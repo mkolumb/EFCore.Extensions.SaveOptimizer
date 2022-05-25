@@ -1,6 +1,14 @@
 # EFCore.Extensions.SaveOptimizer
 Save optimizer extension for EF Core
 
+## Migration command
+
+### SqlLite
+```
+cd .\EFCore.Extensions.SaveOptimizer.Model.SqlLite
+dotnet ef migrations add [NAME] 
+```
+
 ## Roadmap
 
 ### 0.1
