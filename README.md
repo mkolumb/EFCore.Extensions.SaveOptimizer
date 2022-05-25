@@ -19,6 +19,7 @@ Save optimizer extension for EF Core
 - Other
   - Concurrency token
   - Computed properties
+  - Test with different cultures
 
 ### 0.2
 - Providers
@@ -27,3 +28,4 @@ Save optimizer extension for EF Core
   - Firebird
 - Configuration
   - Exclude entity from optimization
+  - Concurrency token behavior (skip versus exception)
