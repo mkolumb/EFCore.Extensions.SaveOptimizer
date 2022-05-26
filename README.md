@@ -1,6 +1,24 @@
 # EFCore.Extensions.SaveOptimizer
 Save optimizer extension for EF Core
 
+## Why another library for batch save?
+
+#### Short version
+Because I needed
+
+#### Long version
+Idea came from one of my commercial projects. 
+
+We were working with CockroachDB (excellent database for multi-region environments) and initially used Entity Framework Core 3.1. It worked fine, but in multi-region configuration save performance was not so good. 
+
+Reason? As many people knows EF generates multiple INSERT / UPDATE / DELETE single row statements instead of lower amount of multiple row statements. 
+
+I considered few solutions (e.g. [EFCore.BulkExtensions](https://github.com/borisdj/EFCore.BulkExtensions), [linq2db](https://linq2db.github.io)) but all of them had some disadvantages during this time. We needed something which doesn't require more code changes than replacing SaveChanges execution and supports CockroachDB and concurrency tokens. As there were no good choice I wrote something simple from scratch. Now I decided to rewrite this as something more integrated into EF. 
+
+Nowadays [EFCore.BulkExtensions](https://github.com/borisdj/EFCore.BulkExtensions) is good choice for most cases as it supports from 6.x version PostgreSQL connector and has BulkSaveChanges method. Then it was not a solution.
+
+Main difference is approach - [EFCore.BulkExtensions](https://github.com/borisdj/EFCore.BulkExtensions) uses copy tools / statements under the hood, SaveOptimizer uses batched INSERT / UPDATE / DELETE statements generated with [SqlKata](sqlkata.com) help. You need to choose which would be better in your case. Likely copy would be faster in most cases (it's good to measure this), but SaveOptimizer approach would result in more features and databases support.
+
 ## How it works
 
 1. SaveChangesOptimizerInterceptor receives info about saving changes
@@ -37,6 +55,7 @@ dotnet ef migrations add [NAME]
 - Other
   - Concurrency token
   - Computed properties
+  - Value converters
   - Test with different cultures
 
 ### 0.2
