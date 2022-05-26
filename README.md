@@ -13,7 +13,7 @@ We were working with CockroachDB (excellent database for multi-region environmen
 
 Reason? As many people knows EF generates multiple INSERT / UPDATE / DELETE single row statements instead of lower amount of multiple row statements. 
 
-I considered few solutions (e.g. [EFCore.BulkExtensions](https://github.com/borisdj/EFCore.BulkExtensions), [linq2db](https://linq2db.github.io)) but all of them had some disadvantages during this time. We needed something which doesn't require more code changes than replacing SaveChanges execution and supports CockroachDB and concurrency tokens. As there were no good choice I wrote something simple from scratch. Now I decided to rewrite this as something more integrated into EF. 
+I considered few solutions (e.g. [EFCore.BulkExtensions](https://github.com/borisdj/EFCore.BulkExtensions), [linq2db](https://linq2db.github.io)) but all of them had some disadvantages during this time. We needed something with support for CockroachDB and concurrency tokens. Also we want to avoid business logic rewrite, more code changes than replacing SaveChanges execution could be big problem. As there were no good choice I wrote something simple from scratch. Now I decided to rewrite this as something more integrated into EF. 
 
 Nowadays [EFCore.BulkExtensions](https://github.com/borisdj/EFCore.BulkExtensions) is good choice for most cases as it supports from 6.x version PostgreSQL connector and has BulkSaveChanges method. Then it was not a solution.
 
