@@ -1,19 +1,19 @@
-﻿using EFCore.Extensions.SaveOptimizer.Model;
-using EFCore.Extensions.SaveOptimizer.Model.SqlLite;
+﻿using EFCore.Extensions.SaveOptimizer.Model.SqlLite;
+using EFCore.Extensions.SaveOptimizer.Tests.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace EFCore.Extensions.SaveOptimizer.Tests.SqlLite;
 
 public abstract class Setup
 {
-    protected EntitiesContext ContextResolver()
+    protected DbContextWrapper ContextWrapperResolver()
     {
         SqlLiteDesignTimeFactory factory = new();
 
-        EntitiesContext context = factory.CreateDbContext(Array.Empty<string>());
+        DbContextWrapper wrapper = new(factory);
 
-        context.Database.Migrate();
+        wrapper.Context.Database.Migrate();
 
-        return context;
+        return wrapper;
     }
 }

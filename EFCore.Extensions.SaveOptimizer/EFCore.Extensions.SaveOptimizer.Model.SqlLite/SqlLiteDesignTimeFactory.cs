@@ -10,6 +10,20 @@ public class SqlLiteDesignTimeFactory : IDesignTimeDbContextFactory<EntitiesCont
 {
     public EntitiesContext CreateDbContext(string[] args)
     {
+        var connectionString = args.Any() && !string.IsNullOrWhiteSpace(args[0]) ? args[0] : GetConnectionString();
+
+        SaveChangesOptimizerInterceptor interceptor = new();
+
+        DbContextOptions<EntitiesContext> options = new DbContextOptionsBuilder<EntitiesContext>()
+            .UseSqlite(connectionString, cfg => cfg.MigrationsAssembly("EFCore.Extensions.SaveOptimizer.Model.SqlLite"))
+            .AddInterceptors(interceptor)
+            .Options;
+
+        return new EntitiesContext(options);
+    }
+
+    private string GetConnectionString()
+    {
         DirectoryInfo directory = new("db");
 
         if (!directory.Exists)
@@ -17,16 +31,10 @@ public class SqlLiteDesignTimeFactory : IDesignTimeDbContextFactory<EntitiesCont
             directory.Create();
         }
 
-        var path = Path.Join(directory.FullName, $"test_{DateTime.Now:yyyy_MM_dd_hh_mm_ss}.db");
+        var dbName = $"test_{DateTime.Now:yyyy_MM_dd_hh_mm_ss}_{Guid.NewGuid()}.db";
 
-        SaveChangesOptimizerInterceptor interceptor = new();
+        var path = Path.Join(directory.FullName, dbName);
 
-        DbContextOptions<EntitiesContext> options = new DbContextOptionsBuilder<EntitiesContext>()
-            .UseSqlite($"Data Source={path}",
-                cfg => cfg.MigrationsAssembly("EFCore.Extensions.SaveOptimizer.Model.SqlLite"))
-            .AddInterceptors(interceptor)
-            .Options;
-
-        return new EntitiesContext(options);
+        return $"Data Source={path}";
     }
 }
