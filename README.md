@@ -32,6 +32,8 @@ dotnet ef migrations add [NAME]
   - Insert
   - Update
   - Delete
+- Dependency injection
+  - .NET DI container
 - Other
   - Concurrency token
   - Computed properties
