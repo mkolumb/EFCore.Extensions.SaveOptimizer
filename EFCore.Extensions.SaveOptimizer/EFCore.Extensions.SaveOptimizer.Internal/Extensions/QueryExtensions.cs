@@ -10,7 +10,7 @@ public static class QueryExtensions
     {
         QueryDataModel[] results = queryResults.ToArray();
 
-        Dictionary<string, Func<QueryDataModel, object>> resolvers = new();
+        Dictionary<string, Func<QueryDataModel, object?>> resolvers = new();
 
         foreach (var key in primaryKeyNames)
         {

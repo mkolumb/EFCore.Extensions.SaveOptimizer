@@ -4,11 +4,11 @@ public class DataGroupModel : IEquatable<DataGroupModel>
 {
     public string Key { get; }
 
-    public object Value { get; }
+    public object? Value { get; }
 
     public HashSet<DataGroupModel> NestedItems { get; set; } = new();
 
-    public DataGroupModel(string key, object value)
+    public DataGroupModel(string key, object? value)
     {
         Key = key;
         Value = value;
@@ -49,7 +49,7 @@ public class DataGroupModel : IEquatable<DataGroupModel>
     public static HashSet<DataGroupModel> CreateDataGroup<TCompare>(
         IReadOnlyCollection<TCompare> items,
         string[] keys,
-        Dictionary<string, Func<TCompare, object>> valueResolvers)
+        Dictionary<string, Func<TCompare, object?>> valueResolvers)
     {
         HashSet<DataGroupModel> data = new();
 

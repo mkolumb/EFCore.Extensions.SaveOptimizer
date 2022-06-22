@@ -110,7 +110,7 @@ public class QueryCompilerService : IQueryCompilerService
                 .AsDelete()
                 .WherePrimaryKeysIn(primaryKeyNames, queryResults);
 
-            IDictionary<string, object> tokens = GetConcurrencyTokens(firstResult);
+            IDictionary<string, object?> tokens = GetConcurrencyTokens(firstResult);
 
             if (tokens.Any())
             {
@@ -130,7 +130,7 @@ public class QueryCompilerService : IQueryCompilerService
         {
             QueryDataModel firstResult = queryResults.First();
 
-            IDictionary<string, object> data = GetUpdateParams(firstResult);
+            IDictionary<string, object?> data = GetUpdateParams(firstResult);
 
             if (!data.Any())
             {
@@ -146,7 +146,7 @@ public class QueryCompilerService : IQueryCompilerService
                 .AsUpdate(data)
                 .WherePrimaryKeysIn(primaryKeyNames, queryResults);
 
-            IDictionary<string, object> tokens = GetConcurrencyTokens(firstResult);
+            IDictionary<string, object?> tokens = GetConcurrencyTokens(firstResult);
 
             if (tokens.Any())
             {
@@ -159,7 +159,7 @@ public class QueryCompilerService : IQueryCompilerService
 
     private static Query GetInsertQuery(IEnumerable<QueryDataModel> columnsGroup, string tableName)
     {
-        Dictionary<string, object>[] data = columnsGroup.Select(queryDataResult => queryDataResult.Data).ToArray();
+        Dictionary<string, object?>[] data = columnsGroup.Select(queryDataResult => queryDataResult.Data).ToArray();
 
         var columns = data[0].Keys;
 
@@ -191,10 +191,10 @@ public class QueryCompilerService : IQueryCompilerService
         return $"tokens_{tokens}";
     }
 
-    private static IDictionary<string, object> GetConcurrencyTokens(QueryDataModel queryResult) =>
-        queryResult.ConcurrencyTokens ?? new Dictionary<string, object>();
+    private static IDictionary<string, object?> GetConcurrencyTokens(QueryDataModel queryResult) =>
+        queryResult.ConcurrencyTokens ?? new Dictionary<string, object?>();
 
-    private static IDictionary<string, object> GetUpdateParams(QueryDataModel queryResult)
+    private static IDictionary<string, object?> GetUpdateParams(QueryDataModel queryResult)
     {
         var primaryKeys = queryResult.PrimaryKeyNames;
 

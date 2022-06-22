@@ -18,7 +18,11 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
 
     public EntitiesContext Context { get; private set; }
 
-    public void Dispose() => Context.Dispose();
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
 
     public void RecreateContext()
     {
@@ -67,6 +71,14 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
         if ((variant & SaveVariant.Recreate) != 0)
         {
             RecreateContext();
+        }
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            Context.Dispose();
         }
     }
 }

@@ -6,7 +6,7 @@ public class QueryDataModel
 {
     public Dictionary<string, object?> Data { get; }
 
-    public string SchemaName { get; }
+    public string? SchemaName { get; }
 
     public string TableName { get; }
 
@@ -20,7 +20,7 @@ public class QueryDataModel
 
     public QueryDataModel(Type entityType,
         EntityState entityState,
-        string schemaName,
+        string? schemaName,
         string tableName,
         Dictionary<string, object?> data,
         string[] primaryKeyNames,
