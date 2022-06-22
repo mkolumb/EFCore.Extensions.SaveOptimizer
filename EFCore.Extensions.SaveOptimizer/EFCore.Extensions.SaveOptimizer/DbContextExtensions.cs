@@ -23,6 +23,8 @@ public static class DbContextExtensions
 
     public static int SaveChangesOptimized(this DbContext context, bool acceptAllChangesOnSuccess)
     {
+        QueryPreparerService.Init(context);
+
         IEnumerable<SqlResult> queries = QueryPreparerService.Prepare(context);
 
         var autoCommit = false;
@@ -75,6 +77,8 @@ public static class DbContextExtensions
     public static async Task<int> SaveChangesOptimizedAsync(this DbContext context, bool acceptAllChangesOnSuccess,
         CancellationToken cancellationToken = default)
     {
+        QueryPreparerService.Init(context);
+
         IEnumerable<SqlResult> queries = QueryPreparerService.Prepare(context);
 
         var autoCommit = false;

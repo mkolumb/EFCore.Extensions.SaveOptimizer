@@ -1,24 +1,11 @@
-﻿using System.Collections.Concurrent;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace EFCore.Extensions.SaveOptimizer.Internal.Extensions;
 
 public static class EntityTypeExtensions
 {
-    private static readonly ConcurrentDictionary<string, IDictionary<Type, int>> Cache = new();
-
-    public static IDictionary<Type, int> ResolveEntityHierarchy(this IModel model)
-    {
-        var name = model.ToDebugString();
-
-        if (!Cache.ContainsKey(name))
-        {
-            Cache[name] = model.GetEntityTypes().ResolveEntityHierarchy(_ => true);
-        }
-
-        return Cache[name];
-    }
+    public static IDictionary<Type, int> ResolveEntityHierarchy(this IModel model) =>
+        model.GetEntityTypes().ResolveEntityHierarchy(_ => true);
 
     public static IDictionary<Type, int> ResolveEntityHierarchy(this IModel model, HashSet<Type> usedTypes) =>
         model.GetEntityTypes().ResolveEntityHierarchy(x => usedTypes.Contains(x.ClrType));
@@ -33,8 +20,6 @@ public static class EntityTypeExtensions
 
         var index = 0;
 
-        HashSet<string> builder = new();
-
         foreach (IEntityType entityType in entities)
         {
             if (!necessary(entityType))
@@ -42,25 +27,16 @@ public static class EntityTypeExtensions
                 continue;
             }
 
-            builder.Add(entityType.GetSchemaQualifiedTableName() ?? string.Empty);
-
             hierarchy.Add(index, entityType);
 
             index++;
         }
 
-        var name = string.Join("|", builder);
+        ShiftEntities(hierarchy);
 
-        if (!Cache.ContainsKey(name))
-        {
-            ShiftEntities(hierarchy);
+        Dictionary<Type, int> value = hierarchy.ToDictionary(x => x.Value.ClrType, x => x.Key);
 
-            Dictionary<Type, int> value = hierarchy.ToDictionary(x => x.Value.ClrType, x => x.Key);
-
-            Cache[name] = value;
-        }
-
-        return Cache[name];
+        return value;
     }
 
     private static void ShiftEntities(IDictionary<int, IEntityType> hierarchy)

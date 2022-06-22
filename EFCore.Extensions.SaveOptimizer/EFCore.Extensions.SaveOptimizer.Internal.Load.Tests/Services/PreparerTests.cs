@@ -7,7 +7,6 @@ using EFCore.Extensions.SaveOptimizer.Internal.Wrappers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-#pragma warning disable CS8620
 #pragma warning disable CS8602
 
 namespace EFCore.Extensions.SaveOptimizer.Internal.Load.Tests.Services;
@@ -27,6 +26,8 @@ public class PreparerTests
             out QueryTranslatorService queryTranslator);
 
         QueryPreparerService queryPreparer = new(queryCompiler, queryTranslator);
+
+        queryPreparer.Init(context);
 
         // Act
         const int howManyTimes = 5;

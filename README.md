@@ -132,7 +132,14 @@ powershell -File run_benchmarks.ps1
 
 #### SqlLite
 
-TBD
+|       Method | Rows |   Variant |       Mean |      Error |      StdDev |
+|------------- |----- |---------- |-----------:|-----------:|------------:|
+| ExecuteAsync |    1 | EF Core   |   2.707 ms |  0.0901 ms |   0.2496 ms |
+| ExecuteAsync |    1 | Optimized |   3.121 ms |  0.1789 ms |   0.4988 ms |
+| ExecuteAsync |   10 | EF Core   |  11.130 ms |  0.9543 ms |   2.8138 ms |
+| ExecuteAsync |   10 | Optimized |  10.225 ms |  0.6741 ms |   1.9556 ms |
+| ExecuteAsync |  100 | EF Core   | 475.454 ms | 60.9337 ms | 179.6644 ms |
+| ExecuteAsync |  100 | Optimized | 372.559 ms | 54.7249 ms | 161.3576 ms |
 
 #### SqlServer
 
