@@ -81,3 +81,5 @@ dotnet ef migrations add [NAME]
   - Custom attributes
   - Ignore
   - Shadow properties
+- GitHub actions
+- Test databases within container

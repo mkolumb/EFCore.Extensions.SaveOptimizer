@@ -1,5 +1,4 @@
-﻿using EFCore.Extensions.SaveOptimizer.Extensions;
-using EFCore.Extensions.SaveOptimizer.Model;
+﻿using EFCore.Extensions.SaveOptimizer.Model;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
@@ -8,8 +7,12 @@ namespace EFCore.Extensions.SaveOptimizer.SqlLite.Tests;
 
 public class InsertTests : Setup
 {
-    [Fact]
-    public async Task GivenSaveChanges_WhenMultipleObjectsInserted_ShouldInsertData()
+    [Theory]
+    [InlineData(SaveVariant.Normal | SaveVariant.Recreate)]
+    [InlineData(SaveVariant.Normal | SaveVariant.Recreate | SaveVariant.WithTransaction)]
+    [InlineData(SaveVariant.Optimized | SaveVariant.Recreate)]
+    [InlineData(SaveVariant.Optimized | SaveVariant.Recreate | SaveVariant.WithTransaction)]
+    public async Task GivenSaveChanges_WhenMultipleObjectsInserted_ShouldInsertData(SaveVariant variant)
     {
         // Arrange
         using DbContextWrapper db = ContextWrapperResolver();
@@ -37,8 +40,7 @@ public class InsertTests : Setup
             await db.Context.AddAsync(ItemResolver());
         }
 
-        await db.Context.SaveChangesOptimizedAsync();
-        db.RecreateContext();
+        await db.Save(variant);
 
         var result = await db.Context.NonRelatedEntities.CountAsync();
 
@@ -46,15 +48,18 @@ public class InsertTests : Setup
         result.Should().Be(10);
     }
 
-    [Fact]
-    public async Task GivenSaveChanges_WhenNoChanges_ShouldDoNothing()
+    [Theory]
+    [InlineData(SaveVariant.Normal | SaveVariant.Recreate)]
+    [InlineData(SaveVariant.Normal | SaveVariant.Recreate | SaveVariant.WithTransaction)]
+    [InlineData(SaveVariant.Optimized | SaveVariant.Recreate)]
+    [InlineData(SaveVariant.Optimized | SaveVariant.Recreate | SaveVariant.WithTransaction)]
+    public async Task GivenSaveChanges_WhenNoChanges_ShouldDoNothing(SaveVariant variant)
     {
         // Arrange
         using DbContextWrapper db = ContextWrapperResolver();
 
         // Act
-        await db.Context.SaveChangesOptimizedAsync();
-        db.RecreateContext();
+        await db.Save(variant);
 
         var result = await db.Context.NonRelatedEntities.CountAsync();
 
@@ -62,8 +67,12 @@ public class InsertTests : Setup
         result.Should().Be(0);
     }
 
-    [Fact]
-    public async Task GivenSaveChanges_WhenOneObjectInserted_ShouldInsertData()
+    [Theory]
+    [InlineData(SaveVariant.Normal | SaveVariant.Recreate)]
+    [InlineData(SaveVariant.Normal | SaveVariant.Recreate | SaveVariant.WithTransaction)]
+    [InlineData(SaveVariant.Optimized | SaveVariant.Recreate)]
+    [InlineData(SaveVariant.Optimized | SaveVariant.Recreate | SaveVariant.WithTransaction)]
+    public async Task GivenSaveChanges_WhenOneObjectInserted_ShouldInsertData(SaveVariant variant)
     {
         // Arrange
         using DbContextWrapper db = ContextWrapperResolver();
@@ -84,8 +93,8 @@ public class InsertTests : Setup
 
         // Act
         await db.Context.AddAsync(item);
-        await db.Context.SaveChangesOptimizedAsync();
-        db.RecreateContext();
+
+        await db.Save(variant);
 
         NonRelatedEntity result = await db.Context.NonRelatedEntities.FirstAsync();
 

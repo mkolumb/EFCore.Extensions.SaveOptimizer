@@ -1,6 +1,9 @@
-﻿using EFCore.Extensions.SaveOptimizer.Model;
+﻿using System.Data;
+using EFCore.Extensions.SaveOptimizer.Extensions;
+using EFCore.Extensions.SaveOptimizer.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace EFCore.Extensions.SaveOptimizer.Shared.Tests;
 
@@ -31,5 +34,38 @@ public sealed class DbContextWrapper : IDisposable
         Context.Dispose();
 
         Context = _factory.CreateDbContext(new[] { connectionString });
+    }
+
+    public async Task Save(SaveVariant variant)
+    {
+        async Task InternalSave()
+        {
+            if ((variant & SaveVariant.Optimized) != 0)
+            {
+                await Context.SaveChangesOptimizedAsync();
+            }
+            else if ((variant & SaveVariant.Normal) != 0)
+            {
+                await Context.SaveChangesAsync();
+            }
+        }
+
+        if ((variant & SaveVariant.WithTransaction) != 0)
+        {
+            await using IDbContextTransaction transaction = await Context.Database.BeginTransactionAsync(IsolationLevel.Serializable);
+
+            await InternalSave();
+
+            await transaction.CommitAsync();
+        }
+        else
+        {
+            await InternalSave();
+        }
+
+        if ((variant & SaveVariant.Recreate) != 0)
+        {
+            RecreateContext();
+        }
     }
 }

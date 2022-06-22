@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EFCore.Extensions.SaveOptimizer.Model\EFCore.Extensions.SaveOptimizer.Model.csproj" />
+    <ProjectReference Include="..\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.csproj" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.6" />
   </ItemGroup>
 
