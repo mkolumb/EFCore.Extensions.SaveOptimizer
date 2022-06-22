@@ -39,10 +39,10 @@ public abstract class BaseInsertBenchmark
     private static NonRelatedEntity CreateItem(long i) =>
         new()
         {
-            ConcurrencyToken = DateTime.Now,
+            ConcurrencyToken = DateTimeOffset.UtcNow,
             SomeNonNullableBooleanProperty = true,
-            SomeNonNullableDateTimeProperty = new DateTime(2010, 10, 10, 1, 2, 3),
-            SomeNullableDateTimeProperty = new DateTime(2012, 11, 11, 1, 2, 3),
+            SomeNonNullableDateTimeProperty = new DateTimeOffset(2010, 10, 10, 1, 2, 3, 0, TimeSpan.Zero),
+            SomeNullableDateTimeProperty = new DateTimeOffset(2012, 11, 11, 1, 2, 3, 0, TimeSpan.Zero),
             SomeNonNullableDecimalProperty = 2.52M,
             SomeNullableDecimalProperty = 4.523M,
             SomeNonNullableIntProperty = 1,

@@ -25,13 +25,13 @@ public class NonRelatedEntity
     public decimal? SomeNullableDecimalProperty { get; set; }
 
     [Required]
-    public DateTime? SomeNonNullableDateTimeProperty { get; set; }
+    public DateTimeOffset? SomeNonNullableDateTimeProperty { get; set; }
 
-    public DateTime? SomeNullableDateTimeProperty { get; set; }
+    public DateTimeOffset? SomeNullableDateTimeProperty { get; set; }
 
     [Required]
     public bool? SomeNonNullableBooleanProperty { get; set; }
 
     [ConcurrencyCheck]
-    public DateTime? ConcurrencyToken { get; set; }
+    public DateTimeOffset? ConcurrencyToken { get; set; }
 }

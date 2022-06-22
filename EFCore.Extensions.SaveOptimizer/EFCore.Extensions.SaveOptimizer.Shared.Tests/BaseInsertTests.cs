@@ -1,5 +1,6 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Model;
 using FluentAssertions;
+using FluentAssertions.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace EFCore.Extensions.SaveOptimizer.Shared.Tests;
@@ -25,10 +26,10 @@ public abstract class BaseInsertTests
         {
             return new NonRelatedEntity
             {
-                ConcurrencyToken = DateTime.Now,
+                ConcurrencyToken = DateTimeOffset.UtcNow,
                 SomeNonNullableBooleanProperty = true,
-                SomeNonNullableDateTimeProperty = new DateTime(2010, 10, 10, 1, 2, 3),
-                SomeNullableDateTimeProperty = new DateTime(2012, 11, 11, 1, 2, 3),
+                SomeNonNullableDateTimeProperty = new DateTimeOffset(2010, 10, 10, 1, 2, 3, 0, TimeSpan.Zero),
+                SomeNullableDateTimeProperty = new DateTimeOffset(2012, 11, 11, 1, 2, 3, 0, TimeSpan.Zero),
                 SomeNonNullableDecimalProperty = 2.52M,
                 SomeNullableDecimalProperty = 4.523M,
                 SomeNonNullableIntProperty = 1,
@@ -87,10 +88,10 @@ public abstract class BaseInsertTests
 
         NonRelatedEntity item = new()
         {
-            ConcurrencyToken = DateTime.Now,
+            ConcurrencyToken = DateTimeOffset.UtcNow,
             SomeNonNullableBooleanProperty = true,
-            SomeNonNullableDateTimeProperty = new DateTime(2010, 10, 10, 1, 2, 3),
-            SomeNullableDateTimeProperty = new DateTime(2012, 11, 11, 1, 2, 3),
+            SomeNonNullableDateTimeProperty = new DateTimeOffset(2010, 10, 10, 1, 2, 3, 0, TimeSpan.Zero),
+            SomeNullableDateTimeProperty = new DateTimeOffset(2012, 11, 11, 1, 2, 3, 0, TimeSpan.Zero),
             SomeNonNullableDecimalProperty = 2.52M,
             SomeNullableDecimalProperty = 4.523M,
             SomeNonNullableIntProperty = 1,
@@ -109,10 +110,10 @@ public abstract class BaseInsertTests
         // Assert
         result.Should().NotBeNull();
         result.NonRelatedEntityId.Should().NotBeEmpty();
-        result.ConcurrencyToken.Should().Be(item.ConcurrencyToken);
+        result.ConcurrencyToken.Should().BeCloseTo(item.ConcurrencyToken.Value, 1.Seconds());
         result.SomeNonNullableBooleanProperty.Should().Be(item.SomeNonNullableBooleanProperty);
-        result.SomeNonNullableDateTimeProperty.Should().Be(item.SomeNonNullableDateTimeProperty);
-        result.SomeNullableDateTimeProperty.Should().Be(item.SomeNullableDateTimeProperty);
+        result.SomeNonNullableDateTimeProperty.Should().BeCloseTo(item.SomeNonNullableDateTimeProperty.Value, 1.Seconds());
+        result.SomeNullableDateTimeProperty.Should().BeCloseTo(item.SomeNullableDateTimeProperty.Value, 1.Seconds());
         result.SomeNonNullableDecimalProperty.Should().Be(item.SomeNonNullableDecimalProperty);
         result.SomeNullableDecimalProperty.Should().Be(item.SomeNullableDecimalProperty);
         result.SomeNonNullableIntProperty.Should().Be(item.SomeNonNullableIntProperty);

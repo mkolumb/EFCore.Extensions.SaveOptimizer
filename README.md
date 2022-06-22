@@ -42,14 +42,6 @@ When you execute SaveChangesOptimized the following sequence happens:
 
 Please note it is not working exactly as SaveChanges, so You should verify it works in your case as expected.
 
-## Migration command
-
-### SqlLite
-```powershell
-cd .\EFCore.Extensions.SaveOptimizer.Model.SqlLite
-dotnet ef migrations add [NAME] 
-```
-
 ## Features
 - Providers support
   - SQL Server
@@ -85,3 +77,50 @@ dotnet ef migrations add [NAME]
   - Shadow properties
 - GitHub actions
 - Test databases within container
+
+## Migration command
+
+```cmd
+powershell -Command ".\add_migration.ps1 -name [NAME]"
+```
+
+```powershell
+$name = "[NAME]"
+
+.\add_migration.ps1 -name $name
+```
+
+## Benchmarks
+
+### Running
+
+```cmd
+# Cockroach
+cd EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Cockroach.Benchmark
+powershell.exe -File benchmark.ps1 
+
+# SqlLite
+cd EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.SqlLite.Benchmark
+powershell.exe -File benchmark.ps1 
+```
+
+```powershell
+# Cockroach
+Set-Location EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Cockroach.Benchmark
+.\benchmark.ps1 
+
+# SqlLite
+Set-Location EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.SqlLite.Benchmark
+.\benchmark.ps1 
+```
+
+### SqlLite
+
+|       Method | Rows |   Variant |      Mean |     Error |    StdDev |
+|------------- |----- |---------- |----------:|----------:|----------:|
+| ExecuteAsync |    1 | EF Core   |  41.81 ms |  6.438 ms |  18.98 ms |
+| ExecuteAsync |    1 | Optimized |  52.59 ms |  5.774 ms |  17.02 ms |
+| ExecuteAsync |   10 | EF Core   | 192.00 ms | 28.277 ms |  83.38 ms |
+| ExecuteAsync |   10 | Optimized | 256.63 ms | 31.335 ms |  92.39 ms |
+| ExecuteAsync |  100 | EF Core   | 414.46 ms | 69.008 ms | 201.30 ms |
+| ExecuteAsync |  100 | Optimized | 379.45 ms | 52.489 ms | 154.76 ms |

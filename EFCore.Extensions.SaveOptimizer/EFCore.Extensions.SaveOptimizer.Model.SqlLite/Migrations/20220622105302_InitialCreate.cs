@@ -20,10 +20,10 @@ namespace EFCore.Extensions.SaveOptimizer.Model.SqlLite.Migrations
                     SomeNullableIntProperty = table.Column<int>(type: "INTEGER", nullable: true),
                     SomeNonNullableDecimalProperty = table.Column<decimal>(type: "TEXT", nullable: false),
                     SomeNullableDecimalProperty = table.Column<decimal>(type: "TEXT", nullable: true),
-                    SomeNonNullableDateTimeProperty = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    SomeNullableDateTimeProperty = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    SomeNonNullableDateTimeProperty = table.Column<DateTimeOffset>(type: "TEXT", nullable: false),
+                    SomeNullableDateTimeProperty = table.Column<DateTimeOffset>(type: "TEXT", nullable: true),
                     SomeNonNullableBooleanProperty = table.Column<bool>(type: "INTEGER", nullable: false),
-                    ConcurrencyToken = table.Column<DateTime>(type: "TEXT", nullable: true)
+                    ConcurrencyToken = table.Column<DateTimeOffset>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
