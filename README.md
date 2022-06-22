@@ -17,53 +17,67 @@ I considered few solutions (e.g. [EFCore.BulkExtensions](https://github.com/bori
 
 [EFCore.BulkExtensions](https://github.com/borisdj/EFCore.BulkExtensions) is good choice for most cases as it has BulkSaveChanges method and currently supports few different databases (SQL Server, PostgreSQL and SQLite). Unfortunately it looks like API they used for PostgreSQL is incompatible with CockroachDB.
 
-Main difference is approach - [EFCore.BulkExtensions](https://github.com/borisdj/EFCore.BulkExtensions) uses copy tools / statements under the hood, SaveOptimizer uses batched INSERT / UPDATE / DELETE statements generated with [SqlKata](https://sqlkata.com/) help. You need to choose which would be better in your case. Likely copy would be faster in most cases (it's good to measure this), but SaveOptimizer approach would result in more features and databases support.
+Main difference is approach - [EFCore.BulkExtensions](https://github.com/borisdj/EFCore.BulkExtensions) uses copy tools / statements under the hood, SaveOptimizer uses batched INSERT / UPDATE / DELETE statements generated with [SqlKata](https://sqlkata.com/) help. You need to choose which would be better in your case. Likely copy would be faster in most cases (it's good to measure this), but SaveOptimizer approach would bring more databases support. SaveOptimizer is simple library so verify more advanced features if needed.
+
+## How to use
+
+Just replace SaveChanges() / SaveChangesAsync() :)
+
+```csharp
+await using var transaction = await context.Database.BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
+await context.AddAsync(entity);
+await context.SaveChangesOptimizedAsync();
+await transaction.RollbackAsync(cancellationToken);
+```
 
 ## How it works
 
-1. SaveChangesOptimizerInterceptor receives info about saving changes
-2. IDataPrepareService prepare SQL statements based on ChangeTracker detection
-3. IExecutionService executes SQL statements
-4. SaveChangesOptimizerInterceptor marks saved entities
-5. EF Core continue with other entities in normal way
+When you execute SaveChangesOptimized the following sequence happens:
+1. Get entries from ChangeTracker
+2. Build property changes dictionary for each entry
+3. Group changes as much as possible
+4. Generate SQL using SqlKata
+5. ExecuteRawSql
+
+Please note it is not working exactly as SaveChanges, so You should verify it works in your case as expected.
 
 ## Migration command
 
 ### SqlLite
-```
+```powershell
 cd .\EFCore.Extensions.SaveOptimizer.Model.SqlLite
 dotnet ef migrations add [NAME] 
 ```
 
-## Roadmap
-
-### 0.1
-- Providers
+## Features
+- Providers support
   - SQL Server
   - SqlLite
   - PostgreSQL
+  - Oracle
+  - MySQL
+  - Firebird
 - Primary keys
   - Simple
   - Composed
   - None
-- Clauses
+- Statements
   - Insert
   - Update
   - Delete
-- Dependency injection
-  - .NET DI container
 - Other
   - Concurrency token
-  - Computed properties
-  - Value converters
-  - Test with different cultures
+  - Auto-generated values
 
-### 0.2
-- Providers
-  - Oracle
-  - MySQL
-  - Firebird
+## What to do next
+
 - Configuration
-  - Exclude entity from optimization
-  - Concurrency token behavior (skip versus exception)
+  - Concurrency token behavior
   - Batch size
+- Support for
+  - Different cultures
+  - Interceptors
+  - Value converters
+  - Custom attributes
+  - Ignore
+  - Shadow properties
