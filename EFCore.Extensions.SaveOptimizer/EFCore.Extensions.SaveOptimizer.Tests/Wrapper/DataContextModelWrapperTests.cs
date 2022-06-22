@@ -9,7 +9,7 @@ namespace EFCore.Extensions.SaveOptimizer.Tests.Wrapper;
 
 public class DataContextModelWrapperTests
 {
-    private readonly DataContextModelWrapper<TestDataContext> _sut;
+    private readonly DataContextModelWrapper _sut;
 
     public DataContextModelWrapperTests()
     {
@@ -17,7 +17,7 @@ public class DataContextModelWrapperTests
             new DbContextOptionsBuilder<TestDataContext>().UseInMemoryDatabase("in_memory_db")
                 .UseSnakeCaseNamingConvention();
         TestDataContext context = new(options.Options);
-        _sut = new DataContextModelWrapper<TestDataContext>(() => context);
+        _sut = new DataContextModelWrapper(() => context);
     }
 
     [Fact]
@@ -26,15 +26,15 @@ public class DataContextModelWrapperTests
         // Arrange / Act
         var results = new[]
         {
-            _sut.GetColumn<FirstLevelEntity>(nameof(FirstLevelEntity.FirstIntNullable)),
-            _sut.GetColumn<FirstLevelEntity>(nameof(FirstLevelEntity.UpdatedDate)),
-            _sut.GetColumn<FirstLevelEntity>(nameof(FirstLevelEntity.FirstIntNullable)),
-            _sut.GetColumn<FirstLevelEntity>(nameof(FirstLevelEntity.UpdatedDate)),
-            _sut.GetColumn<SecondLevelEntity>(nameof(SecondLevelEntity.UpdatedDate)),
-            _sut.GetColumn<SecondLevelEntity>(nameof(SecondLevelEntity.UpdatedDate)),
-            _sut.GetColumn<SecondLevelEntity>(nameof(SecondLevelEntity.AnotherSecondString)),
-            _sut.GetColumn<SecondLevelEntity>(nameof(SecondLevelEntity.AnotherSecondString)),
-            _sut.GetColumn<SecondLevelEntity>(nameof(SecondLevelEntity.SomeSecondDecimal))
+            _sut.GetColumn(typeof(FirstLevelEntity), nameof(FirstLevelEntity.FirstIntNullable)),
+            _sut.GetColumn(typeof(FirstLevelEntity), nameof(FirstLevelEntity.UpdatedDate)),
+            _sut.GetColumn(typeof(FirstLevelEntity), nameof(FirstLevelEntity.FirstIntNullable)),
+            _sut.GetColumn(typeof(FirstLevelEntity), nameof(FirstLevelEntity.UpdatedDate)),
+            _sut.GetColumn(typeof(SecondLevelEntity), nameof(SecondLevelEntity.UpdatedDate)),
+            _sut.GetColumn(typeof(SecondLevelEntity), nameof(SecondLevelEntity.UpdatedDate)),
+            _sut.GetColumn(typeof(SecondLevelEntity), nameof(SecondLevelEntity.AnotherSecondString)),
+            _sut.GetColumn(typeof(SecondLevelEntity), nameof(SecondLevelEntity.AnotherSecondString)),
+            _sut.GetColumn(typeof(SecondLevelEntity), nameof(SecondLevelEntity.SomeSecondDecimal))
         };
 
         // Assert
@@ -57,10 +57,10 @@ public class DataContextModelWrapperTests
         // Arrange / Act
         var results = new[]
         {
-            _sut.GetSchema<FirstLevelEntity>(), _sut.GetSchema<FirstLevelEntity>(),
-            _sut.GetSchema<SecondLevelEntity>(), _sut.GetSchema<FirstLevelEntity>(),
-            _sut.GetSchema<AttributeEntityLog>(), _sut.GetSchema<SecondLevelEntity>(),
-            _sut.GetSchema<ThirdLevelEntity>()
+            _sut.GetSchema(typeof(FirstLevelEntity)), _sut.GetSchema(typeof(FirstLevelEntity)),
+            _sut.GetSchema(typeof(SecondLevelEntity)), _sut.GetSchema(typeof(FirstLevelEntity)),
+            _sut.GetSchema(typeof(AttributeEntityLog)), _sut.GetSchema(typeof(SecondLevelEntity)),
+            _sut.GetSchema(typeof(ThirdLevelEntity))
         };
 
         // Assert
@@ -81,9 +81,9 @@ public class DataContextModelWrapperTests
         // Arrange / Act
         var results = new[]
         {
-            _sut.GetTableName<FirstLevelEntity>(), _sut.GetTableName<FirstLevelEntity>(),
-            _sut.GetTableName<SecondLevelEntity>(), _sut.GetTableName<FirstLevelEntity>(),
-            _sut.GetTableName<SecondLevelEntity>(), _sut.GetTableName<ThirdLevelEntity>()
+            _sut.GetTableName(typeof(FirstLevelEntity)), _sut.GetTableName(typeof(FirstLevelEntity)),
+            _sut.GetTableName(typeof(SecondLevelEntity)), _sut.GetTableName(typeof(FirstLevelEntity)),
+            _sut.GetTableName(typeof(SecondLevelEntity)), _sut.GetTableName(typeof(ThirdLevelEntity))
         };
 
         // Assert

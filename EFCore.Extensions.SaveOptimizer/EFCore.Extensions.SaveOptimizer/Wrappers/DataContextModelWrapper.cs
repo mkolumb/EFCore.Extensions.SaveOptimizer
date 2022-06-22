@@ -4,19 +4,18 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace EFCore.Extensions.SaveOptimizer.Wrappers;
 
-public class DataContextModelWrapper<TContext> : IDataContextModelWrapper
-    where TContext : DbContext
+public class DataContextModelWrapper : IDataContextModelWrapper
 {
     private readonly ConcurrentDictionary<string, IEntityType?> _entityTypes;
 
     private readonly ConcurrentDictionary<string, string?> _properties;
-    private readonly Func<TContext> _resolver;
+    private readonly Func<DbContext> _resolver;
 
     private readonly ConcurrentDictionary<string, string?> _schemaNames;
 
     private readonly ConcurrentDictionary<string, string?> _tableNames;
 
-    public DataContextModelWrapper(Func<TContext> resolver)
+    public DataContextModelWrapper(Func<DbContext> resolver)
     {
         _resolver = resolver;
 
@@ -29,24 +28,24 @@ public class DataContextModelWrapper<TContext> : IDataContextModelWrapper
         _properties = new ConcurrentDictionary<string, string?>();
     }
 
-    public string GetTableName<TEntity>()
+    public string GetTableName(Type entityType)
     {
-        var key = typeof(TEntity).FullName ?? throw new ArgumentNullException(nameof(TEntity));
+        var key = entityType.FullName ?? throw new ArgumentNullException(nameof(entityType));
 
         return _tableNames.GetOrAdd(key, x => GetEntityType(x)?.GetTableName()) ??
                throw new ArgumentException("Table name is null");
     }
 
-    public string? GetSchema<TEntity>()
+    public string? GetSchema(Type entityType)
     {
-        var key = typeof(TEntity).FullName ?? throw new ArgumentNullException(nameof(TEntity));
+        var key = entityType.FullName ?? throw new ArgumentNullException(nameof(entityType));
 
         return _schemaNames.GetOrAdd(key, x => GetEntityType(x)?.GetSchema());
     }
 
-    public string GetColumn<TEntity>(string propertyName)
+    public string GetColumn(Type entityType, string propertyName)
     {
-        var propertyKey = $"{typeof(TEntity).FullName}|{propertyName}";
+        var propertyKey = $"{entityType.FullName}|{propertyName}";
 
         return _properties.GetOrAdd(propertyKey, key =>
         {
@@ -56,12 +55,11 @@ public class DataContextModelWrapper<TContext> : IDataContextModelWrapper
 
             var property = split[1];
 
-            IEntityType? entityType = GetEntityType(entityTypeName);
+            IEntityType? type = GetEntityType(entityTypeName);
 
-            IProperty? propertyInfo = entityType?.FindProperty(property);
+            IProperty? propertyInfo = type?.FindProperty(property);
 
-            StoreObjectIdentifier identifier =
-                StoreObjectIdentifier.Table(entityType?.GetTableName()!, entityType?.GetSchema()!);
+            StoreObjectIdentifier identifier = StoreObjectIdentifier.Table(type?.GetTableName()!, type?.GetSchema()!);
 
             return propertyInfo?.GetColumnName(identifier);
         }) ?? throw new ArgumentException("Property is null");

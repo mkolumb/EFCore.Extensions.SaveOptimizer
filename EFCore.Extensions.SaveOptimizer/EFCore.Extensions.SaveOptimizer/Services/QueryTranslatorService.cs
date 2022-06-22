@@ -1,6 +1,6 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Exceptions;
 using EFCore.Extensions.SaveOptimizer.Models;
-using EFCore.Extensions.SaveOptimizer.Resolvers;
+using EFCore.Extensions.SaveOptimizer.Wrappers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -9,29 +9,25 @@ namespace EFCore.Extensions.SaveOptimizer.Services;
 
 public class QueryTranslatorService : IQueryTranslatorService
 {
-    private readonly IDataContextModelWrapperResolver _resolver;
-
-    public QueryTranslatorService(IDataContextModelWrapperResolver resolver) => _resolver = resolver;
-
-    public QueryDataModel? Translate<TContext, TEntity>(EntityEntry entry)
-        where TContext : DbContext
-        where TEntity : class
+    public QueryDataModel? Translate(DbContext context, EntityEntry entry)
     {
         if (entry.State is EntityState.Detached or EntityState.Unchanged)
         {
             return null;
         }
 
+        var entityType = entry.Entity.GetType();
+
         var properties = entry.Properties.ToArray();
 
-        var model = _resolver.Resolve<TContext>();
+        var model = new DataContextModelWrapper(() => context);
 
-        var tableName = model.GetTableName<TEntity>();
-        var schemaName = model.GetSchema<TEntity>();
+        var tableName = model.GetTableName(entityType);
+        var schemaName = model.GetSchema(entityType);
 
         var primaryKeys = properties
             .Where(x => x.Metadata.IsPrimaryKey())
-            .ToDictionary(x => model.GetColumn<TEntity>(x.Metadata.Name), x => x.CurrentValue);
+            .ToDictionary(x => model.GetColumn(entityType, x.Metadata.Name), x => x.CurrentValue);
 
         var data = new Dictionary<string, object?>();
 
@@ -56,7 +52,7 @@ public class QueryTranslatorService : IQueryTranslatorService
                     continue;
             }
 
-            var columnName = model.GetColumn<TEntity>(property.Metadata.Name);
+            var columnName = model.GetColumn(entityType, property.Metadata.Name);
 
             if (primaryKeys.ContainsKey(columnName))
             {
@@ -81,8 +77,8 @@ public class QueryTranslatorService : IQueryTranslatorService
         var concurrencyTokens = properties.Where(x => x.Metadata.IsConcurrencyToken);
 
         var tokens = concurrencyTokens
-            .ToDictionary(x => model.GetColumn<TEntity>(x.Metadata.Name), x => x.CurrentValue);
+            .ToDictionary(x => model.GetColumn(entityType, x.Metadata.Name), x => x.CurrentValue);
 
-        return new QueryDataModel(typeof(TEntity), entry.State, schemaName, tableName, data, primaryKeys.Select(x => x.Key).ToArray(), tokens);
+        return new QueryDataModel(entityType, entry.State, schemaName, tableName, data, primaryKeys.Select(x => x.Key).ToArray(), tokens);
     }
 }

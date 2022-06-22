@@ -1,13 +1,10 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Models;
-using EFCore.Extensions.SaveOptimizer.Resolvers;
 using EFCore.Extensions.SaveOptimizer.Services;
 using EFCore.Extensions.SaveOptimizer.Tests.TestContext;
 using EFCore.Extensions.SaveOptimizer.Tests.TestContext.Models;
-using EFCore.Extensions.SaveOptimizer.Wrappers;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Moq;
 
 namespace EFCore.Extensions.SaveOptimizer.Tests.Services;
 
@@ -15,7 +12,6 @@ public class QueryTranslatorServiceTests
 {
     private readonly TestDataContext _context;
 
-    private readonly Mock<IDataContextModelWrapperResolver> _resolverMock;
     private readonly QueryTranslatorService _target;
 
     public QueryTranslatorServiceTests()
@@ -24,12 +20,8 @@ public class QueryTranslatorServiceTests
             new DbContextOptionsBuilder<TestDataContext>().UseInMemoryDatabase("in_memory_db")
                 .UseSnakeCaseNamingConvention();
         _context = new TestDataContext(options.Options);
-        DataContextModelWrapper<TestDataContext> wrapper = new(() => _context);
 
-        _resolverMock = new Mock<IDataContextModelWrapperResolver>();
-        _resolverMock.Setup(x => x.Resolve<TestDataContext>()).Returns(wrapper);
-
-        _target = new QueryTranslatorService(_resolverMock.Object);
+        _target = new QueryTranslatorService();
 
         // TODO: tests for
         // - value generated on add
@@ -60,7 +52,7 @@ public class QueryTranslatorServiceTests
         entry.Property(x => x.CreatedDate).IsModified = true;
 
         // Act
-        QueryDataModel? result = _target.Translate<TestDataContext, SecondLevelEntity>(entry);
+        QueryDataModel? result = _target.Translate(_context, entry);
 
         // Assert
         result.SchemaName.Should().BeNull();
@@ -91,7 +83,9 @@ public class QueryTranslatorServiceTests
         // Arrange
         SecondLevelEntity entity = new()
         {
-            SecondLevelEntityId = "aaa", SomeSecondDecimal = 15, CreatedDate = new DateTime(2020, 1, 1)
+            SecondLevelEntityId = "aaa",
+            SomeSecondDecimal = 15,
+            CreatedDate = new DateTime(2020, 1, 1)
         };
 
         EntityEntry<SecondLevelEntity> entry = _context.Entry(entity);
@@ -105,7 +99,7 @@ public class QueryTranslatorServiceTests
         entry.Property(x => x.CreatedDate).IsModified = true;
 
         // Act
-        QueryDataModel? result = _target.Translate<TestDataContext, SecondLevelEntity>(entry);
+        QueryDataModel? result = _target.Translate(_context, entry);
 
         // Assert
         result.SchemaName.Should().BeNull();
@@ -136,7 +130,9 @@ public class QueryTranslatorServiceTests
         // Arrange
         SecondLevelEntity entity = new()
         {
-            SecondLevelEntityId = "aaa", SomeSecondDecimal = 15, CreatedDate = new DateTime(2020, 1, 1)
+            SecondLevelEntityId = "aaa",
+            SomeSecondDecimal = 15,
+            CreatedDate = new DateTime(2020, 1, 1)
         };
 
         EntityEntry<SecondLevelEntity> entry = _context.Entry(entity);
@@ -150,7 +146,7 @@ public class QueryTranslatorServiceTests
         entry.Property(x => x.CreatedDate).IsModified = true;
 
         // Act
-        QueryDataModel? result = _target.Translate<TestDataContext, SecondLevelEntity>(entry);
+        QueryDataModel? result = _target.Translate(_context, entry);
 
         // Assert
         result.SchemaName.Should().BeNull();
@@ -181,7 +177,9 @@ public class QueryTranslatorServiceTests
         // Arrange
         SecondLevelEntity entity = new()
         {
-            SecondLevelEntityId = "aaa", SomeSecondDecimal = 15, CreatedDate = new DateTime(2020, 1, 1)
+            SecondLevelEntityId = "aaa",
+            SomeSecondDecimal = 15,
+            CreatedDate = new DateTime(2020, 1, 1)
         };
 
         EntityEntry<SecondLevelEntity> entry = _context.Entry(entity);
@@ -196,7 +194,7 @@ public class QueryTranslatorServiceTests
         entry.State = EntityState.Detached;
 
         // Act
-        QueryDataModel? result = _target.Translate<TestDataContext, SecondLevelEntity>(entry);
+        QueryDataModel? result = _target.Translate(_context, entry);
 
         // Assert
         result.Should().BeNull();
@@ -208,7 +206,9 @@ public class QueryTranslatorServiceTests
         // Arrange
         SecondLevelEntity entity = new()
         {
-            SecondLevelEntityId = "aaa", SomeSecondDecimal = 15, CreatedDate = new DateTime(2020, 1, 1)
+            SecondLevelEntityId = "aaa",
+            SomeSecondDecimal = 15,
+            CreatedDate = new DateTime(2020, 1, 1)
         };
 
         EntityEntry<SecondLevelEntity> entry = _context.Entry(entity);
@@ -223,7 +223,7 @@ public class QueryTranslatorServiceTests
         entry.State = EntityState.Unchanged;
 
         // Act
-        QueryDataModel? result = _target.Translate<TestDataContext, SecondLevelEntity>(entry);
+        QueryDataModel? result = _target.Translate(_context, entry);
 
         // Assert
         result.Should().BeNull();
@@ -235,7 +235,9 @@ public class QueryTranslatorServiceTests
         // Arrange
         SecondLevelEntity entity = new()
         {
-            SecondLevelEntityId = "aaa", SomeSecondDecimal = 15, CreatedDate = new DateTime(2020, 1, 1)
+            SecondLevelEntityId = "aaa",
+            SomeSecondDecimal = 15,
+            CreatedDate = new DateTime(2020, 1, 1)
         };
 
         EntityEntry<SecondLevelEntity> entry = _context.Entry(entity);
@@ -249,7 +251,7 @@ public class QueryTranslatorServiceTests
         entry.Property(x => x.CreatedDate).IsModified = true;
 
         // Act
-        QueryDataModel? result = _target.Translate<TestDataContext, SecondLevelEntity>(entry);
+        QueryDataModel? result = _target.Translate(_context, entry);
 
         // Assert
         result.SchemaName.Should().BeNull();

@@ -2,10 +2,10 @@
 {
     public interface IDataContextModelWrapper
     {
-        string GetTableName<TEntity>();
+        string GetTableName(Type entityType);
 
-        string? GetSchema<TEntity>();
+        string? GetSchema(Type entityType);
 
-        string GetColumn<TEntity>(string propertyName);
+        string GetColumn(Type entityType, string propertyName);
     }
 }
