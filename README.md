@@ -95,23 +95,11 @@ $name = "[NAME]"
 ### Running
 
 ```cmd
-# Cockroach
-cd EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Cockroach.Benchmark
-powershell.exe -File benchmark.ps1 
-
-# SqlLite
-cd EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.SqlLite.Benchmark
-powershell.exe -File benchmark.ps1 
+powershell -File run_benchmarks.ps1
 ```
 
 ```powershell
-# Cockroach
-Set-Location EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Cockroach.Benchmark
-.\benchmark.ps1 
-
-# SqlLite
-Set-Location EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.SqlLite.Benchmark
-.\benchmark.ps1 
+.\run_benchmarks.ps1
 ```
 
 ### SqlLite
