@@ -4,7 +4,7 @@ namespace EFCore.Extensions.SaveOptimizer.Models;
 
 public class QueryDataModel
 {
-    public Dictionary<string, object> Data { get; }
+    public Dictionary<string, object?> Data { get; }
 
     public string SchemaName { get; }
 
@@ -16,15 +16,15 @@ public class QueryDataModel
 
     public string[] PrimaryKeyNames { get; }
 
-    public Dictionary<string, object>? ConcurrencyTokens { get; }
+    public Dictionary<string, object?>? ConcurrencyTokens { get; }
 
     public QueryDataModel(Type entityType,
         EntityState entityState,
         string schemaName,
         string tableName,
-        Dictionary<string, object> data,
+        Dictionary<string, object?> data,
         string[] primaryKeyNames,
-        Dictionary<string, object> concurrencyTokens)
+        Dictionary<string, object?> concurrencyTokens)
     {
         EntityType = entityType;
         EntityState = entityState;

@@ -7,33 +7,42 @@ namespace EFCore.Extensions.SaveOptimizer.Wrappers;
 public class DataContextModelWrapper<TContext> : IDataContextModelWrapper
     where TContext : DbContext
 {
-    private readonly ConcurrentDictionary<string, IEntityType> _entityTypes;
+    private readonly ConcurrentDictionary<string, IEntityType?> _entityTypes;
 
-    private readonly ConcurrentDictionary<string, string> _properties;
+    private readonly ConcurrentDictionary<string, string?> _properties;
     private readonly Func<TContext> _resolver;
 
-    private readonly ConcurrentDictionary<string, string> _schemaNames;
+    private readonly ConcurrentDictionary<string, string?> _schemaNames;
 
-    private readonly ConcurrentDictionary<string, string> _tableNames;
+    private readonly ConcurrentDictionary<string, string?> _tableNames;
 
     public DataContextModelWrapper(Func<TContext> resolver)
     {
         _resolver = resolver;
 
-        _entityTypes = new ConcurrentDictionary<string, IEntityType>();
+        _entityTypes = new ConcurrentDictionary<string, IEntityType?>();
 
-        _tableNames = new ConcurrentDictionary<string, string>();
+        _tableNames = new ConcurrentDictionary<string, string?>();
 
-        _schemaNames = new ConcurrentDictionary<string, string>();
+        _schemaNames = new ConcurrentDictionary<string, string?>();
 
-        _properties = new ConcurrentDictionary<string, string>();
+        _properties = new ConcurrentDictionary<string, string?>();
     }
 
-    public string GetTableName<TEntity>() =>
-        _tableNames.GetOrAdd(typeof(TEntity).FullName, key => GetEntityType(key).GetTableName());
+    public string GetTableName<TEntity>()
+    {
+        var key = typeof(TEntity).FullName ?? throw new ArgumentNullException(nameof(TEntity));
 
-    public string GetSchema<TEntity>() =>
-        _schemaNames.GetOrAdd(typeof(TEntity).FullName, key => GetEntityType(key).GetSchema());
+        return _tableNames.GetOrAdd(key, x => GetEntityType(x)?.GetTableName()) ??
+               throw new ArgumentException("Table name is null");
+    }
+
+    public string? GetSchema<TEntity>()
+    {
+        var key = typeof(TEntity).FullName ?? throw new ArgumentNullException(nameof(TEntity));
+
+        return _schemaNames.GetOrAdd(key, x => GetEntityType(x)?.GetSchema());
+    }
 
     public string GetColumn<TEntity>(string propertyName)
     {
@@ -47,11 +56,18 @@ public class DataContextModelWrapper<TContext> : IDataContextModelWrapper
 
             var property = split[1];
 
-            return GetEntityType(entityTypeName).FindProperty(property).GetColumnName();
-        });
+            IEntityType? entityType = GetEntityType(entityTypeName);
+
+            IProperty? propertyInfo = entityType?.FindProperty(property);
+
+            StoreObjectIdentifier identifier =
+                StoreObjectIdentifier.Table(entityType?.GetTableName()!, entityType?.GetSchema()!);
+
+            return propertyInfo?.GetColumnName(identifier);
+        }) ?? throw new ArgumentException("Property is null");
     }
 
-    private IEntityType GetEntityType(string typeName) =>
+    private IEntityType? GetEntityType(string typeName) =>
         _entityTypes.GetOrAdd(typeName, key =>
         {
             IModel model = _resolver().Model;

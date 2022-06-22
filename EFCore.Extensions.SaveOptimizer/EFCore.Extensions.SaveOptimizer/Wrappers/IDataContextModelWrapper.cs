@@ -4,7 +4,7 @@
     {
         string GetTableName<TEntity>();
 
-        string GetSchema<TEntity>();
+        string? GetSchema<TEntity>();
 
         string GetColumn<TEntity>(string propertyName);
     }

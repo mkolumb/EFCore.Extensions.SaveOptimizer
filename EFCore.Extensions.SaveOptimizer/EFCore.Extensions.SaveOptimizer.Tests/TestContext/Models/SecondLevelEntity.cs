@@ -20,9 +20,9 @@ public class SecondLevelEntity
     public decimal SomeSecondDecimal { get; set; }
 
     [ConcurrencyCheck]
-    public DateTime UpdatedDate { get; set; }
+    public DateTime? UpdatedDate { get; set; }
 
-    public DateTime CreatedDate { get; set; }
+    public DateTime? CreatedDate { get; set; }
 
     public virtual ICollection<ThirdLevelEntity> ThirdLevelEntities { get; set; } = new List<ThirdLevelEntity>();
 
