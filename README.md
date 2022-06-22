@@ -38,6 +38,7 @@ When you execute SaveChangesOptimized the following sequence happens:
 3. Group changes as much as possible
 4. Generate SQL using SqlKata
 5. ExecuteRawSql
+   - *if there is no transaction started then will start serializable transaction*
 
 Please note it is not working exactly as SaveChanges, so You should verify it works in your case as expected.
 
@@ -74,6 +75,7 @@ dotnet ef migrations add [NAME]
 - Configuration
   - Concurrency token behavior
   - Batch size
+  - Auto transaction behavior
 - Support for
   - Different cultures
   - Interceptors
