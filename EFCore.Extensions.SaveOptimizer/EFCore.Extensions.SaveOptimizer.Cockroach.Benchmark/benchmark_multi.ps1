@@ -20,6 +20,8 @@ Set-Location "Containers"
 
 docker compose --file cockroach_multi.yml up --detach
 
+Start-Sleep -Seconds 10
+
 docker exec -it optimizerroachmulti11 ./cockroach init --insecure
 
 Set-Location $workingDir
