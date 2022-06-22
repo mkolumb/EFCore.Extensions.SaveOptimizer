@@ -48,7 +48,7 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
             {
                 await Context.SaveChangesOptimizedAsync();
             }
-            else if ((variant & SaveVariant.Normal) != 0)
+            else if ((variant & SaveVariant.EfCore) != 0)
             {
                 await Context.SaveChangesAsync();
             }
@@ -56,7 +56,8 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
 
         if ((variant & SaveVariant.WithTransaction) != 0)
         {
-            await using IDbContextTransaction transaction = await Context.Database.BeginTransactionAsync(IsolationLevel.Serializable);
+            await using IDbContextTransaction transaction =
+                await Context.Database.BeginTransactionAsync(IsolationLevel.Serializable);
 
             await InternalSave();
 

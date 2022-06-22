@@ -12,8 +12,8 @@ public abstract class BaseInsertTests
         ContextWrapperResolver = contextWrapperResolver;
 
     [Theory]
-    [InlineData(SaveVariant.Normal | SaveVariant.Recreate)]
-    [InlineData(SaveVariant.Normal | SaveVariant.Recreate | SaveVariant.WithTransaction)]
+    [InlineData(SaveVariant.EfCore | SaveVariant.Recreate)]
+    [InlineData(SaveVariant.EfCore | SaveVariant.Recreate | SaveVariant.WithTransaction)]
     [InlineData(SaveVariant.Optimized | SaveVariant.Recreate)]
     [InlineData(SaveVariant.Optimized | SaveVariant.Recreate | SaveVariant.WithTransaction)]
     public async Task GivenSaveChanges_WhenMultipleObjectsInserted_ShouldInsertData(SaveVariant variant)
@@ -48,7 +48,8 @@ public abstract class BaseInsertTests
 
         var result = await db.Context.NonRelatedEntities.CountAsync();
 
-        var properties = await db.Context.NonRelatedEntities.Select(x => x.SomeNonNullableStringProperty).Distinct().ToArrayAsync();
+        var properties = await db.Context.NonRelatedEntities.Select(x => x.SomeNonNullableStringProperty).Distinct()
+            .ToArrayAsync();
 
         // Assert
         result.Should().Be(10);
@@ -57,8 +58,8 @@ public abstract class BaseInsertTests
     }
 
     [Theory]
-    [InlineData(SaveVariant.Normal | SaveVariant.Recreate)]
-    [InlineData(SaveVariant.Normal | SaveVariant.Recreate | SaveVariant.WithTransaction)]
+    [InlineData(SaveVariant.EfCore | SaveVariant.Recreate)]
+    [InlineData(SaveVariant.EfCore | SaveVariant.Recreate | SaveVariant.WithTransaction)]
     [InlineData(SaveVariant.Optimized | SaveVariant.Recreate)]
     [InlineData(SaveVariant.Optimized | SaveVariant.Recreate | SaveVariant.WithTransaction)]
     public async Task GivenSaveChanges_WhenNoChanges_ShouldDoNothing(SaveVariant variant)
@@ -76,8 +77,8 @@ public abstract class BaseInsertTests
     }
 
     [Theory]
-    [InlineData(SaveVariant.Normal | SaveVariant.Recreate)]
-    [InlineData(SaveVariant.Normal | SaveVariant.Recreate | SaveVariant.WithTransaction)]
+    [InlineData(SaveVariant.EfCore | SaveVariant.Recreate)]
+    [InlineData(SaveVariant.EfCore | SaveVariant.Recreate | SaveVariant.WithTransaction)]
     [InlineData(SaveVariant.Optimized | SaveVariant.Recreate)]
     [InlineData(SaveVariant.Optimized | SaveVariant.Recreate | SaveVariant.WithTransaction)]
     public async Task GivenSaveChanges_WhenOneObjectInserted_ShouldInsertData(SaveVariant variant)
@@ -111,7 +112,8 @@ public abstract class BaseInsertTests
         result.NonRelatedEntityId.Should().NotBeEmpty();
         result.ConcurrencyToken.Should().BeCloseTo(item.ConcurrencyToken.Value, 1.Seconds());
         result.SomeNonNullableBooleanProperty.Should().Be(item.SomeNonNullableBooleanProperty);
-        result.SomeNonNullableDateTimeProperty.Should().BeCloseTo(item.SomeNonNullableDateTimeProperty.Value, 1.Seconds());
+        result.SomeNonNullableDateTimeProperty.Should()
+            .BeCloseTo(item.SomeNonNullableDateTimeProperty.Value, 1.Seconds());
         result.SomeNullableDateTimeProperty.Should().BeCloseTo(item.SomeNullableDateTimeProperty.Value, 1.Seconds());
         result.SomeNonNullableDecimalProperty.Should().Be(item.SomeNonNullableDecimalProperty);
         result.SomeNullableDecimalProperty.Should().Be(item.SomeNullableDecimalProperty);

@@ -43,7 +43,7 @@ public sealed class DbContextWrapper : IDisposable
             {
                 await Context.SaveChangesOptimizedAsync();
             }
-            else if ((variant & SaveVariant.Normal) != 0)
+            else if ((variant & SaveVariant.EfCore) != 0)
             {
                 await Context.SaveChangesAsync();
             }
@@ -51,7 +51,8 @@ public sealed class DbContextWrapper : IDisposable
 
         if ((variant & SaveVariant.WithTransaction) != 0)
         {
-            await using IDbContextTransaction transaction = await Context.Database.BeginTransactionAsync(IsolationLevel.Serializable);
+            await using IDbContextTransaction transaction =
+                await Context.Database.BeginTransactionAsync(IsolationLevel.Serializable);
 
             await InternalSave();
 

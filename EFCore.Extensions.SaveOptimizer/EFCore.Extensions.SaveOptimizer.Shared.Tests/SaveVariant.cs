@@ -3,8 +3,8 @@
 [Flags]
 public enum SaveVariant
 {
-    Normal = 2,
-    Recreate = 4,
-    Optimized = 8,
+    Optimized = 2,
+    EfCore = 4,
+    Recreate = 8,
     WithTransaction = 16
 }

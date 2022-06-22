@@ -5,12 +5,12 @@ namespace EFCore.Extensions.SaveOptimizer.Shared.Benchmark;
 
 public abstract class BaseInsertBenchmark
 {
-    private IDbContextWrapper? _context;
     private readonly IWrapperResolver _contextResolver;
+    private IDbContextWrapper? _context;
 
     public abstract long Rows { get; set; }
 
-    [Params(SaveVariant.Normal | SaveVariant.WithTransaction, SaveVariant.Optimized | SaveVariant.WithTransaction)]
+    [Params(SaveVariant.Optimized | SaveVariant.WithTransaction, SaveVariant.EfCore | SaveVariant.WithTransaction)]
     public SaveVariant Variant { get; set; }
 
     protected BaseInsertBenchmark(IWrapperResolver contextResolver) => _contextResolver = contextResolver;
