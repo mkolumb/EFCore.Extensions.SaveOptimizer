@@ -34,6 +34,7 @@ public class QueryTranslatorServiceTests
         // TODO: tests for
         // - value generated on add
         // - auto increment primary key
+        // - value converter
     }
 
     [Fact]
