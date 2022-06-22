@@ -76,6 +76,7 @@ Please note it is not working exactly as SaveChanges, so you should verify it wo
   - Ignore
   - Shadow properties
 - Dependencies lifecycle optimizations
+- Optimize data retrieval from Change Tracker
 - GitHub actions
 - Test databases within container
 
