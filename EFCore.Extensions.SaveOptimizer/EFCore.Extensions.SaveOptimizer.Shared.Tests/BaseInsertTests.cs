@@ -21,7 +21,7 @@ public abstract class BaseInsertTests
         // Arrange
         using DbContextWrapper db = ContextWrapperResolver();
 
-        NonRelatedEntity ItemResolver()
+        NonRelatedEntity ItemResolver(int i)
         {
             return new NonRelatedEntity
             {
@@ -33,7 +33,7 @@ public abstract class BaseInsertTests
                 SomeNullableDecimalProperty = 4.523M,
                 SomeNonNullableIntProperty = 1,
                 SomeNullableIntProperty = 11,
-                SomeNonNullableStringProperty = "some-string",
+                SomeNonNullableStringProperty = $"some-string-{i}",
                 SomeNullableStringProperty = "other-string"
             };
         }
@@ -41,15 +41,19 @@ public abstract class BaseInsertTests
         // Act
         for (var i = 0; i < 10; i++)
         {
-            await db.Context.AddAsync(ItemResolver());
+            await db.Context.AddAsync(ItemResolver(i));
         }
 
         await db.Save(variant);
 
         var result = await db.Context.NonRelatedEntities.CountAsync();
 
+        var properties = await db.Context.NonRelatedEntities.Select(x => x.SomeNonNullableStringProperty).Distinct().ToArrayAsync();
+
         // Assert
         result.Should().Be(10);
+
+        properties.Should().HaveCount(10);
     }
 
     [Theory]
