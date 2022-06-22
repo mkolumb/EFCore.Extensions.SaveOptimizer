@@ -26,10 +26,6 @@ public class InsertBenchmark : BaseInsertBenchmark
 
         IWrapperResolver resolver = provider.GetRequiredService<IWrapperResolver>();
 
-        using (DbContextWrapper _ = resolver.Resolve())
-        {
-        }
-
         return resolver;
     }
 

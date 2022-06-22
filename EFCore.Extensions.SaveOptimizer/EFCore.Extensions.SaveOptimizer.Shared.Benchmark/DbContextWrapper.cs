@@ -5,18 +5,18 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace EFCore.Extensions.SaveOptimizer.Shared.Benchmark;
 
-public sealed class DbContextWrapper : IDisposable
+public abstract class DbContextWrapperBase : IDbContextWrapper
 {
     private readonly IDbContextFactory<EntitiesContext> _factory;
 
-    public EntitiesContext Context { get; private set; }
-
-    public DbContextWrapper(IDbContextFactory<EntitiesContext> factory)
+    protected DbContextWrapperBase(IDbContextFactory<EntitiesContext> factory)
     {
         _factory = factory;
 
         Context = _factory.CreateDbContext();
     }
+
+    public EntitiesContext Context { get; private set; }
 
     public void Dispose() => Context.Dispose();
 
@@ -33,6 +33,8 @@ public sealed class DbContextWrapper : IDisposable
 
         Context = _factory.CreateDbContext();
     }
+
+    public abstract Task Truncate();
 
     public async Task Save(SaveVariant variant)
     {

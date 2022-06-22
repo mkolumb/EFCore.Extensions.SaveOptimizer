@@ -1,7 +1,8 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Model;
+using EFCore.Extensions.SaveOptimizer.Shared.Benchmark;
 using Microsoft.EntityFrameworkCore;
 
-namespace EFCore.Extensions.SaveOptimizer.Shared.Benchmark;
+namespace EFCore.Extensions.SaveOptimizer.SqlLite.Benchmark;
 
 public class WrapperResolver : IWrapperResolver
 {
@@ -9,7 +10,7 @@ public class WrapperResolver : IWrapperResolver
 
     public WrapperResolver(IDbContextFactory<EntitiesContext> factory) => _factory = factory;
 
-    public DbContextWrapper Resolve()
+    public IDbContextWrapper Resolve()
     {
         DbContextWrapper wrapper = new(_factory);
 

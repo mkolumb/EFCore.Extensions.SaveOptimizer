@@ -1,12 +1,11 @@
 ﻿using BenchmarkDotNet.Attributes;
 using EFCore.Extensions.SaveOptimizer.Model;
-using Microsoft.EntityFrameworkCore;
 
 namespace EFCore.Extensions.SaveOptimizer.Shared.Benchmark;
 
 public abstract class BaseInsertBenchmark
 {
-    private DbContextWrapper? _context;
+    private IDbContextWrapper? _context;
     private readonly IWrapperResolver _contextResolver;
 
     [Params(1L, 10L, 100L)]
@@ -24,6 +23,8 @@ public abstract class BaseInsertBenchmark
         {
             throw new ArgumentNullException(nameof(_context));
         }
+
+        await _context.Truncate();
 
         for (var i = 0L; i < Rows; i++)
         {
@@ -51,18 +52,9 @@ public abstract class BaseInsertBenchmark
         };
 
     [GlobalSetup]
-    public async Task Setup()
+    public void Setup()
     {
         _context = _contextResolver.Resolve();
-
-        NonRelatedEntity[] entities = await _context.Context.NonRelatedEntities.ToArrayAsync();
-
-        foreach (NonRelatedEntity entity in entities)
-        {
-            _context.Context.NonRelatedEntities.Remove(entity);
-        }
-
-        await _context.Save(Variant);
     }
 
     [GlobalCleanup]

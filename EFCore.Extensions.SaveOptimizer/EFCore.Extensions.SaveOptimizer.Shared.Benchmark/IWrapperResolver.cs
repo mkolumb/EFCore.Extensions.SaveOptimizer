@@ -2,5 +2,5 @@
 
 public interface IWrapperResolver
 {
-    DbContextWrapper Resolve();
+    IDbContextWrapper Resolve();
 }
