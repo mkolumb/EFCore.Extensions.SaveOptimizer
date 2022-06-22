@@ -58,7 +58,7 @@ public class QueryPreparerService : IQueryPreparerService
             dictionary[translation.EntityType].Add(translation);
         }
 
-        IDictionary<Type, int> executeOrder = context.Model.GetEntityTypes().ResolveEntityHierarchy();
+        IDictionary<Type, int> executeOrder = context.Model.ResolveEntityHierarchy();
 
         List<SqlResult> results = new();
 

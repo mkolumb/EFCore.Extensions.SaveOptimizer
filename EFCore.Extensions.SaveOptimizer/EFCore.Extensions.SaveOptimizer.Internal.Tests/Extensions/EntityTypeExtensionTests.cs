@@ -19,7 +19,7 @@ public class EntityTypeExtensionTests
     }
 
     [Fact]
-    public void GivenResolveEntityHierarchy_ShouldResolveProperHierarchy()
+    public void GivenResolveEntityHierarchy_WhenCollection_ShouldResolveProperHierarchy()
     {
         // Arrange
         Random randomize = new(20);
@@ -30,6 +30,34 @@ public class EntityTypeExtensionTests
             IEntityType[] entities = _sut.Model.GetEntityTypes().OrderBy(_ => randomize.Next()).ToArray();
 
             IDictionary<Type, int> result = entities.ResolveEntityHierarchy();
+
+            result[typeof(FirstLevelEntity)].Should().BeLessThan(result[typeof(AttributeEntity)]);
+            result[typeof(FirstLevelEntity)].Should().BeLessThan(result[typeof(SecondLevelEntity)]);
+            result[typeof(FirstLevelEntity)].Should().BeLessThan(result[typeof(ThirdLevelEntity)]);
+
+            result[typeof(SecondLevelEntity)].Should().BeLessThan(result[typeof(ThirdLevelEntity)]);
+
+            result[typeof(AttributeEntityLog)].Should().BeLessThan(result[typeof(AttributeEntityPropertyLog)]);
+        }
+    }
+
+    [Fact]
+    public void GivenResolveEntityHierarchy_WhenModel_ShouldResolveProperHierarchy()
+    {
+        // Arrange / Act / Assert
+        HashSet<Type> usedTypes = new()
+        {
+            typeof(FirstLevelEntity),
+            typeof(SecondLevelEntity),
+            typeof(ThirdLevelEntity),
+            typeof(AttributeEntity),
+            typeof(AttributeEntityLog),
+            typeof(AttributeEntityPropertyLog)
+        };
+
+        for (var i = 0; i < 50; i++)
+        {
+            IDictionary<Type, int> result = _sut.Model.ResolveEntityHierarchy(usedTypes);
 
             result[typeof(FirstLevelEntity)].Should().BeLessThan(result[typeof(AttributeEntity)]);
             result[typeof(FirstLevelEntity)].Should().BeLessThan(result[typeof(SecondLevelEntity)]);
