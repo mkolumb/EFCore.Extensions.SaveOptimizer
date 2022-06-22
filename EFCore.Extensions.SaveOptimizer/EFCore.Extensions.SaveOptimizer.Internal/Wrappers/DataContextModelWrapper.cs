@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using EFCore.Extensions.SaveOptimizer.Internal.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -6,70 +7,56 @@ namespace EFCore.Extensions.SaveOptimizer.Internal.Wrappers;
 
 public class DataContextModelWrapper : IDataContextModelWrapper
 {
-    private readonly ConcurrentDictionary<string, IEntityType?> _entityTypes;
-
-    private readonly ConcurrentDictionary<string, string?> _properties;
-    private readonly Func<DbContext> _resolver;
-
-    private readonly ConcurrentDictionary<string, string?> _schemaNames;
-
-    private readonly ConcurrentDictionary<string, string?> _tableNames;
+    private readonly ConcurrentDictionary<string, EntityTypeModel?> _entityTypes;
 
     public DataContextModelWrapper(Func<DbContext> resolver)
     {
-        _resolver = resolver;
+        _entityTypes = new ConcurrentDictionary<string, EntityTypeModel?>();
 
-        _entityTypes = new ConcurrentDictionary<string, IEntityType?>();
-
-        _tableNames = new ConcurrentDictionary<string, string?>();
-
-        _schemaNames = new ConcurrentDictionary<string, string?>();
-
-        _properties = new ConcurrentDictionary<string, string?>();
+        Init(resolver);
     }
 
     public string GetTableName(Type entityType)
     {
         var key = entityType.FullName ?? throw new ArgumentNullException(nameof(entityType));
 
-        return _tableNames.GetOrAdd(key, x => GetEntityType(x)?.GetTableName()) ??
-               throw new ArgumentException("Table name is null");
+        return _entityTypes[key]?.Table ?? throw new ArgumentException("Table name is null");
     }
 
     public string? GetSchema(Type entityType)
     {
         var key = entityType.FullName ?? throw new ArgumentNullException(nameof(entityType));
 
-        return _schemaNames.GetOrAdd(key, x => GetEntityType(x)?.GetSchema());
+        return _entityTypes[key]?.Schema;
     }
 
     public string GetColumn(Type entityType, string propertyName)
     {
-        var propertyKey = $"{entityType.FullName}|{propertyName}";
+        var key = entityType.FullName ?? throw new ArgumentNullException(nameof(entityType));
 
-        return _properties.GetOrAdd(propertyKey, _ =>
-        {
-            var split = propertyKey.Split("|");
-
-            var entityTypeName = split[0];
-
-            var property = split[1];
-
-            IEntityType? type = GetEntityType(entityTypeName);
-
-            IProperty? propertyInfo = type?.FindProperty(property);
-
-            StoreObjectIdentifier identifier = StoreObjectIdentifier.Table(type?.GetTableName()!, type?.GetSchema()!);
-
-            return propertyInfo?.GetColumnName(identifier);
-        }) ?? throw new ArgumentException("Property is null");
+        return _entityTypes[key]?.Properties[propertyName].ColumnName ?? throw new ArgumentException("Property is null");
     }
 
-    private IEntityType? GetEntityType(string typeName) =>
-        _entityTypes.GetOrAdd(typeName, key =>
-        {
-            IModel model = _resolver().Model;
+    private void Init(Func<DbContext> resolver)
+    {
+        DbContext context = resolver();
 
-            return model.FindEntityType(key ?? throw new ArgumentNullException(nameof(key)));
-        });
+        foreach (IEntityType entityType in context.Model.GetEntityTypes())
+        {
+            var name = entityType.ClrType.FullName ?? throw new ArgumentException("Unable to retrieve full name");
+
+            EntityTypeModel model = new() { Schema = entityType.GetSchema(), Table = entityType.GetTableName() };
+
+            foreach (IProperty property in entityType.GetProperties())
+            {
+                var key = property.Name;
+
+                StoreObjectIdentifier identifier = StoreObjectIdentifier.Table(model.Table!, model.Schema!);
+
+                model.Properties[key] = new PropertyTypeModel { ColumnName = property.GetColumnName(identifier) };
+            }
+
+            _entityTypes[name] = model;
+        }
+    }
 }
