@@ -2,7 +2,7 @@
 using EFCore.Extensions.SaveOptimizer.Exceptions;
 using EFCore.Extensions.SaveOptimizer.Extensions;
 using EFCore.Extensions.SaveOptimizer.Models;
-using EFCore.Extensions.SaveOptimizer.Wrappers;
+using EFCore.Extensions.SaveOptimizer.Resolvers;
 using Microsoft.EntityFrameworkCore;
 using SqlKata;
 
@@ -10,11 +10,11 @@ namespace EFCore.Extensions.SaveOptimizer.Services;
 
 public class QueryCompilerService : IQueryCompilerService
 {
-    private readonly ICompilerWrapper _compiler;
+    private readonly ICompilerWrapperResolver _compilerResolver;
 
-    public QueryCompilerService(ICompilerWrapper compiler) => _compiler = compiler;
+    public QueryCompilerService(ICompilerWrapperResolver compilerResolver) => _compilerResolver = compilerResolver;
 
-    public IEnumerable<SqlResult> Compile(IReadOnlyCollection<QueryDataModel> models)
+    public IEnumerable<SqlResult> Compile(IReadOnlyCollection<QueryDataModel> models, string providerName)
     {
         if (!models.Any())
         {
@@ -87,7 +87,9 @@ public class QueryCompilerService : IQueryCompilerService
             }
         }
 
-        return queries.Select(_compiler.Compile);
+        var compiler = _compilerResolver.Resolve(providerName);
+
+        return queries.Select(compiler.Compile);
     }
 
     private static IEnumerable<Query> GetDeleteQueries(IEnumerable<QueryDataModel> columnsGroup, string tableName,

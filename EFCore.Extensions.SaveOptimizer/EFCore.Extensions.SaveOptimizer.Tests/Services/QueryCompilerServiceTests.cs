@@ -1,10 +1,12 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Exceptions;
 using EFCore.Extensions.SaveOptimizer.Models;
+using EFCore.Extensions.SaveOptimizer.Resolvers;
 using EFCore.Extensions.SaveOptimizer.Services;
 using EFCore.Extensions.SaveOptimizer.Tests.TestContext.Models;
 using EFCore.Extensions.SaveOptimizer.Wrappers;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Moq;
 using SqlKata;
 using SqlKata.Compilers;
 
@@ -14,23 +16,28 @@ public class QueryCompilerServiceTests
 {
     private readonly QueryCompilerService _target;
 
-    public QueryCompilerServiceTests() =>
-        _target = new QueryCompilerService(new CompilerWrapper(new PostgresCompiler()));
+    public QueryCompilerServiceTests()
+    {
+        Mock<ICompilerWrapperResolver> resolver = new();
+        resolver.Setup(x => x.Resolve(It.IsAny<string>())).Returns(new CompilerWrapper(new PostgresCompiler()));
+
+        _target = new QueryCompilerService(resolver.Object);
+    }
 
     [Fact]
     public void GivenCompile_WhenDelete_ShouldCompile()
     {
         // Arrange
-        QueryDataModel[] queryResults = new[]
+        QueryDataModel[] queryResults =
         {
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Deleted, null, "order",
+            new(typeof(FirstLevelEntity), EntityState.Deleted, null, "order",
                 new Dictionary<string, object> { { "order_id", 1 } }, new[] { "order_id" }, null),
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Deleted, null, "order",
+            new(typeof(FirstLevelEntity), EntityState.Deleted, null, "order",
                 new Dictionary<string, object> { { "order_id", 2 } }, new[] { "order_id" }, null)
         };
 
         // Act
-        IEnumerable<SqlResult> result = _target.Compile(queryResults);
+        IEnumerable<SqlResult> result = _target.Compile(queryResults, string.Empty);
 
         // Assert
         result.Should().HaveCount(1);
@@ -42,21 +49,21 @@ public class QueryCompilerServiceTests
     public void GivenCompile_WhenDeleteWithConcurrencyToken_ShouldCompile()
     {
         // Arrange
-        QueryDataModel[] queryResults = new[]
+        QueryDataModel[] queryResults =
         {
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Deleted, null, "order",
+            new(typeof(FirstLevelEntity), EntityState.Deleted, null, "order",
                 new Dictionary<string, object> { { "order_id", 1 } }, new[] { "order_id" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_1" } }),
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Deleted, null, "order",
+            new(typeof(FirstLevelEntity), EntityState.Deleted, null, "order",
                 new Dictionary<string, object> { { "order_id", 2 } }, new[] { "order_id" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_2" } }),
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Deleted, null, "order",
+            new(typeof(FirstLevelEntity), EntityState.Deleted, null, "order",
                 new Dictionary<string, object> { { "order_id", 3 } }, new[] { "order_id" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_2" } })
         };
 
         // Act
-        IEnumerable<SqlResult> result = _target.Compile(queryResults);
+        IEnumerable<SqlResult> result = _target.Compile(queryResults, string.Empty);
 
         // Assert
         result.Should().HaveCount(2);
@@ -74,28 +81,28 @@ public class QueryCompilerServiceTests
     public void GivenCompile_WhenDeleteWithMultiplePrimaryKeysWithConcurrencyToken_ShouldCompile()
     {
         // Arrange
-        QueryDataModel[] queryResults = new[]
+        QueryDataModel[] queryResults =
         {
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Deleted, null, "order",
+            new(typeof(FirstLevelEntity), EntityState.Deleted, null, "order",
                 new Dictionary<string, object> { { "order_id", 1 }, { "second_primary_key", 111 } },
                 new[] { "order_id", "second_primary_key" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_1" } }),
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Deleted, null, "order",
+            new(typeof(FirstLevelEntity), EntityState.Deleted, null, "order",
                 new Dictionary<string, object> { { "order_id", 2 }, { "second_primary_key", 112 } },
                 new[] { "order_id", "second_primary_key" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_2" } }),
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Deleted, null, "order",
+            new(typeof(FirstLevelEntity), EntityState.Deleted, null, "order",
                 new Dictionary<string, object> { { "order_id", 3 }, { "second_primary_key", 333 } },
                 new[] { "order_id", "second_primary_key" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_2" } }),
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Deleted, null, "order",
+            new(typeof(FirstLevelEntity), EntityState.Deleted, null, "order",
                 new Dictionary<string, object> { { "order_id", 3 }, { "second_primary_key", 444 } },
                 new[] { "order_id", "second_primary_key" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_2" } })
         };
 
         // Act
-        IEnumerable<SqlResult> result = _target.Compile(queryResults);
+        IEnumerable<SqlResult> result = _target.Compile(queryResults, string.Empty);
 
         // Assert
         result.Should().HaveCount(2);
@@ -115,16 +122,16 @@ public class QueryCompilerServiceTests
     public void GivenCompile_WhenInsert_ShouldCompile()
     {
         // Arrange
-        QueryDataModel[] queryResults = new[]
+        QueryDataModel[] queryResults =
         {
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Added, null, "order",
+            new(typeof(FirstLevelEntity), EntityState.Added, null, "order",
                 new Dictionary<string, object> { { "order_id", 1 } }, new[] { "order_id" }, null),
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Added, null, "order",
+            new(typeof(FirstLevelEntity), EntityState.Added, null, "order",
                 new Dictionary<string, object> { { "order_id", 2 } }, new[] { "order_id" }, null)
         };
 
         // Act
-        IEnumerable<SqlResult> result = _target.Compile(queryResults);
+        IEnumerable<SqlResult> result = _target.Compile(queryResults, string.Empty);
 
         // Assert
         result.Should().HaveCount(1);
@@ -137,18 +144,18 @@ public class QueryCompilerServiceTests
     public void GivenCompile_WhenInsertWithConcurrencyToken_ShouldCompile()
     {
         // Arrange
-        QueryDataModel[] queryResults = new[]
+        QueryDataModel[] queryResults =
         {
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Added, null, "order",
+            new(typeof(FirstLevelEntity), EntityState.Added, null, "order",
                 new Dictionary<string, object> { { "order_id", 1 } }, new[] { "order_id" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_1" } }),
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Added, null, "order",
+            new(typeof(FirstLevelEntity), EntityState.Added, null, "order",
                 new Dictionary<string, object> { { "order_id", 2 } }, new[] { "order_id" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_2" } })
         };
 
         // Act
-        IEnumerable<SqlResult> result = _target.Compile(queryResults);
+        IEnumerable<SqlResult> result = _target.Compile(queryResults, string.Empty);
 
         // Assert
         result.Should().HaveCount(1);
@@ -160,16 +167,16 @@ public class QueryCompilerServiceTests
     public void GivenCompile_WhenResultsWithDifferentActions_ShouldThrows()
     {
         // Arrange
-        QueryDataModel[] queryResults = new[]
+        QueryDataModel[] queryResults =
         {
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Added, null, "order",
+            new(typeof(FirstLevelEntity), EntityState.Added, null, "order",
                 new Dictionary<string, object>(), new[] { "order_id" }, null),
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
+            new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
                 new Dictionary<string, object>(), new[] { "order_id" }, null)
         };
 
         // Act
-        Action result = () => _target.Compile(queryResults);
+        Action result = () => _target.Compile(queryResults, string.Empty);
 
         // Assert
         result.Should().Throw<QueryCompileException>();
@@ -179,16 +186,16 @@ public class QueryCompilerServiceTests
     public void GivenCompile_WhenResultsWithDifferentColumns_ShouldCompile()
     {
         // Arrange
-        QueryDataModel[] queryResults = new[]
+        QueryDataModel[] queryResults =
         {
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Added, "schema1", "order",
+            new(typeof(FirstLevelEntity), EntityState.Added, "schema1", "order",
                 new Dictionary<string, object> { { "order_id2", 1 } }, new[] { "order_id" }, null),
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Added, "schema1", "order",
+            new(typeof(FirstLevelEntity), EntityState.Added, "schema1", "order",
                 new Dictionary<string, object> { { "order_id3", 11 } }, new[] { "order_id" }, null)
         };
 
         // Act
-        IEnumerable<SqlResult> result = _target.Compile(queryResults);
+        IEnumerable<SqlResult> result = _target.Compile(queryResults, string.Empty);
 
         // Assert
         result.Should().HaveCount(2);
@@ -202,16 +209,16 @@ public class QueryCompilerServiceTests
     public void GivenCompile_WhenResultsWithDifferentEntities_ShouldThrows()
     {
         // Arrange
-        QueryDataModel[] queryResults = new[]
+        QueryDataModel[] queryResults =
         {
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Added, null, "order",
+            new(typeof(FirstLevelEntity), EntityState.Added, null, "order",
                 new Dictionary<string, object>(), new[] { "order_id" }, null),
-            new QueryDataModel(typeof(SecondLevelEntity), EntityState.Added, null, "order",
+            new(typeof(SecondLevelEntity), EntityState.Added, null, "order",
                 new Dictionary<string, object>(), new[] { "order_id" }, null)
         };
 
         // Act
-        Action result = () => _target.Compile(queryResults);
+        Action result = () => _target.Compile(queryResults, string.Empty);
 
         // Assert
         result.Should().Throw<QueryCompileException>();
@@ -221,16 +228,16 @@ public class QueryCompilerServiceTests
     public void GivenCompile_WhenResultsWithDifferentPrimaryKey_ShouldThrows()
     {
         // Arrange
-        QueryDataModel[] queryResults = new[]
+        QueryDataModel[] queryResults =
         {
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Added, "schema1", "order",
+            new(typeof(FirstLevelEntity), EntityState.Added, "schema1", "order",
                 new Dictionary<string, object>(), new[] { "order_id1" }, null),
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Added, "schema1", "order",
+            new(typeof(FirstLevelEntity), EntityState.Added, "schema1", "order",
                 new Dictionary<string, object>(), new[] { "order_id2" }, null)
         };
 
         // Act
-        Action result = () => _target.Compile(queryResults);
+        Action result = () => _target.Compile(queryResults, string.Empty);
 
         // Assert
         result.Should().Throw<QueryCompileException>();
@@ -240,16 +247,16 @@ public class QueryCompilerServiceTests
     public void GivenCompile_WhenResultsWithDifferentSchemas_ShouldThrows()
     {
         // Arrange
-        QueryDataModel[] queryResults = new[]
+        QueryDataModel[] queryResults =
         {
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Added, "schema1", "order",
+            new(typeof(FirstLevelEntity), EntityState.Added, "schema1", "order",
                 new Dictionary<string, object>(), new[] { "order_id" }, null),
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Added, "schema2", "order",
+            new(typeof(FirstLevelEntity), EntityState.Added, "schema2", "order",
                 new Dictionary<string, object>(), new[] { "order_id" }, null)
         };
 
         // Act
-        Action result = () => _target.Compile(queryResults);
+        Action result = () => _target.Compile(queryResults, string.Empty);
 
         // Assert
         result.Should().Throw<QueryCompileException>();
@@ -259,16 +266,16 @@ public class QueryCompilerServiceTests
     public void GivenCompile_WhenResultsWithDifferentTables_ShouldThrows()
     {
         // Arrange
-        QueryDataModel[] queryResults = new[]
+        QueryDataModel[] queryResults =
         {
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Added, "schema1", "order1",
+            new(typeof(FirstLevelEntity), EntityState.Added, "schema1", "order1",
                 new Dictionary<string, object>(), new[] { "order_id" }, null),
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Added, "schema1", "order2",
+            new(typeof(FirstLevelEntity), EntityState.Added, "schema1", "order2",
                 new Dictionary<string, object>(), new[] { "order_id" }, null)
         };
 
         // Act
-        Action result = () => _target.Compile(queryResults);
+        Action result = () => _target.Compile(queryResults, string.Empty);
 
         // Assert
         result.Should().Throw<QueryCompileException>();
@@ -278,16 +285,16 @@ public class QueryCompilerServiceTests
     public void GivenCompile_WhenUpdate_ShouldCompile()
     {
         // Arrange
-        QueryDataModel[] queryResults = new[]
+        QueryDataModel[] queryResults =
         {
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
+            new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
                 new Dictionary<string, object> { { "order_id", 1 }, { "other", 11 } }, new[] { "order_id" }, null),
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
+            new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
                 new Dictionary<string, object> { { "order_id", 2 }, { "other", 21 } }, new[] { "order_id" }, null)
         };
 
         // Act
-        IEnumerable<SqlResult> result = _target.Compile(queryResults);
+        IEnumerable<SqlResult> result = _target.Compile(queryResults, string.Empty);
 
         // Assert
         result.Should().HaveCount(2);
@@ -301,24 +308,24 @@ public class QueryCompilerServiceTests
     public void GivenCompile_WhenUpdateBatch_ShouldCompile()
     {
         // Arrange
-        QueryDataModel[] queryResults = new[]
+        QueryDataModel[] queryResults =
         {
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
+            new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
                 new Dictionary<string, object> { { "order_id", 1 }, { "other", 11 } }, new[] { "order_id" }, null),
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
+            new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
                 new Dictionary<string, object> { { "order_id", 2 }, { "other", 21 } }, new[] { "order_id" }, null),
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
+            new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
                 new Dictionary<string, object> { { "order_id", 3 }, { "other", 21 } }, new[] { "order_id" }, null),
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
+            new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
                 new Dictionary<string, object> { { "order_id", 4 }, { "other", 21 } }, new[] { "order_id" }, null),
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
+            new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
                 new Dictionary<string, object> { { "order_id", 5 }, { "other", 11 } }, new[] { "order_id" }, null),
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
+            new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
                 new Dictionary<string, object> { { "order_id", 6 }, { "other", 31 } }, new[] { "order_id" }, null)
         };
 
         // Act
-        IEnumerable<SqlResult> result = _target.Compile(queryResults);
+        IEnumerable<SqlResult> result = _target.Compile(queryResults, string.Empty);
 
         // Assert
         result.Should().HaveCount(3);
@@ -335,30 +342,30 @@ public class QueryCompilerServiceTests
     public void GivenCompile_WhenUpdateBatchWithConcurrencyToken_ShouldCompile()
     {
         // Arrange
-        QueryDataModel[] queryResults = new[]
+        QueryDataModel[] queryResults =
         {
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
+            new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
                 new Dictionary<string, object> { { "order_id", 1 }, { "other", 11 } }, new[] { "order_id" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_11" } }),
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
+            new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
                 new Dictionary<string, object> { { "order_id", 2 }, { "other", 21 } }, new[] { "order_id" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_21" } }),
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
+            new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
                 new Dictionary<string, object> { { "order_id", 3 }, { "other", 21 } }, new[] { "order_id" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_21" } }),
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
+            new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
                 new Dictionary<string, object> { { "order_id", 4 }, { "other", 21 } }, new[] { "order_id" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_11" } }),
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
+            new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
                 new Dictionary<string, object> { { "order_id", 5 }, { "other", 11 } }, new[] { "order_id" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_11" } }),
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
+            new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
                 new Dictionary<string, object> { { "order_id", 6 }, { "other", 31 } }, new[] { "order_id" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_31" } })
         };
 
         // Act
-        IEnumerable<SqlResult> result = _target.Compile(queryResults);
+        IEnumerable<SqlResult> result = _target.Compile(queryResults, string.Empty);
 
         // Assert
         result.Should().HaveCount(4);
@@ -386,60 +393,44 @@ public class QueryCompilerServiceTests
     public void GivenCompile_WhenUpdateBatchWithMultiplePrimaryKeysConcurrencyToken_ShouldCompile()
     {
         // Arrange
-        QueryDataModel[] queryResults = new[]
+        QueryDataModel[] queryResults =
         {
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object>
-                {
-                    { "order_id", 1 }, { "second_primary_key", 111 }, { "other", 11 }
-                }, new[] { "order_id", "second_primary_key" },
+            new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
+                new Dictionary<string, object> { { "order_id", 1 }, { "second_primary_key", 111 }, { "other", 11 } },
+                new[] { "order_id", "second_primary_key" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_11" } }),
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object>
-                {
-                    { "order_id", 2 }, { "second_primary_key", 112 }, { "other", 21 }
-                }, new[] { "order_id", "second_primary_key" },
+            new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
+                new Dictionary<string, object> { { "order_id", 2 }, { "second_primary_key", 112 }, { "other", 21 } },
+                new[] { "order_id", "second_primary_key" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_21" } }),
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object>
-                {
-                    { "order_id", 3 }, { "second_primary_key", 113 }, { "other", 21 }
-                }, new[] { "order_id", "second_primary_key" },
+            new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
+                new Dictionary<string, object> { { "order_id", 3 }, { "second_primary_key", 113 }, { "other", 21 } },
+                new[] { "order_id", "second_primary_key" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_21" } }),
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object>
-                {
-                    { "order_id", 4 }, { "second_primary_key", 114 }, { "other", 21 }
-                }, new[] { "order_id", "second_primary_key" },
+            new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
+                new Dictionary<string, object> { { "order_id", 4 }, { "second_primary_key", 114 }, { "other", 21 } },
+                new[] { "order_id", "second_primary_key" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_11" } }),
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object>
-                {
-                    { "order_id", 5 }, { "second_primary_key", 115 }, { "other", 11 }
-                }, new[] { "order_id", "second_primary_key" },
+            new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
+                new Dictionary<string, object> { { "order_id", 5 }, { "second_primary_key", 115 }, { "other", 11 } },
+                new[] { "order_id", "second_primary_key" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_11" } }),
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object>
-                {
-                    { "order_id", 6 }, { "second_primary_key", 116 }, { "other", 31 }
-                }, new[] { "order_id", "second_primary_key" },
+            new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
+                new Dictionary<string, object> { { "order_id", 6 }, { "second_primary_key", 116 }, { "other", 31 } },
+                new[] { "order_id", "second_primary_key" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_31" } }),
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object>
-                {
-                    { "order_id", 6 }, { "second_primary_key", 126 }, { "other", 31 }
-                }, new[] { "order_id", "second_primary_key" },
+            new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
+                new Dictionary<string, object> { { "order_id", 6 }, { "second_primary_key", 126 }, { "other", 31 } },
+                new[] { "order_id", "second_primary_key" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_31" } }),
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object>
-                {
-                    { "order_id", 6 }, { "second_primary_key", 146 }, { "other", 31 }
-                }, new[] { "order_id", "second_primary_key" },
+            new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
+                new Dictionary<string, object> { { "order_id", 6 }, { "second_primary_key", 146 }, { "other", 31 } },
+                new[] { "order_id", "second_primary_key" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_31" } })
         };
 
         // Act
-        IEnumerable<SqlResult> result = _target.Compile(queryResults);
+        IEnumerable<SqlResult> result = _target.Compile(queryResults, string.Empty);
 
         // Assert
         result.Should().HaveCount(4);
@@ -469,18 +460,18 @@ public class QueryCompilerServiceTests
     public void GivenCompile_WhenUpdateWithConcurrencyToken_ShouldCompile()
     {
         // Arrange
-        QueryDataModel[] queryResults = new[]
+        QueryDataModel[] queryResults =
         {
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
+            new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
                 new Dictionary<string, object> { { "order_id", 1 }, { "other", 11 } }, new[] { "order_id" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_11" } }),
-            new QueryDataModel(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
+            new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
                 new Dictionary<string, object> { { "order_id", 2 }, { "other", 21 } }, new[] { "order_id" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_21" } })
         };
 
         // Act
-        IEnumerable<SqlResult> result = _target.Compile(queryResults);
+        IEnumerable<SqlResult> result = _target.Compile(queryResults, string.Empty);
 
         // Assert
         result.Should().HaveCount(2);
