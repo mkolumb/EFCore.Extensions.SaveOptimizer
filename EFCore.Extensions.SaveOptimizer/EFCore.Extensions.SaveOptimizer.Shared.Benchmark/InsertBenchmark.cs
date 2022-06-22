@@ -23,8 +23,6 @@ public abstract class BaseInsertBenchmark
             throw new ArgumentNullException(nameof(_context));
         }
 
-        await _context.Truncate();
-
         for (var i = 0L; i < Rows; i++)
         {
             NonRelatedEntity entity = CreateItem(i);
@@ -51,9 +49,11 @@ public abstract class BaseInsertBenchmark
         };
 
     [GlobalSetup]
-    public void Setup()
+    public async Task Setup()
     {
         _context = _contextResolver.Resolve();
+
+        await _context.Truncate();
     }
 
     [GlobalCleanup]
