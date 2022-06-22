@@ -131,45 +131,69 @@ public static class DbContextExtensions
 
         DataContextModelWrapper wrapper = new(() => context);
 
-        QueryDataModel?[] translation = entries
+        QueryDataModel[] translation = entries
             .Select(entry => _translatorService.Translate(wrapper, entry))
             .Where(x => x != null)
-            .ToArray();
+            .ToArray()!;
+
+        Dictionary<EntityState, Dictionary<Type, QueryDataModel[]>> group = translation
+            .GroupBy(x => x.EntityState)
+            .ToDictionary(x => x.Key,
+                x => x.GroupBy(i => i.EntityType)
+                    .ToDictionary(i => i.Key, i => i.ToArray()));
 
         IDictionary<Type, int> executeOrder = context.Model.GetEntityTypes().ResolveEntityHierarchy();
 
         List<SqlResult> results = new();
 
+        var providerName = context.Database.ProviderName ??
+                           throw new ArgumentNullException(nameof(context.Database.ProviderName));
+
         foreach ((Type type, _) in executeOrder.OrderByDescending(x => x.Value))
         {
-            QueryDataModel?[] data = translation
-                .Where(t => t != null && t.EntityType == type && t.EntityState == EntityState.Deleted).ToArray();
+            if (!group.ContainsKey(EntityState.Deleted))
+            {
+                break;
+            }
 
-            IEnumerable<SqlResult> compilation = _compilerService.Compile(data, context.Database.ProviderName);
-
-            results.AddRange(compilation);
+            results.AddRange(GetQuery(group, EntityState.Deleted, type, providerName));
         }
 
         foreach ((Type type, _) in executeOrder.OrderBy(x => x.Value))
         {
-            QueryDataModel?[] data = translation
-                .Where(t => t != null && t.EntityType == type && t.EntityState == EntityState.Added).ToArray();
+            if (!group.ContainsKey(EntityState.Added))
+            {
+                break;
+            }
 
-            IEnumerable<SqlResult> compilation = _compilerService.Compile(data, context.Database.ProviderName);
-
-            results.AddRange(compilation);
+            results.AddRange(GetQuery(group, EntityState.Added, type, providerName));
         }
 
         foreach ((Type type, _) in executeOrder.OrderBy(x => x.Value))
         {
-            QueryDataModel?[] data = translation
-                .Where(t => t != null && t.EntityType == type && t.EntityState == EntityState.Modified).ToArray();
+            if (!group.ContainsKey(EntityState.Modified))
+            {
+                break;
+            }
 
-            IEnumerable<SqlResult> compilation = _compilerService.Compile(data, context.Database.ProviderName);
-
-            results.AddRange(compilation);
+            results.AddRange(GetQuery(group, EntityState.Modified, type, providerName));
         }
 
         return results;
+    }
+
+    private static IEnumerable<SqlResult> GetQuery(IReadOnlyDictionary<EntityState, Dictionary<Type, QueryDataModel[]>> group,
+        EntityState state, Type type, string providerName)
+    {
+        Dictionary<Type, QueryDataModel[]> queries = group[state];
+
+        if (!queries.ContainsKey(type))
+        {
+            return Array.Empty<SqlResult>();
+        }
+
+        QueryDataModel[] data = queries[type];
+
+        return _compilerService.Compile(data, providerName);
     }
 }
