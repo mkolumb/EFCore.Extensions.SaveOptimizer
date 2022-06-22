@@ -8,6 +8,8 @@ namespace EFCore.Extensions.SaveOptimizer.SqlLite.Benchmark;
 
 public class InsertBenchmark : BaseInsertBenchmark
 {
+    public override string Database => "SqlLite";
+
     [Params(1L, 10L, 25L, 50L, 100L, 1000L)]
     public override long Rows { get; set; }
 

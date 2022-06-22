@@ -34,6 +34,6 @@ Set-Location ..
 
 Set-Location "Containers"
 
-docker compose --file cockroach.yml down
+docker compose --file cockroach_multi.yml down
 
 Set-Location $workingDir

@@ -105,17 +105,22 @@ $name = "[NAME]"
 
 ### Summary
 
-SaveOptimizer is not always better than pure EF Core methods. EF Core contains tons of optimizations so for small operations likely is better. If you usually update more than 10 rows in one transaction then SaveOptimizer likely is better choice. 
+SaveOptimizer is not always better than pure EF Core methods. EF Core contains tons of optimizations so for small operations and simple workloads likely is better. 
+I noticed that range 1-100 for INSERT is unpredictable - almost each benchmark run produces different results. 
 
-My advice is to compare results in your real environment. Honestly - the best choice for pure performance is leave EF Core for write operations at all and then write statements from scratch. But this library could bring serious performance benefits without big effort. 
+My advice is to compare results in your real environment. Honestly - the best choice for pure performance is leave EF Core for write operations at all and then write statements from scratch. But this library could bring serious performance benefits in many scenarios without big effort. 
 
 All benchmarks uses serializable isolation level.
 
 ```
-// Benchmark Process Environment Information:
-// Runtime=.NET 6.0.5 (6.0.522.21309), X64 RyuJIT
-// GC=Concurrent Workstation
-// Job: DefaultJob
+BenchmarkDotNet=v0.13.1, OS=Windows 10.0.19042.1706 (20H2/October2020Update)
+Intel Core i7-8850H CPU 2.60GHz (Coffee Lake), 1 CPU, 12 logical and 6 physical cores
+.NET SDK=6.0.300
+  [Host]     : .NET 6.0.5 (6.0.522.21309), X64 RyuJIT
+  Job-EAPHHZ : .NET 6.0.5 (6.0.522.21309), X64 RyuJIT
+
+InvocationCount=20  IterationCount=20  LaunchCount=3
+UnrollFactor=1  WarmupCount=5
 ```
 
 ### Running
@@ -132,14 +137,7 @@ powershell -File run_benchmarks.ps1
 
 #### SqlLite
 
-|       Method | Rows |   Variant |       Mean |      Error |      StdDev |
-|------------- |----- |---------- |-----------:|-----------:|------------:|
-| ExecuteAsync |    1 | EF Core   |   2.707 ms |  0.0901 ms |   0.2496 ms |
-| ExecuteAsync |    1 | Optimized |   3.121 ms |  0.1789 ms |   0.4988 ms |
-| ExecuteAsync |   10 | EF Core   |  11.130 ms |  0.9543 ms |   2.8138 ms |
-| ExecuteAsync |   10 | Optimized |  10.225 ms |  0.6741 ms |   1.9556 ms |
-| ExecuteAsync |  100 | EF Core   | 475.454 ms | 60.9337 ms | 179.6644 ms |
-| ExecuteAsync |  100 | Optimized | 372.559 ms | 54.7249 ms | 161.3576 ms |
+TBD
 
 #### SqlServer
 
@@ -163,33 +161,11 @@ TBD
 
 #### CockroachDB - single docker node
 
-|       Method |  Rows |   Variant |        Mean |      Error |       StdDev |
-|------------- |------ |---------- |------------:|-----------:|-------------:|
-| ExecuteAsync |     1 | EF Core   |    29.36 ms |   2.877 ms |     8.482 ms |
-| ExecuteAsync |     1 | Optimized |    30.76 ms |   3.275 ms |     9.503 ms |
-| ExecuteAsync |    10 | EF Core   |    63.57 ms |   1.302 ms |     3.671 ms |
-| ExecuteAsync |    10 | Optimized |   117.82 ms |  15.827 ms |    46.666 ms |
-| ExecuteAsync |   100 | EF Core   |   279.59 ms |  35.761 ms |   105.441 ms |
-| ExecuteAsync |   100 | Optimized |    51.50 ms |   4.782 ms |    14.099 ms |
-| ExecuteAsync |  1000 | EF Core   |   754.31 ms |  50.281 ms |   148.255 ms |
-| ExecuteAsync |  1000 | Optimized |   408.67 ms |  46.751 ms |   137.846 ms |
-| ExecuteAsync | 10000 | EF Core   | 7,588.40 ms | 577.382 ms | 1,702.424 ms |
-| ExecuteAsync | 10000 | Optimized | 4,358.31 ms | 436.266 ms | 1,286.341 ms |
+TBD
 
 #### CockroachDB - nine docker nodes
 
-|       Method |  Rows |   Variant |         Mean |        Error |       StdDev |       Median |
-|------------- |------ |---------- |-------------:|-------------:|-------------:|-------------:|
-| ExecuteAsync |     1 | EF Core   |     23.10 ms |     1.392 ms |     4.039 ms |     22.01 ms |
-| ExecuteAsync |     1 | Optimized |           NA |           NA |           NA |           NA |
-| ExecuteAsync |    10 | EF Core   |     84.42 ms |     4.157 ms |    11.926 ms |     82.93 ms |
-| ExecuteAsync |    10 | Optimized |     86.74 ms |     7.136 ms |    21.042 ms |     86.99 ms |
-| ExecuteAsync |   100 | EF Core   |    259.92 ms |    22.343 ms |    64.822 ms |    250.64 ms |
-| ExecuteAsync |   100 | Optimized |     97.01 ms |     8.380 ms |    24.312 ms |     95.45 ms |
-| ExecuteAsync |  1000 | EF Core   |  2,513.29 ms |   308.718 ms |   905.415 ms |  2,386.83 ms |
-| ExecuteAsync |  1000 | Optimized |    567.27 ms |    55.318 ms |   161.364 ms |    568.92 ms |
-| ExecuteAsync | 10000 | EF Core   | 26,690.04 ms | 2,555.193 ms | 7,372.316 ms | 25,454.51 ms |
-| ExecuteAsync | 10000 | Optimized |  6,597.68 ms |   691.056 ms | 2,037.595 ms |  6,852.37 ms |
+TBD
 
 ## Remarks
 

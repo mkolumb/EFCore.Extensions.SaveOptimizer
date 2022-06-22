@@ -3,10 +3,17 @@ using EFCore.Extensions.SaveOptimizer.Model;
 
 namespace EFCore.Extensions.SaveOptimizer.Shared.Benchmark;
 
+[SimpleJob(3, 5, 20, 20)]
+[MinColumn]
+[MaxColumn]
+[MeanColumn]
+[MedianColumn]
 public abstract class BaseInsertBenchmark
 {
     private readonly IWrapperResolver _contextResolver;
     private IDbContextWrapper? _context;
+
+    public abstract string Database { get; }
 
     public abstract long Rows { get; set; }
 
@@ -16,7 +23,7 @@ public abstract class BaseInsertBenchmark
     protected BaseInsertBenchmark(IWrapperResolver contextResolver) => _contextResolver = contextResolver;
 
     [Benchmark(OperationsPerInvoke = 1)]
-    public async Task ExecuteAsync()
+    public async Task InsertAsync()
     {
         if (_context == null)
         {
@@ -51,11 +58,28 @@ public abstract class BaseInsertBenchmark
     [GlobalSetup]
     public async Task Setup()
     {
+        Console.WriteLine($"Setup {GetDescription()}");
+
         _context = _contextResolver.Resolve();
 
         await _context.Truncate();
     }
 
     [GlobalCleanup]
-    public void Cleanup() => _context?.Dispose();
+    public async Task Cleanup()
+    {
+        Console.WriteLine($"Cleanup {GetDescription()}");
+
+        if (_context != null)
+        {
+            await _context.Truncate();
+
+            _context.Dispose();
+        }
+    }
+
+    private string GetDescription()
+    {
+        return $"{Database} {Variant} {Rows} {DateTimeOffset.UtcNow:T}";
+    }
 }
