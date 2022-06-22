@@ -1,11 +1,11 @@
-﻿using EFCore.Extensions.SaveOptimizer.Internal.Wrappers;
-using EFCore.Extensions.SaveOptimizer.Tests.TestContext;
-using EFCore.Extensions.SaveOptimizer.Tests.TestContext.Logs;
-using EFCore.Extensions.SaveOptimizer.Tests.TestContext.Models;
+﻿using EFCore.Extensions.SaveOptimizer.Internal.Tests.TestContext;
+using EFCore.Extensions.SaveOptimizer.Internal.Tests.TestContext.LogEntities;
+using EFCore.Extensions.SaveOptimizer.Internal.Tests.TestContext.Models;
+using EFCore.Extensions.SaveOptimizer.Internal.Wrappers;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 
-namespace EFCore.Extensions.SaveOptimizer.Tests.Wrapper;
+namespace EFCore.Extensions.SaveOptimizer.Internal.Tests.Wrapper;
 
 public class DataContextModelWrapperTests
 {

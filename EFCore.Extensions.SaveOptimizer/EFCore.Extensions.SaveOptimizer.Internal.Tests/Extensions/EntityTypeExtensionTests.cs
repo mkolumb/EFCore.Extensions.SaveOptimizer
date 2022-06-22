@@ -1,13 +1,12 @@
-﻿using EFCore.Extensions.SaveOptimizer.Extensions;
-using EFCore.Extensions.SaveOptimizer.Internal.Extensions;
-using EFCore.Extensions.SaveOptimizer.Tests.TestContext;
-using EFCore.Extensions.SaveOptimizer.Tests.TestContext.Logs;
-using EFCore.Extensions.SaveOptimizer.Tests.TestContext.Models;
+﻿using EFCore.Extensions.SaveOptimizer.Internal.Extensions;
+using EFCore.Extensions.SaveOptimizer.Internal.Tests.TestContext;
+using EFCore.Extensions.SaveOptimizer.Internal.Tests.TestContext.LogEntities;
+using EFCore.Extensions.SaveOptimizer.Internal.Tests.TestContext.Models;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace EFCore.Extensions.SaveOptimizer.Tests.Extensions;
+namespace EFCore.Extensions.SaveOptimizer.Internal.Tests.Extensions;
 
 public class EntityTypeExtensionTests
 {

@@ -5,8 +5,6 @@ VisualStudioVersion = 17.2.32519.379
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.Extensions.SaveOptimizer", "EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.csproj", "{0CA80389-673A-4686-AA06-479A4A3A0EC5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.Extensions.SaveOptimizer.Tests", "EFCore.Extensions.SaveOptimizer.Tests\EFCore.Extensions.SaveOptimizer.Tests.csproj", "{7905AA7D-DC3E-4F5D-BD64-F8B6116AA4B3}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F90166D1-E132-43F9-A1F1-BB5B385F1D06}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
@@ -18,6 +16,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.Extensions.SaveOptim
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.Extensions.SaveOptimizer.Internal", "EFCore.Extensions.SaveOptimizer.Internal\EFCore.Extensions.SaveOptimizer.Internal.csproj", "{620EB5A1-0E01-49B4-9993-8ED3BA687491}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.Extensions.SaveOptimizer.Shared.Tests", "EFCore.Extensions.SaveOptimizer.Shared.Tests\EFCore.Extensions.SaveOptimizer.Shared.Tests.csproj", "{0234BE18-49EC-44E3-AD80-BDB8BB689BE5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.Extensions.SaveOptimizer.SqlLite.Tests", "EFCore.Extensions.SaveOptimizer.SqlLite.Tests\EFCore.Extensions.SaveOptimizer.SqlLite.Tests.csproj", "{26E7459E-F7DF-4EA3-8F47-D45826927CF1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.Extensions.SaveOptimizer.Internal.Tests", "EFCore.Extensions.SaveOptimizer.Internal.Tests\EFCore.Extensions.SaveOptimizer.Internal.Tests.csproj", "{7465CE46-13DD-486A-837F-AB3BF055749C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,10 +32,6 @@ Global
 		{0CA80389-673A-4686-AA06-479A4A3A0EC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0CA80389-673A-4686-AA06-479A4A3A0EC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0CA80389-673A-4686-AA06-479A4A3A0EC5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7905AA7D-DC3E-4F5D-BD64-F8B6116AA4B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7905AA7D-DC3E-4F5D-BD64-F8B6116AA4B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7905AA7D-DC3E-4F5D-BD64-F8B6116AA4B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7905AA7D-DC3E-4F5D-BD64-F8B6116AA4B3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AEF69D42-0770-45A9-9185-B1751D1B8EB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AEF69D42-0770-45A9-9185-B1751D1B8EB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AEF69D42-0770-45A9-9185-B1751D1B8EB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -44,6 +44,18 @@ Global
 		{620EB5A1-0E01-49B4-9993-8ED3BA687491}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{620EB5A1-0E01-49B4-9993-8ED3BA687491}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{620EB5A1-0E01-49B4-9993-8ED3BA687491}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0234BE18-49EC-44E3-AD80-BDB8BB689BE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0234BE18-49EC-44E3-AD80-BDB8BB689BE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0234BE18-49EC-44E3-AD80-BDB8BB689BE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0234BE18-49EC-44E3-AD80-BDB8BB689BE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26E7459E-F7DF-4EA3-8F47-D45826927CF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26E7459E-F7DF-4EA3-8F47-D45826927CF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26E7459E-F7DF-4EA3-8F47-D45826927CF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26E7459E-F7DF-4EA3-8F47-D45826927CF1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7465CE46-13DD-486A-837F-AB3BF055749C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7465CE46-13DD-486A-837F-AB3BF055749C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7465CE46-13DD-486A-837F-AB3BF055749C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7465CE46-13DD-486A-837F-AB3BF055749C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

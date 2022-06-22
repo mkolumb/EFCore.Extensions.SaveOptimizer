@@ -1,4 +1,4 @@
-﻿namespace EFCore.Extensions.SaveOptimizer.Tests.Models;
+﻿namespace EFCore.Extensions.SaveOptimizer.Internal.Tests.Models;
 
 public class TestEntityInsiderModel
 {

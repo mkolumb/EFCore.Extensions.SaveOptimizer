@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace EFCore.Extensions.SaveOptimizer.Tests.TestContext.Models;
+namespace EFCore.Extensions.SaveOptimizer.Internal.Tests.TestContext.Models;
 
 public class ThirdLevelEntity
 {

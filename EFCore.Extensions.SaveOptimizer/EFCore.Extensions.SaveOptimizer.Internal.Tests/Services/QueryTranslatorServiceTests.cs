@@ -1,13 +1,13 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Internal.Models;
 using EFCore.Extensions.SaveOptimizer.Internal.Services;
+using EFCore.Extensions.SaveOptimizer.Internal.Tests.TestContext;
+using EFCore.Extensions.SaveOptimizer.Internal.Tests.TestContext.Models;
 using EFCore.Extensions.SaveOptimizer.Internal.Wrappers;
-using EFCore.Extensions.SaveOptimizer.Tests.TestContext;
-using EFCore.Extensions.SaveOptimizer.Tests.TestContext.Models;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-namespace EFCore.Extensions.SaveOptimizer.Tests.Services;
+namespace EFCore.Extensions.SaveOptimizer.Internal.Tests.Services;
 
 public class QueryTranslatorServiceTests
 {

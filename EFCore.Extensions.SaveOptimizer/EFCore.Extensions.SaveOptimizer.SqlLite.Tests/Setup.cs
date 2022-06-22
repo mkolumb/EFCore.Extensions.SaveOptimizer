@@ -1,8 +1,8 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Model.SqlLite;
-using EFCore.Extensions.SaveOptimizer.Tests.Data;
+using EFCore.Extensions.SaveOptimizer.Shared.Tests;
 using Microsoft.EntityFrameworkCore;
 
-namespace EFCore.Extensions.SaveOptimizer.Tests.SqlLite;
+namespace EFCore.Extensions.SaveOptimizer.SqlLite.Tests;
 
 public abstract class Setup
 {

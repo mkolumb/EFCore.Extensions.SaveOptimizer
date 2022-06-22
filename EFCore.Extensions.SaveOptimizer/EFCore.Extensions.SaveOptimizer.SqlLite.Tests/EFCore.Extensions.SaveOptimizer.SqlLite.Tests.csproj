@@ -28,6 +28,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EFCore.Extensions.SaveOptimizer.Model.SqlLite\EFCore.Extensions.SaveOptimizer.Model.SqlLite.csproj" />
+    <ProjectReference Include="..\EFCore.Extensions.SaveOptimizer.Shared.Tests\EFCore.Extensions.SaveOptimizer.Shared.Tests.csproj" />
     <ProjectReference Include="..\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.csproj" />
   </ItemGroup>
 

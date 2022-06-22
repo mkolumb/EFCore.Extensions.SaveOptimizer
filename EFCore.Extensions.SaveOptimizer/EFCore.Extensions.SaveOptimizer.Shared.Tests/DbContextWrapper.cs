@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
-namespace EFCore.Extensions.SaveOptimizer.Tests.Data;
+namespace EFCore.Extensions.SaveOptimizer.Shared.Tests;
 
 public sealed class DbContextWrapper : IDisposable
 {

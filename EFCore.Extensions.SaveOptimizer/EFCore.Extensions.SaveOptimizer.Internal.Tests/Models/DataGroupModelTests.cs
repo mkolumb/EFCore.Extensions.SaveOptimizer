@@ -2,7 +2,7 @@
 using EFCore.Extensions.SaveOptimizer.Internal.Models;
 using FluentAssertions;
 
-namespace EFCore.Extensions.SaveOptimizer.Tests.Models;
+namespace EFCore.Extensions.SaveOptimizer.Internal.Tests.Models;
 
 public class DataGroupModelTests
 {

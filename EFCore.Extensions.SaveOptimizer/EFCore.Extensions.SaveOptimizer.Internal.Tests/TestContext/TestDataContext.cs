@@ -1,8 +1,8 @@
-﻿using EFCore.Extensions.SaveOptimizer.Tests.TestContext.Logs;
-using EFCore.Extensions.SaveOptimizer.Tests.TestContext.Models;
+﻿using EFCore.Extensions.SaveOptimizer.Internal.Tests.TestContext.LogEntities;
+using EFCore.Extensions.SaveOptimizer.Internal.Tests.TestContext.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace EFCore.Extensions.SaveOptimizer.Tests.TestContext;
+namespace EFCore.Extensions.SaveOptimizer.Internal.Tests.TestContext;
 
 public class TestDataContext : DbContext
 {

@@ -2,15 +2,15 @@
 using EFCore.Extensions.SaveOptimizer.Internal.Models;
 using EFCore.Extensions.SaveOptimizer.Internal.Resolvers;
 using EFCore.Extensions.SaveOptimizer.Internal.Services;
+using EFCore.Extensions.SaveOptimizer.Internal.Tests.TestContext.Models;
 using EFCore.Extensions.SaveOptimizer.Internal.Wrappers;
-using EFCore.Extensions.SaveOptimizer.Tests.TestContext.Models;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using SqlKata;
 using SqlKata.Compilers;
 
-namespace EFCore.Extensions.SaveOptimizer.Tests.Services;
+namespace EFCore.Extensions.SaveOptimizer.Internal.Tests.Services;
 
 public class QueryCompilerServiceTests
 {

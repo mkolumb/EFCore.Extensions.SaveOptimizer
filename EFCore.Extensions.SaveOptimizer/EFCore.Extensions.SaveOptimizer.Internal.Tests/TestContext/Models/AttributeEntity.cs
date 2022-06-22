@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace EFCore.Extensions.SaveOptimizer.Tests.TestContext.Models;
+namespace EFCore.Extensions.SaveOptimizer.Internal.Tests.TestContext.Models;
 
 public class AttributeEntity
 {
