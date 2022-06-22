@@ -42,6 +42,10 @@ public class CompilerWrapperResolver : ICompilerWrapperResolver
         {
             compiler = new SqliteCompiler();
         }
+        else if (providerName.Contains("InMemory"))
+        {
+            compiler = new SqliteCompiler();
+        }
 
         if (compiler == null)
         {

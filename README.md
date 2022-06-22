@@ -112,3 +112,7 @@ powershell -File run_benchmarks.ps1
 | ExecuteAsync |   10 | Optimized | 256.63 ms | 31.335 ms |  92.39 ms |
 | ExecuteAsync |  100 | EF Core   | 414.46 ms | 69.008 ms | 201.30 ms |
 | ExecuteAsync |  100 | Optimized | 379.45 ms | 52.489 ms | 154.76 ms |
+
+## Remarks
+
+Currently this package instead of using SqlKata directly from NuGet uses my own fork. The reason behind is performance - there is something wrong with current version. I created [pull request](https://github.com/sqlkata/querybuilder/pull/548), but unfortunately it is under review since January. When it will be approved I will switch.
