@@ -14,11 +14,11 @@ public class QueryPreparerService : IQueryPreparerService
 
     private readonly IQueryCompilerService _compilerService;
 
+    private readonly ConcurrentDictionary<string, IDictionary<Type, int>> _orders;
+
     private readonly IQueryTranslatorService _translatorService;
 
     private readonly ConcurrentDictionary<string, DataContextModelWrapper> _wrappers;
-
-    private readonly ConcurrentDictionary<string, IDictionary<Type, int>> _orders;
 
     public QueryPreparerService(IQueryCompilerService compilerService, IQueryTranslatorService translatorService)
     {
@@ -30,7 +30,7 @@ public class QueryPreparerService : IQueryPreparerService
 
     public void Init(DbContext context)
     {
-        var name = context.GetType().FullName ?? throw new ArgumentNullException(nameof(context));
+        var name = GetKey(context);
 
         if (!_wrappers.ContainsKey(name))
         {
@@ -49,7 +49,7 @@ public class QueryPreparerService : IQueryPreparerService
 
     public IEnumerable<SqlResult> Prepare(DbContext context)
     {
-        var name = context.GetType().FullName ?? throw new ArgumentNullException(nameof(context));
+        var name = GetKey(context);
 
         IEnumerable<EntityEntry> entries = context.ChangeTracker.Entries();
 
@@ -106,6 +106,15 @@ public class QueryPreparerService : IQueryPreparerService
         }
 
         return results;
+    }
+
+    private static string GetKey(DbContext context)
+    {
+        var typeName = context.GetType().FullName ?? throw new ArgumentNullException(nameof(context));
+
+        var providerName = context.Database.ProviderName;
+
+        return $"{typeName}_{providerName}";
     }
 
     private IEnumerable<IEnumerable<SqlResult>> GetQuery(
