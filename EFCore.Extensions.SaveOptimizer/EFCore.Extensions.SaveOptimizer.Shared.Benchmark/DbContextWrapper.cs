@@ -56,8 +56,7 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
 
         if ((variant & SaveVariant.WithTransaction) != 0)
         {
-            await using IDbContextTransaction transaction =
-                await Context.Database.BeginTransactionAsync(IsolationLevel.Serializable);
+            await using IDbContextTransaction transaction = await Context.Database.BeginTransactionAsync(IsolationLevel.Serializable);
 
             await InternalSave();
 

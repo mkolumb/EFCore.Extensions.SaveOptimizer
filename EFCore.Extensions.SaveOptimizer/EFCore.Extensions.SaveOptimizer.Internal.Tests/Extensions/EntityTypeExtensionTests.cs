@@ -28,7 +28,7 @@ public class EntityTypeExtensionTests
         // Act / Assert
         for (var i = 0; i < 50; i++)
         {
-            IEntityType[] entities = _sut.Model.GetEntityTypes().OrderBy(x => randomize.Next()).ToArray();
+            IEntityType[] entities = _sut.Model.GetEntityTypes().OrderBy(_ => randomize.Next()).ToArray();
 
             IDictionary<Type, int> result = entities.ResolveEntityHierarchy();
 

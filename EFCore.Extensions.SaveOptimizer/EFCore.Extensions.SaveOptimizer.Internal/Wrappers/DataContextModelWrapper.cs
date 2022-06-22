@@ -47,7 +47,7 @@ public class DataContextModelWrapper : IDataContextModelWrapper
     {
         var propertyKey = $"{entityType.FullName}|{propertyName}";
 
-        return _properties.GetOrAdd(propertyKey, key =>
+        return _properties.GetOrAdd(propertyKey, _ =>
         {
             var split = propertyKey.Split("|");
 
