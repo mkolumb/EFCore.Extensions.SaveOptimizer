@@ -23,6 +23,10 @@ $workingDir = $(Get-Location).Path
 
 git clean -fdX
 
+# solution
+Set-Location .\EFCore.Extensions.SaveOptimizer
+dotnet build -c Release
+
 # Cockroach
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Cockroach.Benchmark
