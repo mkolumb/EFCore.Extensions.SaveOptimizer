@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using EFCore.Extensions.SaveOptimizer.Internal.Models;
 using FluentAssertions;
+#pragma warning disable CS8620
 
 namespace EFCore.Extensions.SaveOptimizer.Internal.Tests.Models;
 

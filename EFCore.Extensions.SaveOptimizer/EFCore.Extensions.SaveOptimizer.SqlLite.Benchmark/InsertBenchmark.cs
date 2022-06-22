@@ -1,4 +1,5 @@
-﻿using EFCore.Extensions.SaveOptimizer.Model;
+﻿using BenchmarkDotNet.Attributes;
+using EFCore.Extensions.SaveOptimizer.Model;
 using EFCore.Extensions.SaveOptimizer.Shared.Benchmark;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,6 +8,9 @@ namespace EFCore.Extensions.SaveOptimizer.SqlLite.Benchmark;
 
 public class InsertBenchmark : BaseInsertBenchmark
 {
+    [Params(1L, 10L, 100L)]
+    public override long Rows { get; set; }
+
     public InsertBenchmark() : base(ContextResolver())
     {
     }

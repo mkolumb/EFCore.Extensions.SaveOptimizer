@@ -21,6 +21,8 @@ $workingDir = $(Get-Location).Path
 
 # script
 
+git clean -fdX
+
 # Cockroach
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Cockroach.Benchmark

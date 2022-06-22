@@ -1,4 +1,5 @@
 ﻿using System.Data.Common;
+using BenchmarkDotNet.Attributes;
 using EFCore.Extensions.SaveOptimizer.Model;
 using EFCore.Extensions.SaveOptimizer.Shared.Benchmark;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,9 @@ namespace EFCore.Extensions.SaveOptimizer.Cockroach.Benchmark;
 
 public class InsertBenchmark : BaseInsertBenchmark
 {
+    [Params(1L, 10L, 100L, 1000L, 10000L)]
+    public override long Rows { get; set; }
+
     public InsertBenchmark() : base(ContextResolver())
     {
     }

@@ -8,8 +8,7 @@ public abstract class BaseInsertBenchmark
     private IDbContextWrapper? _context;
     private readonly IWrapperResolver _contextResolver;
 
-    [Params(1L, 10L, 100L)]
-    public long Rows { get; set; }
+    public abstract long Rows { get; set; }
 
     [Params(SaveVariant.Normal | SaveVariant.WithTransaction, SaveVariant.Optimized | SaveVariant.WithTransaction)]
     public SaveVariant Variant { get; set; }
