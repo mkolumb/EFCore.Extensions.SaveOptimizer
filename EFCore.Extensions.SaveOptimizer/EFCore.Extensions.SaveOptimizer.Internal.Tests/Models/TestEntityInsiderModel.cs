@@ -1,4 +1,5 @@
-﻿namespace EFCore.Extensions.SaveOptimizer.Internal.Tests.Models;
+﻿#pragma warning disable CS8618
+namespace EFCore.Extensions.SaveOptimizer.Internal.Tests.Models;
 
 public class TestEntityInsiderModel
 {

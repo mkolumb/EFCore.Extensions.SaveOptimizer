@@ -13,15 +13,15 @@ namespace EFCore.Extensions.SaveOptimizer;
 
 public static class DbContextExtensions
 {
-    private static readonly QueryCompilerService _compilerService;
+    private static readonly QueryCompilerService CompilerService;
 
-    private static readonly QueryTranslatorService _translatorService;
+    private static readonly QueryTranslatorService TranslatorService;
 
     static DbContextExtensions()
     {
-        _compilerService = new QueryCompilerService(new CompilerWrapperResolver());
+        CompilerService = new QueryCompilerService(new CompilerWrapperResolver());
 
-        _translatorService = new QueryTranslatorService();
+        TranslatorService = new QueryTranslatorService();
     }
 
     public static int SaveChangesOptimized(this DbContext context) => context.SaveChangesOptimized(true);
@@ -132,7 +132,7 @@ public static class DbContextExtensions
         DataContextModelWrapper wrapper = new(() => context);
 
         QueryDataModel[] translation = entries
-            .Select(entry => _translatorService.Translate(wrapper, entry))
+            .Select(entry => TranslatorService.Translate(wrapper, entry))
             .Where(x => x != null)
             .ToArray()!;
 
@@ -194,6 +194,6 @@ public static class DbContextExtensions
 
         QueryDataModel[] data = queries[type];
 
-        return _compilerService.Compile(data, providerName);
+        return CompilerService.Compile(data, providerName);
     }
 }

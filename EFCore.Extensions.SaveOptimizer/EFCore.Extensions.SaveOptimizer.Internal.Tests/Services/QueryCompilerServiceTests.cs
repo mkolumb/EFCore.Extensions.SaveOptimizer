@@ -9,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 using Moq;
 using SqlKata;
 using SqlKata.Compilers;
+#pragma warning disable CS8625
+#pragma warning disable CS8620
 
 namespace EFCore.Extensions.SaveOptimizer.Internal.Tests.Services;
 

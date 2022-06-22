@@ -1,6 +1,7 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Internal.Tests.TestContext.LogEntities;
 using EFCore.Extensions.SaveOptimizer.Internal.Tests.TestContext.Models;
 using Microsoft.EntityFrameworkCore;
+#pragma warning disable CS8618
 
 namespace EFCore.Extensions.SaveOptimizer.Internal.Tests.TestContext;
 

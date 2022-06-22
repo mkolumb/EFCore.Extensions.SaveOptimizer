@@ -6,6 +6,7 @@ using EFCore.Extensions.SaveOptimizer.Internal.Wrappers;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+#pragma warning disable CS8602
 
 namespace EFCore.Extensions.SaveOptimizer.Internal.Tests.Services;
 

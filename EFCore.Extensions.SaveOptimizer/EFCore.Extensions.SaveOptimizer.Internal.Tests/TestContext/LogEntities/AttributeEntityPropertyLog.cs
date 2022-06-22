@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+#pragma warning disable CS8618
 
 namespace EFCore.Extensions.SaveOptimizer.Internal.Tests.TestContext.LogEntities;
 
