@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace EFCore.Extensions.SaveOptimizer.Extensions;
+namespace EFCore.Extensions.SaveOptimizer.Internal.Extensions;
 
 public static class EntityTypeExtensions
 {

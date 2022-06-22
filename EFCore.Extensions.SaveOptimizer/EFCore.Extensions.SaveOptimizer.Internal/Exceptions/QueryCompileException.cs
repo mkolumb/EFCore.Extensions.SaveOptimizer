@@ -1,4 +1,4 @@
-﻿namespace EFCore.Extensions.SaveOptimizer.Exceptions;
+﻿namespace EFCore.Extensions.SaveOptimizer.Internal.Exceptions;
 
 public class QueryCompileException : Exception
 {

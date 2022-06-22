@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using EFCore.Extensions.SaveOptimizer.Models;
+using EFCore.Extensions.SaveOptimizer.Internal.Models;
 using FluentAssertions;
 
 namespace EFCore.Extensions.SaveOptimizer.Tests.Models;

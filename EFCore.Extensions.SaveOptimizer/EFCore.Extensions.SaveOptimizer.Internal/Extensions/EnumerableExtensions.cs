@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace EFCore.Extensions.SaveOptimizer.Extensions;
+namespace EFCore.Extensions.SaveOptimizer.Internal.Extensions;
 
 public static class EnumerableExtensions
 {

@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace EFCore.Extensions.SaveOptimizer.Wrappers;
+namespace EFCore.Extensions.SaveOptimizer.Internal.Wrappers;
 
 public class DataContextModelWrapper : IDataContextModelWrapper
 {

@@ -1,7 +1,7 @@
 ﻿using SqlKata;
 using SqlKata.Compilers;
 
-namespace EFCore.Extensions.SaveOptimizer.Wrappers
+namespace EFCore.Extensions.SaveOptimizer.Internal.Wrappers
 {
     public class CompilerWrapper : ICompilerWrapper
     {

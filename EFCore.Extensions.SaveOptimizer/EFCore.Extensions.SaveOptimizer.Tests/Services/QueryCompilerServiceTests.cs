@@ -1,9 +1,9 @@
-﻿using EFCore.Extensions.SaveOptimizer.Exceptions;
-using EFCore.Extensions.SaveOptimizer.Models;
-using EFCore.Extensions.SaveOptimizer.Resolvers;
-using EFCore.Extensions.SaveOptimizer.Services;
+﻿using EFCore.Extensions.SaveOptimizer.Internal.Exceptions;
+using EFCore.Extensions.SaveOptimizer.Internal.Models;
+using EFCore.Extensions.SaveOptimizer.Internal.Resolvers;
+using EFCore.Extensions.SaveOptimizer.Internal.Services;
+using EFCore.Extensions.SaveOptimizer.Internal.Wrappers;
 using EFCore.Extensions.SaveOptimizer.Tests.TestContext.Models;
-using EFCore.Extensions.SaveOptimizer.Wrappers;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Moq;

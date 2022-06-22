@@ -1,4 +1,5 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Extensions;
+using EFCore.Extensions.SaveOptimizer.Internal.Extensions;
 using EFCore.Extensions.SaveOptimizer.Tests.TestContext;
 using EFCore.Extensions.SaveOptimizer.Tests.TestContext.Logs;
 using EFCore.Extensions.SaveOptimizer.Tests.TestContext.Models;

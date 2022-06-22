@@ -1,4 +1,4 @@
-﻿namespace EFCore.Extensions.SaveOptimizer.Wrappers
+﻿namespace EFCore.Extensions.SaveOptimizer.Internal.Wrappers
 {
     public interface IDataContextModelWrapper
     {

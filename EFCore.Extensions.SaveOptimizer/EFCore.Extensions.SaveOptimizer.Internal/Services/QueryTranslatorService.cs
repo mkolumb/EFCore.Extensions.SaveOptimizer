@@ -1,11 +1,11 @@
-﻿using EFCore.Extensions.SaveOptimizer.Exceptions;
-using EFCore.Extensions.SaveOptimizer.Models;
-using EFCore.Extensions.SaveOptimizer.Wrappers;
+﻿using EFCore.Extensions.SaveOptimizer.Internal.Exceptions;
+using EFCore.Extensions.SaveOptimizer.Internal.Models;
+using EFCore.Extensions.SaveOptimizer.Internal.Wrappers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace EFCore.Extensions.SaveOptimizer.Services;
+namespace EFCore.Extensions.SaveOptimizer.Internal.Services;
 
 public class QueryTranslatorService : IQueryTranslatorService
 {

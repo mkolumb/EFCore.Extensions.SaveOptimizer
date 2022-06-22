@@ -1,7 +1,7 @@
-﻿using EFCore.Extensions.SaveOptimizer.Models;
+﻿using EFCore.Extensions.SaveOptimizer.Internal.Models;
 using SqlKata;
 
-namespace EFCore.Extensions.SaveOptimizer.Extensions;
+namespace EFCore.Extensions.SaveOptimizer.Internal.Extensions;
 
 public static class QueryExtensions
 {

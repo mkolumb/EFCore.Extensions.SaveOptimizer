@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace EFCore.Extensions.SaveOptimizer.Models;
+namespace EFCore.Extensions.SaveOptimizer.Internal.Models;
 
 public class QueryDataModel
 {

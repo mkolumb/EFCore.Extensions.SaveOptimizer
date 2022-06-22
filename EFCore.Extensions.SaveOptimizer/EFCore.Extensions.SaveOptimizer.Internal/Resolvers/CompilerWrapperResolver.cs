@@ -1,8 +1,8 @@
 ﻿using System.Collections.Concurrent;
-using EFCore.Extensions.SaveOptimizer.Wrappers;
+using EFCore.Extensions.SaveOptimizer.Internal.Wrappers;
 using SqlKata.Compilers;
 
-namespace EFCore.Extensions.SaveOptimizer.Resolvers;
+namespace EFCore.Extensions.SaveOptimizer.Internal.Resolvers;
 
 public class CompilerWrapperResolver : ICompilerWrapperResolver
 {
