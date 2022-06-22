@@ -159,17 +159,8 @@ public class QueryCompilerService : IQueryCompilerService
     private static Query GetInsertQuery(IEnumerable<QueryDataModel> columnsGroup, string tableName)
     {
         Dictionary<string, object?>[] data = columnsGroup.Select(queryDataResult => queryDataResult.Data).ToArray();
-
-        Dictionary<string, object?>.KeyCollection columns = data[0].Keys;
-
-        List<Dictionary<string, object?>.ValueCollection> rows = new();
-
-        foreach (Dictionary<string, object?> objects in data)
-        {
-            rows.Add(objects.Values);
-        }
-
-        return new Query(tableName).AsInsert(columns, rows);
+        
+        return new Query(tableName).AsInsert(data);
     }
 
     private static string GetColumnsBatchKey(QueryDataModel queryResult)
