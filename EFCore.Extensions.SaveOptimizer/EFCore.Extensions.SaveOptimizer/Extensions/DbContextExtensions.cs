@@ -1,8 +1,8 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Models;
 using EFCore.Extensions.SaveOptimizer.Resolvers;
 using EFCore.Extensions.SaveOptimizer.Services;
+using EFCore.Extensions.SaveOptimizer.Wrappers;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using SqlKata;
 
 namespace EFCore.Extensions.SaveOptimizer.Extensions;
@@ -54,8 +54,10 @@ public static class DbContextExtensions
     {
         var entries = context.ChangeTracker.Entries();
 
+        var wrapper = new DataContextModelWrapper(() => context);
+
         QueryDataModel?[] translation = entries
-            .Select(entry => _translatorService.Translate(context, entry))
+            .Select(entry => _translatorService.Translate(wrapper, entry))
             .Where(x => x != null)
             .ToArray();
 

@@ -2,6 +2,7 @@
 using EFCore.Extensions.SaveOptimizer.Services;
 using EFCore.Extensions.SaveOptimizer.Tests.TestContext;
 using EFCore.Extensions.SaveOptimizer.Tests.TestContext.Models;
+using EFCore.Extensions.SaveOptimizer.Wrappers;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -11,6 +12,7 @@ namespace EFCore.Extensions.SaveOptimizer.Tests.Services;
 public class QueryTranslatorServiceTests
 {
     private readonly TestDataContext _context;
+    private readonly DataContextModelWrapper _wrapper;
 
     private readonly QueryTranslatorService _target;
 
@@ -20,6 +22,8 @@ public class QueryTranslatorServiceTests
             new DbContextOptionsBuilder<TestDataContext>().UseInMemoryDatabase("in_memory_db")
                 .UseSnakeCaseNamingConvention();
         _context = new TestDataContext(options.Options);
+
+        _wrapper = new DataContextModelWrapper(() => _context);
 
         _target = new QueryTranslatorService();
 
@@ -52,7 +56,7 @@ public class QueryTranslatorServiceTests
         entry.Property(x => x.CreatedDate).IsModified = true;
 
         // Act
-        QueryDataModel? result = _target.Translate(_context, entry);
+        QueryDataModel? result = _target.Translate(_wrapper, entry);
 
         // Assert
         result.SchemaName.Should().BeNull();
@@ -99,7 +103,7 @@ public class QueryTranslatorServiceTests
         entry.Property(x => x.CreatedDate).IsModified = true;
 
         // Act
-        QueryDataModel? result = _target.Translate(_context, entry);
+        QueryDataModel? result = _target.Translate(_wrapper, entry);
 
         // Assert
         result.SchemaName.Should().BeNull();
@@ -146,7 +150,7 @@ public class QueryTranslatorServiceTests
         entry.Property(x => x.CreatedDate).IsModified = true;
 
         // Act
-        QueryDataModel? result = _target.Translate(_context, entry);
+        QueryDataModel? result = _target.Translate(_wrapper, entry);
 
         // Assert
         result.SchemaName.Should().BeNull();
@@ -194,7 +198,7 @@ public class QueryTranslatorServiceTests
         entry.State = EntityState.Detached;
 
         // Act
-        QueryDataModel? result = _target.Translate(_context, entry);
+        QueryDataModel? result = _target.Translate(_wrapper, entry);
 
         // Assert
         result.Should().BeNull();
@@ -223,7 +227,7 @@ public class QueryTranslatorServiceTests
         entry.State = EntityState.Unchanged;
 
         // Act
-        QueryDataModel? result = _target.Translate(_context, entry);
+        QueryDataModel? result = _target.Translate(_wrapper, entry);
 
         // Assert
         result.Should().BeNull();
@@ -251,7 +255,7 @@ public class QueryTranslatorServiceTests
         entry.Property(x => x.CreatedDate).IsModified = true;
 
         // Act
-        QueryDataModel? result = _target.Translate(_context, entry);
+        QueryDataModel? result = _target.Translate(_wrapper, entry);
 
         // Assert
         result.SchemaName.Should().BeNull();

@@ -9,7 +9,7 @@ namespace EFCore.Extensions.SaveOptimizer.Services;
 
 public class QueryTranslatorService : IQueryTranslatorService
 {
-    public QueryDataModel? Translate(DbContext context, EntityEntry entry)
+    public QueryDataModel? Translate(IDataContextModelWrapper model, EntityEntry entry)
     {
         if (entry.State is EntityState.Detached or EntityState.Unchanged)
         {
@@ -19,8 +19,6 @@ public class QueryTranslatorService : IQueryTranslatorService
         var entityType = entry.Entity.GetType();
 
         var properties = entry.Properties.ToArray();
-
-        var model = new DataContextModelWrapper(() => context);
 
         var tableName = model.GetTableName(entityType);
         var schemaName = model.GetSchema(entityType);
