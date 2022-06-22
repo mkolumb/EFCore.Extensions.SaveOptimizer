@@ -612,3 +612,5 @@ obj/
 
 # Test DB Files
 *.db
+*.db-wal
+*.db-shm
