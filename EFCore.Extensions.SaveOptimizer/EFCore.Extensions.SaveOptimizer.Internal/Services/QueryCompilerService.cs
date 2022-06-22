@@ -4,7 +4,6 @@ using EFCore.Extensions.SaveOptimizer.Internal.Extensions;
 using EFCore.Extensions.SaveOptimizer.Internal.Models;
 using EFCore.Extensions.SaveOptimizer.Internal.Resolvers;
 using Microsoft.EntityFrameworkCore;
-using SqlKata;
 
 namespace EFCore.Extensions.SaveOptimizer.Internal.Services;
 

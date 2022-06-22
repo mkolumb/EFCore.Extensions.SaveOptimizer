@@ -4,11 +4,11 @@ using EFCore.Extensions.SaveOptimizer.Internal.Resolvers;
 using EFCore.Extensions.SaveOptimizer.Internal.Services;
 using EFCore.Extensions.SaveOptimizer.Internal.Tests.TestContext.Models;
 using EFCore.Extensions.SaveOptimizer.Internal.Wrappers;
-using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Moq;
-using SqlKata;
-using SqlKata.Compilers;
+using SqlKata.Net6;
+using SqlKata.Net6.Compilers;
+
 #pragma warning disable CS8625
 #pragma warning disable CS8620
 

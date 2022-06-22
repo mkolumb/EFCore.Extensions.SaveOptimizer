@@ -4,7 +4,6 @@ using EFCore.Extensions.SaveOptimizer.Internal.Models;
 using EFCore.Extensions.SaveOptimizer.Internal.Resolvers;
 using EFCore.Extensions.SaveOptimizer.Internal.Services;
 using EFCore.Extensions.SaveOptimizer.Internal.Wrappers;
-using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 

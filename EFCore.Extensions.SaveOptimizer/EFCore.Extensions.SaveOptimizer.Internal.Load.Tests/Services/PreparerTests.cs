@@ -4,7 +4,6 @@ using EFCore.Extensions.SaveOptimizer.Internal.Models;
 using EFCore.Extensions.SaveOptimizer.Internal.Resolvers;
 using EFCore.Extensions.SaveOptimizer.Internal.Services;
 using EFCore.Extensions.SaveOptimizer.Internal.Wrappers;
-using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
@@ -23,7 +22,8 @@ public class PreparerTests
     public void PreparerShouldBeFast()
     {
         // Arrange
-        GetData(out TestDataContext? context, out QueryCompilerService? queryCompiler,
+        GetData(out TestDataContext? context,
+            out QueryCompilerService? queryCompiler,
             out QueryTranslatorService queryTranslator);
 
         QueryPreparerService queryPreparer = new(queryCompiler, queryTranslator);

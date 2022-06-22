@@ -2,7 +2,6 @@
 using EFCore.Extensions.SaveOptimizer.Internal.Load.Tests.Helpers;
 using EFCore.Extensions.SaveOptimizer.Internal.Services;
 using EFCore.Extensions.SaveOptimizer.Internal.Wrappers;
-using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 

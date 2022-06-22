@@ -4,7 +4,6 @@ using EFCore.Extensions.SaveOptimizer.Internal.Models;
 using EFCore.Extensions.SaveOptimizer.Internal.Wrappers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using SqlKata;
 
 namespace EFCore.Extensions.SaveOptimizer.Internal.Services;
 

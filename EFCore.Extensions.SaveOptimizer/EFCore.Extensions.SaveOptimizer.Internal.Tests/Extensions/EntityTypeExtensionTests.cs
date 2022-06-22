@@ -2,7 +2,6 @@
 using EFCore.Extensions.SaveOptimizer.Internal.Tests.TestContext;
 using EFCore.Extensions.SaveOptimizer.Internal.Tests.TestContext.LogEntities;
 using EFCore.Extensions.SaveOptimizer.Internal.Tests.TestContext.Models;
-using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 

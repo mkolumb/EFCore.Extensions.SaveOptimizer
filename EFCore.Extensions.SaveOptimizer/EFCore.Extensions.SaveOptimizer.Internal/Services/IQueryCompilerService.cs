@@ -1,5 +1,4 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Internal.Models;
-using SqlKata;
 
 namespace EFCore.Extensions.SaveOptimizer.Internal.Services;
 

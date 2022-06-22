@@ -2,7 +2,6 @@
 using EFCore.Extensions.SaveOptimizer.Internal.Tests.TestContext.LogEntities;
 using EFCore.Extensions.SaveOptimizer.Internal.Tests.TestContext.Models;
 using EFCore.Extensions.SaveOptimizer.Internal.Wrappers;
-using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 
 namespace EFCore.Extensions.SaveOptimizer.Internal.Tests.Wrapper;

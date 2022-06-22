@@ -1,6 +1,5 @@
 ﻿using System.Collections.Concurrent;
 using EFCore.Extensions.SaveOptimizer.Internal.Wrappers;
-using SqlKata.Compilers;
 
 namespace EFCore.Extensions.SaveOptimizer.Internal.Resolvers;
 

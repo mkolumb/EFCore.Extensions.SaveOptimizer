@@ -115,4 +115,4 @@ powershell -File run_benchmarks.ps1
 
 ## Remarks
 
-Currently this package instead of using SqlKata directly from NuGet uses my own fork. The reason behind is performance - there is something wrong with current version. I created [pull request](https://github.com/sqlkata/querybuilder/pull/548), but unfortunately it is under review since January. When it will be approved I will switch.
+Currently this package instead of using SqlKata directly from NuGet uses my own fork. The reason behind is performance - there is something wrong with current version. I created [pull request](https://github.com/sqlkata/querybuilder/pull/548), but unfortunately it is under review since January. When it will be approved I will switch to using package from NuGet.

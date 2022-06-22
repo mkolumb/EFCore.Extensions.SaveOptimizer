@@ -1,5 +1,4 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Model;
-using FluentAssertions;
 using FluentAssertions.Extensions;
 using Microsoft.EntityFrameworkCore;
 
