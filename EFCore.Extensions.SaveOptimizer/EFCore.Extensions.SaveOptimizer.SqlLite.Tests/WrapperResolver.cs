@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EFCore.Extensions.SaveOptimizer.SqlLite.Tests;
 
-public abstract class Setup
+public static class WrapperResolver
 {
-    protected DbContextWrapper ContextWrapperResolver()
+    public static DbContextWrapper ContextWrapperResolver()
     {
         SqlLiteDesignTimeFactory factory = new();
 
