@@ -40,7 +40,7 @@ When you execute SaveChangesOptimized the following sequence happens:
 5. ExecuteRawSql
    - *if there is no transaction started then will start serializable transaction*
 
-Please note it is not working exactly as SaveChanges, so You should verify it works in your case as expected.
+Please note it is not working exactly as SaveChanges, so you should verify it works in your case as expected. 
 
 ## Features
 - Providers support
@@ -75,6 +75,7 @@ Please note it is not working exactly as SaveChanges, so You should verify it wo
   - Custom attributes
   - Ignore
   - Shadow properties
+- Dependencies lifecycle optimizations
 - GitHub actions
 - Test databases within container
 
@@ -91,6 +92,12 @@ $name = "[NAME]"
 ```
 
 ## Benchmarks
+
+### Summary
+
+SaveOptimizer is not always better than pure EF Core methods. EF Core contains tons of optimizations so for small operations likely is better. If you usually update more than 10 rows then SaveOptimizer likely is better choice. 
+
+My advice is to compare results in your real environment. Honestly - the best choice for pure performance is leave EF Core for write operations at all and then write statements from scratch. But this library could bring performance benefits without big effort. 
 
 ### Running
 
