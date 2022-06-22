@@ -49,7 +49,7 @@ public class QueryCompilerService : IQueryCompilerService
             throw new QueryCompileException("All table should be the same");
         }
 
-        var primaryKeyValidator = models.Select(x => x.PrimaryKeyNames.ToRepresentation(x => x)).Distinct().ToArray();
+        var primaryKeyValidator = models.Select(x => x.PrimaryKeyNames.ToRepresentation(i => i)).Distinct().ToArray();
 
         if (primaryKeyValidator.Length > 1)
         {
@@ -161,9 +161,14 @@ public class QueryCompilerService : IQueryCompilerService
     {
         Dictionary<string, object?>[] data = columnsGroup.Select(queryDataResult => queryDataResult.Data).ToArray();
 
-        var columns = data[0].Keys;
+        Dictionary<string, object?>.KeyCollection columns = data[0].Keys;
 
-        var rows = data.Select(x => x.Values).ToArray();
+        List<Dictionary<string, object?>.ValueCollection> rows = new();
+
+        foreach (Dictionary<string, object?> objects in data)
+        {
+            rows.Add(objects.Values);
+        }
 
         return new Query(tableName).AsInsert(columns, rows);
     }

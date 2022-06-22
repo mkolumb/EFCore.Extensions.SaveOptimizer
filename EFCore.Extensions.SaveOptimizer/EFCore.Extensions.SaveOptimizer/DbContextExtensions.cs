@@ -127,20 +127,41 @@ public static class DbContextExtensions
 
     private static IEnumerable<SqlResult> Prepare(this DbContext context)
     {
-        IEnumerable<EntityEntry> entries = context.ChangeTracker.Entries();
-
         DataContextModelWrapper wrapper = new(() => context);
 
-        QueryDataModel[] translation = entries
-            .Select(entry => TranslatorService.Translate(wrapper, entry))
-            .Where(x => x != null)
-            .ToArray()!;
+        IEnumerable<EntityEntry> entries = context.ChangeTracker.Entries();
 
-        Dictionary<EntityState, Dictionary<Type, QueryDataModel[]>> group = translation
-            .GroupBy(x => x.EntityState)
-            .ToDictionary(x => x.Key,
-                x => x.GroupBy(i => i.EntityType)
-                    .ToDictionary(i => i.Key, i => i.ToArray()));
+        Dictionary<EntityState, Dictionary<Type, List<QueryDataModel>>> translations =
+            new()
+            {
+                { EntityState.Added, new Dictionary<Type, List<QueryDataModel>>() },
+                { EntityState.Modified, new Dictionary<Type, List<QueryDataModel>>() },
+                { EntityState.Deleted, new Dictionary<Type, List<QueryDataModel>>() }
+            };
+
+        foreach (EntityEntry entry in entries)
+        {
+            if (entry.State is not (EntityState.Modified or EntityState.Added or EntityState.Deleted))
+            {
+                continue;
+            }
+
+            QueryDataModel? translation = TranslatorService.Translate(wrapper, entry);
+
+            if (translation == null)
+            {
+                continue;
+            }
+
+            Dictionary<Type, List<QueryDataModel>> dictionary = translations[entry.State];
+
+            if (!dictionary.ContainsKey(translation.EntityType))
+            {
+                dictionary.Add(translation.EntityType, new List<QueryDataModel>());
+            }
+
+            dictionary[translation.EntityType].Add(translation);
+        }
 
         IDictionary<Type, int> executeOrder = context.Model.GetEntityTypes().ResolveEntityHierarchy();
 
@@ -151,48 +172,34 @@ public static class DbContextExtensions
 
         foreach ((Type type, _) in executeOrder.OrderByDescending(x => x.Value))
         {
-            if (!group.ContainsKey(EntityState.Deleted))
-            {
-                break;
-            }
-
-            results.AddRange(GetQuery(group, EntityState.Deleted, type, providerName));
+            results.AddRange(GetQuery(translations, EntityState.Deleted, type, providerName));
         }
 
         foreach ((Type type, _) in executeOrder.OrderBy(x => x.Value))
         {
-            if (!group.ContainsKey(EntityState.Added))
-            {
-                break;
-            }
-
-            results.AddRange(GetQuery(group, EntityState.Added, type, providerName));
+            results.AddRange(GetQuery(translations, EntityState.Added, type, providerName));
         }
 
         foreach ((Type type, _) in executeOrder.OrderBy(x => x.Value))
         {
-            if (!group.ContainsKey(EntityState.Modified))
-            {
-                break;
-            }
-
-            results.AddRange(GetQuery(group, EntityState.Modified, type, providerName));
+            results.AddRange(GetQuery(translations, EntityState.Modified, type, providerName));
         }
 
         return results;
     }
 
-    private static IEnumerable<SqlResult> GetQuery(IReadOnlyDictionary<EntityState, Dictionary<Type, QueryDataModel[]>> group,
+    private static IEnumerable<SqlResult> GetQuery(
+        IReadOnlyDictionary<EntityState, Dictionary<Type, List<QueryDataModel>>> group,
         EntityState state, Type type, string providerName)
     {
-        Dictionary<Type, QueryDataModel[]> queries = group[state];
+        Dictionary<Type, List<QueryDataModel>> queries = group[state];
 
         if (!queries.ContainsKey(type))
         {
             return Array.Empty<SqlResult>();
         }
 
-        QueryDataModel[] data = queries[type];
+        List<QueryDataModel> data = queries[type];
 
         return CompilerService.Compile(data, providerName);
     }
