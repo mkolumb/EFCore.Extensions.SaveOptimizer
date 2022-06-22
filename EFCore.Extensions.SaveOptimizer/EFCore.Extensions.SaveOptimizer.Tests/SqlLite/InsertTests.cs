@@ -1,4 +1,5 @@
-﻿using EFCore.Extensions.SaveOptimizer.Model;
+﻿using EFCore.Extensions.SaveOptimizer.Extensions;
+using EFCore.Extensions.SaveOptimizer.Model;
 using EFCore.Extensions.SaveOptimizer.Tests.Data;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
@@ -36,7 +37,7 @@ public class InsertTests : Setup
             await db.Context.AddAsync(ItemResolver());
         }
 
-        await db.Context.SaveChangesAsync();
+        await db.Context.SaveChangesOptimizedAsync();
         db.RecreateContext();
 
         var result = await db.Context.NonRelatedEntities.CountAsync();
@@ -52,7 +53,7 @@ public class InsertTests : Setup
         using DbContextWrapper db = ContextWrapperResolver();
 
         // Act
-        await db.Context.SaveChangesAsync();
+        await db.Context.SaveChangesOptimizedAsync();
         db.RecreateContext();
 
         var result = await db.Context.NonRelatedEntities.CountAsync();
@@ -83,7 +84,7 @@ public class InsertTests : Setup
 
         // Act
         await db.Context.AddAsync(item);
-        await db.Context.SaveChangesAsync();
+        await db.Context.SaveChangesOptimizedAsync();
         db.RecreateContext();
 
         NonRelatedEntity result = await db.Context.NonRelatedEntities.FirstAsync();

@@ -16,6 +16,8 @@ public static class DbContextExtensions
 
     public static async Task<int> SaveChangesOptimizedAsync(this DbContext context, CancellationToken cancellationToken = default)
     {
+        var entries = context.ChangeTracker.Entries().ToArray();
+
         throw new NotImplementedException();
     }
 
