@@ -1,5 +1,4 @@
-﻿using EFCore.Extensions.SaveOptimizer.Interceptor;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
 // ReSharper disable UnusedMember.Global
@@ -12,11 +11,8 @@ public class SqlLiteDesignTimeFactory : IDesignTimeDbContextFactory<EntitiesCont
     {
         var connectionString = args.Any() && !string.IsNullOrWhiteSpace(args[0]) ? args[0] : GetConnectionString();
 
-        SaveChangesOptimizerInterceptor interceptor = new();
-
         DbContextOptions<EntitiesContext> options = new DbContextOptionsBuilder<EntitiesContext>()
             .UseSqlite(connectionString, cfg => cfg.MigrationsAssembly("EFCore.Extensions.SaveOptimizer.Model.SqlLite"))
-            .AddInterceptors(interceptor)
             .Options;
 
         return new EntitiesContext(options);

@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage;
 using SqlKata;
 
-namespace EFCore.Extensions.SaveOptimizer.Extensions;
+namespace EFCore.Extensions.SaveOptimizer;
 
 public static class DbContextExtensions
 {

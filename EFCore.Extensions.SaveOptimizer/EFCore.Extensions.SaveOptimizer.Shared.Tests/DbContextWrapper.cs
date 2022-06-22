@@ -1,5 +1,4 @@
 ﻿using System.Data;
-using EFCore.Extensions.SaveOptimizer.Extensions;
 using EFCore.Extensions.SaveOptimizer.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
