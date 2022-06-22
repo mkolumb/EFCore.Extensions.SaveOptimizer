@@ -102,16 +102,50 @@ powershell -File run_benchmarks.ps1
 .\run_benchmarks.ps1
 ```
 
-### SqlLite
+### INSERT
 
-|       Method | Rows |   Variant |      Mean |     Error |    StdDev |
-|------------- |----- |---------- |----------:|----------:|----------:|
-| ExecuteAsync |    1 | EF Core   |  41.81 ms |  6.438 ms |  18.98 ms |
-| ExecuteAsync |    1 | Optimized |  52.59 ms |  5.774 ms |  17.02 ms |
-| ExecuteAsync |   10 | EF Core   | 192.00 ms | 28.277 ms |  83.38 ms |
-| ExecuteAsync |   10 | Optimized | 256.63 ms | 31.335 ms |  92.39 ms |
-| ExecuteAsync |  100 | EF Core   | 414.46 ms | 69.008 ms | 201.30 ms |
-| ExecuteAsync |  100 | Optimized | 379.45 ms | 52.489 ms | 154.76 ms |
+#### SqlLite
+
+TBD
+
+#### SqlServer
+
+TBD
+
+#### Oracle
+
+TBD
+
+#### MySql
+
+TBD
+
+#### PostgreSQL
+
+TBD
+
+#### Firebird
+
+TBD
+
+#### CockroachDB - single docker node
+
+|       Method |  Rows |   Variant |        Mean |      Error |       StdDev |
+|------------- |------ |---------- |------------:|-----------:|-------------:|
+| ExecuteAsync |     1 | EF Core   |    29.36 ms |   2.877 ms |     8.482 ms |
+| ExecuteAsync |     1 | Optimized |    30.76 ms |   3.275 ms |     9.503 ms |
+| ExecuteAsync |    10 | EF Core   |    63.57 ms |   1.302 ms |     3.671 ms |
+| ExecuteAsync |    10 | Optimized |   117.82 ms |  15.827 ms |    46.666 ms |
+| ExecuteAsync |   100 | EF Core   |   279.59 ms |  35.761 ms |   105.441 ms |
+| ExecuteAsync |   100 | Optimized |    51.50 ms |   4.782 ms |    14.099 ms |
+| ExecuteAsync |  1000 | EF Core   |   754.31 ms |  50.281 ms |   148.255 ms |
+| ExecuteAsync |  1000 | Optimized |   408.67 ms |  46.751 ms |   137.846 ms |
+| ExecuteAsync | 10000 | EF Core   | 7,588.40 ms | 577.382 ms | 1,702.424 ms |
+| ExecuteAsync | 10000 | Optimized | 4,358.31 ms | 436.266 ms | 1,286.341 ms |
+
+#### CockroachDB - nine docker nodes
+
+TBD
 
 ## Remarks
 

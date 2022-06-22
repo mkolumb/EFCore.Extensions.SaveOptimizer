@@ -14,8 +14,6 @@ $workingDir = $(Get-Location).Path
 
 # script
 
-git clean -fdX
-
 dotnet build -c release
 
 dotnet run -c release
