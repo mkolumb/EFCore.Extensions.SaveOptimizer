@@ -45,27 +45,14 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
 
     public async Task Save(SaveVariant variant)
     {
-        async Task InternalSave()
+        try
         {
-            switch (variant)
-            {
-                case SaveVariant.Optimized:
-                    await Context.SaveChangesOptimizedAsync();
-                    break;
-                case SaveVariant.EfCore:
-                    await Context.SaveChangesAsync();
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(variant), variant, null);
-            }
+            await TrySave(variant);
         }
-
-        await using IDbContextTransaction transaction =
-            await Context.Database.BeginTransactionAsync(IsolationLevel.Serializable);
-
-        await InternalSave();
-
-        await transaction.CommitAsync();
+        catch
+        {
+            await TrySave(variant);
+        }
 
         RecreateContext();
     }
@@ -88,6 +75,35 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
         SomeNonNullableStringProperty = $"some-string-{i}",
         SomeNullableStringProperty = "other-string"
     };
+
+    private async Task TrySave(SaveVariant variant)
+    {
+        using CancellationTokenSource source = new(TimeSpan.FromMinutes(10));
+
+        CancellationToken token = source.Token;
+
+        async Task InternalSave()
+        {
+            switch (variant)
+            {
+                case SaveVariant.Optimized:
+                    await Context.SaveChangesOptimizedAsync(token);
+                    break;
+                case SaveVariant.EfCore:
+                    await Context.SaveChangesAsync(token);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(variant), variant, null);
+            }
+        }
+
+        await using IDbContextTransaction transaction =
+            await Context.Database.BeginTransactionAsync(IsolationLevel.Serializable, token);
+
+        await InternalSave();
+
+        await transaction.CommitAsync(token);
+    }
 
     private static DateTimeOffset? RemoveMilliseconds(DateTimeOffset x) =>
         new DateTimeOffset(x.Year, x.Month, x.Day, x.Hour, x.Minute, x.Second, 0, x.Offset);
