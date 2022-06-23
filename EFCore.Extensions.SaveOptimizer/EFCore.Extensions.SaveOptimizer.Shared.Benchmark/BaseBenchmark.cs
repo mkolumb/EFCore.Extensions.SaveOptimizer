@@ -31,7 +31,7 @@ public abstract class BaseBenchmark
 
         Context = _contextResolver.Resolve();
 
-        await Context.Seed(Rows * 100);
+        await Context.Seed(Rows, 100);
     }
 
     [GlobalCleanup]
@@ -47,5 +47,5 @@ public abstract class BaseBenchmark
         }
     }
 
-    private string GetDescription() => $"{Database} {Operation} {Variant} {Rows} {DateTimeOffset.UtcNow:T}";
+    protected string GetDescription() => $"{Database} {Operation} {Variant} {Rows} {DateTimeOffset.UtcNow:T}";
 }

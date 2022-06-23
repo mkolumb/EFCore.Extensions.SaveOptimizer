@@ -5,6 +5,8 @@ namespace EFCore.Extensions.SaveOptimizer.Shared.Benchmark;
 
 public abstract class BaseInsertBenchmark : BaseBenchmark
 {
+    private int _iterations;
+
     public override string Operation => "Insert";
 
     protected BaseInsertBenchmark(IWrapperResolver contextResolver) : base(contextResolver)
@@ -18,6 +20,10 @@ public abstract class BaseInsertBenchmark : BaseBenchmark
         {
             throw new ArgumentNullException(nameof(Context));
         }
+
+        _iterations++;
+
+        Console.WriteLine($"Iteration setup {_iterations} {GetDescription()}");
 
         for (var i = 0L; i < Rows; i++)
         {

@@ -26,18 +26,21 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
 
     public abstract Task Truncate();
 
-    public async Task Seed(long count)
+    public async Task Seed(long count, int repeat)
     {
         await Truncate();
 
-        for (var i = 0; i < count; i++)
+        for (var j = 0; j < repeat; j++)
         {
-            NonRelatedEntity item = CreateItem(i);
+            for (var i = 0; i < count; i++)
+            {
+                NonRelatedEntity item = CreateItem(i);
 
-            await Context.AddAsync(item);
+                await Context.AddAsync(item);
+            }
+
+            await Save(SaveVariant.Optimized | SaveVariant.WithTransaction | SaveVariant.Recreate);
         }
-
-        await Save(SaveVariant.Optimized | SaveVariant.WithTransaction | SaveVariant.Recreate);
     }
 
     public async Task Save(SaveVariant variant)

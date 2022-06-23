@@ -23,6 +23,8 @@ public abstract class BaseUpdateBenchmark : BaseBenchmark
 
         _iterations++;
 
+        Console.WriteLine($"Iteration setup {_iterations} {GetDescription()}");
+
         IReadOnlyList<NonRelatedEntity> items = Context.RetrieveData(Rows).GetAwaiter().GetResult();
 
         for (var i = 0L; i < Rows; i++)

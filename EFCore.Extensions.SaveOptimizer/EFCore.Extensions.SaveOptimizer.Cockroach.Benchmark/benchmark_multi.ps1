@@ -24,6 +24,8 @@ Start-Sleep -Seconds 10
 
 docker exec -it optimizerroachmulti11 ./cockroach init --insecure
 
+Start-Sleep -Seconds 10
+
 Set-Location $workingDir
 
 dotnet build -c release
