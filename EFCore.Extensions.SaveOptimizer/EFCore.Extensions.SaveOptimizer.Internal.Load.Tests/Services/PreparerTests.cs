@@ -1,7 +1,13 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Internal.Load.Tests.Context;
+using EFCore.Extensions.SaveOptimizer.Internal.Load.Tests.Helpers;
+using EFCore.Extensions.SaveOptimizer.Internal.Models;
 using EFCore.Extensions.SaveOptimizer.Internal.Resolvers;
 using EFCore.Extensions.SaveOptimizer.Internal.Services;
+using EFCore.Extensions.SaveOptimizer.Internal.Wrappers;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+
+// ReSharper disable UnusedVariable
 
 namespace EFCore.Extensions.SaveOptimizer.Internal.Load.Tests.Services;
 
@@ -59,6 +65,17 @@ public class PreparerTests
         options = options.UseInMemoryDatabase("in_memory_db");
 
         context = new TestDataContext(options.Options);
+        TestDataContext dataContext = context;
+        DataContextModelWrapper wrapper = new(() => dataContext);
+
+        EntityEntry[] changes = DataHelper.ResolveData(context);
+
+        QueryTranslatorService service = translator;
+
+        QueryDataModel?[] queries = changes.Select(x => service.Translate(wrapper, x)).ToArray();
+
+        Dictionary<EntityState, QueryDataModel?[]> batches = queries.GroupBy(x => x.EntityState)
+            .ToDictionary(x => x.Key, x => x.ToArray());
 
         CompilerWrapperResolver resolver = new();
 
