@@ -21,23 +21,6 @@ public abstract class BaseInsertTests
         // Arrange
         using DbContextWrapper db = ContextWrapperResolver();
 
-        NonRelatedEntity ItemResolver(int i)
-        {
-            return new NonRelatedEntity
-            {
-                ConcurrencyToken = DateTimeOffset.UtcNow,
-                SomeNonNullableBooleanProperty = true,
-                SomeNonNullableDateTimeProperty = new DateTimeOffset(2010, 10, 10, 1, 2, 3, 0, TimeSpan.Zero),
-                SomeNullableDateTimeProperty = new DateTimeOffset(2012, 11, 11, 1, 2, 3, 0, TimeSpan.Zero),
-                SomeNonNullableDecimalProperty = 2.52M,
-                SomeNullableDecimalProperty = 4.523M,
-                SomeNonNullableIntProperty = 1,
-                SomeNullableIntProperty = 11,
-                SomeNonNullableStringProperty = $"some-string-{i}",
-                SomeNullableStringProperty = "other-string"
-            };
-        }
-
         // Act
         for (var i = 0; i < 10; i++)
         {
@@ -122,4 +105,19 @@ public abstract class BaseInsertTests
         result.SomeNonNullableStringProperty.Should().Be(item.SomeNonNullableStringProperty);
         result.SomeNullableStringProperty.Should().Be(item.SomeNullableStringProperty);
     }
+
+    private static NonRelatedEntity ItemResolver(int i) =>
+        new()
+        {
+            ConcurrencyToken = DateTimeOffset.UtcNow,
+            SomeNonNullableBooleanProperty = true,
+            SomeNonNullableDateTimeProperty = new DateTimeOffset(2010, 10, 10, 1, 2, 3, 0, TimeSpan.Zero),
+            SomeNullableDateTimeProperty = new DateTimeOffset(2012, 11, 11, 1, 2, 3, 0, TimeSpan.Zero),
+            SomeNonNullableDecimalProperty = 2.52M,
+            SomeNullableDecimalProperty = 4.523M,
+            SomeNonNullableIntProperty = 1,
+            SomeNullableIntProperty = 11,
+            SomeNonNullableStringProperty = $"some-string-{i}",
+            SomeNullableStringProperty = "other-string"
+        };
 }

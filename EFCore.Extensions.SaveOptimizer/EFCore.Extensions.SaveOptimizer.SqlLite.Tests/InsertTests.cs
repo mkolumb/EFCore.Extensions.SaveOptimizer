@@ -9,3 +9,7 @@ public class InsertTests : BaseInsertTests
     {
     }
 }
+
+// ReSharper disable once UnusedMember.Global
+
+// ReSharper disable once UnusedMember.Global
