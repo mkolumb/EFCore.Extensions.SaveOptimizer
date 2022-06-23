@@ -30,16 +30,16 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
     {
         await Truncate();
 
-        for (var j = 0; j < repeat; j++)
+        for (var j = 0; j < repeat / 10; j++)
         {
-            for (var i = 0; i < count; i++)
+            for (var i = 0; i < count * 10; i++)
             {
                 NonRelatedEntity item = CreateItem(i);
 
                 await Context.AddAsync(item);
             }
 
-            await Save(SaveVariant.Optimized | SaveVariant.WithTransaction | SaveVariant.Recreate);
+            await Save(SaveVariant.Optimized);
         }
     }
 
@@ -47,41 +47,28 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
     {
         async Task InternalSave()
         {
-            if ((variant & SaveVariant.Optimized) != 0)
+            switch (variant)
             {
-                await Context.SaveChangesOptimizedAsync();
+                case SaveVariant.Optimized:
+                    await Context.SaveChangesOptimizedAsync();
+                    break;
+                case SaveVariant.EfCore:
+                    await Context.SaveChangesAsync();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(variant), variant, null);
             }
-            else if ((variant & SaveVariant.EfCore) != 0)
-            {
-                await Context.SaveChangesAsync();
-            }
         }
 
-        if ((variant & SaveVariant.WithTransaction) != 0)
-        {
-            await using IDbContextTransaction transaction =
-                await Context.Database.BeginTransactionAsync(IsolationLevel.Serializable);
+        await using IDbContextTransaction transaction =
+            await Context.Database.BeginTransactionAsync(IsolationLevel.Serializable);
 
-            await InternalSave();
+        await InternalSave();
 
-            await transaction.CommitAsync();
-        }
-        else
-        {
-            await InternalSave();
-        }
+        await transaction.CommitAsync();
 
-        if ((variant & SaveVariant.Recreate) != 0)
-        {
-            RecreateContext();
-        }
+        RecreateContext();
     }
-
-    public async Task<IReadOnlyList<Guid>> RetrieveIds(long count) =>
-        await Context.NonRelatedEntities
-            .Select(x => x.NonRelatedEntityId)
-            .Take((int)(count % int.MaxValue))
-            .ToArrayAsync();
 
     public async Task<IReadOnlyList<NonRelatedEntity>> RetrieveData(long count)
     {
@@ -105,6 +92,12 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
         SomeNonNullableStringProperty = $"some-string-{i}",
         SomeNullableStringProperty = "other-string"
     };
+
+    private async Task<IReadOnlyList<Guid>> RetrieveIds(long count) =>
+        await Context.NonRelatedEntities
+            .Select(x => x.NonRelatedEntityId)
+            .Take((int)(count % int.MaxValue))
+            .ToArrayAsync();
 
     private static DateTimeOffset? RemoveMilliseconds(DateTimeOffset x) =>
         new DateTimeOffset(x.Year, x.Month, x.Day, x.Hour, x.Minute, x.Second, 0, x.Offset);

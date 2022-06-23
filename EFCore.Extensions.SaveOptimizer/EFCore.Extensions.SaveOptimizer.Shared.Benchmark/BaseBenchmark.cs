@@ -19,7 +19,7 @@ public abstract class BaseBenchmark
 
     public abstract long Rows { get; set; }
 
-    [Params(SaveVariant.Optimized | SaveVariant.WithTransaction, SaveVariant.EfCore | SaveVariant.WithTransaction)]
+    [Params(SaveVariant.Optimized, SaveVariant.EfCore)]
     public SaveVariant Variant { get; set; }
 
     protected BaseBenchmark(IWrapperResolver contextResolver) => _contextResolver = contextResolver;

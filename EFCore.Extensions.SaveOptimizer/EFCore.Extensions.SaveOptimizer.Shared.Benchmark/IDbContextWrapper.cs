@@ -8,7 +8,6 @@ public interface IDbContextWrapper : IDisposable
     Task Truncate();
     Task Seed(long count, int repeat);
     Task Save(SaveVariant variant);
-    Task<IReadOnlyList<Guid>> RetrieveIds(long count);
     Task<IReadOnlyList<NonRelatedEntity>> RetrieveData(long count);
     NonRelatedEntity CreateItem(long i);
 }
