@@ -1,5 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
+// ReSharper disable All
+
 #pragma warning disable CS8618
 
 namespace EFCore.Extensions.SaveOptimizer.Internal.Tests.TestContext.LogEntities;

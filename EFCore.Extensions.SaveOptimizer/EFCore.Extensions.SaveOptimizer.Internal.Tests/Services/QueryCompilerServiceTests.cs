@@ -9,6 +9,8 @@ using Moq;
 using SqlKata.Net6;
 using SqlKata.Net6.Compilers;
 
+// ReSharper disable PossibleMultipleEnumeration
+
 #pragma warning disable CS8625
 #pragma warning disable CS8620
 

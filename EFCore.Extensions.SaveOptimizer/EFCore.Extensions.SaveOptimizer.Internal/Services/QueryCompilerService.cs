@@ -50,6 +50,7 @@ public class QueryCompilerService : IQueryCompilerService
 
             batchKeys.Add(batchKey);
 
+            // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
             switch (model.EntityState)
             {
                 case EntityState.Added:
@@ -141,6 +142,7 @@ public class QueryCompilerService : IQueryCompilerService
 
         foreach (var batchKey in batchKeys)
         {
+            // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
             switch (queryType)
             {
                 case EntityState.Added:

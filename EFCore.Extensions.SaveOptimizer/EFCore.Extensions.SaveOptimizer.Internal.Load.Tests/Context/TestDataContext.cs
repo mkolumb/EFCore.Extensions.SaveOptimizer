@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
+// ReSharper disable All
+
 #pragma warning disable CS8618
 
 namespace EFCore.Extensions.SaveOptimizer.Internal.Load.Tests.Context;

@@ -1,6 +1,9 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Internal.Tests.TestContext.LogEntities;
 using EFCore.Extensions.SaveOptimizer.Internal.Tests.TestContext.Models;
 using Microsoft.EntityFrameworkCore;
+
+// ReSharper disable All
+
 #pragma warning disable CS8618
 
 namespace EFCore.Extensions.SaveOptimizer.Internal.Tests.TestContext;

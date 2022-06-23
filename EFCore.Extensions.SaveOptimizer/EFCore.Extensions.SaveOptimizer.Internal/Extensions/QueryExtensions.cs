@@ -11,6 +11,7 @@ public static class QueryExtensions
 
         Dictionary<string, Func<QueryDataModel, object?>> resolvers = new();
 
+        // ReSharper disable once LoopCanBeConvertedToQuery
         foreach (var key in primaryKeyNames)
         {
             resolvers.Add(key, x => x.Data[key]);
@@ -27,6 +28,7 @@ public static class QueryExtensions
         {
             query = query.Where(subQuery =>
             {
+                // ReSharper disable once ForeachCanBeConvertedToQueryUsingAnotherGetEnumerator
                 foreach (DataGroupModel item in dataResult)
                 {
                     subQuery = subQuery.OrWhere(p =>

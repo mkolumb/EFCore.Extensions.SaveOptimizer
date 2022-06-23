@@ -20,7 +20,7 @@ public class PostgresDesignTimeFactory : IDesignTimeDbContextFactory<EntitiesCon
         return new EntitiesContext(options);
     }
 
-    private DbConnection GetConnection()
+    private static DbConnection GetConnection()
     {
         const string connectionString = "Host=localhost;Port=26257;SSL Mode=Disable;Username=root;Database=test_db";
 

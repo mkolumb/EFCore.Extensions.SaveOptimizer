@@ -24,7 +24,7 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
         GC.SuppressFinalize(this);
     }
 
-    public void RecreateContext()
+    private void RecreateContext()
     {
         var connectionString = Context.Database.GetConnectionString();
 

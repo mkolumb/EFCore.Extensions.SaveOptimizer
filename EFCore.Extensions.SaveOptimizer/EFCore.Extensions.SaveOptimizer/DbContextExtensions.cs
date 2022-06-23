@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage;
 
+// ReSharper disable UnusedMember.Global
+
 namespace EFCore.Extensions.SaveOptimizer;
 
 public static class DbContextExtensions
@@ -45,6 +47,7 @@ public static class DbContextExtensions
         {
             var rows = 0;
 
+            // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (SqlResult sql in queries)
             {
                 rows += context.Database.ExecuteSqlRaw(sql.Sql, sql.Bindings);
@@ -104,6 +107,7 @@ public static class DbContextExtensions
         {
             var rows = 0;
 
+            // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (SqlResult sql in queries)
             {
                 rows += await context.Database.ExecuteSqlRawAsync(sql.Sql, sql.Bindings, cancellationToken)

@@ -18,7 +18,7 @@ public class SqlLiteDesignTimeFactory : IDesignTimeDbContextFactory<EntitiesCont
         return new EntitiesContext(options);
     }
 
-    private string GetConnectionString()
+    private static string GetConnectionString()
     {
         DirectoryInfo directory = new("db");
 
