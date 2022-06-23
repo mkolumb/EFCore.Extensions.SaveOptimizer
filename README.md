@@ -117,10 +117,8 @@ BenchmarkDotNet=v0.13.1, OS=Windows 10.0.19042.1706 (20H2/October2020Update)
 Intel Core i7-8850H CPU 2.60GHz (Coffee Lake), 1 CPU, 12 logical and 6 physical cores
 .NET SDK=6.0.300
   [Host]     : .NET 6.0.5 (6.0.522.21309), X64 RyuJIT
-  Job-EAPHHZ : .NET 6.0.5 (6.0.522.21309), X64 RyuJIT
 
-InvocationCount=20  IterationCount=20  LaunchCount=3
-UnrollFactor=1  WarmupCount=5
+InvocationCount=10, IterationCount=10, LaunchCount=5, RunStrategy=Monitoring, UnrollFactor=1, WarmupCount=2
 ```
 
 ### Running

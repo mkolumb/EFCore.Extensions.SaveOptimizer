@@ -1,13 +1,16 @@
 ﻿using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Engines;
 using EFCore.Extensions.SaveOptimizer.Model;
 
 namespace EFCore.Extensions.SaveOptimizer.Shared.Benchmark;
 
-[SimpleJob(3, 5, 20, 20)]
+[SimpleJob(RunStrategy.Monitoring, 5, 2, 10, 10)]
 [MinColumn]
 [MaxColumn]
 [MeanColumn]
 [MedianColumn]
+[StdDevColumn]
+[StdErrorColumn]
 public abstract class BaseInsertBenchmark
 {
     private readonly IWrapperResolver _contextResolver;
