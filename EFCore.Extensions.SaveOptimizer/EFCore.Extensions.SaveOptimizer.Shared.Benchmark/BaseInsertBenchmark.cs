@@ -9,8 +9,6 @@ namespace EFCore.Extensions.SaveOptimizer.Shared.Benchmark;
 [MaxColumn]
 [MeanColumn]
 [MedianColumn]
-[StdDevColumn]
-[StdErrorColumn]
 public abstract class BaseInsertBenchmark
 {
     private readonly IWrapperResolver _contextResolver;
