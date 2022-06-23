@@ -41,10 +41,7 @@ public class QueryTranslatorService : IQueryTranslatorService
             {
                 primaryKeyNames.Add(columnName);
 
-                if (property.Metadata.ValueGenerated == ValueGenerated.Never)
-                {
-                    data.Add(columnName, property.CurrentValue);
-                }
+                data.Add(columnName, property.CurrentValue);
 
                 continue;
             }
