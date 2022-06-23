@@ -21,7 +21,7 @@ public abstract class BaseDeleteTests
         // Arrange
         using DbContextWrapper db = ContextWrapperResolver();
 
-        NonRelatedEntity[] data = await InitialSeed(db, variant);
+        NonRelatedEntity[] data = await InitialSeed(db, variant, 10);
 
         var state = JsonConvert.SerializeObject(data);
 
@@ -34,7 +34,7 @@ public abstract class BaseDeleteTests
         // Act
         await db.Save(variant);
 
-        NonRelatedEntity[] result = await db.Context.NonRelatedEntities.ToArrayAsync();
+        NonRelatedEntity[] result = await db.Context.NonRelatedEntities.OrderBy(x => x.NonRelatedEntityId).ToArrayAsync();
 
         var newState = JsonConvert.SerializeObject(result);
 
@@ -44,22 +44,22 @@ public abstract class BaseDeleteTests
         newState.Should().BeEquivalentTo(state);
     }
 
-    private static async Task<NonRelatedEntity[]> InitialSeed(DbContextWrapper db, SaveVariant variant)
+    private static async Task<NonRelatedEntity[]> InitialSeed(DbContextWrapper db, SaveVariant variant, int count)
     {
-        for (var i = 0; i < 10; i++)
+        for (var i = 0; i < count; i++)
         {
             await db.Context.AddAsync(ItemResolver(i));
         }
 
         await db.Save(variant);
 
-        return await db.Context.NonRelatedEntities.ToArrayAsync();
+        return await db.Context.NonRelatedEntities.OrderBy(x => x.NonRelatedEntityId).ToArrayAsync();
     }
 
     private static NonRelatedEntity ItemResolver(int i) =>
         new()
         {
-            ConcurrencyToken = DateTimeOffset.UtcNow,
+            ConcurrencyToken = new DateTimeOffset(2033, 11, 11, 2, 3, 4, 5, TimeSpan.Zero),
             SomeNonNullableBooleanProperty = true,
             SomeNonNullableDateTimeProperty = new DateTimeOffset(2010, 10, 10, 1, 2, 3, 0, TimeSpan.Zero),
             SomeNullableDateTimeProperty = new DateTimeOffset(2012, 11, 11, 1, 2, 3, 0, TimeSpan.Zero),

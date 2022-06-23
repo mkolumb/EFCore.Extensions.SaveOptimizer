@@ -31,7 +31,9 @@ public abstract class BaseInsertTests
 
         var result = await db.Context.NonRelatedEntities.CountAsync();
 
-        var properties = await db.Context.NonRelatedEntities.Select(x => x.SomeNonNullableStringProperty).Distinct()
+        var properties = await db.Context.NonRelatedEntities
+            .Select(x => x.SomeNonNullableStringProperty)
+            .Distinct()
             .ToArrayAsync();
 
         // Assert
@@ -71,7 +73,7 @@ public abstract class BaseInsertTests
 
         NonRelatedEntity item = new()
         {
-            ConcurrencyToken = DateTimeOffset.UtcNow,
+            ConcurrencyToken = new DateTimeOffset(2033, 11, 11, 2, 3, 4, 5, TimeSpan.Zero),
             SomeNonNullableBooleanProperty = true,
             SomeNonNullableDateTimeProperty = new DateTimeOffset(2010, 10, 10, 1, 2, 3, 0, TimeSpan.Zero),
             SomeNullableDateTimeProperty = new DateTimeOffset(2012, 11, 11, 1, 2, 3, 0, TimeSpan.Zero),
@@ -109,7 +111,7 @@ public abstract class BaseInsertTests
     private static NonRelatedEntity ItemResolver(int i) =>
         new()
         {
-            ConcurrencyToken = DateTimeOffset.UtcNow,
+            ConcurrencyToken = new DateTimeOffset(2033, 11, 11, 2, 3, 4, 5, TimeSpan.Zero),
             SomeNonNullableBooleanProperty = true,
             SomeNonNullableDateTimeProperty = new DateTimeOffset(2010, 10, 10, 1, 2, 3, 0, TimeSpan.Zero),
             SomeNullableDateTimeProperty = new DateTimeOffset(2012, 11, 11, 1, 2, 3, 0, TimeSpan.Zero),

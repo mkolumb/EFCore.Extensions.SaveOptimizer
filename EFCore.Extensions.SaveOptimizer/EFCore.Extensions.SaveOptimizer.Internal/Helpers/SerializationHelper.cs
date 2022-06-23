@@ -30,9 +30,9 @@ public class SerializationHelper
             case byte[] bytes:
                 return $"{key}={Convert.ToBase64String(bytes)}";
             case DateTimeOffset dateOffset:
-                return $"{key}={dateOffset.Ticks:G}";
+                return $"{key}={dateOffset:O}";
             case DateTime date:
-                return $"{key}={date.Ticks:G}";
+                return $"{key}={date:O}";
             case IEnumerable enumerable:
                 {
                     StringBuilder builder = new();
