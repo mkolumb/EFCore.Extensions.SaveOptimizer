@@ -179,20 +179,20 @@ TBD
 | UpdateAsync | EfCore    | 1000  | 661.244 ms   | 590.635 ms   | 291.719 ms   | 1,800.184 ms |
 | UpdateAsync | EfCore    | 10000 | 3,178.785 ms | 3,129.773 ms | 1,140.467 ms | 7,029.094 ms |
 |             |           |       |              |              |              |              |
-| DeleteAsync | Optimized | 1     | 4.584 ms     | 4.254 ms     | 11.590 ms    | 3.142 ms     |
-| DeleteAsync | Optimized | 10    | 4.437 ms     | 3.960 ms     | 8.541 ms     | 2.997 ms     |
-| DeleteAsync | Optimized | 25    | 4.561 ms     | 4.247 ms     | 8.867 ms     | 3.189 ms     |
-| DeleteAsync | Optimized | 50    | 4.962 ms     | 4.706 ms     | 7.742 ms     | 3.485 ms     |
-| DeleteAsync | Optimized | 100   | 5.929 ms     | 5.621 ms     | 8.820 ms     | 4.502 ms     |
-| DeleteAsync | Optimized | 1000  | 24.705 ms    | 23.936 ms    | 41.615 ms    | 18.086 ms    |
-| DeleteAsync | Optimized | 10000 | 182.846 ms   | 180.678 ms   | 261.666 ms   | 118.888 ms   |
-| DeleteAsync | EfCore    | 1     | 6.010 ms     | 4.858 ms     | 19.899 ms    | 2.996 ms     |
-| DeleteAsync | EfCore    | 10    | 8.795 ms     | 7.619 ms     | 18.777 ms    | 4.705 ms     |
-| DeleteAsync | EfCore    | 25    | 11.669 ms    | 11.010 ms    | 23.525 ms    | 5.851 ms     |
-| DeleteAsync | EfCore    | 50    | 16.202 ms    | 15.363 ms    | 29.180 ms    | 7.241 ms     |
-| DeleteAsync | EfCore    | 100   | 32.802 ms    | 30.629 ms    | 71.012 ms    | 13.730 ms    |
-| DeleteAsync | EfCore    | 1000  | 581.582 ms   | 521.002 ms   | 1,798.104 ms | 113.653 ms   |
-| DeleteAsync | EfCore    | 10000 | 2,970.546 ms | 2,762.116 ms | 5,334.432 ms | 927.011 ms   |
+| DeleteAsync | Optimized | 1     | 4.584 ms     | 4.254 ms     | 3.142 ms     | 11.590 ms    |
+| DeleteAsync | Optimized | 10    | 4.437 ms     | 3.960 ms     | 2.997 ms     | 8.541 ms     |
+| DeleteAsync | Optimized | 25    | 4.561 ms     | 4.247 ms     | 3.189 ms     | 8.867 ms     |
+| DeleteAsync | Optimized | 50    | 4.962 ms     | 4.706 ms     | 3.485 ms     | 7.742 ms     |
+| DeleteAsync | Optimized | 100   | 5.929 ms     | 5.621 ms     | 4.502 ms     | 8.820 ms     |
+| DeleteAsync | Optimized | 1000  | 24.705 ms    | 23.936 ms    | 18.086 ms    | 41.615 ms    |
+| DeleteAsync | Optimized | 10000 | 182.846 ms   | 180.678 ms   | 118.888 ms   | 261.666 ms   |
+| DeleteAsync | EfCore    | 1     | 6.010 ms     | 4.858 ms     | 2.996 ms     | 19.899 ms    |
+| DeleteAsync | EfCore    | 10    | 8.795 ms     | 7.619 ms     | 4.705 ms     | 18.777 ms    |
+| DeleteAsync | EfCore    | 25    | 11.669 ms    | 11.010 ms    | 5.851 ms     | 23.525 ms    |
+| DeleteAsync | EfCore    | 50    | 16.202 ms    | 15.363 ms    | 7.241 ms     | 29.180 ms    |
+| DeleteAsync | EfCore    | 100   | 32.802 ms    | 30.629 ms    | 13.730 ms    | 71.012 ms    |
+| DeleteAsync | EfCore    | 1000  | 581.582 ms   | 521.002 ms   | 113.653 ms   | 1,798.104 ms |
+| DeleteAsync | EfCore    | 10000 | 2,970.546 ms | 2,762.116 ms | 927.011 ms   | 5,334.432 ms |
 
 #### SqlLite
 
