@@ -70,14 +70,10 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
         RecreateContext();
     }
 
-    public async Task<IReadOnlyList<NonRelatedEntity>> RetrieveData(long count)
-    {
-        IReadOnlyCollection<Guid> ids = await RetrieveIds(count);
-
-        return await Context.NonRelatedEntities
-            .Where(x => ids.Contains(x.NonRelatedEntityId))
+    public async Task<IReadOnlyList<NonRelatedEntity>> RetrieveData(long count) =>
+        await Context.NonRelatedEntities
+            .Take((int)(count % int.MaxValue))
             .ToArrayAsync();
-    }
 
     public NonRelatedEntity CreateItem(long i) => new()
     {
@@ -92,12 +88,6 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
         SomeNonNullableStringProperty = $"some-string-{i}",
         SomeNullableStringProperty = "other-string"
     };
-
-    private async Task<IReadOnlyList<Guid>> RetrieveIds(long count) =>
-        await Context.NonRelatedEntities
-            .Select(x => x.NonRelatedEntityId)
-            .Take((int)(count % int.MaxValue))
-            .ToArrayAsync();
 
     private static DateTimeOffset? RemoveMilliseconds(DateTimeOffset x) =>
         new DateTimeOffset(x.Year, x.Month, x.Day, x.Hour, x.Minute, x.Second, 0, x.Offset);

@@ -27,6 +27,17 @@ public abstract class BaseDeleteBenchmark : BaseBenchmark
 
         IReadOnlyList<NonRelatedEntity> items = Context.RetrieveData(Rows).GetAwaiter().GetResult();
 
+        if (items.Count != Rows)
+        {
+            var oldColor = Console.ForegroundColor;
+
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+
+            Console.WriteLine($"Expected {Rows} rows but retrieved {items.Count}");
+
+            Console.ForegroundColor = oldColor;
+        }
+
         for (var i = 0L; i < Rows; i++)
         {
             Context.Context.Remove(items[(int)i]);
