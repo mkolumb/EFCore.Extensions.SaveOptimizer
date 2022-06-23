@@ -255,7 +255,7 @@ public class QueryCompilerService : IQueryCompilerService
 
     private static IDictionary<string, object?> GetUpdateParams(QueryDataModel queryResult)
     {
-        var primaryKeys = queryResult.PrimaryKeyNames;
+        HashSet<string> primaryKeys = queryResult.PrimaryKeyNames;
 
         return queryResult.Data
             .Where(x => !primaryKeys.Contains(x.Key))

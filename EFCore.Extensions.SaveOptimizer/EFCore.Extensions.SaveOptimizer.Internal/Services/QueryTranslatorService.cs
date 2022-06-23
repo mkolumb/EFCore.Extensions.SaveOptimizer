@@ -1,5 +1,4 @@
-﻿using EFCore.Extensions.SaveOptimizer.Internal.Exceptions;
-using EFCore.Extensions.SaveOptimizer.Internal.Models;
+﻿using EFCore.Extensions.SaveOptimizer.Internal.Models;
 using EFCore.Extensions.SaveOptimizer.Internal.Wrappers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -16,67 +15,51 @@ public class QueryTranslatorService : IQueryTranslatorService
             return null;
         }
 
-        var entityType = entry.Entity.GetType();
+        Type entityType = entry.Entity.GetType();
 
-        var properties = entry.Properties.ToArray();
+        PropertyEntry[] properties = entry.Properties.ToArray();
 
         var tableName = model.GetTableName(entityType);
         var schemaName = model.GetSchema(entityType);
 
-        var primaryKeys = properties
-            .Where(x => x.Metadata.IsPrimaryKey())
-            .ToDictionary(x => model.GetColumn(entityType, x.Metadata.Name), x => x.CurrentValue);
+        Dictionary<string, object?> data = new();
 
-        var data = new Dictionary<string, object?>();
+        HashSet<string> primaryKeyNames = new();
 
-        foreach (var (key, value) in primaryKeys)
+        Dictionary<string, object?> tokens = new();
+
+        foreach (PropertyEntry property in properties)
         {
-            data.Add(key, value);
-        }
+            var columnName = model.GetColumn(entityType, property.Metadata.Name);
 
-        foreach (var property in properties)
-        {
+            if (property.Metadata.IsConcurrencyToken)
+            {
+                tokens.Add(columnName, property.CurrentValue);
+            }
+
+            if (property.Metadata.IsPrimaryKey())
+            {
+                primaryKeyNames.Add(columnName);
+
+                if (property.Metadata.ValueGenerated == ValueGenerated.Never)
+                {
+                    data.Add(columnName, property.CurrentValue);
+                }
+
+                continue;
+            }
+
             if (entry.State == EntityState.Modified && !property.IsModified)
             {
                 continue;
             }
 
-            switch (property.Metadata.ValueGenerated)
+            if (property.Metadata.ValueGenerated == ValueGenerated.Never)
             {
-                case ValueGenerated.OnAdd when entry.State == EntityState.Added:
-                case ValueGenerated.OnUpdate when entry.State == EntityState.Modified:
-                case ValueGenerated.OnUpdateSometimes when entry.State == EntityState.Modified:
-                case ValueGenerated.OnAddOrUpdate when entry.State is EntityState.Added or EntityState.Modified:
-                    continue;
+                data.Add(columnName, property.CurrentValue);
             }
-
-            var columnName = model.GetColumn(entityType, property.Metadata.Name);
-
-            if (primaryKeys.ContainsKey(columnName))
-            {
-                continue;
-            }
-
-            var newValue = property.CurrentValue;
-
-            if (data.ContainsKey(columnName))
-            {
-                var oldValue = data[columnName];
-
-                if (oldValue != newValue)
-                {
-                    throw new QueryTranslateException(property.Metadata.Name, oldValue, newValue);
-                }
-            }
-
-            data[columnName] = newValue;
         }
 
-        var concurrencyTokens = properties.Where(x => x.Metadata.IsConcurrencyToken);
-
-        var tokens = concurrencyTokens
-            .ToDictionary(x => model.GetColumn(entityType, x.Metadata.Name), x => x.CurrentValue);
-
-        return new QueryDataModel(entityType, entry.State, schemaName, tableName, data, primaryKeys.Select(x => x.Key).ToArray(), tokens);
+        return new QueryDataModel(entityType, entry.State, schemaName, tableName, data, primaryKeyNames, tokens);
     }
 }

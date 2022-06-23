@@ -14,7 +14,7 @@ public class QueryDataModel
 
     public EntityState EntityState { get; }
 
-    public string[] PrimaryKeyNames { get; }
+    public HashSet<string> PrimaryKeyNames { get; }
 
     public Dictionary<string, object?>? ConcurrencyTokens { get; }
 
@@ -23,7 +23,7 @@ public class QueryDataModel
         string? schemaName,
         string tableName,
         Dictionary<string, object?> data,
-        string[] primaryKeyNames,
+        HashSet<string> primaryKeyNames,
         Dictionary<string, object?> concurrencyTokens)
     {
         EntityType = entityType;

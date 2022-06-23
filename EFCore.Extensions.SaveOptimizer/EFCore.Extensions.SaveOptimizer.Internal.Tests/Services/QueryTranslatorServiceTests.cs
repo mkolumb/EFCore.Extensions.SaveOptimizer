@@ -63,7 +63,7 @@ public class QueryTranslatorServiceTests
         result.TableName.Should().Be("second_level_entity");
         result.EntityState.Should().Be(EntityState.Added);
         result.EntityType.Should().BeSameAs(typeof(SecondLevelEntity));
-        result.PrimaryKeyNames[0].Should().Be("second_level_entity_id");
+        result.PrimaryKeyNames.First().Should().Be("second_level_entity_id");
         result.ConcurrencyTokens.Should().BeEquivalentTo(new Dictionary<string, object?>
         {
             { "updated_date", new DateTime(2010, 01, 01) }
@@ -110,7 +110,7 @@ public class QueryTranslatorServiceTests
         result.TableName.Should().Be("second_level_entity");
         result.EntityState.Should().Be(EntityState.Added);
         result.EntityType.Should().BeSameAs(typeof(SecondLevelEntity));
-        result.PrimaryKeyNames[0].Should().Be("second_level_entity_id");
+        result.PrimaryKeyNames.First().Should().Be("second_level_entity_id");
         result.ConcurrencyTokens.Should().BeEquivalentTo(new Dictionary<string, object?>
         {
             { "updated_date", null }
@@ -157,7 +157,7 @@ public class QueryTranslatorServiceTests
         result.TableName.Should().Be("second_level_entity");
         result.EntityState.Should().Be(EntityState.Deleted);
         result.EntityType.Should().BeSameAs(typeof(SecondLevelEntity));
-        result.PrimaryKeyNames[0].Should().Be("second_level_entity_id");
+        result.PrimaryKeyNames.First().Should().Be("second_level_entity_id");
         result.ConcurrencyTokens.Should().BeEquivalentTo(new Dictionary<string, object?>
         {
             { "updated_date", null }
@@ -262,7 +262,7 @@ public class QueryTranslatorServiceTests
         result.TableName.Should().Be("second_level_entity");
         result.EntityState.Should().Be(EntityState.Modified);
         result.EntityType.Should().BeSameAs(typeof(SecondLevelEntity));
-        result.PrimaryKeyNames[0].Should().Be("second_level_entity_id");
+        result.PrimaryKeyNames.First().Should().Be("second_level_entity_id");
         result.ConcurrencyTokens.Should().BeEquivalentTo(new Dictionary<string, object?>
         {
             { "updated_date", null }

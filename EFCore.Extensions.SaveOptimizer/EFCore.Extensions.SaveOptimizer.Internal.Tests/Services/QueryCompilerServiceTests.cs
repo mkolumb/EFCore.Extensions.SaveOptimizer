@@ -33,9 +33,9 @@ public class QueryCompilerServiceTests
         QueryDataModel[] queryResults =
         {
             new(typeof(FirstLevelEntity), EntityState.Deleted, null, "order",
-                new Dictionary<string, object> { { "order_id", 1 } }, new[] { "order_id" }, null),
+                new Dictionary<string, object> { { "order_id", 1 } }, new HashSet<string> { "order_id" }, null),
             new(typeof(FirstLevelEntity), EntityState.Deleted, null, "order",
-                new Dictionary<string, object> { { "order_id", 2 } }, new[] { "order_id" }, null)
+                new Dictionary<string, object> { { "order_id", 2 } }, new HashSet<string> { "order_id" }, null)
         };
 
         // Act
@@ -54,13 +54,13 @@ public class QueryCompilerServiceTests
         QueryDataModel[] queryResults =
         {
             new(typeof(FirstLevelEntity), EntityState.Deleted, null, "order",
-                new Dictionary<string, object> { { "order_id", 1 } }, new[] { "order_id" },
+                new Dictionary<string, object> { { "order_id", 1 } }, new HashSet<string> { "order_id" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_1" } }),
             new(typeof(FirstLevelEntity), EntityState.Deleted, null, "order",
-                new Dictionary<string, object> { { "order_id", 2 } }, new[] { "order_id" },
+                new Dictionary<string, object> { { "order_id", 2 } }, new HashSet<string> { "order_id" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_2" } }),
             new(typeof(FirstLevelEntity), EntityState.Deleted, null, "order",
-                new Dictionary<string, object> { { "order_id", 3 } }, new[] { "order_id" },
+                new Dictionary<string, object> { { "order_id", 3 } }, new HashSet<string> { "order_id" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_2" } })
         };
 
@@ -87,19 +87,19 @@ public class QueryCompilerServiceTests
         {
             new(typeof(FirstLevelEntity), EntityState.Deleted, null, "order",
                 new Dictionary<string, object> { { "order_id", 1 }, { "second_primary_key", 111 } },
-                new[] { "order_id", "second_primary_key" },
+                new HashSet<string> { "order_id", "second_primary_key" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_1" } }),
             new(typeof(FirstLevelEntity), EntityState.Deleted, null, "order",
                 new Dictionary<string, object> { { "order_id", 2 }, { "second_primary_key", 112 } },
-                new[] { "order_id", "second_primary_key" },
+                new HashSet<string> { "order_id", "second_primary_key" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_2" } }),
             new(typeof(FirstLevelEntity), EntityState.Deleted, null, "order",
                 new Dictionary<string, object> { { "order_id", 3 }, { "second_primary_key", 333 } },
-                new[] { "order_id", "second_primary_key" },
+                new HashSet<string> { "order_id", "second_primary_key" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_2" } }),
             new(typeof(FirstLevelEntity), EntityState.Deleted, null, "order",
                 new Dictionary<string, object> { { "order_id", 3 }, { "second_primary_key", 444 } },
-                new[] { "order_id", "second_primary_key" },
+                new HashSet<string> { "order_id", "second_primary_key" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_2" } })
         };
 
@@ -127,9 +127,9 @@ public class QueryCompilerServiceTests
         QueryDataModel[] queryResults =
         {
             new(typeof(FirstLevelEntity), EntityState.Added, null, "order",
-                new Dictionary<string, object> { { "order_id", 1 } }, new[] { "order_id" }, null),
+                new Dictionary<string, object> { { "order_id", 1 } }, new HashSet<string> { "order_id" }, null),
             new(typeof(FirstLevelEntity), EntityState.Added, null, "order",
-                new Dictionary<string, object> { { "order_id", 2 } }, new[] { "order_id" }, null)
+                new Dictionary<string, object> { { "order_id", 2 } }, new HashSet<string> { "order_id" }, null)
         };
 
         // Act
@@ -149,10 +149,10 @@ public class QueryCompilerServiceTests
         QueryDataModel[] queryResults =
         {
             new(typeof(FirstLevelEntity), EntityState.Added, null, "order",
-                new Dictionary<string, object> { { "order_id", 1 } }, new[] { "order_id" },
+                new Dictionary<string, object> { { "order_id", 1 } }, new HashSet<string> { "order_id" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_1" } }),
             new(typeof(FirstLevelEntity), EntityState.Added, null, "order",
-                new Dictionary<string, object> { { "order_id", 2 } }, new[] { "order_id" },
+                new Dictionary<string, object> { { "order_id", 2 } }, new HashSet<string> { "order_id" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_2" } })
         };
 
@@ -172,9 +172,9 @@ public class QueryCompilerServiceTests
         QueryDataModel[] queryResults =
         {
             new(typeof(FirstLevelEntity), EntityState.Added, null, "order",
-                new Dictionary<string, object>(), new[] { "order_id" }, null),
+                new Dictionary<string, object>(), new HashSet<string> { "order_id" }, null),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object>(), new[] { "order_id" }, null)
+                new Dictionary<string, object>(), new HashSet<string> { "order_id" }, null)
         };
 
         // Act
@@ -191,9 +191,9 @@ public class QueryCompilerServiceTests
         QueryDataModel[] queryResults =
         {
             new(typeof(FirstLevelEntity), EntityState.Added, "schema1", "order",
-                new Dictionary<string, object> { { "order_id2", 1 } }, new[] { "order_id" }, null),
+                new Dictionary<string, object> { { "order_id2", 1 } }, new HashSet<string> { "order_id" }, null),
             new(typeof(FirstLevelEntity), EntityState.Added, "schema1", "order",
-                new Dictionary<string, object> { { "order_id3", 11 } }, new[] { "order_id" }, null)
+                new Dictionary<string, object> { { "order_id3", 11 } }, new HashSet<string> { "order_id" }, null)
         };
 
         // Act
@@ -214,9 +214,9 @@ public class QueryCompilerServiceTests
         QueryDataModel[] queryResults =
         {
             new(typeof(FirstLevelEntity), EntityState.Added, null, "order",
-                new Dictionary<string, object>(), new[] { "order_id" }, null),
+                new Dictionary<string, object>(), new HashSet<string> { "order_id" }, null),
             new(typeof(SecondLevelEntity), EntityState.Added, null, "order",
-                new Dictionary<string, object>(), new[] { "order_id" }, null)
+                new Dictionary<string, object>(), new HashSet<string> { "order_id" }, null)
         };
 
         // Act
@@ -233,9 +233,9 @@ public class QueryCompilerServiceTests
         QueryDataModel[] queryResults =
         {
             new(typeof(FirstLevelEntity), EntityState.Added, "schema1", "order",
-                new Dictionary<string, object>(), new[] { "order_id1" }, null),
+                new Dictionary<string, object>(), new HashSet<string> { "order_id1" }, null),
             new(typeof(FirstLevelEntity), EntityState.Added, "schema1", "order",
-                new Dictionary<string, object>(), new[] { "order_id2" }, null)
+                new Dictionary<string, object>(), new HashSet<string> { "order_id2" }, null)
         };
 
         // Act
@@ -252,9 +252,9 @@ public class QueryCompilerServiceTests
         QueryDataModel[] queryResults =
         {
             new(typeof(FirstLevelEntity), EntityState.Added, "schema1", "order",
-                new Dictionary<string, object>(), new[] { "order_id" }, null),
+                new Dictionary<string, object>(), new HashSet<string> { "order_id" }, null),
             new(typeof(FirstLevelEntity), EntityState.Added, "schema2", "order",
-                new Dictionary<string, object>(), new[] { "order_id" }, null)
+                new Dictionary<string, object>(), new HashSet<string> { "order_id" }, null)
         };
 
         // Act
@@ -271,9 +271,9 @@ public class QueryCompilerServiceTests
         QueryDataModel[] queryResults =
         {
             new(typeof(FirstLevelEntity), EntityState.Added, "schema1", "order1",
-                new Dictionary<string, object>(), new[] { "order_id" }, null),
+                new Dictionary<string, object>(), new HashSet<string> { "order_id" }, null),
             new(typeof(FirstLevelEntity), EntityState.Added, "schema1", "order2",
-                new Dictionary<string, object>(), new[] { "order_id" }, null)
+                new Dictionary<string, object>(), new HashSet<string> { "order_id" }, null)
         };
 
         // Act
@@ -290,9 +290,9 @@ public class QueryCompilerServiceTests
         QueryDataModel[] queryResults =
         {
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 1 }, { "other", 11 } }, new[] { "order_id" }, null),
+                new Dictionary<string, object> { { "order_id", 1 }, { "other", 11 } }, new HashSet<string> { "order_id" }, null),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 2 }, { "other", 21 } }, new[] { "order_id" }, null)
+                new Dictionary<string, object> { { "order_id", 2 }, { "other", 21 } }, new HashSet<string> { "order_id" }, null)
         };
 
         // Act
@@ -313,17 +313,17 @@ public class QueryCompilerServiceTests
         QueryDataModel[] queryResults =
         {
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 1 }, { "other", 11 } }, new[] { "order_id" }, null),
+                new Dictionary<string, object> { { "order_id", 1 }, { "other", 11 } }, new HashSet<string> { "order_id" }, null),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 2 }, { "other", 21 } }, new[] { "order_id" }, null),
+                new Dictionary<string, object> { { "order_id", 2 }, { "other", 21 } }, new HashSet<string> { "order_id" }, null),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 3 }, { "other", 21 } }, new[] { "order_id" }, null),
+                new Dictionary<string, object> { { "order_id", 3 }, { "other", 21 } }, new HashSet<string> { "order_id" }, null),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 4 }, { "other", 21 } }, new[] { "order_id" }, null),
+                new Dictionary<string, object> { { "order_id", 4 }, { "other", 21 } }, new HashSet<string> { "order_id" }, null),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 5 }, { "other", 11 } }, new[] { "order_id" }, null),
+                new Dictionary<string, object> { { "order_id", 5 }, { "other", 11 } }, new HashSet<string> { "order_id" }, null),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 6 }, { "other", 31 } }, new[] { "order_id" }, null)
+                new Dictionary<string, object> { { "order_id", 6 }, { "other", 31 } }, new HashSet<string> { "order_id" }, null)
         };
 
         // Act
@@ -347,22 +347,22 @@ public class QueryCompilerServiceTests
         QueryDataModel[] queryResults =
         {
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 1 }, { "other", 11 } }, new[] { "order_id" },
+                new Dictionary<string, object> { { "order_id", 1 }, { "other", 11 } }, new HashSet<string> { "order_id" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_11" } }),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 2 }, { "other", 21 } }, new[] { "order_id" },
+                new Dictionary<string, object> { { "order_id", 2 }, { "other", 21 } }, new HashSet<string> { "order_id" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_21" } }),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 3 }, { "other", 21 } }, new[] { "order_id" },
+                new Dictionary<string, object> { { "order_id", 3 }, { "other", 21 } }, new HashSet<string> { "order_id" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_21" } }),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 4 }, { "other", 21 } }, new[] { "order_id" },
+                new Dictionary<string, object> { { "order_id", 4 }, { "other", 21 } }, new HashSet<string> { "order_id" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_11" } }),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 5 }, { "other", 11 } }, new[] { "order_id" },
+                new Dictionary<string, object> { { "order_id", 5 }, { "other", 11 } }, new HashSet<string> { "order_id" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_11" } }),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 6 }, { "other", 31 } }, new[] { "order_id" },
+                new Dictionary<string, object> { { "order_id", 6 }, { "other", 31 } }, new HashSet<string> { "order_id" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_31" } })
         };
 
@@ -399,35 +399,35 @@ public class QueryCompilerServiceTests
         {
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
                 new Dictionary<string, object> { { "order_id", 1 }, { "second_primary_key", 111 }, { "other", 11 } },
-                new[] { "order_id", "second_primary_key" },
+                new HashSet<string> { "order_id", "second_primary_key" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_11" } }),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
                 new Dictionary<string, object> { { "order_id", 2 }, { "second_primary_key", 112 }, { "other", 21 } },
-                new[] { "order_id", "second_primary_key" },
+                new HashSet<string> { "order_id", "second_primary_key" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_21" } }),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
                 new Dictionary<string, object> { { "order_id", 3 }, { "second_primary_key", 113 }, { "other", 21 } },
-                new[] { "order_id", "second_primary_key" },
+                new HashSet<string> { "order_id", "second_primary_key" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_21" } }),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
                 new Dictionary<string, object> { { "order_id", 4 }, { "second_primary_key", 114 }, { "other", 21 } },
-                new[] { "order_id", "second_primary_key" },
+                new HashSet<string> { "order_id", "second_primary_key" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_11" } }),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
                 new Dictionary<string, object> { { "order_id", 5 }, { "second_primary_key", 115 }, { "other", 11 } },
-                new[] { "order_id", "second_primary_key" },
+                new HashSet<string> { "order_id", "second_primary_key" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_11" } }),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
                 new Dictionary<string, object> { { "order_id", 6 }, { "second_primary_key", 116 }, { "other", 31 } },
-                new[] { "order_id", "second_primary_key" },
+                new HashSet<string> { "order_id", "second_primary_key" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_31" } }),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
                 new Dictionary<string, object> { { "order_id", 6 }, { "second_primary_key", 126 }, { "other", 31 } },
-                new[] { "order_id", "second_primary_key" },
+                new HashSet<string> { "order_id", "second_primary_key" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_31" } }),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
                 new Dictionary<string, object> { { "order_id", 6 }, { "second_primary_key", 146 }, { "other", 31 } },
-                new[] { "order_id", "second_primary_key" },
+                new HashSet<string> { "order_id", "second_primary_key" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_31" } })
         };
 
@@ -465,10 +465,10 @@ public class QueryCompilerServiceTests
         QueryDataModel[] queryResults =
         {
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 1 }, { "other", 11 } }, new[] { "order_id" },
+                new Dictionary<string, object> { { "order_id", 1 }, { "other", 11 } }, new HashSet<string> { "order_id" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_11" } }),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 2 }, { "other", 21 } }, new[] { "order_id" },
+                new Dictionary<string, object> { { "order_id", 2 }, { "other", 21 } }, new HashSet<string> { "order_id" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_21" } })
         };
 

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Concurrent;
-using System.Collections.Immutable;
 using EFCore.Extensions.SaveOptimizer.Internal.Constants;
 using EFCore.Extensions.SaveOptimizer.Internal.Extensions;
 using EFCore.Extensions.SaveOptimizer.Internal.Models;
@@ -90,17 +89,26 @@ public class QueryPreparerService : IQueryPreparerService
 
         foreach ((Type type, _) in _orders[name].OrderByDescending(x => x.Value))
         {
-            results.AddRange(GetQuery(translations, EntityState.Deleted, type, providerName, batchSize).SelectMany(x => x));
+            foreach (IEnumerable<SqlResult> sqlResults in GetQuery(translations, EntityState.Deleted, type,
+                         providerName, batchSize))
+            {
+                results.AddRange(sqlResults);
+            }
         }
 
         foreach ((Type type, _) in _orders[name].OrderBy(x => x.Value))
         {
-            results.AddRange(GetQuery(translations, EntityState.Added, type, providerName, batchSize).SelectMany(x => x));
-        }
+            foreach (IEnumerable<SqlResult> sqlResults in GetQuery(translations, EntityState.Added, type, providerName,
+                         batchSize))
+            {
+                results.AddRange(sqlResults);
+            }
 
-        foreach ((Type type, _) in _orders[name].OrderBy(x => x.Value))
-        {
-            results.AddRange(GetQuery(translations, EntityState.Modified, type, providerName, batchSize).SelectMany(x => x));
+            foreach (IEnumerable<SqlResult> sqlResults in GetQuery(translations, EntityState.Modified, type,
+                         providerName, batchSize))
+            {
+                results.AddRange(sqlResults);
+            }
         }
 
         return results;
@@ -122,16 +130,26 @@ public class QueryPreparerService : IQueryPreparerService
         string providerName,
         int batchSize)
     {
-        Dictionary<Type, List<QueryDataModel>> queries = group[state];
-
-        if (!queries.ContainsKey(type))
+        if (!group[state].ContainsKey(type))
         {
             yield break;
         }
 
-        ImmutableArray<ImmutableArray<QueryDataModel>> data = queries[type].ToChunks(batchSize);
+        List<List<QueryDataModel>> data = new();
 
-        foreach (ImmutableArray<QueryDataModel> q in data)
+        for (var i = 0; i < group[state][type].Count; i++)
+        {
+            QueryDataModel query = group[state][type][i];
+
+            if (i % batchSize == 0)
+            {
+                data.Add(new List<QueryDataModel>());
+            }
+
+            data.Last().Add(query);
+        }
+
+        foreach (List<QueryDataModel> q in data)
         {
             yield return _compilerService.Compile(q, providerName);
         }
