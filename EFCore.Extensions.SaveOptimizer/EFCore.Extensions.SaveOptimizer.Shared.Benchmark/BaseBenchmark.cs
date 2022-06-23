@@ -31,7 +31,7 @@ public abstract class BaseBenchmark
 
         Context = _contextResolver.Resolve();
 
-        await Context.Seed(Rows, 100);
+        await Context.Seed(Rows, 20);
     }
 
     [GlobalCleanup]
