@@ -48,14 +48,14 @@ public class DataGroupModel : IEquatable<DataGroupModel>
 
     public static HashSet<DataGroupModel> CreateDataGroup<TCompare>(
         IReadOnlyCollection<TCompare> items,
-        string[] keys,
+        IReadOnlyList<string> keys,
         Dictionary<string, Func<TCompare, object?>> valueResolvers)
     {
         HashSet<DataGroupModel> data = new();
 
         foreach (TCompare item in items)
         {
-            for (var i = 0; i < keys.Length; i++)
+            for (var i = 0; i < keys.Count; i++)
             {
                 HashSet<DataGroupModel> set = data;
 

@@ -3,6 +3,7 @@ using EFCore.Extensions.SaveOptimizer.Internal.Exceptions;
 using EFCore.Extensions.SaveOptimizer.Internal.Extensions;
 using EFCore.Extensions.SaveOptimizer.Internal.Models;
 using EFCore.Extensions.SaveOptimizer.Internal.Resolvers;
+using EFCore.Extensions.SaveOptimizer.Internal.Wrappers;
 using Microsoft.EntityFrameworkCore;
 
 namespace EFCore.Extensions.SaveOptimizer.Internal.Services;
@@ -20,85 +21,153 @@ public class QueryCompilerService : IQueryCompilerService
             return Array.Empty<SqlResult>();
         }
 
-        Type[] entityType = models.Select(x => x.EntityType).Distinct().ToArray();
+        HashSet<Type> entityTypes = new();
+        HashSet<EntityState> queryTypes = new();
+        HashSet<string?> schemas = new();
+        HashSet<string> tables = new();
+        HashSet<string> primaryKeyValidators = new();
+        HashSet<string> primaryKeyNames = new();
+        HashSet<string> batchKeys = new();
+        Dictionary<string, List<Dictionary<string, object?>>> insertData = new();
+        Dictionary<string, Dictionary<string, List<QueryDataModel>>> updateData = new();
+        Dictionary<string, Dictionary<string, List<QueryDataModel>>> deleteData = new();
 
-        if (entityType.Length > 1)
+        foreach (QueryDataModel model in models)
+        {
+            entityTypes.Add(model.EntityType);
+            queryTypes.Add(model.EntityState);
+            schemas.Add(model.SchemaName);
+            tables.Add(model.TableName);
+            primaryKeyValidators.Add(model.PrimaryKeyNames.ToRepresentation(i => i));
+
+            foreach (var primaryKeyName in model.PrimaryKeyNames)
+            {
+                primaryKeyNames.Add(primaryKeyName);
+            }
+
+            var batchKey = GetColumnsBatchKey(model);
+
+            batchKeys.Add(batchKey);
+
+            switch (model.EntityState)
+            {
+                case EntityState.Added:
+                    {
+                        if (!insertData.ContainsKey(batchKey))
+                        {
+                            insertData.Add(batchKey, new List<Dictionary<string, object?>>());
+                        }
+
+                        insertData[batchKey].Add(model.Data);
+                        break;
+                    }
+                case EntityState.Modified:
+                    {
+                        var updateBatchKey = GetUpdateBatchKey(model);
+
+                        if (!updateData.ContainsKey(batchKey))
+                        {
+                            updateData.Add(batchKey, new Dictionary<string, List<QueryDataModel>>());
+                        }
+
+                        if (!updateData[batchKey].ContainsKey(updateBatchKey))
+                        {
+                            updateData[batchKey].Add(updateBatchKey, new List<QueryDataModel>());
+                        }
+
+                        updateData[batchKey][updateBatchKey].Add(model);
+                        break;
+                    }
+                case EntityState.Deleted:
+                    {
+                        var deleteBatchKey = GetDeleteBatchKey(model);
+
+                        if (!deleteData.ContainsKey(batchKey))
+                        {
+                            deleteData.Add(batchKey, new Dictionary<string, List<QueryDataModel>>());
+                        }
+
+                        if (!deleteData[batchKey].ContainsKey(deleteBatchKey))
+                        {
+                            deleteData[batchKey].Add(deleteBatchKey, new List<QueryDataModel>());
+                        }
+
+                        deleteData[batchKey][deleteBatchKey].Add(model);
+                        break;
+                    }
+            }
+        }
+
+        if (entityTypes.Count > 1)
         {
             throw new QueryCompileException("All entities should be the same type");
         }
 
-        EntityState[] queryType = models.Select(x => x.EntityState).Distinct().ToArray();
-
-        if (queryType.Length > 1)
+        if (queryTypes.Count > 1)
         {
             throw new QueryCompileException("All queries should be the same type");
         }
 
-        var schema = models.Select(x => x.SchemaName).Distinct().ToArray();
-
-        if (schema.Length > 1)
+        if (schemas.Count > 1)
         {
             throw new QueryCompileException("All schemas should be the same");
         }
 
-        var table = models.Select(x => x.TableName).Distinct().ToArray();
-
-        if (table.Length > 1)
+        if (tables.Count > 1)
         {
             throw new QueryCompileException("All table should be the same");
         }
 
-        var primaryKeyValidator = models.Select(x => x.PrimaryKeyNames.ToRepresentation(i => i)).Distinct().ToArray();
-
-        if (primaryKeyValidator.Length > 1)
+        if (primaryKeyValidators.Count > 1)
         {
             throw new QueryCompileException("All primary key should be the same");
         }
 
-        var tableName = table[0];
+        var tableName = tables.First();
 
-        if (!string.IsNullOrEmpty(schema[0]))
+        var schema = schemas.First();
+
+        EntityState queryType = queryTypes.First();
+
+        if (!string.IsNullOrEmpty(schema))
         {
-            tableName = $"{schema[0]}.{tableName}";
+            tableName = $"{schema}.{tableName}";
         }
 
         List<Query> queries = new();
 
-        IEnumerable<IGrouping<string, QueryDataModel>> columnsGrouped = models.GroupBy(GetColumnsBatchKey);
+        var primaryKeys = primaryKeyNames.ToArray();
 
-        var primaryKeys = models.SelectMany(x => x.PrimaryKeyNames).Distinct().ToArray();
-
-        foreach (IGrouping<string, QueryDataModel> columnsGroup in columnsGrouped)
+        foreach (var batchKey in batchKeys)
         {
-            switch (queryType[0])
+            switch (queryType)
             {
                 case EntityState.Added:
-                    queries.Add(GetInsertQuery(columnsGroup, tableName));
+                    queries.Add(GetInsertQuery(insertData[batchKey], tableName));
                     break;
                 case EntityState.Modified:
-                    queries.AddRange(GetUpdateQueries(columnsGroup, tableName, primaryKeys));
+                    queries.AddRange(GetUpdateQueries(updateData[batchKey], tableName, primaryKeys));
                     break;
                 case EntityState.Deleted:
-                    queries.AddRange(GetDeleteQueries(columnsGroup, tableName, primaryKeys));
+                    queries.AddRange(GetDeleteQueries(deleteData[batchKey], tableName, primaryKeys));
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentOutOfRangeException(nameof(models), "Unrecognized query type");
             }
         }
 
-        var compiler = _compilerResolver.Resolve(providerName);
+        ICompilerWrapper compiler = _compilerResolver.Resolve(providerName);
 
         return queries.Select(compiler.Compile);
     }
 
-    private static IEnumerable<Query> GetDeleteQueries(IEnumerable<QueryDataModel> columnsGroup, string tableName,
-        string[] primaryKeyNames)
+    private static IEnumerable<Query> GetDeleteQueries(IDictionary<string, List<QueryDataModel>> queryResultGrouped,
+        string tableName,
+        IReadOnlyList<string> primaryKeyNames)
     {
-        IEnumerable<IGrouping<string, QueryDataModel>> queryResultGrouped = columnsGroup.GroupBy(GetDeleteBatchKey);
-
-        foreach (IGrouping<string, QueryDataModel> queryResults in queryResultGrouped)
+        foreach ((_, List<QueryDataModel> queryResults) in queryResultGrouped)
         {
-            QueryDataModel firstResult = queryResults.First();
+            QueryDataModel firstResult = queryResults[0];
 
             if (!primaryKeyNames.Any())
             {
@@ -120,14 +189,13 @@ public class QueryCompilerService : IQueryCompilerService
         }
     }
 
-    private static IEnumerable<Query> GetUpdateQueries(IEnumerable<QueryDataModel> columnsGroup, string tableName,
-        string[] primaryKeyNames)
+    private static IEnumerable<Query> GetUpdateQueries(IDictionary<string, List<QueryDataModel>> queryResultGrouped,
+        string tableName,
+        IReadOnlyList<string> primaryKeyNames)
     {
-        IEnumerable<IGrouping<string, QueryDataModel>> queryResultGrouped = columnsGroup.GroupBy(GetUpdateBatchKey);
-
-        foreach (IGrouping<string, QueryDataModel> queryResults in queryResultGrouped)
+        foreach ((_, List<QueryDataModel> queryResults) in queryResultGrouped)
         {
-            QueryDataModel firstResult = queryResults.First();
+            QueryDataModel firstResult = queryResults[0];
 
             IDictionary<string, object?> data = GetUpdateParams(firstResult);
 
@@ -156,12 +224,8 @@ public class QueryCompilerService : IQueryCompilerService
         }
     }
 
-    private static Query GetInsertQuery(IEnumerable<QueryDataModel> columnsGroup, string tableName)
-    {
-        Dictionary<string, object?>[] data = columnsGroup.Select(queryDataResult => queryDataResult.Data).ToArray();
-        
-        return new Query(tableName).AsInsert(data);
-    }
+    private static Query GetInsertQuery(IEnumerable<Dictionary<string, object?>> data, string tableName) =>
+        new Query(tableName).AsInsert(data);
 
     private static string GetColumnsBatchKey(QueryDataModel queryResult)
     {

@@ -4,7 +4,7 @@ namespace EFCore.Extensions.SaveOptimizer.Internal.Extensions;
 
 public static class QueryExtensions
 {
-    public static Query WherePrimaryKeysIn(this Query query, string[] primaryKeyNames,
+    public static Query WherePrimaryKeysIn(this Query query, IReadOnlyList<string> primaryKeyNames,
         IEnumerable<QueryDataModel> queryResults)
     {
         QueryDataModel[] results = queryResults.ToArray();
