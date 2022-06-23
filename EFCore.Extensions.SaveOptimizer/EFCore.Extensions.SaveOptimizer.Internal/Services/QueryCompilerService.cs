@@ -1,6 +1,7 @@
-﻿using System.Text.Json;
+﻿using System.Text;
 using EFCore.Extensions.SaveOptimizer.Internal.Exceptions;
 using EFCore.Extensions.SaveOptimizer.Internal.Extensions;
+using EFCore.Extensions.SaveOptimizer.Internal.Helpers;
 using EFCore.Extensions.SaveOptimizer.Internal.Models;
 using EFCore.Extensions.SaveOptimizer.Internal.Resolvers;
 using EFCore.Extensions.SaveOptimizer.Internal.Wrappers;
@@ -178,11 +179,9 @@ public class QueryCompilerService : IQueryCompilerService
                 .AsDelete()
                 .WherePrimaryKeysIn(primaryKeyNames, queryResults);
 
-            IDictionary<string, object?> tokens = GetConcurrencyTokens(firstResult);
-
-            if (tokens.Any())
+            if (firstResult.ConcurrencyTokens != null && firstResult.ConcurrencyTokens.Any())
             {
-                query = query.Where(tokens);
+                query = query.Where(firstResult.ConcurrencyTokens);
             }
 
             yield return query;
@@ -213,11 +212,9 @@ public class QueryCompilerService : IQueryCompilerService
                 .AsUpdate(data)
                 .WherePrimaryKeysIn(primaryKeyNames, queryResults);
 
-            IDictionary<string, object?> tokens = GetConcurrencyTokens(firstResult);
-
-            if (tokens.Any())
+            if (firstResult.ConcurrencyTokens != null && firstResult.ConcurrencyTokens.Any())
             {
-                query = query.Where(tokens);
+                query = query.Where(firstResult.ConcurrencyTokens);
             }
 
             yield return query;
@@ -229,36 +226,70 @@ public class QueryCompilerService : IQueryCompilerService
 
     private static string GetColumnsBatchKey(QueryDataModel queryResult)
     {
-        var columns = JsonSerializer.Serialize(queryResult.Data.Keys);
-
-        return $"columns_{columns}";
+        return string.Join("_", queryResult.Data.Keys);
     }
 
     private static string GetUpdateBatchKey(QueryDataModel queryResult)
     {
-        var updateParams = JsonSerializer.Serialize(GetUpdateParams(queryResult));
+        StringBuilder builder = new();
 
-        var tokens = JsonSerializer.Serialize(GetConcurrencyTokens(queryResult));
+        builder = AddUpdateParamsRepresentation(queryResult, builder);
 
-        return $"params_{updateParams}_tokens_{tokens}";
+        builder = AddTokensRepresentation(queryResult, builder);
+
+        return builder.ToString();
     }
 
     private static string GetDeleteBatchKey(QueryDataModel queryResult)
     {
-        var tokens = JsonSerializer.Serialize(GetConcurrencyTokens(queryResult));
+        StringBuilder builder = new();
 
-        return $"tokens_{tokens}";
+        builder = AddTokensRepresentation(queryResult, builder);
+
+        return builder.ToString();
     }
 
-    private static IDictionary<string, object?> GetConcurrencyTokens(QueryDataModel queryResult) =>
-        queryResult.ConcurrencyTokens ?? new Dictionary<string, object?>();
+    private static StringBuilder AddUpdateParamsRepresentation(QueryDataModel queryResult, StringBuilder builder)
+    {
+        IDictionary<string, object?> data = GetUpdateParams(queryResult);
+
+        foreach (var (key, value) in data)
+        {
+            builder.Append(SerializationHelper.Serialize(key, value));
+        }
+
+        return builder;
+    }
+
+    private static StringBuilder AddTokensRepresentation(QueryDataModel queryResult, StringBuilder builder)
+    {
+        if (queryResult.ConcurrencyTokens == null)
+        {
+            return builder;
+        }
+
+        foreach (var (key, value) in queryResult.ConcurrencyTokens)
+        {
+            builder.Append(SerializationHelper.Serialize(key, value));
+        }
+
+        return builder;
+    }
 
     private static IDictionary<string, object?> GetUpdateParams(QueryDataModel queryResult)
     {
-        HashSet<string> primaryKeys = queryResult.PrimaryKeyNames;
+        Dictionary<string, object?> dict = new();
 
-        return queryResult.Data
-            .Where(x => !primaryKeys.Contains(x.Key))
-            .ToDictionary(x => x.Key, x => x.Value);
+        foreach (var (key, value) in queryResult.Data)
+        {
+            if (queryResult.PrimaryKeyNames.Contains(key))
+            {
+                continue;
+            }
+
+            dict.Add(key, value);
+        }
+
+        return dict;
     }
 }
