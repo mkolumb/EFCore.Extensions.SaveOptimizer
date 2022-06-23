@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using EFCore.Extensions.SaveOptimizer.Internal.Constants;
 using EFCore.Extensions.SaveOptimizer.Internal.Resolvers;
 using EFCore.Extensions.SaveOptimizer.Internal.Services;
 using Microsoft.EntityFrameworkCore;
@@ -19,13 +20,19 @@ public static class DbContextExtensions
         QueryPreparerService = new QueryPreparerService(compilerService, translatorService);
     }
 
-    public static int SaveChangesOptimized(this DbContext context) => context.SaveChangesOptimized(true);
+    public static int SaveChangesOptimized(this DbContext context) =>
+        context.SaveChangesOptimized(true, InternalConstants.DefaultBatchSize);
 
-    public static int SaveChangesOptimized(this DbContext context, bool acceptAllChangesOnSuccess)
+    public static int SaveChangesOptimized(this DbContext context, bool acceptAllChangesOnSuccess) =>
+        context.SaveChangesOptimized(acceptAllChangesOnSuccess, InternalConstants.DefaultBatchSize);
+
+    public static int SaveChangesOptimized(this DbContext context,
+        bool acceptAllChangesOnSuccess,
+        int batchSize)
     {
         QueryPreparerService.Init(context);
 
-        IEnumerable<SqlResult> queries = QueryPreparerService.Prepare(context);
+        IEnumerable<SqlResult> queries = QueryPreparerService.Prepare(context, batchSize);
 
         var autoCommit = false;
 
@@ -72,14 +79,21 @@ public static class DbContextExtensions
 
     public static async Task<int> SaveChangesOptimizedAsync(this DbContext context,
         CancellationToken cancellationToken = default) =>
-        await context.SaveChangesOptimizedAsync(true, cancellationToken);
+        await context.SaveChangesOptimizedAsync(true, InternalConstants.DefaultBatchSize, cancellationToken);
 
     public static async Task<int> SaveChangesOptimizedAsync(this DbContext context, bool acceptAllChangesOnSuccess,
+        CancellationToken cancellationToken = default) =>
+        await context.SaveChangesOptimizedAsync(acceptAllChangesOnSuccess, InternalConstants.DefaultBatchSize,
+            cancellationToken);
+
+    public static async Task<int> SaveChangesOptimizedAsync(this DbContext context,
+        bool acceptAllChangesOnSuccess,
+        int batchSize,
         CancellationToken cancellationToken = default)
     {
         QueryPreparerService.Init(context);
 
-        IEnumerable<SqlResult> queries = QueryPreparerService.Prepare(context);
+        IEnumerable<SqlResult> queries = QueryPreparerService.Prepare(context, batchSize);
 
         var autoCommit = false;
 

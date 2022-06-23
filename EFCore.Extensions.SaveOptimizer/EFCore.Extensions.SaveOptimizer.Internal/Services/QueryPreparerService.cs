@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Immutable;
+using EFCore.Extensions.SaveOptimizer.Internal.Constants;
 using EFCore.Extensions.SaveOptimizer.Internal.Extensions;
 using EFCore.Extensions.SaveOptimizer.Internal.Models;
 using EFCore.Extensions.SaveOptimizer.Internal.Wrappers;
@@ -10,8 +11,6 @@ namespace EFCore.Extensions.SaveOptimizer.Internal.Services;
 
 public class QueryPreparerService : IQueryPreparerService
 {
-    private const int BatchSize = 1000;
-
     private readonly IQueryCompilerService _compilerService;
 
     private readonly ConcurrentDictionary<string, IDictionary<Type, int>> _orders;
@@ -47,7 +46,7 @@ public class QueryPreparerService : IQueryPreparerService
         }
     }
 
-    public IEnumerable<SqlResult> Prepare(DbContext context)
+    public IEnumerable<SqlResult> Prepare(DbContext context, int batchSize = InternalConstants.DefaultBatchSize)
     {
         var name = GetKey(context);
 
@@ -87,22 +86,21 @@ public class QueryPreparerService : IQueryPreparerService
 
         List<SqlResult> results = new();
 
-        var providerName = context.Database.ProviderName ??
-                           throw new ArgumentNullException(nameof(context.Database.ProviderName));
+        var providerName = context.Database.ProviderName ?? throw new ArgumentException("Provider not known");
 
         foreach ((Type type, _) in _orders[name].OrderByDescending(x => x.Value))
         {
-            results.AddRange(GetQuery(translations, EntityState.Deleted, type, providerName).SelectMany(x => x));
+            results.AddRange(GetQuery(translations, EntityState.Deleted, type, providerName, batchSize).SelectMany(x => x));
         }
 
         foreach ((Type type, _) in _orders[name].OrderBy(x => x.Value))
         {
-            results.AddRange(GetQuery(translations, EntityState.Added, type, providerName).SelectMany(x => x));
+            results.AddRange(GetQuery(translations, EntityState.Added, type, providerName, batchSize).SelectMany(x => x));
         }
 
         foreach ((Type type, _) in _orders[name].OrderBy(x => x.Value))
         {
-            results.AddRange(GetQuery(translations, EntityState.Modified, type, providerName).SelectMany(x => x));
+            results.AddRange(GetQuery(translations, EntityState.Modified, type, providerName, batchSize).SelectMany(x => x));
         }
 
         return results;
@@ -119,7 +117,10 @@ public class QueryPreparerService : IQueryPreparerService
 
     private IEnumerable<IEnumerable<SqlResult>> GetQuery(
         IReadOnlyDictionary<EntityState, Dictionary<Type, List<QueryDataModel>>> group,
-        EntityState state, Type type, string providerName)
+        EntityState state,
+        Type type,
+        string providerName,
+        int batchSize)
     {
         Dictionary<Type, List<QueryDataModel>> queries = group[state];
 
@@ -128,7 +129,7 @@ public class QueryPreparerService : IQueryPreparerService
             yield break;
         }
 
-        ImmutableArray<ImmutableArray<QueryDataModel>> data = queries[type].ToChunks(BatchSize);
+        ImmutableArray<ImmutableArray<QueryDataModel>> data = queries[type].ToChunks(batchSize);
 
         foreach (ImmutableArray<QueryDataModel> q in data)
         {

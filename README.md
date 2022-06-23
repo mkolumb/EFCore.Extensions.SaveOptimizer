@@ -130,7 +130,7 @@ powershell -File run_benchmarks.ps1
 .\run_benchmarks.ps1
 ```
 
-### INSERT
+### Results
 
 #### CockroachDB - single docker node
 
