@@ -7,6 +7,8 @@ using EFCore.Extensions.SaveOptimizer.Internal.Wrappers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
+#pragma warning disable CS8602
+
 // ReSharper disable UnusedVariable
 
 namespace EFCore.Extensions.SaveOptimizer.Internal.Load.Tests.Services;

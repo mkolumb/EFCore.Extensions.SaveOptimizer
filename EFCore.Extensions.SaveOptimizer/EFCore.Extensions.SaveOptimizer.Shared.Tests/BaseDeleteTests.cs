@@ -27,14 +27,15 @@ public abstract class BaseDeleteTests
 
         foreach (NonRelatedEntity entity in data)
         {
-            entity.SomeNonNullableIntProperty++;
-            entity.SomeNonNullableIntProperty--;
+            db.Context.NonRelatedEntities.Remove(entity);
+            db.Context.NonRelatedEntities.Update(entity);
         }
 
         // Act
         await db.Save(variant);
 
-        NonRelatedEntity[] result = await db.Context.NonRelatedEntities.OrderBy(x => x.NonRelatedEntityId).ToArrayAsync();
+        NonRelatedEntity[] result =
+            await db.Context.NonRelatedEntities.OrderBy(x => x.SomeNonNullableIntProperty).ToArrayAsync();
 
         var newState = JsonConvert.SerializeObject(result);
 
@@ -42,6 +43,62 @@ public abstract class BaseDeleteTests
         result.Should().HaveCount(10);
 
         newState.Should().BeEquivalentTo(state);
+    }
+
+    [Theory]
+    [InlineData(SaveVariant.EfCore | SaveVariant.Recreate)]
+    [InlineData(SaveVariant.EfCore | SaveVariant.Recreate | SaveVariant.WithTransaction)]
+    [InlineData(SaveVariant.Optimized | SaveVariant.Recreate)]
+    [InlineData(SaveVariant.Optimized | SaveVariant.Recreate | SaveVariant.WithTransaction)]
+    public async Task GivenSaveChanges_WhenOneObjectDeleted_ShouldDeleteData(SaveVariant variant)
+    {
+        // Arrange
+        using DbContextWrapper db = ContextWrapperResolver();
+
+        NonRelatedEntity[] data = await InitialSeed(db, variant, 3);
+
+        db.Context.NonRelatedEntities.Remove(data[0]);
+
+        // Act
+        await db.Save(variant);
+
+        NonRelatedEntity[] result =
+            await db.Context.NonRelatedEntities.OrderBy(x => x.SomeNonNullableIntProperty).ToArrayAsync();
+
+        // Assert
+        result.Should().HaveCount(2);
+        result[0].SomeNonNullableDecimalProperty.Should().Be(2.52M);
+        result[1].SomeNonNullableDecimalProperty.Should().Be(2.52M);
+    }
+
+    [Theory]
+    [InlineData(SaveVariant.EfCore | SaveVariant.Recreate)]
+    [InlineData(SaveVariant.EfCore | SaveVariant.Recreate | SaveVariant.WithTransaction)]
+    [InlineData(SaveVariant.Optimized | SaveVariant.Recreate)]
+    [InlineData(SaveVariant.Optimized | SaveVariant.Recreate | SaveVariant.WithTransaction)]
+    public async Task GivenSaveChanges_WhenMultipleObjectsDeleted_ShouldDeleteData(SaveVariant variant)
+    {
+        // Arrange
+        using DbContextWrapper db = ContextWrapperResolver();
+
+        NonRelatedEntity[] data = await InitialSeed(db, variant, 15);
+
+        for (var i = 0; i < 5; i++)
+        {
+            db.Context.NonRelatedEntities.Remove(data[i]);
+        }
+
+        // Act
+        await db.Save(variant);
+
+        NonRelatedEntity[] result =
+            await db.Context.NonRelatedEntities.OrderBy(x => x.SomeNonNullableIntProperty).ToArrayAsync();
+
+        var nonNullableIntProperties = result.Select(x => x.SomeNonNullableIntProperty).ToArray();
+
+        // Assert
+        result.Should().HaveCount(10);
+        nonNullableIntProperties.Should().ContainInOrder(5, 6, 7, 8, 9, 10, 11, 12, 13, 14);
     }
 
     private static async Task<NonRelatedEntity[]> InitialSeed(DbContextWrapper db, SaveVariant variant, int count)
@@ -53,7 +110,7 @@ public abstract class BaseDeleteTests
 
         await db.Save(variant);
 
-        return await db.Context.NonRelatedEntities.OrderBy(x => x.NonRelatedEntityId).ToArrayAsync();
+        return await db.Context.NonRelatedEntities.OrderBy(x => x.SomeNonNullableIntProperty).ToArrayAsync();
     }
 
     private static NonRelatedEntity ItemResolver(int i) =>
@@ -65,7 +122,7 @@ public abstract class BaseDeleteTests
             SomeNullableDateTimeProperty = new DateTimeOffset(2012, 11, 11, 1, 2, 3, 0, TimeSpan.Zero),
             SomeNonNullableDecimalProperty = 2.52M,
             SomeNullableDecimalProperty = 4.523M,
-            SomeNonNullableIntProperty = 1,
+            SomeNonNullableIntProperty = i,
             SomeNullableIntProperty = 11,
             SomeNonNullableStringProperty = $"some-string-{i}",
             SomeNullableStringProperty = "other-string"

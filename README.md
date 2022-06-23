@@ -88,6 +88,12 @@ This will make much easier refresh data after save if necessary, you will be abl
 - Optimize data retrieval from Change Tracker
 - GitHub actions
 - Test databases within container
+- Tests
+  - Value generated on add
+  - Auto increment primary key
+  - Value converter
+  - Mixed statements
+  - Hierarchical operations
 
 ## Migration command
 
