@@ -132,30 +132,6 @@ powershell -File run_benchmarks.ps1
 
 ### INSERT
 
-#### SqlLite
-
-TBD
-
-#### SqlServer
-
-TBD
-
-#### Oracle
-
-TBD
-
-#### MySql
-
-TBD
-
-#### PostgreSQL
-
-TBD
-
-#### Firebird
-
-TBD
-
 #### CockroachDB - single docker node
 
 | Method      | Rows  | Variant   | Mean        | Error      | Median       | Min          | Max          |
@@ -193,6 +169,43 @@ TBD
 | InsertAsync | 1000  | EF Core   | 1,993.56 ms  | 225.990 ms   | 1,951.14 ms  | 1,284.95 ms  | 3,014.77 ms  |
 | InsertAsync | 10000 | Optimized | 5,516.29 ms  | 2,842.006 ms | 5,412.93 ms  | 3,016.59 ms  | 8,488.42 ms  |
 | InsertAsync | 10000 | EF Core   | 20,122.79 ms | 1,633.778 ms | 20,256.04 ms | 13,500.72 ms | 27,940.97 ms |
+
+#### SqlLite
+
+| Method      | Rows | Variant   | Mean         | Error      | Median       | Min        | Max          |
+|-------------|------|-----------|--------------|------------|--------------|------------|--------------|
+| InsertAsync | 1    | Optimized | 2.287 ms     | 0.1987 ms  | 2.193 ms     | 1.705 ms   | 3.438 ms     |
+| InsertAsync | 1    | EF Core   | 2.166 ms     | 0.1899 ms  | 2.090 ms     | 1.695 ms   | 3.337 ms     |
+| InsertAsync | 10   | Optimized | 7.025 ms     | 0.6289 ms  | 6.757 ms     | 4.842 ms   | 9.928 ms     |
+| InsertAsync | 10   | EF Core   | 7.502 ms     | 0.7314 ms  | 7.479 ms     | 4.997 ms   | 11.344 ms    |
+| InsertAsync | 25   | Optimized | 16.939 ms    | 1.7578 ms  | 17.026 ms    | 10.462 ms  | 23.645 ms    |
+| InsertAsync | 25   | EF Core   | 15.848 ms    | 1.5884 ms  | 16.095 ms    | 10.032 ms  | 25.248 ms    |
+| InsertAsync | 50   | Optimized | 28.555 ms    | 3.2777 ms  | 27.246 ms    | 17.189 ms  | 46.990 ms    |
+| InsertAsync | 50   | EF Core   | 27.448 ms    | 2.5110 ms  | 26.423 ms    | 18.210 ms  | 37.059 ms    |
+| InsertAsync | 100  | Optimized | 56.768 ms    | 7.3173 ms  | 55.476 ms    | 31.235 ms  | 81.964 ms    |
+| InsertAsync | 100  | EF Core   | 49.896 ms    | 7.0108 ms  | 47.269 ms    | 26.899 ms  | 73.854 ms    |
+| InsertAsync | 1000 | Optimized | 1,196.481 ms | 67.2465 ms | 1,179.837 ms | 937.973 ms | 1,454.437 ms |
+| InsertAsync | 1000 | EF Core   | 430.888 ms   | 72.1050 ms | 428.233 ms   | 192.775 ms | 698.452 ms   |
+
+#### SqlServer
+
+TBD
+
+#### Oracle
+
+TBD
+
+#### MySql
+
+TBD
+
+#### PostgreSQL
+
+TBD
+
+#### Firebird
+
+TBD
 
 ## Remarks
 
