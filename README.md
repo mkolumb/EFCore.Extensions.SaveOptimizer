@@ -159,11 +159,41 @@ TBD
 
 #### CockroachDB - single docker node
 
-TBD
+|      Method |  Rows |   Variant |        Mean |      Error |       StdDev |     StdErr |       Median |          Min |          Max |
+|------------ |------ |---------- |------------:|-----------:|-------------:|-----------:|-------------:|-------------:|-------------:|
+| InsertAsync |     1 | Optimized |    10.17 ms |   0.652 ms |     1.317 ms |   0.186 ms |     9.840 ms |     8.095 ms |     14.14 ms |
+| InsertAsync |     1 | EF Core   |    11.71 ms |   0.995 ms |     2.010 ms |   0.284 ms |    11.357 ms |     9.340 ms |     18.26 ms |
+| InsertAsync |    10 | Optimized |    14.46 ms |   0.864 ms |     1.746 ms |   0.247 ms |    14.119 ms |    12.077 ms |     19.87 ms |
+| InsertAsync |    10 | EF Core   |    60.71 ms |   0.815 ms |     1.645 ms |   0.233 ms |    60.493 ms |    55.334 ms |     65.75 ms |
+| InsertAsync |    25 | Optimized |    21.93 ms |   1.119 ms |     2.261 ms |   0.320 ms |    21.954 ms |    17.452 ms |     25.74 ms |
+| InsertAsync |    25 | EF Core   |    46.27 ms |   3.228 ms |     6.522 ms |   0.922 ms |    46.950 ms |    30.909 ms |     59.11 ms |
+| InsertAsync |    50 | Optimized |    31.96 ms |   2.328 ms |     4.704 ms |   0.665 ms |    31.650 ms |    23.543 ms |     42.29 ms |
+| InsertAsync |    50 | EF Core   |    65.48 ms |   4.262 ms |     8.609 ms |   1.217 ms |    65.888 ms |    49.199 ms |     82.25 ms |
+| InsertAsync |   100 | Optimized |    58.07 ms |   7.676 ms |    15.505 ms |   2.193 ms |    55.675 ms |    32.708 ms |     97.82 ms |
+| InsertAsync |   100 | EF Core   |   102.57 ms |   7.028 ms |    14.197 ms |   2.008 ms |   101.253 ms |    79.008 ms |    140.81 ms |
+| InsertAsync |  1000 | Optimized |   460.28 ms |  63.296 ms |   127.861 ms |  18.082 ms |   454.208 ms |   257.897 ms |    671.97 ms |
+| InsertAsync |  1000 | EF Core   |   682.31 ms |  58.695 ms |   118.567 ms |  16.768 ms |   688.391 ms |   488.458 ms |    885.48 ms |
+| InsertAsync | 10000 | Optimized | 4,640.29 ms | 694.274 ms | 1,402.468 ms | 198.339 ms | 4,615.951 ms | 2,443.311 ms |  7,358.03 ms |
+| InsertAsync | 10000 | EF Core   | 7,630.47 ms | 785.283 ms | 1,586.310 ms | 224.338 ms | 7,009.984 ms | 5,799.234 ms | 11,372.97 ms |
 
 #### CockroachDB - nine docker nodes
 
-TBD
+|      Method |  Rows |    ariant |         Mean |        Error |       StdDev |     StdErr |          Min |          Max |       Median |
+|------------ |------ |---------- |-------------:|-------------:|-------------:|-----------:|-------------:|-------------:|-------------:|
+| InsertAsync |     1 | Optimized |     21.16 ms |     1.885 ms |     3.807 ms |   0.538 ms |     16.18 ms |     33.57 ms |     20.31 ms |
+| InsertAsync |     1 | EF Core   |     21.15 ms |     1.394 ms |     2.817 ms |   0.398 ms |     15.88 ms |     32.41 ms |     20.41 ms |
+| InsertAsync |    10 | Optimized |     25.17 ms |     1.223 ms |     2.471 ms |   0.349 ms |     21.08 ms |     31.57 ms |     24.52 ms |
+| InsertAsync |    10 | EF Core   |     76.67 ms |     1.772 ms |     3.580 ms |   0.506 ms |     71.14 ms |     87.05 ms |     76.18 ms |
+| InsertAsync |    25 | Optimized |     34.18 ms |     2.214 ms |     4.472 ms |   0.632 ms |     24.85 ms |     49.15 ms |     33.07 ms |
+| InsertAsync |    25 | EF Core   |     93.90 ms |     4.585 ms |     9.262 ms |   1.310 ms |     78.24 ms |    126.30 ms |     93.01 ms |
+| InsertAsync |    50 | Optimized |     46.73 ms |     4.402 ms |     8.893 ms |   1.258 ms |     35.10 ms |     77.57 ms |     45.99 ms |
+| InsertAsync |    50 | EF Core   |    117.21 ms |     5.161 ms |    10.426 ms |   1.474 ms |     90.53 ms |    146.95 ms |    118.13 ms |
+| InsertAsync |   100 | Optimized |     63.66 ms |     6.524 ms |    13.179 ms |   1.864 ms |     42.38 ms |     87.64 ms |     62.56 ms |
+| InsertAsync |   100 | EF Core   |    196.49 ms |     8.679 ms |    17.532 ms |   2.479 ms |    166.72 ms |    241.54 ms |    196.59 ms |
+| InsertAsync |  1000 | Optimized |    606.18 ms |    76.693 ms |   154.924 ms |  21.909 ms |    333.27 ms |    869.72 ms |    587.11 ms |
+| InsertAsync |  1000 | EF Core   |  1,993.56 ms |   225.990 ms |   456.511 ms |  64.560 ms |  1,284.95 ms |  3,014.77 ms |  1,951.14 ms |
+| InsertAsync | 10000 | Optimized |  5,516.29 ms | 2,842.006 ms | 1,879.811 ms | 594.448 ms |  3,016.59 ms |  8,488.42 ms |  5,412.93 ms |
+| InsertAsync | 10000 | EF Core   | 20,122.79 ms | 1,633.778 ms | 3,300.313 ms | 466.735 ms | 13,500.72 ms | 27,940.97 ms | 20,256.04 ms |
 
 ## Remarks
 
