@@ -106,7 +106,6 @@ $name = "[NAME]"
 ### Summary
 
 SaveOptimizer is not always better than pure EF Core methods. EF Core contains tons of optimizations so for small operations and simple workloads likely is better. 
-I noticed that range 1-100 for INSERT is unpredictable - almost each benchmark run produces different results. 
 
 My advice is to compare results in your real environment. Honestly - the best choice for pure performance is leave EF Core for write operations at all and then write statements from scratch. But this library could bring serious performance benefits in many scenarios without big effort. 
 
