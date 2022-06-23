@@ -3,11 +3,11 @@ using EFCore.Extensions.SaveOptimizer.Model;
 
 namespace EFCore.Extensions.SaveOptimizer.Shared.Benchmark;
 
-public abstract class BaseInsertBenchmark : BaseBenchmark
+public abstract class BaseDeleteBenchmark : BaseBenchmark
 {
-    public override string Operation => "Insert";
+    public override string Operation => "Delete";
 
-    protected BaseInsertBenchmark(IWrapperResolver contextResolver) : base(contextResolver)
+    protected BaseDeleteBenchmark(IWrapperResolver contextResolver) : base(contextResolver)
     {
     }
 
@@ -19,16 +19,16 @@ public abstract class BaseInsertBenchmark : BaseBenchmark
             throw new ArgumentNullException(nameof(Context));
         }
 
+        IReadOnlyList<NonRelatedEntity> items = Context.RetrieveData(Rows).GetAwaiter().GetResult();
+
         for (var i = 0L; i < Rows; i++)
         {
-            NonRelatedEntity entity = Context.CreateItem(i);
-
-            Context.Context.NonRelatedEntities.Add(entity);
+            Context.Context.Remove(items[(int)i]);
         }
     }
 
     [Benchmark(OperationsPerInvoke = 1)]
-    public async Task InsertAsync()
+    public async Task DeleteAsync()
     {
         if (Context == null)
         {

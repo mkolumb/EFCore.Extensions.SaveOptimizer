@@ -50,6 +50,7 @@ public static class DbContextExtensions
             // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (SqlResult sql in queries)
             {
+                Console.WriteLine(sql.Sql);
                 rows += context.Database.ExecuteSqlRaw(sql.Sql, sql.Bindings);
             }
 

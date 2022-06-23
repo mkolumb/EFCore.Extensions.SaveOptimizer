@@ -6,5 +6,9 @@ public interface IDbContextWrapper : IDisposable
 {
     EntitiesContext Context { get; }
     Task Truncate();
+    Task Seed(long count);
     Task Save(SaveVariant variant);
+    Task<IReadOnlyList<Guid>> RetrieveIds(long count);
+    Task<IReadOnlyList<NonRelatedEntity>> RetrieveData(long count);
+    NonRelatedEntity CreateItem(long i);
 }

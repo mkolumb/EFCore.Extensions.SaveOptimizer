@@ -3,11 +3,13 @@ using EFCore.Extensions.SaveOptimizer.Model;
 
 namespace EFCore.Extensions.SaveOptimizer.Shared.Benchmark;
 
-public abstract class BaseInsertBenchmark : BaseBenchmark
+public abstract class BaseUpdateBenchmark : BaseBenchmark
 {
-    public override string Operation => "Insert";
+    private int _iterations;
 
-    protected BaseInsertBenchmark(IWrapperResolver contextResolver) : base(contextResolver)
+    public override string Operation => "Update";
+
+    protected BaseUpdateBenchmark(IWrapperResolver contextResolver) : base(contextResolver)
     {
     }
 
@@ -19,16 +21,18 @@ public abstract class BaseInsertBenchmark : BaseBenchmark
             throw new ArgumentNullException(nameof(Context));
         }
 
+        _iterations++;
+
+        IReadOnlyList<NonRelatedEntity> items = Context.RetrieveData(Rows).GetAwaiter().GetResult();
+
         for (var i = 0L; i < Rows; i++)
         {
-            NonRelatedEntity entity = Context.CreateItem(i);
-
-            Context.Context.NonRelatedEntities.Add(entity);
+            items[(int)i].SomeNullableDecimalProperty = 9.181M + _iterations;
         }
     }
 
     [Benchmark(OperationsPerInvoke = 1)]
-    public async Task InsertAsync()
+    public async Task UpdateAsync()
     {
         if (Context == null)
         {
