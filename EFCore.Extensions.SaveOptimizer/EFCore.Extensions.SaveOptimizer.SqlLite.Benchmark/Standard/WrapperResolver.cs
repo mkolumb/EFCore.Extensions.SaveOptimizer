@@ -1,8 +1,9 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Model;
 using EFCore.Extensions.SaveOptimizer.Shared.Benchmark;
+using EFCore.Extensions.SaveOptimizer.SqlLite.Benchmark.Specific;
 using Microsoft.EntityFrameworkCore;
 
-namespace EFCore.Extensions.SaveOptimizer.SqlLite.Benchmark;
+namespace EFCore.Extensions.SaveOptimizer.SqlLite.Benchmark.Standard;
 
 public class WrapperResolver : IWrapperResolver
 {

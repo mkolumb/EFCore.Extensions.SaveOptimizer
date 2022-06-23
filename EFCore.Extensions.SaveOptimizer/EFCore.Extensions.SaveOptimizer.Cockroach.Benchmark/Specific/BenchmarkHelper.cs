@@ -1,11 +1,12 @@
 ﻿using System.Data.Common;
+using EFCore.Extensions.SaveOptimizer.Cockroach.Benchmark.Standard;
 using EFCore.Extensions.SaveOptimizer.Model;
 using EFCore.Extensions.SaveOptimizer.Shared.Benchmark;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 
-namespace EFCore.Extensions.SaveOptimizer.Cockroach.Benchmark;
+namespace EFCore.Extensions.SaveOptimizer.Cockroach.Benchmark.Specific;
 
 public static class BenchmarkHelper
 {

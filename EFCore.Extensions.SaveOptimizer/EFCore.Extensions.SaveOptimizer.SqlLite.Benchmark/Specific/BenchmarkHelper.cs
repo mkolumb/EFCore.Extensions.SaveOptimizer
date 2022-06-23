@@ -1,9 +1,10 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Model;
 using EFCore.Extensions.SaveOptimizer.Shared.Benchmark;
+using EFCore.Extensions.SaveOptimizer.SqlLite.Benchmark.Standard;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EFCore.Extensions.SaveOptimizer.SqlLite.Benchmark;
+namespace EFCore.Extensions.SaveOptimizer.SqlLite.Benchmark.Specific;
 
 public static class BenchmarkHelper
 {

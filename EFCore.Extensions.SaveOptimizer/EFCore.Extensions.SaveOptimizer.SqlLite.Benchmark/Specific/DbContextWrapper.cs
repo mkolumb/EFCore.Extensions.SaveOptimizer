@@ -2,7 +2,7 @@
 using EFCore.Extensions.SaveOptimizer.Shared.Benchmark;
 using Microsoft.EntityFrameworkCore;
 
-namespace EFCore.Extensions.SaveOptimizer.Cockroach.Benchmark;
+namespace EFCore.Extensions.SaveOptimizer.SqlLite.Benchmark.Specific;
 
 public class DbContextWrapper : DbContextWrapperBase
 {
@@ -12,7 +12,7 @@ public class DbContextWrapper : DbContextWrapperBase
 
     public override async Task Truncate()
     {
-        const string query = "truncate \"NonRelatedEntities\";";
+        const string query = "DELETE FROM NonRelatedEntities";
 
         await Context.Database.ExecuteSqlRawAsync(query);
     }
