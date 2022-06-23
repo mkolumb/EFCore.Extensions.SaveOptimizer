@@ -1,15 +1,14 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Shared.Tests;
+using Xunit;
+
+// ReSharper disable UnusedMember.Global
 
 namespace EFCore.Extensions.SaveOptimizer.SqlLite.Tests;
 
-// ReSharper disable once UnusedMember.Global
+[Collection("SqlLite")]
 public class InsertTests : BaseInsertTests
 {
     public InsertTests() : base(WrapperResolver.ContextWrapperResolver)
     {
     }
 }
-
-// ReSharper disable once UnusedMember.Global
-
-// ReSharper disable once UnusedMember.Global
