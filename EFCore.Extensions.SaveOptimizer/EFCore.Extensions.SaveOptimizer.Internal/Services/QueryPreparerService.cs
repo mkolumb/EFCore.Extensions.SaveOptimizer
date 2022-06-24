@@ -95,9 +95,9 @@ public class QueryPreparerService : IQueryPreparerService
 
             dictionary[translation.EntityType].Add(translation);
 
-            if (paramsDictionary[translation.EntityType] < translation.RetrievePropertiesCount())
+            if (paramsDictionary[translation.EntityType] < translation.PropertiesCount)
             {
-                paramsDictionary[translation.EntityType] = translation.RetrievePropertiesCount();
+                paramsDictionary[translation.EntityType] = translation.PropertiesCount;
             }
         }
 

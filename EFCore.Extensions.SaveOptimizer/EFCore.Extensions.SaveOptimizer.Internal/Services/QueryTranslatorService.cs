@@ -28,6 +28,8 @@ public class QueryTranslatorService : IQueryTranslatorService
 
         Dictionary<string, object?> tokens = new();
 
+        var propertiesCount = 0;
+
         foreach (PropertyEntry property in properties)
         {
             var columnName = model.GetColumn(entityType, property.Metadata.Name);
@@ -35,6 +37,8 @@ public class QueryTranslatorService : IQueryTranslatorService
             if (property.Metadata.IsConcurrencyToken)
             {
                 tokens.Add(columnName, property.CurrentValue);
+
+                propertiesCount++;
             }
 
             if (property.Metadata.IsPrimaryKey())
@@ -42,6 +46,8 @@ public class QueryTranslatorService : IQueryTranslatorService
                 primaryKeyNames.Add(columnName);
 
                 data.Add(columnName, property.CurrentValue);
+
+                propertiesCount++;
 
                 continue;
             }
@@ -51,12 +57,19 @@ public class QueryTranslatorService : IQueryTranslatorService
                 continue;
             }
 
-            if (property.Metadata.ValueGenerated == ValueGenerated.Never)
+            if (property.Metadata.ValueGenerated != ValueGenerated.Never)
             {
-                data.Add(columnName, property.CurrentValue);
+                continue;
+            }
+
+            data.Add(columnName, property.CurrentValue);
+
+            if (!property.Metadata.IsConcurrencyToken)
+            {
+                propertiesCount++;
             }
         }
 
-        return new QueryDataModel(entityType, entry.State, schemaName, tableName, data, primaryKeyNames, tokens);
+        return new QueryDataModel(entityType, entry.State, schemaName, tableName, data, primaryKeyNames, tokens, propertiesCount);
     }
 }

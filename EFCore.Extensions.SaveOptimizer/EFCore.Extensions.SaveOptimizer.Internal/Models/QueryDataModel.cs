@@ -18,13 +18,16 @@ public class QueryDataModel
 
     public Dictionary<string, object?>? ConcurrencyTokens { get; }
 
+    public int PropertiesCount { get; }
+
     public QueryDataModel(Type entityType,
         EntityState entityState,
         string? schemaName,
         string tableName,
         Dictionary<string, object?> data,
         HashSet<string> primaryKeyNames,
-        Dictionary<string, object?> concurrencyTokens)
+        Dictionary<string, object?> concurrencyTokens,
+        int propertiesCount)
     {
         EntityType = entityType;
         EntityState = entityState;
@@ -33,30 +36,6 @@ public class QueryDataModel
         Data = data;
         PrimaryKeyNames = primaryKeyNames;
         ConcurrencyTokens = concurrencyTokens;
-    }
-
-    public int RetrievePropertiesCount()
-    {
-        HashSet<string> keys = new();
-
-        foreach (var key in PrimaryKeyNames)
-        {
-            keys.Add(key);
-        }
-
-        if (ConcurrencyTokens?.Keys != null)
-        {
-            foreach (var key in ConcurrencyTokens.Keys)
-            {
-                keys.Add(key);
-            }
-        }
-
-        foreach (var key in Data.Keys)
-        {
-            keys.Add(key);
-        }
-
-        return keys.Count;
+        PropertiesCount = propertiesCount;
     }
 }
