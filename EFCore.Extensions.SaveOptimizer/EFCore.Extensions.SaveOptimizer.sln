@@ -64,7 +64,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CockroachMulti", "Cockroach
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.Extensions.SaveOptimizer.Model.CockroachMulti", "EFCore.Extensions.SaveOptimizer.Model.CockroachMulti\EFCore.Extensions.SaveOptimizer.Model.CockroachMulti.csproj", "{BBC795A0-F636-414C-BEB8-368C3ABAEA86}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.Extensions.SaveOptimizer.Cockroach.Benchmark", "EFCore.Extensions.SaveOptimizer.CockroachMulti.Benchmark\EFCore.Extensions.SaveOptimizer.Cockroach.Benchmark.csproj", "{1F457272-F09C-44BE-9081-A98847FB31F3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.Extensions.SaveOptimizer.CockroachMulti.Benchmark", "EFCore.Extensions.SaveOptimizer.CockroachMulti.Benchmark\EFCore.Extensions.SaveOptimizer.CockroachMulti.Benchmark.csproj", "{1F457272-F09C-44BE-9081-A98847FB31F3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.Extensions.SaveOptimizer.CockroachMulti.Tests", "EFCore.Extensions.SaveOptimizer.CockroachMulti.Tests\EFCore.Extensions.SaveOptimizer.CockroachMulti.Tests.csproj", "{9477C3C9-F293-48D4-9E29-D20F2F3832F0}"
 EndProject
