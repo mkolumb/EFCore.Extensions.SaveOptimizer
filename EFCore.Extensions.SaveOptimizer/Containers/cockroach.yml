@@ -6,8 +6,8 @@ services:
     image: cockroachdb/cockroach:latest-v22.1
     command: start-single-node --insecure --locality=region=us,zone=us-east
     ports:
-      - '26257:26257'
-      - '8080:8080'
+      - '26258:26257'
+      - '8081:8080'
     volumes:
       - 'optimizerroachdbdata:/cockroach/cockroach-data'
     networks:

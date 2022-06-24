@@ -1,14 +1,14 @@
-﻿using EFCore.Extensions.SaveOptimizer.Model.Cockroach;
+﻿using EFCore.Extensions.SaveOptimizer.Model.Postgres;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests;
 using Microsoft.EntityFrameworkCore;
 
-namespace EFCore.Extensions.SaveOptimizer.Cockroach.Tests;
+namespace EFCore.Extensions.SaveOptimizer.Postgres.Tests;
 
 public static class WrapperResolver
 {
     public static DbContextWrapper ContextWrapperResolver()
     {
-        CockroachDesignTimeFactory factory = new();
+        PostgresDesignTimeFactory factory = new();
 
         DbContextWrapper wrapper = new(factory);
 

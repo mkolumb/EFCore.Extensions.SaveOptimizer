@@ -35,3 +35,13 @@ dotnet ef migrations add $name
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Model.Postgres
 dotnet ef migrations add $name
+
+# Cockroach
+Set-Location $workingDir
+Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Model.Cockroach
+dotnet ef migrations add $name
+
+# CockroachMulti
+Set-Location $workingDir
+Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Model.CockroachMulti
+dotnet ef migrations add $name

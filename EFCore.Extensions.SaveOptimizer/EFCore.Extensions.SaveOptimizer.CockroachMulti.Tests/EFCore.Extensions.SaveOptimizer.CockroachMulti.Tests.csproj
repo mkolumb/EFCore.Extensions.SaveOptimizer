@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EFCore.Extensions.SaveOptimizer.Model.Cockroach\EFCore.Extensions.SaveOptimizer.Model.Cockroach.csproj" />
+    <ProjectReference Include="..\EFCore.Extensions.SaveOptimizer.Model.CockroachMulti\EFCore.Extensions.SaveOptimizer.Model.CockroachMulti.csproj" />
     <ProjectReference Include="..\EFCore.Extensions.SaveOptimizer.Shared.Tests\EFCore.Extensions.SaveOptimizer.Shared.Tests.csproj" />
     <ProjectReference Include="..\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.csproj" />
   </ItemGroup>

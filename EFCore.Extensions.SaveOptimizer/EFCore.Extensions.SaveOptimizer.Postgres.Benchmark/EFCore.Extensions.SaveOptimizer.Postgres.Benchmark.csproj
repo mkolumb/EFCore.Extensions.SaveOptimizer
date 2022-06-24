@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EFCore.Extensions.SaveOptimizer.Shared.Benchmark\EFCore.Extensions.SaveOptimizer.Shared.Benchmark.csproj" />
-    <ProjectReference Include="..\EFCore.Extensions.SaveOptimizer.Model.Cockroach\EFCore.Extensions.SaveOptimizer.Model.Cockroach.csproj" />
+    <ProjectReference Include="..\EFCore.Extensions.SaveOptimizer.Model.Postgres\EFCore.Extensions.SaveOptimizer.Model.Postgres.csproj" />
   </ItemGroup>
 
 </Project>

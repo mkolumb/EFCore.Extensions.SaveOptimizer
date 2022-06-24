@@ -1,12 +1,12 @@
 ﻿using System.Data.Common;
-using EFCore.Extensions.SaveOptimizer.Cockroach.Benchmark.Standard;
 using EFCore.Extensions.SaveOptimizer.Model;
+using EFCore.Extensions.SaveOptimizer.Postgres.Benchmark.Standard;
 using EFCore.Extensions.SaveOptimizer.Shared.Benchmark;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 
-namespace EFCore.Extensions.SaveOptimizer.Cockroach.Benchmark.Specific;
+namespace EFCore.Extensions.SaveOptimizer.Postgres.Benchmark.Specific;
 
 public static class BenchmarkHelper
 {
@@ -17,7 +17,7 @@ public static class BenchmarkHelper
         ServiceCollection collection = new();
 
         collection.AddDbContextFactory<EntitiesContext>(builder => builder.UseNpgsql(connection,
-            cfg => cfg.MigrationsAssembly("EFCore.Extensions.SaveOptimizer.Model.Cockroach")));
+            cfg => cfg.MigrationsAssembly("EFCore.Extensions.SaveOptimizer.Model.Postgres")));
 
         collection.AddSingleton<IWrapperResolver, WrapperResolver>();
 
@@ -30,7 +30,7 @@ public static class BenchmarkHelper
 
     public static DbConnection GetConnection()
     {
-        const string connectionString = "Host=localhost;Port=26258;SSL Mode=Disable;Username=root;Database=test_db";
+        const string connectionString = "Host=localhost;Port=26257;SSL Mode=Disable;Username=root;Database=test_db";
 
         NpgsqlConnection conn = new(connectionString);
 

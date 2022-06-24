@@ -54,6 +54,20 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.Extensions.SaveOptim
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.Extensions.SaveOptimizer.SqlServer.Benchmark", "EFCore.Extensions.SaveOptimizer.SqlServer.Benchmark\EFCore.Extensions.SaveOptimizer.SqlServer.Benchmark.csproj", "{C5716084-3941-4BCC-9CBE-35EA29858B6E}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.Extensions.SaveOptimizer.Postgres.Benchmark", "EFCore.Extensions.SaveOptimizer.Postgres.Benchmark\EFCore.Extensions.SaveOptimizer.Postgres.Benchmark.csproj", "{C186FD49-7E9B-4972-8A24-F8771027FEEB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.Extensions.SaveOptimizer.Postgres.Tests", "EFCore.Extensions.SaveOptimizer.Postgres.Tests\EFCore.Extensions.SaveOptimizer.Postgres.Tests.csproj", "{F89B6095-BA12-42C9-B368-BF8A96482246}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.Extensions.SaveOptimizer.Model.Cockroach", "EFCore.Extensions.SaveOptimizer.Model.Cockroach\EFCore.Extensions.SaveOptimizer.Model.Cockroach.csproj", "{D74D64FA-B5AE-4A12-A847-CA99E2F78740}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CockroachMulti", "CockroachMulti", "{B10917EC-4C67-4C71-B549-30BDB7F434D4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.Extensions.SaveOptimizer.Model.CockroachMulti", "EFCore.Extensions.SaveOptimizer.Model.CockroachMulti\EFCore.Extensions.SaveOptimizer.Model.CockroachMulti.csproj", "{BBC795A0-F636-414C-BEB8-368C3ABAEA86}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.Extensions.SaveOptimizer.Cockroach.Benchmark", "EFCore.Extensions.SaveOptimizer.CockroachMulti.Benchmark\EFCore.Extensions.SaveOptimizer.Cockroach.Benchmark.csproj", "{1F457272-F09C-44BE-9081-A98847FB31F3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.Extensions.SaveOptimizer.CockroachMulti.Tests", "EFCore.Extensions.SaveOptimizer.CockroachMulti.Tests\EFCore.Extensions.SaveOptimizer.CockroachMulti.Tests.csproj", "{9477C3C9-F293-48D4-9E29-D20F2F3832F0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -124,6 +138,30 @@ Global
 		{C5716084-3941-4BCC-9CBE-35EA29858B6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C5716084-3941-4BCC-9CBE-35EA29858B6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C5716084-3941-4BCC-9CBE-35EA29858B6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C186FD49-7E9B-4972-8A24-F8771027FEEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C186FD49-7E9B-4972-8A24-F8771027FEEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C186FD49-7E9B-4972-8A24-F8771027FEEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C186FD49-7E9B-4972-8A24-F8771027FEEB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F89B6095-BA12-42C9-B368-BF8A96482246}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F89B6095-BA12-42C9-B368-BF8A96482246}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F89B6095-BA12-42C9-B368-BF8A96482246}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F89B6095-BA12-42C9-B368-BF8A96482246}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D74D64FA-B5AE-4A12-A847-CA99E2F78740}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D74D64FA-B5AE-4A12-A847-CA99E2F78740}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D74D64FA-B5AE-4A12-A847-CA99E2F78740}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D74D64FA-B5AE-4A12-A847-CA99E2F78740}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BBC795A0-F636-414C-BEB8-368C3ABAEA86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BBC795A0-F636-414C-BEB8-368C3ABAEA86}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BBC795A0-F636-414C-BEB8-368C3ABAEA86}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BBC795A0-F636-414C-BEB8-368C3ABAEA86}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F457272-F09C-44BE-9081-A98847FB31F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F457272-F09C-44BE-9081-A98847FB31F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F457272-F09C-44BE-9081-A98847FB31F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F457272-F09C-44BE-9081-A98847FB31F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9477C3C9-F293-48D4-9E29-D20F2F3832F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9477C3C9-F293-48D4-9E29-D20F2F3832F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9477C3C9-F293-48D4-9E29-D20F2F3832F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9477C3C9-F293-48D4-9E29-D20F2F3832F0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -150,6 +188,13 @@ Global
 		{9BB1A8C2-01B7-42C6-B2A8-4910770FE7E3} = {0908ED14-EEFE-4C68-84D0-6479A0DC3402}
 		{8C21098D-8FA9-4645-B6DF-591EC21D4060} = {0908ED14-EEFE-4C68-84D0-6479A0DC3402}
 		{C5716084-3941-4BCC-9CBE-35EA29858B6E} = {0908ED14-EEFE-4C68-84D0-6479A0DC3402}
+		{C186FD49-7E9B-4972-8A24-F8771027FEEB} = {E879B7FD-A72D-4648-B887-B56EC8923D47}
+		{F89B6095-BA12-42C9-B368-BF8A96482246} = {E879B7FD-A72D-4648-B887-B56EC8923D47}
+		{D74D64FA-B5AE-4A12-A847-CA99E2F78740} = {7EC3837A-FEF4-4AFD-A542-B8F06D563B8B}
+		{B10917EC-4C67-4C71-B549-30BDB7F434D4} = {AAA2E26A-4421-4F88-8A0C-05C13DFB9435}
+		{BBC795A0-F636-414C-BEB8-368C3ABAEA86} = {B10917EC-4C67-4C71-B549-30BDB7F434D4}
+		{1F457272-F09C-44BE-9081-A98847FB31F3} = {B10917EC-4C67-4C71-B549-30BDB7F434D4}
+		{9477C3C9-F293-48D4-9E29-D20F2F3832F0} = {B10917EC-4C67-4C71-B549-30BDB7F434D4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AD2F8CF4-9238-4492-A1F6-495E5B55687D}

@@ -6,8 +6,8 @@ services:
     image: cockroachdb/cockroach:latest-v22.1
     command: start --insecure --locality=region=us,zone=us-east --join=optimizerroachmulti11,optimizerroachmulti12,optimizerroachmulti13,optimizerroachmulti21,optimizerroachmulti22,optimizerroachmulti23,optimizerroachmulti31,optimizerroachmulti32,optimizerroachmulti33
     ports:
-      - '26257:26257'
-      - '8080:8080'
+      - '26259:26257'
+      - '8082:8080'
     volumes:
       - 'optimizerroachmulti11dbdata:/cockroach/cockroach-data'
     networks:
