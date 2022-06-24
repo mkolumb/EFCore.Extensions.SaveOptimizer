@@ -88,6 +88,7 @@ Please note it is not working exactly as SaveChanges, so you should verify it wo
   - Mixed statements
   - Hierarchical operations
   - Data types precision (date, decimal etc.)
+  - Update concurrency tokens
 
 ## Limitations
 
