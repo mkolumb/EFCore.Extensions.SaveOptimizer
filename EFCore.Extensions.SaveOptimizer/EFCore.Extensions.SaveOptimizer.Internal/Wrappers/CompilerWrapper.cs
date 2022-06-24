@@ -25,7 +25,7 @@ public class CompilerWrapper : ICompilerWrapper
             { typeof(PostgresCompiler), () => MaxParametersCount = 31768 },
             { typeof(MySqlCompiler), () => MaxParametersCount = 15384 },
             { typeof(FirebirdCompiler), () => MaxParametersCount = 15384 },
-            { typeof(SqliteCompiler), () => MaxParametersCount = 31768 },
+            { typeof(SqliteCompiler), () => MaxParametersCount = 512 },
             { typeof(OracleCompiler), () => MaxParametersCount = 15384 }
         };
 
