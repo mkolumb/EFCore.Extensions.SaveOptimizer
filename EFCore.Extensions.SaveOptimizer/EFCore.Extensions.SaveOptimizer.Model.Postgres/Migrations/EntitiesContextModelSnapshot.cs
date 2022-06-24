@@ -68,6 +68,8 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Postgres.Migrations
 
                     b.HasKey("NonRelatedEntityId");
 
+                    b.HasIndex("ConcurrencyToken", "NonRelatedEntityId");
+
                     b.ToTable("NonRelatedEntities");
                 });
 #pragma warning restore 612, 618

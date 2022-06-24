@@ -29,6 +29,11 @@ namespace EFCore.Extensions.SaveOptimizer.Model.SqlLite.Migrations
                 {
                     table.PrimaryKey("PK_NonRelatedEntities", x => x.NonRelatedEntityId);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_NonRelatedEntities_ConcurrencyToken_NonRelatedEntityId",
+                table: "NonRelatedEntities",
+                columns: new[] { "ConcurrencyToken", "NonRelatedEntityId" });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

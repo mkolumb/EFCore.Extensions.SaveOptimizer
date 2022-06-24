@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace EFCore.Extensions.SaveOptimizer.Model.Postgres.Migrations
+namespace EFCore.Extensions.SaveOptimizer.Model.CockroachMulti.Migrations
 {
     public partial class InitialCreate : Migration
     {
@@ -29,6 +29,11 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Postgres.Migrations
                 {
                     table.PrimaryKey("PK_NonRelatedEntities", x => x.NonRelatedEntityId);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_NonRelatedEntities_ConcurrencyToken_NonRelatedEntityId",
+                table: "NonRelatedEntities",
+                columns: new[] { "ConcurrencyToken", "NonRelatedEntityId" });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

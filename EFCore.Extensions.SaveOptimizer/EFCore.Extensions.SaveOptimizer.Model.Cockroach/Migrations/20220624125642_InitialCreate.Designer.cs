@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EFCore.Extensions.SaveOptimizer.Model.Cockroach.Migrations
 {
     [DbContext(typeof(EntitiesContext))]
-    [Migration("20220624100904_InitialCreate")]
+    [Migration("20220624125642_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -69,6 +69,8 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Cockroach.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("NonRelatedEntityId");
+
+                    b.HasIndex("ConcurrencyToken", "NonRelatedEntityId");
 
                     b.ToTable("NonRelatedEntities");
                 });

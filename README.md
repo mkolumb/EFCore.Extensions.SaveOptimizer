@@ -122,7 +122,7 @@ $name = "[NAME]"
 
 SaveOptimizer is not always better than pure EF Core methods. EF Core contains tons of optimizations so for small operations and simple workloads likely is better. 
 
-My advice is to compare results in your real environment. Honestly - the best choice for pure performance is leave EF Core for write operations at all and then write statements from scratch. But this library could bring serious performance benefits in many scenarios without big effort. 
+My advice is to compare results in your real environment. Honestly - the best choice for pure performance is leave EF Core for write operations at all and then write statements from scratch for your scenarios. But this library could bring serious performance benefits in many scenarios without big effort. 
 
 All benchmarks uses serializable isolation level.
 

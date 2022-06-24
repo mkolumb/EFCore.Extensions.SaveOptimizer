@@ -13,11 +13,17 @@ public class EntitiesContext : DbContext
     {
     }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder) =>
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
         modelBuilder.Entity<NonRelatedEntity>(
             eb =>
             {
                 eb.Property(b => b.SomeNullableDecimalProperty).HasPrecision(12, 6);
                 eb.Property(b => b.SomeNonNullableDecimalProperty).HasPrecision(12, 6);
             });
+
+        modelBuilder.Entity<NonRelatedEntity>()
+            .HasIndex(x => new { x.ConcurrencyToken, x.NonRelatedEntityId })
+            .IsUnique(false);
+    }
 }
