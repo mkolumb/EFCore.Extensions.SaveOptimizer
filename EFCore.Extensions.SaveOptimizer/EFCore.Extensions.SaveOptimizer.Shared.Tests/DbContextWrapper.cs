@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using EFCore.Extensions.SaveOptimizer.Internal.Constants;
 using EFCore.Extensions.SaveOptimizer.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
@@ -35,13 +36,13 @@ public sealed class DbContextWrapper : IDisposable
         Context = _factory.CreateDbContext(new[] { connectionString });
     }
 
-    public async Task Save(SaveVariant variant)
+    public async Task Save(SaveVariant variant, int batchSize = InternalConstants.DefaultBatchSize)
     {
         async Task InternalSave()
         {
             if ((variant & SaveVariant.Optimized) != 0)
             {
-                await Context.SaveChangesOptimizedAsync();
+                await Context.SaveChangesOptimizedAsync(batchSize);
             }
             else if ((variant & SaveVariant.EfCore) != 0)
             {

@@ -12,22 +12,30 @@ public abstract class BaseInsertTests
         ContextWrapperResolver = contextWrapperResolver;
 
     [Theory]
-    [InlineData(SaveVariant.EfCore | SaveVariant.Recreate)]
-    [InlineData(SaveVariant.EfCore | SaveVariant.Recreate | SaveVariant.WithTransaction)]
-    [InlineData(SaveVariant.Optimized | SaveVariant.Recreate)]
-    [InlineData(SaveVariant.Optimized | SaveVariant.Recreate | SaveVariant.WithTransaction)]
-    public async Task GivenSaveChanges_WhenMultipleObjectsInserted_ShouldInsertData(SaveVariant variant)
+    [InlineData(SaveVariant.EfCore | SaveVariant.Recreate, 1000, 10)]
+    [InlineData(SaveVariant.EfCore | SaveVariant.Recreate | SaveVariant.WithTransaction, 1000, 10)]
+    [InlineData(SaveVariant.Optimized | SaveVariant.Recreate, 1000, 10)]
+    [InlineData(SaveVariant.Optimized | SaveVariant.Recreate | SaveVariant.WithTransaction, 1000, 10)]
+    [InlineData(SaveVariant.EfCore | SaveVariant.Recreate, 1000, 1000)]
+    [InlineData(SaveVariant.EfCore | SaveVariant.Recreate | SaveVariant.WithTransaction, 1000, 1000)]
+    [InlineData(SaveVariant.Optimized | SaveVariant.Recreate, 1000, 1000)]
+    [InlineData(SaveVariant.Optimized | SaveVariant.Recreate | SaveVariant.WithTransaction, 1000, 1000)]
+    [InlineData(SaveVariant.EfCore | SaveVariant.Recreate, 100000, 100000)]
+    [InlineData(SaveVariant.EfCore | SaveVariant.Recreate | SaveVariant.WithTransaction, 100000, 100000)]
+    [InlineData(SaveVariant.Optimized | SaveVariant.Recreate, 100000, 100000)]
+    [InlineData(SaveVariant.Optimized | SaveVariant.Recreate | SaveVariant.WithTransaction, 100000, 100000)]
+    public async Task GivenSaveChanges_WhenMultipleObjectsInserted_ShouldInsertData(SaveVariant variant, int batchSize, int count)
     {
         // Arrange
         using DbContextWrapper db = ContextWrapperResolver();
 
         // Act
-        for (var i = 0; i < 10; i++)
+        for (var i = 0; i < count; i++)
         {
             await db.Context.AddAsync(ItemResolver(i));
         }
 
-        await db.Save(variant);
+        await db.Save(variant, batchSize);
 
         var result = await db.Context.NonRelatedEntities.CountAsync();
 
@@ -37,9 +45,9 @@ public abstract class BaseInsertTests
             .ToArrayAsync();
 
         // Assert
-        result.Should().Be(10);
+        result.Should().Be(count);
 
-        properties.Should().HaveCount(10);
+        properties.Should().HaveCount(count);
     }
 
     [Theory]
