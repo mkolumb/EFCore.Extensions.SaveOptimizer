@@ -38,19 +38,11 @@ When you execute SaveChangesOptimized the following sequence happens:
 2. Build property changes dictionary for each entry
 3. Group changes as much as possible
 4. Generate SQL using SqlKata
-5. ExecuteRawSql
+5. Execute
    - *if there is no transaction started then will start serializable transaction*
 6. Mark all saved entities as detached 
 
 Please note it is not working exactly as SaveChanges, so you should verify it works in your case as expected. 
-
-## Limitations
-
-### Refresh data after save
-
-SaveOptimizer approach makes almost impossible refresh data after save, it is on your side. 
-I recommend to generate values for primary keys in code, not in db. 
-This will make much easier refresh data after save if necessary, you will be able to use this values for query. 
 
 ## Features
 - Providers support
@@ -95,6 +87,22 @@ This will make much easier refresh data after save if necessary, you will be abl
   - Value converter
   - Mixed statements
   - Hierarchical operations
+
+
+## Limitations
+
+### Refresh data after save
+
+SaveOptimizer approach makes almost impossible refresh data after save, it is on your side. 
+I recommend to generate values for primary keys in code, not in db. 
+This will make much easier refresh data after save if necessary, you will be able to use this values for query. 
+
+## Q&A
+
+1. Why there is reference to SqlKata.Net6 instead of SqlKata?
+   - Currently this package instead of using SqlKata directly from original authors uses my own fork. The reason behind is performance - there is something wrong with current version, especially when generate multi-row insert statements. I created [pull request](https://github.com/sqlkata/querybuilder/pull/548), but unfortunately it is under review since January. When it will be approved I will switch to using package from NuGet.
+2. Why there is Dapper reference?
+   - I noticed a bug with ExecuteSqlRaw from RelationalExtensions. It looks it cuts precision for decimals. So I switched execution to Dapper.
 
 ## Migration command
 
@@ -301,7 +309,3 @@ TBD
 #### Firebird
 
 TBD
-
-## Remarks
-
-Currently this package instead of using SqlKata directly from original authors uses my own fork. The reason behind is performance - there is something wrong with current version, especially when generate multi-row insert statements. I created [pull request](https://github.com/sqlkata/querybuilder/pull/548), but unfortunately it is under review since January. When it will be approved I will switch to using package from NuGet.
