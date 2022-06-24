@@ -164,6 +164,8 @@ public class QueryCompilerService : IQueryCompilerService
         return queries.Select(compiler.Compile);
     }
 
+    public int GetParametersLimit(string providerName) => _compilerResolver.Resolve(providerName).MaxParametersCount;
+
     private static IEnumerable<Query> GetDeleteQueries(IDictionary<string, List<QueryDataModel>> queryResultGrouped,
         string tableName,
         IReadOnlyList<string> primaryKeyNames)
@@ -226,10 +228,7 @@ public class QueryCompilerService : IQueryCompilerService
     private static Query GetInsertQuery(IEnumerable<Dictionary<string, object?>> data, string tableName) =>
         new Query(tableName).AsInsert(data);
 
-    private static string GetColumnsBatchKey(QueryDataModel queryResult)
-    {
-        return string.Join("_", queryResult.Data.Keys);
-    }
+    private static string GetColumnsBatchKey(QueryDataModel queryResult) => string.Join("_", queryResult.Data.Keys);
 
     private static string GetUpdateBatchKey(QueryDataModel queryResult)
     {

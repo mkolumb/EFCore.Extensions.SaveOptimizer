@@ -29,6 +29,10 @@ public class CompilerWrapperResolver : ICompilerWrapperResolver
         {
             compiler = new MySqlCompiler();
         }
+        else if (providerName.Contains("Maria"))
+        {
+            compiler = new MySqlCompiler();
+        }
         else if (providerName.Contains("Oracle"))
         {
             compiler = new OracleCompiler();

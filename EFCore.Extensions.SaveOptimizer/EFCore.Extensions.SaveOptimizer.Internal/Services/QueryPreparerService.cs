@@ -51,13 +51,19 @@ public class QueryPreparerService : IQueryPreparerService
 
         IEnumerable<EntityEntry> entries = context.ChangeTracker.Entries();
 
-        Dictionary<EntityState, Dictionary<Type, List<QueryDataModel>>> translations =
-            new()
-            {
-                { EntityState.Added, new Dictionary<Type, List<QueryDataModel>>() },
-                { EntityState.Modified, new Dictionary<Type, List<QueryDataModel>>() },
-                { EntityState.Deleted, new Dictionary<Type, List<QueryDataModel>>() }
-            };
+        Dictionary<EntityState, Dictionary<Type, List<QueryDataModel>>> translations = new()
+        {
+            { EntityState.Added, new Dictionary<Type, List<QueryDataModel>>() },
+            { EntityState.Modified, new Dictionary<Type, List<QueryDataModel>>() },
+            { EntityState.Deleted, new Dictionary<Type, List<QueryDataModel>>() }
+        };
+
+        Dictionary<EntityState, Dictionary<Type, int>> maxParameters = new()
+        {
+            { EntityState.Added, new Dictionary<Type, int>() },
+            { EntityState.Modified, new Dictionary<Type, int>() },
+            { EntityState.Deleted, new Dictionary<Type, int>() }
+        };
 
         foreach (EntityEntry entry in entries)
         {
@@ -73,6 +79,13 @@ public class QueryPreparerService : IQueryPreparerService
                 continue;
             }
 
+            Dictionary<Type, int> paramsDictionary = maxParameters[entry.State];
+
+            if (!paramsDictionary.ContainsKey(translation.EntityType))
+            {
+                paramsDictionary.Add(translation.EntityType, 1);
+            }
+
             Dictionary<Type, List<QueryDataModel>> dictionary = translations[entry.State];
 
             if (!dictionary.ContainsKey(translation.EntityType))
@@ -81,6 +94,11 @@ public class QueryPreparerService : IQueryPreparerService
             }
 
             dictionary[translation.EntityType].Add(translation);
+
+            if (paramsDictionary[translation.EntityType] < translation.RetrievePropertiesCount())
+            {
+                paramsDictionary[translation.EntityType] = translation.RetrievePropertiesCount();
+            }
         }
 
         List<SqlResult> results = new();
@@ -89,8 +107,7 @@ public class QueryPreparerService : IQueryPreparerService
 
         foreach ((Type type, _) in _orders[name].OrderByDescending(x => x.Value))
         {
-            foreach (IEnumerable<SqlResult> sqlResults in GetQuery(translations, EntityState.Deleted, type,
-                         providerName, batchSize))
+            foreach (IEnumerable<SqlResult> sqlResults in GetQuery(translations, maxParameters, EntityState.Deleted, type, providerName, batchSize))
             {
                 results.AddRange(sqlResults);
             }
@@ -98,14 +115,12 @@ public class QueryPreparerService : IQueryPreparerService
 
         foreach ((Type type, _) in _orders[name].OrderBy(x => x.Value))
         {
-            foreach (IEnumerable<SqlResult> sqlResults in GetQuery(translations, EntityState.Added, type, providerName,
-                         batchSize))
+            foreach (IEnumerable<SqlResult> sqlResults in GetQuery(translations, maxParameters, EntityState.Added, type, providerName, batchSize))
             {
                 results.AddRange(sqlResults);
             }
 
-            foreach (IEnumerable<SqlResult> sqlResults in GetQuery(translations, EntityState.Modified, type,
-                         providerName, batchSize))
+            foreach (IEnumerable<SqlResult> sqlResults in GetQuery(translations, maxParameters, EntityState.Modified, type, providerName, batchSize))
             {
                 results.AddRange(sqlResults);
             }
@@ -125,21 +140,37 @@ public class QueryPreparerService : IQueryPreparerService
 
     private IEnumerable<IEnumerable<SqlResult>> GetQuery(
         IReadOnlyDictionary<EntityState, Dictionary<Type, List<QueryDataModel>>> group,
+        Dictionary<EntityState, Dictionary<Type, int>> maxParameters,
         EntityState state,
         Type type,
         string providerName,
         int batchSize)
     {
-        if (!group[state].ContainsKey(type))
+        Dictionary<Type, List<QueryDataModel>> queries = group[state];
+
+        if (!queries.ContainsKey(type))
         {
             yield break;
         }
 
+        List<QueryDataModel> typedQueries = queries[type];
+
+        if (typedQueries.Count == 0)
+        {
+            yield break;
+        }
+
+        var limit = _compilerService.GetParametersLimit(providerName);
+
+        var maxBatch = limit / maxParameters[state][type];
+
+        batchSize = Math.Min(batchSize, maxBatch);
+
         List<List<QueryDataModel>> data = new();
 
-        for (var i = 0; i < group[state][type].Count; i++)
+        for (var i = 0; i < typedQueries.Count; i++)
         {
-            QueryDataModel query = group[state][type][i];
+            QueryDataModel query = typedQueries[i];
 
             if (i % batchSize == 0)
             {

@@ -3,5 +3,7 @@
     public interface ICompilerWrapper
     {
         SqlResult Compile(Query query);
+
+        int MaxParametersCount { get; }
     }
 }

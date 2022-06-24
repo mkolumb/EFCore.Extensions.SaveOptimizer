@@ -34,4 +34,29 @@ public class QueryDataModel
         PrimaryKeyNames = primaryKeyNames;
         ConcurrencyTokens = concurrencyTokens;
     }
+
+    public int RetrievePropertiesCount()
+    {
+        HashSet<string> keys = new();
+
+        foreach (var key in PrimaryKeyNames)
+        {
+            keys.Add(key);
+        }
+
+        if (ConcurrencyTokens?.Keys != null)
+        {
+            foreach (var key in ConcurrencyTokens.Keys)
+            {
+                keys.Add(key);
+            }
+        }
+
+        foreach (var key in Data.Keys)
+        {
+            keys.Add(key);
+        }
+
+        return keys.Count;
+    }
 }

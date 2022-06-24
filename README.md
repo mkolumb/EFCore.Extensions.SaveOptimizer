@@ -87,7 +87,7 @@ Please note it is not working exactly as SaveChanges, so you should verify it wo
   - Value converter
   - Mixed statements
   - Hierarchical operations
-
+  - Data types precision (date, decimal etc.)
 
 ## Limitations
 

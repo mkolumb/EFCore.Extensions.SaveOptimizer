@@ -1,17 +1,41 @@
-﻿namespace EFCore.Extensions.SaveOptimizer.Internal.Wrappers
+﻿namespace EFCore.Extensions.SaveOptimizer.Internal.Wrappers;
+
+public class CompilerWrapper : ICompilerWrapper
 {
-    public class CompilerWrapper : ICompilerWrapper
+    private readonly Compiler _compiler;
+
+    public CompilerWrapper(Compiler compiler)
     {
-        private readonly Compiler _compiler;
+        _compiler = compiler;
 
-        public CompilerWrapper(Compiler compiler)
+        SetParametersCount();
+    }
+
+    public SqlResult Compile(Query query) => _compiler.Compile(query);
+
+    public int MaxParametersCount { get; private set; }
+
+    private void SetParametersCount()
+    {
+        Type type = _compiler.GetType();
+
+        Dictionary<Type, Action> @switch = new()
         {
-            _compiler = compiler;
+            { typeof(SqlServerCompiler), () => MaxParametersCount = 2048 },
+            { typeof(PostgresCompiler), () => MaxParametersCount = 31768 },
+            { typeof(MySqlCompiler), () => MaxParametersCount = 15384 },
+            { typeof(FirebirdCompiler), () => MaxParametersCount = 15384 },
+            { typeof(SqliteCompiler), () => MaxParametersCount = 31768 },
+            { typeof(OracleCompiler), () => MaxParametersCount = 15384 }
+        };
+
+        if (@switch.ContainsKey(type))
+        {
+            @switch[type]();
         }
-
-        public SqlResult Compile(Query query)
+        else
         {
-            return _compiler.Compile(query);
+            MaxParametersCount = 15384;
         }
     }
 }
