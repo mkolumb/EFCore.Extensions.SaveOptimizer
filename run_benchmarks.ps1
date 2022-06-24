@@ -36,6 +36,7 @@ docker compose --file sqlserver.yml down
 docker compose --file postgres.yml down
 
 # solution
+Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer
 dotnet build -c Release
 
