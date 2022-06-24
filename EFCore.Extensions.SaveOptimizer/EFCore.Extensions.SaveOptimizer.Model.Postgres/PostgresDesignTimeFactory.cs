@@ -22,7 +22,7 @@ public class PostgresDesignTimeFactory : IDesignTimeDbContextFactory<EntitiesCon
 
     private static DbConnection GetConnection()
     {
-        const string connectionString = "Host=localhost;Port=26257;SSL Mode=Disable;Username=root;Database=test_db";
+        const string connectionString = "Host=localhost;Port=5432;SSL Mode=Disable;Username=root;Password=root;Database=test_db";
 
         NpgsqlConnection conn = new(connectionString);
 
