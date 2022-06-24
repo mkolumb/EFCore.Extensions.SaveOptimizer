@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace EFCore.Extensions.SaveOptimizer.Model;
 
@@ -20,8 +21,10 @@ public class NonRelatedEntity
     public int? SomeNullableIntProperty { get; set; }
 
     [Required]
+    [Precision(12, 6)]
     public decimal? SomeNonNullableDecimalProperty { get; set; }
 
+    [Precision(12, 6)]
     public decimal? SomeNullableDecimalProperty { get; set; }
 
     [Required]

@@ -3,68 +3,70 @@ using System;
 using EFCore.Extensions.SaveOptimizer.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace EFCore.Extensions.SaveOptimizer.Model.Postgres.Migrations
+namespace EFCore.Extensions.SaveOptimizer.Model.SqlServer.Migrations
 {
     [DbContext(typeof(EntitiesContext))]
-    partial class EntitiesContextModelSnapshot : ModelSnapshot
+    [Migration("20220624071654_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "6.0.5")
-                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.NonRelatedEntity", b =>
                 {
                     b.Property<Guid>("NonRelatedEntityId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTimeOffset?>("ConcurrencyToken")
                         .IsConcurrencyToken()
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<bool?>("SomeNonNullableBooleanProperty")
                         .IsRequired()
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<DateTimeOffset?>("SomeNonNullableDateTimeProperty")
                         .IsRequired()
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<decimal?>("SomeNonNullableDecimalProperty")
                         .IsRequired()
                         .HasPrecision(12, 6)
-                        .HasColumnType("numeric(12,6)");
+                        .HasColumnType("decimal(12,6)");
 
                     b.Property<int?>("SomeNonNullableIntProperty")
                         .IsRequired()
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<string>("SomeNonNullableStringProperty")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset?>("SomeNullableDateTimeProperty")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<decimal?>("SomeNullableDecimalProperty")
                         .HasPrecision(12, 6)
-                        .HasColumnType("numeric(12,6)");
+                        .HasColumnType("decimal(12,6)");
 
                     b.Property<int?>("SomeNullableIntProperty")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<string>("SomeNullableStringProperty")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("NonRelatedEntityId");
 

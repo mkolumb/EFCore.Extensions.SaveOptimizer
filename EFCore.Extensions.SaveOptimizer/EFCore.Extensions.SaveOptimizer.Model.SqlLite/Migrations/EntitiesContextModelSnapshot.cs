@@ -37,6 +37,7 @@ namespace EFCore.Extensions.SaveOptimizer.Model.SqlLite.Migrations
 
                     b.Property<decimal?>("SomeNonNullableDecimalProperty")
                         .IsRequired()
+                        .HasPrecision(12, 6)
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("SomeNonNullableIntProperty")
@@ -51,6 +52,7 @@ namespace EFCore.Extensions.SaveOptimizer.Model.SqlLite.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<decimal?>("SomeNullableDecimalProperty")
+                        .HasPrecision(12, 6)
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("SomeNullableIntProperty")

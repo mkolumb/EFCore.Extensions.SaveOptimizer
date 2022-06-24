@@ -78,7 +78,7 @@ public abstract class BaseInsertTests
             SomeNonNullableDateTimeProperty = new DateTimeOffset(2010, 10, 10, 1, 2, 3, 0, TimeSpan.Zero),
             SomeNullableDateTimeProperty = new DateTimeOffset(2012, 11, 11, 1, 2, 3, 0, TimeSpan.Zero),
             SomeNonNullableDecimalProperty = 2.52M,
-            SomeNullableDecimalProperty = 4.523M,
+            SomeNullableDecimalProperty = 4.523435M,
             SomeNonNullableIntProperty = 1,
             SomeNullableIntProperty = 11,
             SomeNonNullableStringProperty = "some-string",

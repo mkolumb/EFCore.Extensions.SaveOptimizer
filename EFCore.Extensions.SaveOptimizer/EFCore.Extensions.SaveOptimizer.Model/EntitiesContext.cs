@@ -12,4 +12,12 @@ public class EntitiesContext : DbContext
         : base(options)
     {
     }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder) =>
+        modelBuilder.Entity<NonRelatedEntity>(
+            eb =>
+            {
+                eb.Property(b => b.SomeNullableDecimalProperty).HasPrecision(12, 6);
+                eb.Property(b => b.SomeNonNullableDecimalProperty).HasPrecision(12, 6);
+            });
 }

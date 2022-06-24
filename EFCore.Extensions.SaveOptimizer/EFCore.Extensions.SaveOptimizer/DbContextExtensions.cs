@@ -1,4 +1,6 @@
 ﻿using System.Data;
+using System.Data.Common;
+using Dapper;
 using EFCore.Extensions.SaveOptimizer.Internal.Constants;
 using EFCore.Extensions.SaveOptimizer.Internal.Resolvers;
 using EFCore.Extensions.SaveOptimizer.Internal.Services;
@@ -50,7 +52,7 @@ public static class DbContextExtensions
             // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (SqlResult sql in queries)
             {
-                rows += context.Database.ExecuteSqlRaw(sql.Sql, sql.Bindings);
+                rows += Execute(transaction, context.Database.GetCommandTimeout(), sql);
             }
 
             if (autoCommit)
@@ -110,7 +112,7 @@ public static class DbContextExtensions
             // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (SqlResult sql in queries)
             {
-                rows += await context.Database.ExecuteSqlRawAsync(sql.Sql, sql.Bindings, cancellationToken)
+                rows += await ExecuteAsync(transaction, sql, context.Database.GetCommandTimeout(), cancellationToken)
                     .ConfigureAwait(false);
             }
 
@@ -139,6 +141,38 @@ public static class DbContextExtensions
                 await transaction.DisposeAsync().ConfigureAwait(false);
             }
         }
+    }
+
+    private static int Execute(IDbContextTransaction transaction,
+        int? timeout,
+        SqlResult sql)
+    {
+        DbTransaction dbTransaction = transaction.GetDbTransaction();
+
+        CommandDefinition commandDefinition = new(
+            sql.Sql,
+            sql.NamedBindings,
+            dbTransaction,
+            timeout);
+
+        return dbTransaction.Connection.Execute(commandDefinition);
+    }
+
+    private static async Task<int> ExecuteAsync(IDbContextTransaction transaction,
+        SqlResult sql,
+        int? timeout,
+        CancellationToken cancellationToken)
+    {
+        DbTransaction dbTransaction = transaction.GetDbTransaction();
+
+        CommandDefinition commandDefinition = new(
+            sql.Sql,
+            sql.NamedBindings,
+            dbTransaction,
+            timeout,
+            cancellationToken: cancellationToken);
+
+        return await dbTransaction.Connection.ExecuteAsync(commandDefinition);
     }
 
     private static void MarkEntitiesAfterSave(DbContext context)

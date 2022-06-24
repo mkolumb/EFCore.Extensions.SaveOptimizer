@@ -44,7 +44,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.Extensions.SaveOptim
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.Extensions.SaveOptimizer.Cockroach.Tests", "EFCore.Extensions.SaveOptimizer.Cockroach.Tests\EFCore.Extensions.SaveOptimizer.Cockroach.Tests.csproj", "{F0C6C4E4-509C-47C7-8680-2EBE73399A2E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EFCore.Extensions.SaveOptimizer.Internal.Load.Tests", "EFCore.Extensions.SaveOptimizer.Internal.Load.Tests\EFCore.Extensions.SaveOptimizer.Internal.Load.Tests.csproj", "{5DC7109C-B6D3-43B6-9320-4D9D95090B94}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.Extensions.SaveOptimizer.Internal.Load.Tests", "EFCore.Extensions.SaveOptimizer.Internal.Load.Tests\EFCore.Extensions.SaveOptimizer.Internal.Load.Tests.csproj", "{5DC7109C-B6D3-43B6-9320-4D9D95090B94}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SqlServer", "SqlServer", "{0908ED14-EEFE-4C68-84D0-6479A0DC3402}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.Extensions.SaveOptimizer.Model.SqlServer", "EFCore.Extensions.SaveOptimizer.Model.SqlServer\EFCore.Extensions.SaveOptimizer.Model.SqlServer.csproj", "{9BB1A8C2-01B7-42C6-B2A8-4910770FE7E3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.Extensions.SaveOptimizer.SqlServer.Tests", "EFCore.Extensions.SaveOptimizer.SqlServer.Tests\EFCore.Extensions.SaveOptimizer.SqlServer.Tests.csproj", "{8C21098D-8FA9-4645-B6DF-591EC21D4060}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.Extensions.SaveOptimizer.SqlServer.Benchmark", "EFCore.Extensions.SaveOptimizer.SqlServer.Benchmark\EFCore.Extensions.SaveOptimizer.SqlServer.Benchmark.csproj", "{C5716084-3941-4BCC-9CBE-35EA29858B6E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -104,6 +112,18 @@ Global
 		{5DC7109C-B6D3-43B6-9320-4D9D95090B94}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5DC7109C-B6D3-43B6-9320-4D9D95090B94}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5DC7109C-B6D3-43B6-9320-4D9D95090B94}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9BB1A8C2-01B7-42C6-B2A8-4910770FE7E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9BB1A8C2-01B7-42C6-B2A8-4910770FE7E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9BB1A8C2-01B7-42C6-B2A8-4910770FE7E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9BB1A8C2-01B7-42C6-B2A8-4910770FE7E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C21098D-8FA9-4645-B6DF-591EC21D4060}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C21098D-8FA9-4645-B6DF-591EC21D4060}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C21098D-8FA9-4645-B6DF-591EC21D4060}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C21098D-8FA9-4645-B6DF-591EC21D4060}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5716084-3941-4BCC-9CBE-35EA29858B6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5716084-3941-4BCC-9CBE-35EA29858B6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5716084-3941-4BCC-9CBE-35EA29858B6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5716084-3941-4BCC-9CBE-35EA29858B6E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -126,6 +146,10 @@ Global
 		{7C4796C4-5AE2-457C-B50C-F1ABD9454CFA} = {7EC3837A-FEF4-4AFD-A542-B8F06D563B8B}
 		{F0C6C4E4-509C-47C7-8680-2EBE73399A2E} = {7EC3837A-FEF4-4AFD-A542-B8F06D563B8B}
 		{5DC7109C-B6D3-43B6-9320-4D9D95090B94} = {5B9CF003-538D-42B1-847D-56953D6F4AF3}
+		{0908ED14-EEFE-4C68-84D0-6479A0DC3402} = {AAA2E26A-4421-4F88-8A0C-05C13DFB9435}
+		{9BB1A8C2-01B7-42C6-B2A8-4910770FE7E3} = {0908ED14-EEFE-4C68-84D0-6479A0DC3402}
+		{8C21098D-8FA9-4645-B6DF-591EC21D4060} = {0908ED14-EEFE-4C68-84D0-6479A0DC3402}
+		{C5716084-3941-4BCC-9CBE-35EA29858B6E} = {0908ED14-EEFE-4C68-84D0-6479A0DC3402}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AD2F8CF4-9238-4492-A1F6-495E5B55687D}
