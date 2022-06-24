@@ -21,20 +21,16 @@ $workingDir = $(Get-Location).Path
 
 # script
 
-./remove_containers.ps1
-
-# start all
-
 Set-Location .\EFCore.Extensions.SaveOptimizer\Containers
 
-docker compose --file cockroach.yml up --detach
+docker compose --file cockroach.yml down
 
-docker compose --file cockroach_multi.yml up --detach
+docker compose --file cockroach_multi.yml down
 
-docker compose --file sqlserver.yml up --detach
+docker compose --file sqlserver.yml down
 
-docker compose --file postgres.yml up --detach
+docker compose --file postgres.yml down
 
-docker exec -it optimizerroachmulti11 ./cockroach init --insecure
+docker volume prune --force
 
 Set-Location $workingDir
