@@ -1,4 +1,4 @@
-﻿namespace EFCore.Extensions.SaveOptimizer.Cockroach.Benchmark.Specific;
+﻿namespace EFCore.Extensions.SaveOptimizer.CockroachMulti.Benchmark.Specific;
 
 public class Variables
 {

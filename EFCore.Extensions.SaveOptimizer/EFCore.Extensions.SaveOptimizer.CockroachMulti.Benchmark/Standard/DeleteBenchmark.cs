@@ -1,10 +1,10 @@
 ﻿using BenchmarkDotNet.Attributes;
-using EFCore.Extensions.SaveOptimizer.Cockroach.Benchmark.Specific;
+using EFCore.Extensions.SaveOptimizer.CockroachMulti.Benchmark.Specific;
 using EFCore.Extensions.SaveOptimizer.Shared.Benchmark;
 
 // ReSharper disable UnusedMember.Global
 
-namespace EFCore.Extensions.SaveOptimizer.Cockroach.Benchmark.Standard;
+namespace EFCore.Extensions.SaveOptimizer.CockroachMulti.Benchmark.Standard;
 
 public class DeleteBenchmark : BaseDeleteBenchmark
 {

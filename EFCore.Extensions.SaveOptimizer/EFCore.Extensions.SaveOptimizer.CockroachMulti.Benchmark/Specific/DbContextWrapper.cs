@@ -2,7 +2,7 @@
 using EFCore.Extensions.SaveOptimizer.Shared.Benchmark;
 using Microsoft.EntityFrameworkCore;
 
-namespace EFCore.Extensions.SaveOptimizer.Cockroach.Benchmark.Specific;
+namespace EFCore.Extensions.SaveOptimizer.CockroachMulti.Benchmark.Specific;
 
 public class DbContextWrapper : DbContextWrapperBase
 {

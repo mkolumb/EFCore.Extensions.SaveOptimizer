@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using BenchmarkDotNet.Running;
 
-namespace EFCore.Extensions.SaveOptimizer.Cockroach.Benchmark;
+namespace EFCore.Extensions.SaveOptimizer.CockroachMulti.Benchmark;
 
 public static class Program
 {

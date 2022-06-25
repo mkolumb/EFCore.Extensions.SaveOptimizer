@@ -1,9 +1,9 @@
-﻿using EFCore.Extensions.SaveOptimizer.Cockroach.Benchmark.Specific;
+﻿using EFCore.Extensions.SaveOptimizer.CockroachMulti.Benchmark.Specific;
 using EFCore.Extensions.SaveOptimizer.Model;
 using EFCore.Extensions.SaveOptimizer.Shared.Benchmark;
 using Microsoft.EntityFrameworkCore;
 
-namespace EFCore.Extensions.SaveOptimizer.Cockroach.Benchmark.Standard;
+namespace EFCore.Extensions.SaveOptimizer.CockroachMulti.Benchmark.Standard;
 
 public class WrapperResolver : IWrapperResolver
 {
