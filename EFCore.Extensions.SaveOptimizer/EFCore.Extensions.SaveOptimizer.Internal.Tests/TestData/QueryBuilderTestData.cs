@@ -26,6 +26,20 @@ public static class QueryBuilderTestData
             {
                 yield return p;
             }
+
+            data = new Dictionary<string, object?> { { "id_1", 43 } };
+
+            foreach (IEnumerable<object?> p in GetValues(filter, data))
+            {
+                yield return p;
+            }
+
+            filter = null;
+
+            foreach (IEnumerable<object?> p in GetValues(filter, data))
+            {
+                yield return p;
+            }
         }
     }
 
@@ -53,7 +67,10 @@ public static class QueryBuilderTestData
 
             data = new List<IDictionary<string, object?>>
             {
-                new Dictionary<string, object?> { { "id some", "some_val" }, { "id_2", "some_val2" }, { "id_3", 45 } }
+                new Dictionary<string, object?>
+                {
+                    { "id some", "some_val" }, { "id_2", "some_val2" }, { "id_3", 45 }
+                }
             };
 
             yield return new object?[] { "table_name", data };
@@ -120,6 +137,17 @@ public static class QueryBuilderTestData
             new() { { "idx_1", "some" }, { "idx_3", "some_3" } },
             new() { { "idx_1", "some2" }, { "idx_3", "some_5" } }
         };
+
+        queries = values
+            .Select(v => new QueryDataModel(typeof(object), EntityState.Modified, null, null, v, null, null, 0))
+            .ToArray();
+
+        yield return new object?[] { "table_name", filter, keys, queries, data };
+        yield return new object?[] { "dbo.table_name", filter, keys, queries, data };
+
+        keys = new[] { "idx_1" };
+
+        values = new Dictionary<string, object?>[] { new() { { "idx_1", "some" } } };
 
         queries = values
             .Select(v => new QueryDataModel(typeof(object), EntityState.Modified, null, null, v, null, null, 0))
