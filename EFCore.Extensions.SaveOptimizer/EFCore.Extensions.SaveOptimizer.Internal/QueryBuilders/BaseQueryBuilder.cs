@@ -22,8 +22,7 @@ public abstract class BaseQueryBuilder : IQueryBuilder
 
     public IQueryBuilder Insert(string tableName, IReadOnlyList<IDictionary<string, object?>> data)
     {
-        _builder.Append(
-            $"{_clauses[ClauseType.Insert]} {_clauses[ClauseType.ValueEscapeLeft]}{tableName.Replace(".", _clauses[ClauseType.TableEscape])}{_clauses[ClauseType.ValueEscapeRight]} (");
+        _builder.Append($"{_clauses[ClauseType.Insert]} {GetTableName(tableName)} (");
 
         var idx = 0;
 
@@ -60,11 +59,7 @@ public abstract class BaseQueryBuilder : IQueryBuilder
 
             foreach (var key in data[i].Keys)
             {
-                _builder.Append(idx > 0
-                    ? $", {_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}"
-                    : $"{_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}");
-
-                _bindings.Add($"{_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}", data[i][key]);
+                AppendValueIn(data[i][key], idx > 0);
 
                 idx++;
             }
@@ -77,18 +72,13 @@ public abstract class BaseQueryBuilder : IQueryBuilder
 
     public IQueryBuilder Update(string tableName, IDictionary<string, object?> data)
     {
-        _builder.Append(
-            $"{_clauses[ClauseType.Update]} {_clauses[ClauseType.ValueEscapeLeft]}{tableName.Replace(".", _clauses[ClauseType.TableEscape])}{_clauses[ClauseType.ValueEscapeRight]} {_clauses[ClauseType.Set]} ");
+        _builder.Append($"{_clauses[ClauseType.Update]} {GetTableName(tableName)} {_clauses[ClauseType.Set]} ");
 
         var idx = 0;
 
         foreach (var (key, value) in data)
         {
-            _builder.Append(idx > 0
-                ? $", {_clauses[ClauseType.ValueEscapeLeft]}{key}{_clauses[ClauseType.ValueEscapeRight]} = {_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}"
-                : $"{_clauses[ClauseType.ValueEscapeLeft]}{key}{_clauses[ClauseType.ValueEscapeRight]} = {_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}");
-
-            _bindings.Add($"{_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}", value);
+            AppendValue(key, value, idx > 0);
 
             idx++;
         }
@@ -98,34 +88,32 @@ public abstract class BaseQueryBuilder : IQueryBuilder
 
     public IQueryBuilder Delete(string tableName)
     {
-        _builder.Append(
-            $"{_clauses[ClauseType.Delete]} {_clauses[ClauseType.ValueEscapeLeft]}{tableName.Replace(".", _clauses[ClauseType.TableEscape])}{_clauses[ClauseType.ValueEscapeRight]}");
+        _builder.Append($"{_clauses[ClauseType.Delete]} {GetTableName(tableName)}");
 
         return this;
     }
 
     public IQueryBuilder Where(IDictionary<string, object?>? filter)
     {
-        if (filter != null)
+        if (filter == null)
         {
-            foreach (var (key, value) in filter)
+            return this;
+        }
+
+        foreach (var (key, value) in filter)
+        {
+            if (_whereAdded)
             {
-                if (_whereAdded)
-                {
-                    _builder.Append($" {_clauses[ClauseType.And]} ");
-                }
-                else
-                {
-                    _builder.Append($" {_clauses[ClauseType.Where]} ");
-
-                    _whereAdded = true;
-                }
-
-                _builder.Append(
-                    $"{_clauses[ClauseType.ValueEscapeLeft]}{key}{_clauses[ClauseType.ValueEscapeRight]} = {_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}");
-
-                _bindings.Add($"{_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}", value);
+                _builder.Append($" {_clauses[ClauseType.And]} ");
             }
+            else
+            {
+                _builder.Append($" {_clauses[ClauseType.Where]} ");
+
+                _whereAdded = true;
+            }
+
+            AppendValue(key, value, false);
         }
 
         return this;
@@ -165,6 +153,27 @@ public abstract class BaseQueryBuilder : IQueryBuilder
         return new SqlCommandModel { NamedBindings = _bindings, Sql = sql };
     }
 
+    private string GetTableName(string tableName) =>
+        $"{_clauses[ClauseType.ValueEscapeLeft]}{tableName.Replace(".", _clauses[ClauseType.TableEscape])}{_clauses[ClauseType.ValueEscapeRight]}";
+
+    private void AppendValue(string key, object? value, bool comma)
+    {
+        _builder.Append(comma
+            ? $", {_clauses[ClauseType.ValueEscapeLeft]}{key}{_clauses[ClauseType.ValueEscapeRight]} = {_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}"
+            : $"{_clauses[ClauseType.ValueEscapeLeft]}{key}{_clauses[ClauseType.ValueEscapeRight]} = {_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}");
+
+        _bindings.Add($"{_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}", value);
+    }
+
+    private void AppendValueIn(object? value, bool comma)
+    {
+        _builder.Append(comma
+            ? $", {_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}"
+            : $"{_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}");
+
+        _bindings.Add($"{_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}", value);
+    }
+
     private void AppendFilter(HashSet<DataGroupModel> data)
     {
         if (_whereAdded)
@@ -193,11 +202,7 @@ public abstract class BaseQueryBuilder : IQueryBuilder
 
                 foreach (DataGroupModel item in data)
                 {
-                    _builder.Append(idx > 0
-                        ? $", {_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}"
-                        : $"{_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}");
-
-                    _bindings.Add($"{_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}", item.Value);
+                    AppendValueIn(item.Value, idx > 0);
 
                     idx++;
                 }
@@ -206,10 +211,7 @@ public abstract class BaseQueryBuilder : IQueryBuilder
             }
             else
             {
-                _builder.Append(
-                    $"{_clauses[ClauseType.ValueEscapeLeft]}{firstItem.Key}{_clauses[ClauseType.ValueEscapeRight]} = {_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}");
-
-                _bindings.Add($"{_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}", firstItem.Value);
+                AppendValue(firstItem.Key, firstItem.Value, false);
             }
 
             return;
@@ -228,10 +230,7 @@ public abstract class BaseQueryBuilder : IQueryBuilder
 
             _builder.Append(_clauses[ClauseType.RangeLeft]);
 
-            _builder.Append(
-                $"{_clauses[ClauseType.ValueEscapeLeft]}{item.Key}{_clauses[ClauseType.ValueEscapeRight]} = {_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}");
-
-            _bindings.Add($"{_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}", item.Value);
+            AppendValue(item.Key, item.Value, false);
 
             if (item.NestedItems.Any())
             {
