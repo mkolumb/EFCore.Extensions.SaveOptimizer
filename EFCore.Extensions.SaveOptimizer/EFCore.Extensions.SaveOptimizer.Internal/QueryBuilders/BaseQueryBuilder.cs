@@ -9,10 +9,10 @@ public abstract class BaseQueryBuilder : IQueryBuilder
     private readonly IDictionary<string, object?> _bindings;
     private readonly StringBuilder _builder;
     private readonly CaseType _caseType;
-    private readonly Dictionary<ClauseType, string> _clauses;
+    private readonly IReadOnlyDictionary<ClauseType, string> _clauses;
     private bool _whereAdded;
 
-    protected BaseQueryBuilder(Dictionary<ClauseType, string> clauses, CaseType caseType = CaseType.Normal)
+    protected BaseQueryBuilder(IReadOnlyDictionary<ClauseType, string> clauses, CaseType caseType = CaseType.Normal)
     {
         _clauses = clauses;
         _caseType = caseType;

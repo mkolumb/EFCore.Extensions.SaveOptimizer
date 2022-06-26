@@ -91,6 +91,9 @@ public static class QueryBuilderTestData
             .Select(v => new QueryDataModel(typeof(object), EntityState.Modified, null, null, v, null, null, 0))
             .ToArray();
 
+        yield return new object?[] { "table_name", filter, keys, queries, data };
+        yield return new object?[] { "dbo.table_name", filter, keys, queries, data };
+
         keys = new[] { "idx_1", "idx_3" };
 
         values = new Dictionary<string, object?>[]

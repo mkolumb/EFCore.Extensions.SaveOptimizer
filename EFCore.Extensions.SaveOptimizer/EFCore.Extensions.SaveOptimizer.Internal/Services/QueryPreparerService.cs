@@ -140,7 +140,7 @@ public class QueryPreparerService : IQueryPreparerService
 
     private IEnumerable<IEnumerable<SqlCommandModel>> GetQuery(
         IReadOnlyDictionary<EntityState, Dictionary<Type, List<QueryDataModel>>> group,
-        Dictionary<EntityState, Dictionary<Type, int>> maxParameters,
+        IReadOnlyDictionary<EntityState, Dictionary<Type, int>> maxParameters,
         EntityState state,
         Type type,
         string providerName,
