@@ -16,5 +16,12 @@ public enum ClauseType
     ValueSetRightLast,
     ValueSetOneLeft,
     ValueSetOneRight,
-    ValueSetSeparator
+    ValueSetSeparator,
+    Where,
+    In,
+    Or,
+    And,
+    Set,
+    RangeLeft,
+    RangeRight
 }

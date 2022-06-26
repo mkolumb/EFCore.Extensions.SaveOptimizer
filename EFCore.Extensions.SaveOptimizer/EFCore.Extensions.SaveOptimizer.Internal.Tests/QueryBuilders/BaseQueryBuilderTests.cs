@@ -44,7 +44,7 @@ public abstract class BaseQueryBuilderTests
 
     [Theory]
     [MemberData(nameof(UpdateDeleteData))]
-    public void GivenUpdate_ShouldProduceSameResultsAsSqlKata(string tableName,
+    public void GivenUpdate_WhenFilterFirst_ShouldProduceSameResultsAsSqlKata(string tableName,
         Dictionary<string, object?> filter,
         IReadOnlyList<string> keys,
         IReadOnlyList<QueryDataModel> queries,
@@ -71,7 +71,7 @@ public abstract class BaseQueryBuilderTests
 
     [Theory]
     [MemberData(nameof(UpdateDeleteData))]
-    public void GivenDelete_ShouldProduceSameResultsAsSqlKata(string tableName,
+    public void GivenDelete_WhenFilterFirst_ShouldProduceSameResultsAsSqlKata(string tableName,
         Dictionary<string, object?> filter,
         IReadOnlyList<string> keys,
         IReadOnlyList<QueryDataModel> queries,
@@ -89,6 +89,60 @@ public abstract class BaseQueryBuilderTests
             .Delete(tableName)
             .Where(filter)
             .Where(keys, queries)
+            .Build();
+
+        // Assert
+        result.Sql.Should().Be(expected.Sql);
+        result.NamedBindings.Should().BeEquivalentTo(expected.NamedBindings);
+    }
+
+    [Theory]
+    [MemberData(nameof(UpdateDeleteData))]
+    public void GivenUpdate_WhenFilterLast_ShouldProduceSameResultsAsSqlKata(string tableName,
+        Dictionary<string, object?> filter,
+        IReadOnlyList<string> keys,
+        IReadOnlyList<QueryDataModel> queries,
+        Dictionary<string, object?> data)
+    {
+        // Arrange
+        SqlCommandModel expected = new SqlKataBuilder(_compiler)
+            .Update(tableName, data)
+            .Where(keys, queries)
+            .Where(filter)
+            .Build();
+
+        // Act
+        SqlCommandModel result = _factory()
+            .Update(tableName, data)
+            .Where(keys, queries)
+            .Where(filter)
+            .Build();
+
+        // Assert
+        result.Sql.Should().Be(expected.Sql);
+        result.NamedBindings.Should().BeEquivalentTo(expected.NamedBindings);
+    }
+
+    [Theory]
+    [MemberData(nameof(UpdateDeleteData))]
+    public void GivenDelete_WhenFilterLast_ShouldProduceSameResultsAsSqlKata(string tableName,
+        Dictionary<string, object?> filter,
+        IReadOnlyList<string> keys,
+        IReadOnlyList<QueryDataModel> queries,
+        Dictionary<string, object?> data)
+    {
+        // Arrange
+        SqlCommandModel expected = new SqlKataBuilder(_compiler)
+            .Delete(tableName)
+            .Where(keys, queries)
+            .Where(filter)
+            .Build();
+
+        // Act
+        SqlCommandModel result = _factory()
+            .Delete(tableName)
+            .Where(keys, queries)
+            .Where(filter)
             .Build();
 
         // Assert

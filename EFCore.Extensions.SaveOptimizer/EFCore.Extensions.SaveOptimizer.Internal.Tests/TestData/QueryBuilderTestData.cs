@@ -91,6 +91,22 @@ public static class QueryBuilderTestData
             .Select(v => new QueryDataModel(typeof(object), EntityState.Modified, null, null, v, null, null, 0))
             .ToArray();
 
+        keys = new[] { "idx_1", "idx_3" };
+
+        values = new Dictionary<string, object?>[]
+        {
+            new() { { "idx_1", "some2" }, { "idx_3", "some_3" } },
+            new() { { "idx_1", "some2" }, { "idx_3", "some_5" } },
+            new() { { "idx_1", "some2" }, { "idx_3", "some_6" } },
+            new() { { "idx_1", "some3" }, { "idx_3", "some_7" } },
+            new() { { "idx_1", "some4" }, { "idx_3", "some_8" } },
+            new() { { "idx_1", "some4" }, { "idx_3", "some_9" } }
+        };
+
+        queries = values
+            .Select(v => new QueryDataModel(typeof(object), EntityState.Modified, null, null, v, null, null, 0))
+            .ToArray();
+
         yield return new object?[] { "table_name", filter, keys, queries, data };
         yield return new object?[] { "dbo.table_name", filter, keys, queries, data };
 

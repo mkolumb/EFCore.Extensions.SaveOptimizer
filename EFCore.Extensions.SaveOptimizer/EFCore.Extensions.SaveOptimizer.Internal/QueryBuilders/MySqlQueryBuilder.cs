@@ -20,7 +20,14 @@ public class MySqlQueryBuilder : BaseQueryBuilder
         { ClauseType.ValueSetRightLast, ")" },
         { ClauseType.ValueSetOneLeft, "(" },
         { ClauseType.ValueSetOneRight, ")" },
-        { ClauseType.ValueSetSeparator, ", " }
+        { ClauseType.ValueSetSeparator, ", " },
+        { ClauseType.Where, "WHERE" },
+        { ClauseType.In, "IN" },
+        { ClauseType.Or, "OR" },
+        { ClauseType.And, "AND" },
+        { ClauseType.Set, "SET" },
+        { ClauseType.RangeLeft, "(" },
+        { ClauseType.RangeRight, ")" }
     };
 
     public MySqlQueryBuilder() : base(Clauses)
