@@ -162,26 +162,6 @@ public class QueryCompilerService : IQueryCompilerService
         return queries;
     }
 
-    public int GetParametersLimit(string providerName)
-    {
-        if (providerName.Contains("SqlServer"))
-        {
-            return 2048;
-        }
-
-        if (providerName.Contains("Postgre"))
-        {
-            return 31768;
-        }
-
-        if (providerName.Contains("Sqlite") || providerName.Contains("InMemory"))
-        {
-            return 512;
-        }
-
-        return 15384;
-    }
-
     private IEnumerable<SqlCommandModel> GetDeleteQueries(
         string providerName,
         IDictionary<string, List<QueryDataModel>> queryResultGrouped,

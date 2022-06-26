@@ -160,7 +160,7 @@ public class QueryPreparerService : IQueryPreparerService
             yield break;
         }
 
-        var limit = _compilerService.GetParametersLimit(providerName);
+        var limit = GetParametersLimit(providerName);
 
         var maxBatch = limit / maxParameters[state][type];
 
@@ -184,5 +184,25 @@ public class QueryPreparerService : IQueryPreparerService
         {
             yield return _compilerService.Compile(q, providerName);
         }
+    }
+
+    private static int GetParametersLimit(string providerName)
+    {
+        if (providerName.Contains("SqlServer"))
+        {
+            return 1024;
+        }
+
+        if (providerName.Contains("Postgre"))
+        {
+            return 31768;
+        }
+
+        if (providerName.Contains("Sqlite") || providerName.Contains("InMemory"))
+        {
+            return 512;
+        }
+
+        return 15384;
     }
 }
