@@ -37,7 +37,7 @@ When you execute SaveChangesOptimized the following sequence happens:
 1. Get entries from ChangeTracker
 2. Build property changes dictionary for each entry
 3. Group changes as much as possible
-4. Generate SQL using SqlKata
+4. Generate SQL
 5. Execute
    - *if there is no transaction started then will start serializable transaction*
 6. Mark all saved entities as detached 
@@ -100,8 +100,8 @@ This will make much easier refresh data after save if necessary, you will be abl
 
 ## Q&A
 
-1. Why there is reference to SqlKata.Net6 instead of SqlKata?
-   - Currently this package instead of using SqlKata directly from original authors uses my own fork. The reason behind is performance - there is something wrong with current version, especially when generate multi-row insert statements. I created [pull request](https://github.com/sqlkata/querybuilder/pull/548), but unfortunately it is under review since January. When it will be approved I will switch to using package from NuGet.
+1. Why you wrote query builder instead of using SqlKata?
+   - The reason behind is performance. I noticed few issues and created [pull request](https://github.com/sqlkata/querybuilder/pull/548). When I started working on this library my pull request was in review without response for few months. Initially I decided to create [.NET 6 fork](https://www.nuget.org/packages/SqlKata.Net6/) and performance improvements were really great. Later I realized I don't need most of SqlKata features so it's better to write something optimized from scratch - this will bring performance & freedom boost. Currently there is reference to SqlKata in test project, just for verify my builder.
 2. Why there is Dapper reference?
    - I noticed a bug with ExecuteSqlRaw from RelationalExtensions. It looks it cuts precision for decimals. So I switched execution to Dapper.
 

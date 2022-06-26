@@ -1,5 +1,5 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Internal.QueryBuilders;
-using SqlKata.Net6.Compilers;
+using SqlKata.Compilers;
 
 // ReSharper disable UnusedMember.Global
 

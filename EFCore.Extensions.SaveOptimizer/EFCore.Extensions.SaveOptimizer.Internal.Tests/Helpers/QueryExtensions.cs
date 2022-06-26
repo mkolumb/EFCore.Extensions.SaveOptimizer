@@ -1,5 +1,5 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Internal.Models;
-using SqlKata.Net6;
+using SqlKata;
 
 namespace EFCore.Extensions.SaveOptimizer.Internal.Tests.Helpers;
 

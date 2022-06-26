@@ -2,7 +2,7 @@
 using EFCore.Extensions.SaveOptimizer.Internal.QueryBuilders;
 using EFCore.Extensions.SaveOptimizer.Internal.Tests.Helpers;
 using EFCore.Extensions.SaveOptimizer.Internal.Tests.TestData;
-using SqlKata.Net6.Compilers;
+using SqlKata.Compilers;
 
 #pragma warning disable xUnit1026
 

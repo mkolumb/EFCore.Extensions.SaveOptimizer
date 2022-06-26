@@ -1,7 +1,7 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Internal.Models;
 using EFCore.Extensions.SaveOptimizer.Internal.QueryBuilders;
-using SqlKata.Net6;
-using SqlKata.Net6.Compilers;
+using SqlKata;
+using SqlKata.Compilers;
 
 namespace EFCore.Extensions.SaveOptimizer.Internal.Tests.Helpers;
 
@@ -14,7 +14,11 @@ public class SqlKataBuilder : IQueryBuilder
 
     public IQueryBuilder Insert(string tableName, IReadOnlyList<IDictionary<string, object?>> data)
     {
-        _query = new Query(tableName).AsInsert(data);
+        ICollection<string> columns = data[0].Keys;
+
+        IEnumerable<ICollection<object?>> rows = data.Select(x => x.Values);
+
+        _query = new Query(tableName).AsInsert(columns, rows);
 
         return this;
     }
