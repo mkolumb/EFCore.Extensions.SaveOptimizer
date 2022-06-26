@@ -1,25 +1,25 @@
 ﻿using System.Text;
 using EFCore.Extensions.SaveOptimizer.Internal.Exceptions;
 using EFCore.Extensions.SaveOptimizer.Internal.Extensions;
+using EFCore.Extensions.SaveOptimizer.Internal.Factories;
 using EFCore.Extensions.SaveOptimizer.Internal.Helpers;
 using EFCore.Extensions.SaveOptimizer.Internal.Models;
-using EFCore.Extensions.SaveOptimizer.Internal.Resolvers;
-using EFCore.Extensions.SaveOptimizer.Internal.Wrappers;
+using EFCore.Extensions.SaveOptimizer.Internal.QueryBuilders;
 using Microsoft.EntityFrameworkCore;
 
 namespace EFCore.Extensions.SaveOptimizer.Internal.Services;
 
 public class QueryCompilerService : IQueryCompilerService
 {
-    private readonly ICompilerWrapperResolver _compilerResolver;
+    private readonly IQueryBuilderFactory _queryBuilderFactory;
 
-    public QueryCompilerService(ICompilerWrapperResolver compilerResolver) => _compilerResolver = compilerResolver;
+    public QueryCompilerService(IQueryBuilderFactory queryBuilderFactory) => _queryBuilderFactory = queryBuilderFactory;
 
-    public IEnumerable<SqlResult> Compile(IReadOnlyCollection<QueryDataModel> models, string providerName)
+    public IEnumerable<SqlCommandModel> Compile(IReadOnlyCollection<QueryDataModel> models, string providerName)
     {
         if (!models.Any())
         {
-            return Array.Empty<SqlResult>();
+            return Array.Empty<SqlCommandModel>();
         }
 
         HashSet<Type> entityTypes = new();
@@ -136,7 +136,7 @@ public class QueryCompilerService : IQueryCompilerService
             tableName = $"{schema}.{tableName}";
         }
 
-        List<Query> queries = new();
+        List<SqlCommandModel> queries = new();
 
         var primaryKeys = primaryKeyNames.ToArray();
 
@@ -146,27 +146,45 @@ public class QueryCompilerService : IQueryCompilerService
             switch (queryType)
             {
                 case EntityState.Added:
-                    queries.Add(GetInsertQuery(insertData[batchKey], tableName));
+                    queries.Add(GetInsertQuery(providerName, insertData[batchKey], tableName));
                     break;
                 case EntityState.Modified:
-                    queries.AddRange(GetUpdateQueries(updateData[batchKey], tableName, primaryKeys));
+                    queries.AddRange(GetUpdateQueries(providerName, updateData[batchKey], tableName, primaryKeys));
                     break;
                 case EntityState.Deleted:
-                    queries.AddRange(GetDeleteQueries(deleteData[batchKey], tableName, primaryKeys));
+                    queries.AddRange(GetDeleteQueries(providerName, deleteData[batchKey], tableName, primaryKeys));
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(models), "Unrecognized query type");
             }
         }
 
-        ICompilerWrapper compiler = _compilerResolver.Resolve(providerName);
-
-        return queries.Select(compiler.Compile);
+        return queries;
     }
 
-    public int GetParametersLimit(string providerName) => _compilerResolver.Resolve(providerName).MaxParametersCount;
+    public int GetParametersLimit(string providerName)
+    {
+        if (providerName.Contains("SqlServer"))
+        {
+            return 2048;
+        }
 
-    private static IEnumerable<Query> GetDeleteQueries(IDictionary<string, List<QueryDataModel>> queryResultGrouped,
+        if (providerName.Contains("Postgre"))
+        {
+            return 31768;
+        }
+
+        if (providerName.Contains("Sqlite") || providerName.Contains("InMemory"))
+        {
+            return 512;
+        }
+
+        return 15384;
+    }
+
+    private IEnumerable<SqlCommandModel> GetDeleteQueries(
+        string providerName,
+        IDictionary<string, List<QueryDataModel>> queryResultGrouped,
         string tableName,
         IReadOnlyList<string> primaryKeyNames)
     {
@@ -179,20 +197,17 @@ public class QueryCompilerService : IQueryCompilerService
                 throw new QueryCompileException("Query needs to have primary keys");
             }
 
-            Query? query = new Query(tableName)
-                .AsDelete()
-                .WherePrimaryKeysIn(primaryKeyNames, queryResults);
+            IQueryBuilder builder = _queryBuilderFactory.Query(providerName)
+                .Delete(tableName)
+                .Where(primaryKeyNames, queryResults)
+                .Where(firstResult.ConcurrencyTokens);
 
-            if (firstResult.ConcurrencyTokens != null && firstResult.ConcurrencyTokens.Any())
-            {
-                query = query.Where(firstResult.ConcurrencyTokens);
-            }
-
-            yield return query;
+            yield return builder.Build();
         }
     }
 
-    private static IEnumerable<Query> GetUpdateQueries(IDictionary<string, List<QueryDataModel>> queryResultGrouped,
+    private IEnumerable<SqlCommandModel> GetUpdateQueries(string providerName,
+        IDictionary<string, List<QueryDataModel>> queryResultGrouped,
         string tableName,
         IReadOnlyList<string> primaryKeyNames)
     {
@@ -212,21 +227,24 @@ public class QueryCompilerService : IQueryCompilerService
                 throw new QueryCompileException("Query needs to have primary keys");
             }
 
-            Query? query = new Query(tableName)
-                .AsUpdate(data)
-                .WherePrimaryKeysIn(primaryKeyNames, queryResults);
+            IQueryBuilder builder = _queryBuilderFactory.Query(providerName)
+                .Update(tableName, data)
+                .Where(primaryKeyNames, queryResults)
+                .Where(firstResult.ConcurrencyTokens);
 
-            if (firstResult.ConcurrencyTokens != null && firstResult.ConcurrencyTokens.Any())
-            {
-                query = query.Where(firstResult.ConcurrencyTokens);
-            }
-
-            yield return query;
+            yield return builder.Build();
         }
     }
 
-    private static Query GetInsertQuery(IEnumerable<Dictionary<string, object?>> data, string tableName) =>
-        new Query(tableName).AsInsert(data);
+    private SqlCommandModel GetInsertQuery(string providerName,
+        IReadOnlyList<IDictionary<string, object?>> data,
+        string tableName)
+    {
+        IQueryBuilder builder = _queryBuilderFactory.Query(providerName)
+            .Insert(tableName, data);
+
+        return builder.Build();
+    }
 
     private static string GetColumnsBatchKey(QueryDataModel queryResult) => string.Join("_", queryResult.Data.Keys);
 

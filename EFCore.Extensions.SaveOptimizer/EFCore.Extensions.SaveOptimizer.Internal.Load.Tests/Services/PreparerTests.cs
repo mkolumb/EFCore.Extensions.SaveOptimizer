@@ -1,7 +1,7 @@
-﻿using EFCore.Extensions.SaveOptimizer.Internal.Load.Tests.Context;
+﻿using EFCore.Extensions.SaveOptimizer.Internal.Factories;
+using EFCore.Extensions.SaveOptimizer.Internal.Load.Tests.Context;
 using EFCore.Extensions.SaveOptimizer.Internal.Load.Tests.Helpers;
 using EFCore.Extensions.SaveOptimizer.Internal.Models;
-using EFCore.Extensions.SaveOptimizer.Internal.Resolvers;
 using EFCore.Extensions.SaveOptimizer.Internal.Services;
 using EFCore.Extensions.SaveOptimizer.Internal.Wrappers;
 using Microsoft.EntityFrameworkCore;
@@ -79,8 +79,8 @@ public class PreparerTests
         Dictionary<EntityState, QueryDataModel?[]> batches = queries.GroupBy(x => x.EntityState)
             .ToDictionary(x => x.Key, x => x.ToArray());
 
-        CompilerWrapperResolver resolver = new();
+        QueryBuilderFactory factory = new();
 
-        queryCompiler = new QueryCompilerService(resolver);
+        queryCompiler = new QueryCompilerService(factory);
     }
 }

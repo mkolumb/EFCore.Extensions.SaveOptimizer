@@ -2,7 +2,8 @@
 using System.Data.Common;
 using Dapper;
 using EFCore.Extensions.SaveOptimizer.Internal.Constants;
-using EFCore.Extensions.SaveOptimizer.Internal.Resolvers;
+using EFCore.Extensions.SaveOptimizer.Internal.Factories;
+using EFCore.Extensions.SaveOptimizer.Internal.Models;
 using EFCore.Extensions.SaveOptimizer.Internal.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -18,7 +19,7 @@ public static class DbContextExtensions
 
     static DbContextExtensions()
     {
-        QueryCompilerService compilerService = new(new CompilerWrapperResolver());
+        QueryCompilerService compilerService = new(new QueryBuilderFactory());
 
         QueryTranslatorService translatorService = new();
 
@@ -32,7 +33,7 @@ public static class DbContextExtensions
     {
         QueryPreparerService.Init(context);
 
-        IEnumerable<SqlResult> queries = QueryPreparerService.Prepare(context, batchSize);
+        IEnumerable<SqlCommandModel> queries = QueryPreparerService.Prepare(context, batchSize);
 
         var autoCommit = false;
 
@@ -50,7 +51,7 @@ public static class DbContextExtensions
             var rows = 0;
 
             // ReSharper disable once LoopCanBeConvertedToQuery
-            foreach (SqlResult sql in queries)
+            foreach (SqlCommandModel sql in queries)
             {
                 rows += Execute(transaction, context.Database.GetCommandTimeout(), sql);
             }
@@ -91,7 +92,7 @@ public static class DbContextExtensions
     {
         QueryPreparerService.Init(context);
 
-        IEnumerable<SqlResult> queries = QueryPreparerService.Prepare(context, batchSize);
+        IEnumerable<SqlCommandModel> queries = QueryPreparerService.Prepare(context, batchSize);
 
         var autoCommit = false;
 
@@ -110,7 +111,7 @@ public static class DbContextExtensions
             var rows = 0;
 
             // ReSharper disable once LoopCanBeConvertedToQuery
-            foreach (SqlResult sql in queries)
+            foreach (SqlCommandModel sql in queries)
             {
                 rows += await ExecuteAsync(transaction, sql, context.Database.GetCommandTimeout(), cancellationToken)
                     .ConfigureAwait(false);
@@ -145,7 +146,7 @@ public static class DbContextExtensions
 
     private static int Execute(IDbContextTransaction transaction,
         int? timeout,
-        SqlResult sql)
+        SqlCommandModel sql)
     {
         DbTransaction dbTransaction = transaction.GetDbTransaction();
 
@@ -159,7 +160,7 @@ public static class DbContextExtensions
     }
 
     private static async Task<int> ExecuteAsync(IDbContextTransaction transaction,
-        SqlResult sql,
+        SqlCommandModel sql,
         int? timeout,
         CancellationToken cancellationToken)
     {

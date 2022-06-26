@@ -1,23 +1,13 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Internal.Models;
+using SqlKata.Net6;
 
-namespace EFCore.Extensions.SaveOptimizer.Internal.Extensions;
+namespace EFCore.Extensions.SaveOptimizer.Internal.Tests.Helpers;
 
 public static class QueryExtensions
 {
-    public static Query WherePrimaryKeysIn(this Query query, IReadOnlyList<string> primaryKeyNames,
-        IEnumerable<QueryDataModel> queryResults)
+    public static Query WherePrimaryKeysIn(this Query query, IReadOnlyList<string> primaryKeyNames, IReadOnlyList<QueryDataModel> queryResults)
     {
-        QueryDataModel[] results = queryResults.ToArray();
-
-        Dictionary<string, Func<QueryDataModel, object?>> resolvers = new();
-
-        // ReSharper disable once LoopCanBeConvertedToQuery
-        foreach (var key in primaryKeyNames)
-        {
-            resolvers.Add(key, x => x.Data[key]);
-        }
-
-        HashSet<DataGroupModel> dataResult = DataGroupModel.CreateDataGroup(results, primaryKeyNames, resolvers);
+        HashSet<DataGroupModel> dataResult = DataGroupModel.CreateDataGroup(queryResults, primaryKeyNames);
 
         return WhereDataGroupItem(query, dataResult);
     }

@@ -46,14 +46,13 @@ public class DataGroupModel : IEquatable<DataGroupModel>
 
     public override int GetHashCode() => HashCode.Combine(Key, Value);
 
-    public static HashSet<DataGroupModel> CreateDataGroup<TCompare>(
-        IReadOnlyCollection<TCompare> items,
-        IReadOnlyList<string> keys,
-        Dictionary<string, Func<TCompare, object?>> valueResolvers)
+    public static HashSet<DataGroupModel> CreateDataGroup(
+        IReadOnlyCollection<QueryDataModel> items,
+        IReadOnlyList<string> keys)
     {
         HashSet<DataGroupModel> data = new();
 
-        foreach (TCompare item in items)
+        foreach (QueryDataModel item in items)
         {
             for (var i = 0; i < keys.Count; i++)
             {
@@ -63,7 +62,7 @@ public class DataGroupModel : IEquatable<DataGroupModel>
                 {
                     var key = keys[j];
 
-                    var value = valueResolvers[key](item);
+                    var value = item.Data[key];
 
                     DataGroupModel? dataItem = new(key, value);
 

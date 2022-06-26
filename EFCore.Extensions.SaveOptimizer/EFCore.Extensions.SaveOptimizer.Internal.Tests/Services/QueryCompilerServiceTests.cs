@@ -1,12 +1,12 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Internal.Exceptions;
+using EFCore.Extensions.SaveOptimizer.Internal.Factories;
 using EFCore.Extensions.SaveOptimizer.Internal.Models;
-using EFCore.Extensions.SaveOptimizer.Internal.Resolvers;
+using EFCore.Extensions.SaveOptimizer.Internal.QueryBuilders;
 using EFCore.Extensions.SaveOptimizer.Internal.Services;
+using EFCore.Extensions.SaveOptimizer.Internal.Tests.Helpers;
 using EFCore.Extensions.SaveOptimizer.Internal.Tests.TestContext.Models;
-using EFCore.Extensions.SaveOptimizer.Internal.Wrappers;
 using Microsoft.EntityFrameworkCore;
 using Moq;
-using SqlKata.Net6;
 using SqlKata.Net6.Compilers;
 
 // ReSharper disable PossibleMultipleEnumeration
@@ -22,8 +22,9 @@ public class QueryCompilerServiceTests
 
     public QueryCompilerServiceTests()
     {
-        Mock<ICompilerWrapperResolver> resolver = new();
-        resolver.Setup(x => x.Resolve(It.IsAny<string>())).Returns(new CompilerWrapper(new PostgresCompiler()));
+        Mock<IQueryBuilderFactory> resolver = new();
+
+        resolver.Setup(x => x.Query(It.IsAny<string>())).Returns(new PostgresQueryBuilder());
 
         _target = new QueryCompilerService(resolver.Object);
     }
@@ -41,12 +42,13 @@ public class QueryCompilerServiceTests
         };
 
         // Act
-        IEnumerable<SqlResult> result = _target.Compile(queryResults, string.Empty);
+        IEnumerable<SqlCommandModel> result = _target.Compile(queryResults, string.Empty);
 
         // Assert
         result.Should().HaveCount(1);
         result.ElementAt(0).Sql.Should().Be("DELETE FROM \"order\" WHERE \"order_id\" IN (@p0, @p1)");
-        result.ElementAt(0).Bindings.Should().BeEquivalentTo(new[] { 1, 2 }, c => c.WithStrictOrdering());
+        result.ElementAt(0).NamedBindings.Should()
+            .BeEquivalentTo(new Dictionary<string, object> { { "@p0", 1 }, { "@p1", 2 } });
     }
 
     [Fact]
@@ -67,18 +69,21 @@ public class QueryCompilerServiceTests
         };
 
         // Act
-        IEnumerable<SqlResult> result = _target.Compile(queryResults, string.Empty);
+        IEnumerable<SqlCommandModel> result = _target.Compile(queryResults, string.Empty);
 
         // Assert
         result.Should().HaveCount(2);
         result.ElementAt(0).Sql.Should()
             .Be("DELETE FROM \"order\" WHERE \"order_id\" = @p0 AND \"order_concurrency_token\" = @p1");
-        result.ElementAt(0).Bindings.Should()
-            .BeEquivalentTo(new object[] { 1, "concurrency_token_1" }, c => c.WithStrictOrdering());
+        result.ElementAt(0).NamedBindings.Should()
+            .BeEquivalentTo(new Dictionary<string, object> { { "@p0", 1 }, { "@p1", "concurrency_token_1" } });
         result.ElementAt(1).Sql.Should()
             .Be("DELETE FROM \"order\" WHERE \"order_id\" IN (@p0, @p1) AND \"order_concurrency_token\" = @p2");
-        result.ElementAt(1).Bindings.Should()
-            .BeEquivalentTo(new object[] { 2, 3, "concurrency_token_2" }, c => c.WithStrictOrdering());
+        result.ElementAt(1).NamedBindings.Should()
+            .BeEquivalentTo(new Dictionary<string, object>
+            {
+                { "@p0", 2 }, { "@p1", 3 }, { "@p2", "concurrency_token_2" }
+            });
     }
 
     [Fact]
@@ -106,20 +111,31 @@ public class QueryCompilerServiceTests
         };
 
         // Act
-        IEnumerable<SqlResult> result = _target.Compile(queryResults, string.Empty);
+        IEnumerable<SqlCommandModel> result = _target.Compile(queryResults, string.Empty);
 
         // Assert
         result.Should().HaveCount(2);
         result.ElementAt(0).Sql.Should()
             .Be(
                 "DELETE FROM \"order\" WHERE ((\"order_id\" = @p0 AND \"second_primary_key\" = @p1)) AND \"order_concurrency_token\" = @p2");
-        result.ElementAt(0).Bindings.Should()
-            .BeEquivalentTo(new object[] { 1, 111, "concurrency_token_1" }, c => c.WithStrictOrdering());
+        result.ElementAt(0).NamedBindings.Should()
+            .BeEquivalentTo(new Dictionary<string, object>
+            {
+                { "@p0", 1 }, { "@p1", 111 }, { "@p2", "concurrency_token_1" }
+            });
         result.ElementAt(1).Sql.Should()
             .Be(
                 "DELETE FROM \"order\" WHERE ((\"order_id\" = @p0 AND \"second_primary_key\" = @p1) OR (\"order_id\" = @p2 AND \"second_primary_key\" IN (@p3, @p4))) AND \"order_concurrency_token\" = @p5");
-        result.ElementAt(1).Bindings.Should()
-            .BeEquivalentTo(new object[] { 2, 112, 3, 333, 444, "concurrency_token_2" }, c => c.WithStrictOrdering());
+        result.ElementAt(1).NamedBindings.Should()
+            .BeEquivalentTo(new Dictionary<string, object>
+            {
+                { "@p0", 2 },
+                { "@p1", 112 },
+                { "@p2", 3 },
+                { "@p3", 333 },
+                { "@p4", 444 },
+                { "@p5", "concurrency_token_2" }
+            });
     }
 
     [Fact]
@@ -135,12 +151,13 @@ public class QueryCompilerServiceTests
         };
 
         // Act
-        IEnumerable<SqlResult> result = _target.Compile(queryResults, string.Empty);
+        IEnumerable<SqlCommandModel> result = _target.Compile(queryResults, string.Empty);
 
         // Assert
         result.Should().HaveCount(1);
         result.ElementAt(0).Sql.Should().Be("INSERT INTO \"order\" (\"order_id\") VALUES (@p0), (@p1)");
-        result.ElementAt(0).Bindings.Should().BeEquivalentTo(new[] { 1, 2 }, c => c.WithStrictOrdering());
+        result.ElementAt(0).NamedBindings.Should()
+            .BeEquivalentTo(new Dictionary<string, object> { { "@p0", 1 }, { "@p1", 2 } });
     }
 
 
@@ -159,12 +176,13 @@ public class QueryCompilerServiceTests
         };
 
         // Act
-        IEnumerable<SqlResult> result = _target.Compile(queryResults, string.Empty);
+        IEnumerable<SqlCommandModel> result = _target.Compile(queryResults, string.Empty);
 
         // Assert
         result.Should().HaveCount(1);
         result.ElementAt(0).Sql.Should().Be("INSERT INTO \"order\" (\"order_id\") VALUES (@p0), (@p1)");
-        result.ElementAt(0).Bindings.Should().BeEquivalentTo(new[] { 1, 2 }, c => c.WithStrictOrdering());
+        result.ElementAt(0).NamedBindings.Should()
+            .BeEquivalentTo(new Dictionary<string, object> { { "@p0", 1 }, { "@p1", 2 } });
     }
 
     [Fact]
@@ -199,14 +217,14 @@ public class QueryCompilerServiceTests
         };
 
         // Act
-        IEnumerable<SqlResult> result = _target.Compile(queryResults, string.Empty);
+        IEnumerable<SqlCommandModel> result = _target.Compile(queryResults, string.Empty);
 
         // Assert
         result.Should().HaveCount(2);
         result.ElementAt(0).Sql.Should().Be("INSERT INTO \"schema1\".\"order\" (\"order_id2\") VALUES (@p0)");
-        result.ElementAt(0).Bindings.Should().BeEquivalentTo(new[] { 1 }, c => c.WithStrictOrdering());
+        result.ElementAt(0).NamedBindings.Should().BeEquivalentTo(new Dictionary<string, object> { { "@p0", 1 } });
         result.ElementAt(1).Sql.Should().Be("INSERT INTO \"schema1\".\"order\" (\"order_id3\") VALUES (@p0)");
-        result.ElementAt(1).Bindings.Should().BeEquivalentTo(new[] { 11 }, c => c.WithStrictOrdering());
+        result.ElementAt(1).NamedBindings.Should().BeEquivalentTo(new Dictionary<string, object> { { "@p0", 11 } });
     }
 
     [Fact]
@@ -292,20 +310,24 @@ public class QueryCompilerServiceTests
         QueryDataModel[] queryResults =
         {
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 1 }, { "other", 11 } }, new HashSet<string> { "order_id" }, null, 1),
+                new Dictionary<string, object> { { "order_id", 1 }, { "other", 11 } },
+                new HashSet<string> { "order_id" }, null, 1),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 2 }, { "other", 21 } }, new HashSet<string> { "order_id" }, null, 1)
+                new Dictionary<string, object> { { "order_id", 2 }, { "other", 21 } },
+                new HashSet<string> { "order_id" }, null, 1)
         };
 
         // Act
-        IEnumerable<SqlResult> result = _target.Compile(queryResults, string.Empty);
+        IEnumerable<SqlCommandModel> result = _target.Compile(queryResults, string.Empty);
 
         // Assert
         result.Should().HaveCount(2);
         result.ElementAt(0).Sql.Should().Be("UPDATE \"order\" SET \"other\" = @p0 WHERE \"order_id\" = @p1");
-        result.ElementAt(0).Bindings.Should().BeEquivalentTo(new[] { 11, 1 }, c => c.WithStrictOrdering());
+        result.ElementAt(0).NamedBindings.Should()
+            .BeEquivalentTo(new Dictionary<string, object> { { "@p0", 11 }, { "@p1", 1 } });
         result.ElementAt(1).Sql.Should().Be("UPDATE \"order\" SET \"other\" = @p0 WHERE \"order_id\" = @p1");
-        result.ElementAt(1).Bindings.Should().BeEquivalentTo(new[] { 21, 2 }, c => c.WithStrictOrdering());
+        result.ElementAt(1).NamedBindings.Should()
+            .BeEquivalentTo(new Dictionary<string, object> { { "@p0", 21 }, { "@p1", 2 } });
     }
 
     [Fact]
@@ -315,31 +337,40 @@ public class QueryCompilerServiceTests
         QueryDataModel[] queryResults =
         {
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 1 }, { "other", 11 } }, new HashSet<string> { "order_id" }, null, 1),
+                new Dictionary<string, object> { { "order_id", 1 }, { "other", 11 } },
+                new HashSet<string> { "order_id" }, null, 1),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 2 }, { "other", 21 } }, new HashSet<string> { "order_id" }, null, 1),
+                new Dictionary<string, object> { { "order_id", 2 }, { "other", 21 } },
+                new HashSet<string> { "order_id" }, null, 1),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 3 }, { "other", 21 } }, new HashSet<string> { "order_id" }, null, 1),
+                new Dictionary<string, object> { { "order_id", 3 }, { "other", 21 } },
+                new HashSet<string> { "order_id" }, null, 1),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 4 }, { "other", 21 } }, new HashSet<string> { "order_id" }, null, 1),
+                new Dictionary<string, object> { { "order_id", 4 }, { "other", 21 } },
+                new HashSet<string> { "order_id" }, null, 1),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 5 }, { "other", 11 } }, new HashSet<string> { "order_id" }, null, 1),
+                new Dictionary<string, object> { { "order_id", 5 }, { "other", 11 } },
+                new HashSet<string> { "order_id" }, null, 1),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 6 }, { "other", 31 } }, new HashSet<string> { "order_id" }, null, 1)
+                new Dictionary<string, object> { { "order_id", 6 }, { "other", 31 } },
+                new HashSet<string> { "order_id" }, null, 1)
         };
 
         // Act
-        IEnumerable<SqlResult> result = _target.Compile(queryResults, string.Empty);
+        IEnumerable<SqlCommandModel> result = _target.Compile(queryResults, string.Empty);
 
         // Assert
         result.Should().HaveCount(3);
         result.ElementAt(0).Sql.Should().Be("UPDATE \"order\" SET \"other\" = @p0 WHERE \"order_id\" IN (@p1, @p2)");
-        result.ElementAt(0).Bindings.Should().BeEquivalentTo(new[] { 11, 1, 5 }, c => c.WithStrictOrdering());
+        result.ElementAt(0).NamedBindings.Should()
+            .BeEquivalentTo(new Dictionary<string, object> { { "@p0", 11 }, { "@p1", 1 }, { "@p2", 5 } });
         result.ElementAt(1).Sql.Should()
             .Be("UPDATE \"order\" SET \"other\" = @p0 WHERE \"order_id\" IN (@p1, @p2, @p3)");
-        result.ElementAt(1).Bindings.Should().BeEquivalentTo(new[] { 21, 2, 3, 4 }, c => c.WithStrictOrdering());
+        result.ElementAt(1).NamedBindings.Should()
+            .BeEquivalentTo(new Dictionary<string, object> { { "@p0", 21 }, { "@p1", 2 }, { "@p2", 3 }, { "@p3", 4 } });
         result.ElementAt(2).Sql.Should().Be("UPDATE \"order\" SET \"other\" = @p0 WHERE \"order_id\" = @p1");
-        result.ElementAt(2).Bindings.Should().BeEquivalentTo(new[] { 31, 6 }, c => c.WithStrictOrdering());
+        result.ElementAt(2).NamedBindings.Should()
+            .BeEquivalentTo(new Dictionary<string, object> { { "@p0", 31 }, { "@p1", 6 } });
     }
 
     [Fact]
@@ -349,48 +380,64 @@ public class QueryCompilerServiceTests
         QueryDataModel[] queryResults =
         {
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 1 }, { "other", 11 } }, new HashSet<string> { "order_id" },
+                new Dictionary<string, object> { { "order_id", 1 }, { "other", 11 } },
+                new HashSet<string> { "order_id" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_11" } }, 1),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 2 }, { "other", 21 } }, new HashSet<string> { "order_id" },
+                new Dictionary<string, object> { { "order_id", 2 }, { "other", 21 } },
+                new HashSet<string> { "order_id" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_21" } }, 1),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 3 }, { "other", 21 } }, new HashSet<string> { "order_id" },
+                new Dictionary<string, object> { { "order_id", 3 }, { "other", 21 } },
+                new HashSet<string> { "order_id" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_21" } }, 1),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 4 }, { "other", 21 } }, new HashSet<string> { "order_id" },
+                new Dictionary<string, object> { { "order_id", 4 }, { "other", 21 } },
+                new HashSet<string> { "order_id" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_11" } }, 1),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 5 }, { "other", 11 } }, new HashSet<string> { "order_id" },
+                new Dictionary<string, object> { { "order_id", 5 }, { "other", 11 } },
+                new HashSet<string> { "order_id" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_11" } }, 1),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 6 }, { "other", 31 } }, new HashSet<string> { "order_id" },
+                new Dictionary<string, object> { { "order_id", 6 }, { "other", 31 } },
+                new HashSet<string> { "order_id" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_31" } }, 1)
         };
 
         // Act
-        IEnumerable<SqlResult> result = _target.Compile(queryResults, string.Empty);
+        IEnumerable<SqlCommandModel> result = _target.Compile(queryResults, string.Empty);
 
         // Assert
         result.Should().HaveCount(4);
         result.ElementAt(0).Sql.Should()
             .Be(
                 "UPDATE \"order\" SET \"other\" = @p0 WHERE \"order_id\" IN (@p1, @p2) AND \"order_concurrency_token\" = @p3");
-        result.ElementAt(0).Bindings.Should().BeEquivalentTo(new object[] { 11, 1, 5, "concurrency_token_11" },
-            c => c.WithStrictOrdering());
+        result.ElementAt(0).NamedBindings.Should().BeEquivalentTo(new Dictionary<string, object>
+        {
+            { "@p0", 11 }, { "@p1", 1 }, { "@p2", 5 }, { "@p3", "concurrency_token_11" }
+        });
         result.ElementAt(1).Sql.Should()
             .Be(
                 "UPDATE \"order\" SET \"other\" = @p0 WHERE \"order_id\" IN (@p1, @p2) AND \"order_concurrency_token\" = @p3");
-        result.ElementAt(1).Bindings.Should().BeEquivalentTo(new object[] { 21, 2, 3, "concurrency_token_21" },
-            c => c.WithStrictOrdering());
+        result.ElementAt(1).NamedBindings.Should().BeEquivalentTo(new Dictionary<string, object>
+        {
+            { "@p0", 21 }, { "@p1", 2 }, { "@p2", 3 }, { "@p3", "concurrency_token_21" }
+        });
         result.ElementAt(2).Sql.Should()
             .Be("UPDATE \"order\" SET \"other\" = @p0 WHERE \"order_id\" = @p1 AND \"order_concurrency_token\" = @p2");
-        result.ElementAt(2).Bindings.Should()
-            .BeEquivalentTo(new object[] { 21, 4, "concurrency_token_11" }, c => c.WithStrictOrdering());
+        result.ElementAt(2).NamedBindings.Should()
+            .BeEquivalentTo(new Dictionary<string, object>
+            {
+                { "@p0", 21 }, { "@p1", 4 }, { "@p2", "concurrency_token_11" }
+            });
         result.ElementAt(3).Sql.Should()
             .Be("UPDATE \"order\" SET \"other\" = @p0 WHERE \"order_id\" = @p1 AND \"order_concurrency_token\" = @p2");
-        result.ElementAt(3).Bindings.Should()
-            .BeEquivalentTo(new object[] { 31, 6, "concurrency_token_31" }, c => c.WithStrictOrdering());
+        result.ElementAt(3).NamedBindings.Should()
+            .BeEquivalentTo(new Dictionary<string, object>
+            {
+                { "@p0", 31 }, { "@p1", 6 }, { "@p2", "concurrency_token_31" }
+            });
     }
 
     [Fact]
@@ -434,30 +481,56 @@ public class QueryCompilerServiceTests
         };
 
         // Act
-        IEnumerable<SqlResult> result = _target.Compile(queryResults, string.Empty);
+        IEnumerable<SqlCommandModel> result = _target.Compile(queryResults, string.Empty);
 
         // Assert
         result.Should().HaveCount(4);
         result.ElementAt(0).Sql.Should()
             .Be(
                 "UPDATE \"order\" SET \"other\" = @p0 WHERE ((\"order_id\" = @p1 AND \"second_primary_key\" = @p2) OR (\"order_id\" = @p3 AND \"second_primary_key\" = @p4)) AND \"order_concurrency_token\" = @p5");
-        result.ElementAt(0).Bindings.Should()
-            .BeEquivalentTo(new object[] { 11, 1, 111, 5, 115, "concurrency_token_11" }, c => c.WithStrictOrdering());
+        result.ElementAt(0).NamedBindings.Should()
+            .BeEquivalentTo(new Dictionary<string, object>
+            {
+                { "@p0", 11 },
+                { "@p1", 1 },
+                { "@p2", 111 },
+                { "@p3", 5 },
+                { "@p4", 115 },
+                { "@p5", "concurrency_token_11" }
+            });
         result.ElementAt(1).Sql.Should()
             .Be(
                 "UPDATE \"order\" SET \"other\" = @p0 WHERE ((\"order_id\" = @p1 AND \"second_primary_key\" = @p2) OR (\"order_id\" = @p3 AND \"second_primary_key\" = @p4)) AND \"order_concurrency_token\" = @p5");
-        result.ElementAt(1).Bindings.Should()
-            .BeEquivalentTo(new object[] { 21, 2, 112, 3, 113, "concurrency_token_21" }, c => c.WithStrictOrdering());
+        result.ElementAt(1).NamedBindings.Should()
+            .BeEquivalentTo(new Dictionary<string, object>
+            {
+                { "@p0", 21 },
+                { "@p1", 2 },
+                { "@p2", 112 },
+                { "@p3", 3 },
+                { "@p4", 113 },
+                { "@p5", "concurrency_token_21" }
+            });
         result.ElementAt(2).Sql.Should()
             .Be(
                 "UPDATE \"order\" SET \"other\" = @p0 WHERE ((\"order_id\" = @p1 AND \"second_primary_key\" = @p2)) AND \"order_concurrency_token\" = @p3");
-        result.ElementAt(2).Bindings.Should().BeEquivalentTo(new object[] { 21, 4, 114, "concurrency_token_11" },
-            c => c.WithStrictOrdering());
+        result.ElementAt(2).NamedBindings.Should().BeEquivalentTo(new Dictionary<string, object>
+        {
+            { "@p0", 21 }, { "@p1", 4 }, { "@p2", 114 }, { "@p3", "concurrency_token_11" }
+        });
         result.ElementAt(3).Sql.Should()
             .Be(
                 "UPDATE \"order\" SET \"other\" = @p0 WHERE ((\"order_id\" = @p1 AND \"second_primary_key\" IN (@p2, @p3, @p4))) AND \"order_concurrency_token\" = @p5");
-        result.ElementAt(3).Bindings.Should()
-            .BeEquivalentTo(new object[] { 31, 6, 116, 126, 146, "concurrency_token_31" }, c => c.WithStrictOrdering());
+        result.ElementAt(3).NamedBindings.Should()
+            .BeEquivalentTo(new Dictionary<string, object>
+            {
+                { "@p0", 31 },
+                { "@p1", 6 },
+                { "@p2", 116 },
+                { "@p3", 126 },
+                { "@p4", 146 },
+                { "@p5", "concurrency_token_31" }
+            });
     }
 
     [Fact]
@@ -467,25 +540,33 @@ public class QueryCompilerServiceTests
         QueryDataModel[] queryResults =
         {
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 1 }, { "other", 11 } }, new HashSet<string> { "order_id" },
+                new Dictionary<string, object> { { "order_id", 1 }, { "other", 11 } },
+                new HashSet<string> { "order_id" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_11" } }, 1),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 2 }, { "other", 21 } }, new HashSet<string> { "order_id" },
+                new Dictionary<string, object> { { "order_id", 2 }, { "other", 21 } },
+                new HashSet<string> { "order_id" },
                 new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_21" } }, 1)
         };
 
         // Act
-        IEnumerable<SqlResult> result = _target.Compile(queryResults, string.Empty);
+        IEnumerable<SqlCommandModel> result = _target.Compile(queryResults, string.Empty);
 
         // Assert
         result.Should().HaveCount(2);
         result.ElementAt(0).Sql.Should()
             .Be("UPDATE \"order\" SET \"other\" = @p0 WHERE \"order_id\" = @p1 AND \"order_concurrency_token\" = @p2");
-        result.ElementAt(0).Bindings.Should()
-            .BeEquivalentTo(new object[] { 11, 1, "concurrency_token_11" }, c => c.WithStrictOrdering());
+        result.ElementAt(0).NamedBindings.Should()
+            .BeEquivalentTo(new Dictionary<string, object>
+            {
+                { "@p0", 11 }, { "@p1", 1 }, { "@p2", "concurrency_token_11" }
+            });
         result.ElementAt(1).Sql.Should()
             .Be("UPDATE \"order\" SET \"other\" = @p0 WHERE \"order_id\" = @p1 AND \"order_concurrency_token\" = @p2");
-        result.ElementAt(1).Bindings.Should()
-            .BeEquivalentTo(new object[] { 21, 2, "concurrency_token_21" }, c => c.WithStrictOrdering());
+        result.ElementAt(1).NamedBindings.Should()
+            .BeEquivalentTo(new Dictionary<string, object>
+            {
+                { "@p0", 21 }, { "@p1", 2 }, { "@p2", "concurrency_token_21" }
+            });
     }
 }

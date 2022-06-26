@@ -1,7 +1,7 @@
-﻿using EFCore.Extensions.SaveOptimizer.Internal.Load.Tests.Context;
+﻿using EFCore.Extensions.SaveOptimizer.Internal.Factories;
+using EFCore.Extensions.SaveOptimizer.Internal.Load.Tests.Context;
 using EFCore.Extensions.SaveOptimizer.Internal.Load.Tests.Helpers;
 using EFCore.Extensions.SaveOptimizer.Internal.Models;
-using EFCore.Extensions.SaveOptimizer.Internal.Resolvers;
 using EFCore.Extensions.SaveOptimizer.Internal.Services;
 using EFCore.Extensions.SaveOptimizer.Internal.Wrappers;
 using Microsoft.EntityFrameworkCore;
@@ -22,9 +22,9 @@ public class CompilerTests
     public void CompilerShouldBeFast()
     {
         // Arrange
-        GetData(out Dictionary<EntityState, QueryDataModel?[]> batches, out CompilerWrapperResolver resolver);
+        GetData(out Dictionary<EntityState, QueryDataModel?[]> batches, out IQueryBuilderFactory factory);
 
-        QueryCompilerService queryCompiler = new(resolver);
+        QueryCompilerService queryCompiler = new(factory);
 
         // Act
         const int howManyTimes = 5;
@@ -98,7 +98,7 @@ public class CompilerTests
     }
 
     private static void GetData(out Dictionary<EntityState, QueryDataModel?[]> batches,
-        out CompilerWrapperResolver resolver)
+        out IQueryBuilderFactory factory)
     {
         QueryTranslatorService translator = new();
 
@@ -115,6 +115,6 @@ public class CompilerTests
         batches = queries.GroupBy(x => x.EntityState)
             .ToDictionary(x => x.Key, x => x.ToArray());
 
-        resolver = new CompilerWrapperResolver();
+        factory = new QueryBuilderFactory();
     }
 }

@@ -1,18 +1,16 @@
 ﻿using System.Text.Json;
 using EFCore.Extensions.SaveOptimizer.Internal.Models;
-
-#pragma warning disable CS8620
+using Microsoft.EntityFrameworkCore;
 
 namespace EFCore.Extensions.SaveOptimizer.Internal.Tests.Models;
 
 public class DataGroupModelTests
 {
-    private readonly List<TestEntityInsiderModel> _items;
-    private readonly Dictionary<string, Func<TestEntityInsiderModel, object>> _resolvers;
+    private readonly List<QueryDataModel> _items;
 
     public DataGroupModelTests()
     {
-        _items = new List<TestEntityInsiderModel>();
+        _items = new List<QueryDataModel>();
 
         for (var i = 0; i < 10; i++)
         {
@@ -20,12 +18,31 @@ public class DataGroupModelTests
             {
                 for (var k = j; k < 14; k++)
                 {
-                    _items.Add(new TestEntityInsiderModel
+                    TestEntityInsiderModel entity = new()
                     {
                         InsiderId = $"i_{i}",
                         InsiderName = $"j_{j}",
                         InsiderValue = $"k_{k}"
-                    });
+                    };
+
+                    QueryDataModel model = new(entity.GetType(),
+                        EntityState.Added,
+                        null,
+                        "some",
+                        new Dictionary<string, object?>
+                        {
+                            { nameof(entity.InsiderId), entity.InsiderId },
+                            { nameof(entity.InsiderName), entity.InsiderName },
+                            { nameof(entity.InsiderValue), entity.InsiderValue }
+                        },
+                        new HashSet<string>
+                        {
+                            nameof(entity.InsiderId), nameof(entity.InsiderName), nameof(entity.InsiderValue)
+                        },
+                        new Dictionary<string, object?>(),
+                        3);
+
+                    _items.Add(model);
                 }
             }
         }
@@ -36,22 +53,34 @@ public class DataGroupModelTests
             {
                 for (var k = j; k < 14; k++)
                 {
-                    _items.Add(new TestEntityInsiderModel
+                    TestEntityInsiderModel entity = new()
                     {
                         InsiderId = $"i_{i}",
                         InsiderName = $"j_{j}",
                         InsiderValue = $"k_{k}"
-                    });
+                    };
+
+                    QueryDataModel model = new(entity.GetType(),
+                        EntityState.Added,
+                        null,
+                        "some",
+                        new Dictionary<string, object?>
+                        {
+                            { nameof(entity.InsiderId), entity.InsiderId },
+                            { nameof(entity.InsiderName), entity.InsiderName },
+                            { nameof(entity.InsiderValue), entity.InsiderValue }
+                        },
+                        new HashSet<string>
+                        {
+                            nameof(entity.InsiderId), nameof(entity.InsiderName), nameof(entity.InsiderValue)
+                        },
+                        new Dictionary<string, object?>(),
+                        3);
+
+                    _items.Add(model);
                 }
             }
         }
-
-        _resolvers = new Dictionary<string, Func<TestEntityInsiderModel, object>>
-        {
-            { nameof(TestEntityInsiderModel.InsiderId), x => x.InsiderId },
-            { nameof(TestEntityInsiderModel.InsiderName), x => x.InsiderName },
-            { nameof(TestEntityInsiderModel.InsiderValue), x => x.InsiderValue }
-        };
     }
 
     [Fact]
@@ -66,7 +95,7 @@ public class DataGroupModelTests
         }
 
         // Act
-        HashSet<DataGroupModel> result = DataGroupModel.CreateDataGroup(_items, new[] { "InsiderId" }, _resolvers);
+        HashSet<DataGroupModel> result = DataGroupModel.CreateDataGroup(_items, new[] { "InsiderId" });
 
         // Assert
         JsonSerializer.Serialize(result).Should().BeEquivalentTo(JsonSerializer.Serialize(expected));
@@ -98,8 +127,7 @@ public class DataGroupModelTests
         }
 
         // Act
-        HashSet<DataGroupModel> result =
-            DataGroupModel.CreateDataGroup(_items, new[] { "InsiderId", "InsiderName", "InsiderValue" }, _resolvers);
+        HashSet<DataGroupModel> result = DataGroupModel.CreateDataGroup(_items, new[] { "InsiderId", "InsiderName", "InsiderValue" });
 
         // Assert
         JsonSerializer.Serialize(result).Should().BeEquivalentTo(JsonSerializer.Serialize(expected));
@@ -124,8 +152,7 @@ public class DataGroupModelTests
         }
 
         // Act
-        HashSet<DataGroupModel> result =
-            DataGroupModel.CreateDataGroup(_items, new[] { "InsiderId", "InsiderName" }, _resolvers);
+        HashSet<DataGroupModel> result = DataGroupModel.CreateDataGroup(_items, new[] { "InsiderId", "InsiderName" });
 
         // Assert
         JsonSerializer.Serialize(result).Should().BeEquivalentTo(JsonSerializer.Serialize(expected));
