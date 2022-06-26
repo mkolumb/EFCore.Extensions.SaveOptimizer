@@ -75,7 +75,26 @@ public abstract class BaseQueryBuilder : IQueryBuilder
         return this;
     }
 
-    public IQueryBuilder Update(string tableName, IDictionary<string, object?> data) => this;
+    public IQueryBuilder Update(string tableName, IDictionary<string, object?> data)
+    {
+        _builder.Append(
+            $"{_clauses[ClauseType.Update]} {_clauses[ClauseType.ValueEscapeLeft]}{tableName.Replace(".", _clauses[ClauseType.TableEscape])}{_clauses[ClauseType.ValueEscapeRight]} {_clauses[ClauseType.Set]} ");
+
+        var idx = 0;
+
+        foreach (var (key, value) in data)
+        {
+            _builder.Append(idx > 0
+                ? $", {_clauses[ClauseType.ValueEscapeLeft]}{key}{_clauses[ClauseType.ValueEscapeRight]} = {_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}"
+                : $"{_clauses[ClauseType.ValueEscapeLeft]}{key}{_clauses[ClauseType.ValueEscapeRight]} = {_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}");
+
+            _bindings.Add($"{_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}", value);
+
+            idx++;
+        }
+
+        return this;
+    }
 
     public IQueryBuilder Delete(string tableName)
     {
@@ -102,7 +121,8 @@ public abstract class BaseQueryBuilder : IQueryBuilder
                     _whereAdded = true;
                 }
 
-                _builder.Append($"{_clauses[ClauseType.ValueEscapeLeft]}{key}{_clauses[ClauseType.ValueEscapeRight]} = {_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}");
+                _builder.Append(
+                    $"{_clauses[ClauseType.ValueEscapeLeft]}{key}{_clauses[ClauseType.ValueEscapeRight]} = {_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}");
 
                 _bindings.Add($"{_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}", value);
             }
@@ -113,89 +133,11 @@ public abstract class BaseQueryBuilder : IQueryBuilder
 
     public IQueryBuilder Where(IReadOnlyList<string> keys, IReadOnlyList<QueryDataModel> results)
     {
-        var data = DataGroupModel.CreateDataGroup(results, keys);
+        HashSet<DataGroupModel> data = DataGroupModel.CreateDataGroup(results, keys);
 
         AppendFilter(data);
 
         return this;
-    }
-
-    private void AppendFilter(HashSet<DataGroupModel> data)
-    {
-        if (_whereAdded)
-        {
-            _builder.Append($" {_clauses[ClauseType.And]} ");
-        }
-        else
-        {
-            _builder.Append($" {_clauses[ClauseType.Where]} ");
-
-            _whereAdded = true;
-        }
-
-        var idx = 0;
-
-        var firstItem = data.First();
-
-        if (!firstItem.NestedItems.Any())
-        {
-            if (data.Count > 1)
-            {
-                _builder.Append($"{_clauses[ClauseType.ValueEscapeLeft]}{firstItem.Key}{_clauses[ClauseType.ValueEscapeRight]} {_clauses[ClauseType.In]} ");
-
-                _builder.Append(_clauses[ClauseType.RangeLeft]);
-                
-                foreach (var item in data)
-                {
-                    _builder.Append(idx > 0
-                        ? $", {_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}"
-                        : $"{_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}");
-
-                    _bindings.Add($"{_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}", item.Value);
-
-                    idx++;
-                }
-
-                _builder.Append(_clauses[ClauseType.RangeRight]);
-            }
-            else
-            {
-                _builder.Append($"{_clauses[ClauseType.ValueEscapeLeft]}{firstItem.Key}{_clauses[ClauseType.ValueEscapeRight]} = {_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}");
-
-                _bindings.Add($"{_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}", firstItem.Value);
-            }
-
-            return;
-        }
-
-        _builder.Append(_clauses[ClauseType.RangeLeft]);
-
-        idx = 0;
-
-        foreach (var item in data)
-        {
-            if (idx > 0)
-            {
-                _builder.Append($" {_clauses[ClauseType.Or]} ");
-            }
-
-            _builder.Append(_clauses[ClauseType.RangeLeft]);
-
-            _builder.Append($"{_clauses[ClauseType.ValueEscapeLeft]}{item.Key}{_clauses[ClauseType.ValueEscapeRight]} = {_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}");
-
-            _bindings.Add($"{_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}", item.Value);
-
-            if (item.NestedItems.Any())
-            {
-                AppendFilter(item.NestedItems);
-            }
-
-            _builder.Append(_clauses[ClauseType.RangeRight]);
-
-            idx++;
-        }
-
-        _builder.Append(_clauses[ClauseType.RangeRight]);
     }
 
     public SqlCommandModel Build()
@@ -221,5 +163,86 @@ public abstract class BaseQueryBuilder : IQueryBuilder
         }
 
         return new SqlCommandModel { NamedBindings = _bindings, Sql = sql };
+    }
+
+    private void AppendFilter(HashSet<DataGroupModel> data)
+    {
+        if (_whereAdded)
+        {
+            _builder.Append($" {_clauses[ClauseType.And]} ");
+        }
+        else
+        {
+            _builder.Append($" {_clauses[ClauseType.Where]} ");
+
+            _whereAdded = true;
+        }
+
+        var idx = 0;
+
+        DataGroupModel firstItem = data.First();
+
+        if (!firstItem.NestedItems.Any())
+        {
+            if (data.Count > 1)
+            {
+                _builder.Append(
+                    $"{_clauses[ClauseType.ValueEscapeLeft]}{firstItem.Key}{_clauses[ClauseType.ValueEscapeRight]} {_clauses[ClauseType.In]} ");
+
+                _builder.Append(_clauses[ClauseType.RangeLeft]);
+
+                foreach (DataGroupModel item in data)
+                {
+                    _builder.Append(idx > 0
+                        ? $", {_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}"
+                        : $"{_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}");
+
+                    _bindings.Add($"{_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}", item.Value);
+
+                    idx++;
+                }
+
+                _builder.Append(_clauses[ClauseType.RangeRight]);
+            }
+            else
+            {
+                _builder.Append(
+                    $"{_clauses[ClauseType.ValueEscapeLeft]}{firstItem.Key}{_clauses[ClauseType.ValueEscapeRight]} = {_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}");
+
+                _bindings.Add($"{_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}", firstItem.Value);
+            }
+
+            return;
+        }
+
+        _builder.Append(_clauses[ClauseType.RangeLeft]);
+
+        idx = 0;
+
+        foreach (DataGroupModel item in data)
+        {
+            if (idx > 0)
+            {
+                _builder.Append($" {_clauses[ClauseType.Or]} ");
+            }
+
+            _builder.Append(_clauses[ClauseType.RangeLeft]);
+
+            _builder.Append(
+                $"{_clauses[ClauseType.ValueEscapeLeft]}{item.Key}{_clauses[ClauseType.ValueEscapeRight]} = {_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}");
+
+            _bindings.Add($"{_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}", item.Value);
+
+            if (item.NestedItems.Any())
+            {
+                AppendFilter(item.NestedItems);
+            }
+
+            _builder.Append(_clauses[ClauseType.RangeRight]);
+
+            idx++;
+        }
+
+        _builder.Append(_clauses[ClauseType.RangeRight]);
     }
 }

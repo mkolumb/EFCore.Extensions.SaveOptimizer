@@ -3,11 +3,9 @@ using EFCore.Extensions.SaveOptimizer.Internal.Factories;
 using EFCore.Extensions.SaveOptimizer.Internal.Models;
 using EFCore.Extensions.SaveOptimizer.Internal.QueryBuilders;
 using EFCore.Extensions.SaveOptimizer.Internal.Services;
-using EFCore.Extensions.SaveOptimizer.Internal.Tests.Helpers;
 using EFCore.Extensions.SaveOptimizer.Internal.Tests.TestContext.Models;
 using Microsoft.EntityFrameworkCore;
 using Moq;
-using SqlKata.Net6.Compilers;
 
 // ReSharper disable PossibleMultipleEnumeration
 
@@ -24,7 +22,7 @@ public class QueryCompilerServiceTests
     {
         Mock<IQueryBuilderFactory> resolver = new();
 
-        resolver.Setup(x => x.Query(It.IsAny<string>())).Returns(new PostgresQueryBuilder());
+        resolver.Setup(x => x.Query(It.IsAny<string>())).Returns(() => new PostgresQueryBuilder());
 
         _target = new QueryCompilerService(resolver.Object);
     }

@@ -1,6 +1,5 @@
 ﻿using System.Text.Json;
 using EFCore.Extensions.SaveOptimizer.Internal.Models;
-using EFCore.Extensions.SaveOptimizer.Internal.Tests.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace EFCore.Extensions.SaveOptimizer.Internal.Tests.Models;

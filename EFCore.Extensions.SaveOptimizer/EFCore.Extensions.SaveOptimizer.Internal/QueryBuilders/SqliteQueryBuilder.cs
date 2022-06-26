@@ -7,7 +7,7 @@ public class SqliteQueryBuilder : BaseQueryBuilder
     private static readonly Dictionary<ClauseType, string> Clauses = new()
     {
         { ClauseType.Insert, "INSERT INTO" },
-        { ClauseType.Update, "UPDATE FROM" },
+        { ClauseType.Update, "UPDATE" },
         { ClauseType.Delete, "DELETE FROM" },
         { ClauseType.Values, "VALUES " },
         { ClauseType.ValuesOne, "VALUES " },
