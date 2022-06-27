@@ -9,10 +9,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace EFCore.Extensions.SaveOptimizer.Model.Firebird4.Migrations
+namespace EFCore.Extensions.SaveOptimizer.Model.Firebird3.Migrations
 {
     [DbContext(typeof(EntitiesContext))]
-    [Migration("20220627190152_InitialCreate")]
+    [Migration("20220627195705_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

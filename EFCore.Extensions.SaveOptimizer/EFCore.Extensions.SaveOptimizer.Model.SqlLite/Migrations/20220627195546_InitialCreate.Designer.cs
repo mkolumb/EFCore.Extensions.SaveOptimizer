@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EFCore.Extensions.SaveOptimizer.Model.SqlLite.Migrations
 {
     [DbContext(typeof(EntitiesContext))]
-    [Migration("20220627190114_InitialCreate")]
+    [Migration("20220627195546_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

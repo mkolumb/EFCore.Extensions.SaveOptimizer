@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMariaDb.Migrations
 {
     [DbContext(typeof(EntitiesContext))]
-    [Migration("20220627190204_InitialCreate")]
+    [Migration("20220627195732_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
