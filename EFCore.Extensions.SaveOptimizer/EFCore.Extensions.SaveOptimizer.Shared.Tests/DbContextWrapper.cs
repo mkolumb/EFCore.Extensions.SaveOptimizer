@@ -19,7 +19,7 @@ public sealed class DbContextWrapper : IDisposable
     public DbContextWrapper(ITestTimeDbContextFactory<EntitiesContext> factory, ITestOutputHelper testOutputHelper)
     {
         _factory = factory;
-        _loggerFactory = new LoggerFactory(new[] { new TestLoggerProvider(testOutputHelper, LogLevel.Trace) });
+        _loggerFactory = new LoggerFactory(new[] { new TestLoggerProvider(testOutputHelper, LogLevel.Warning) });
 
         Context = _factory.CreateDbContext(Array.Empty<string>(), _loggerFactory);
     }
