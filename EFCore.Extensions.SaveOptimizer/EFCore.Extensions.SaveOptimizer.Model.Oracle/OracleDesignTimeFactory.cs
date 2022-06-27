@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Logging;
+using Oracle.ManagedDataAccess.Client;
 
 // ReSharper disable UnusedMember.Global
 
@@ -31,10 +32,14 @@ public class OracleDesignTimeFactory : IDesignTimeDbContextFactory<EntitiesConte
     {
         const string serverName = "127.0.0.1";
         const int port = 1521;
-        const string db = "test_db";
+        const string service = "XE";
         const string user = "system";
         const string password = "root";
 
-        return $"Server={serverName};Port={port};Database={db};User Id={user};Password={password};";
+        var dataSource = $"{serverName}:{port}/{service}";
+
+        OracleConnectionStringBuilder builder = new() { DataSource = dataSource, UserID = user, Password = password };
+
+        return builder.ToString();
     }
 }
