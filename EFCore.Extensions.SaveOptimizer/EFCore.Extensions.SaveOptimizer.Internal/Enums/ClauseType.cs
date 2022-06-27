@@ -23,5 +23,6 @@ public enum ClauseType
     And,
     Set,
     RangeLeft,
-    RangeRight
+    RangeRight,
+    QueryEnding
 }

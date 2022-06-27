@@ -45,7 +45,7 @@ public class QueryCompilerServiceTests
 
         // Assert
         result.Should().HaveCount(1);
-        result.ElementAt(0).Sql.Should().Be("DELETE FROM \"order\" WHERE \"order_id\" IN (@p0, @p1)");
+        result.ElementAt(0).Sql.Should().Be("DELETE FROM \"order\" WHERE \"order_id\" IN (@p0, @p1);");
         result.ElementAt(0).NamedBindings.Should()
             .BeEquivalentTo(new Dictionary<string, object> { { "@p0", 1 }, { "@p1", 2 } });
     }
@@ -73,11 +73,11 @@ public class QueryCompilerServiceTests
         // Assert
         result.Should().HaveCount(2);
         result.ElementAt(0).Sql.Should()
-            .Be("DELETE FROM \"order\" WHERE \"order_id\" = @p0 AND \"order_concurrency_token\" = @p1");
+            .Be("DELETE FROM \"order\" WHERE \"order_id\" = @p0 AND \"order_concurrency_token\" = @p1;");
         result.ElementAt(0).NamedBindings.Should()
             .BeEquivalentTo(new Dictionary<string, object> { { "@p0", 1 }, { "@p1", "concurrency_token_1" } });
         result.ElementAt(1).Sql.Should()
-            .Be("DELETE FROM \"order\" WHERE \"order_id\" IN (@p0, @p1) AND \"order_concurrency_token\" = @p2");
+            .Be("DELETE FROM \"order\" WHERE \"order_id\" IN (@p0, @p1) AND \"order_concurrency_token\" = @p2;");
         result.ElementAt(1).NamedBindings.Should()
             .BeEquivalentTo(new Dictionary<string, object>
             {
@@ -116,7 +116,7 @@ public class QueryCompilerServiceTests
         result.Should().HaveCount(2);
         result.ElementAt(0).Sql.Should()
             .Be(
-                "DELETE FROM \"order\" WHERE ((\"order_id\" = @p0 AND \"second_primary_key\" = @p1)) AND \"order_concurrency_token\" = @p2");
+                "DELETE FROM \"order\" WHERE ((\"order_id\" = @p0 AND \"second_primary_key\" = @p1)) AND \"order_concurrency_token\" = @p2;");
         result.ElementAt(0).NamedBindings.Should()
             .BeEquivalentTo(new Dictionary<string, object>
             {
@@ -124,7 +124,7 @@ public class QueryCompilerServiceTests
             });
         result.ElementAt(1).Sql.Should()
             .Be(
-                "DELETE FROM \"order\" WHERE ((\"order_id\" = @p0 AND \"second_primary_key\" = @p1) OR (\"order_id\" = @p2 AND \"second_primary_key\" IN (@p3, @p4))) AND \"order_concurrency_token\" = @p5");
+                "DELETE FROM \"order\" WHERE ((\"order_id\" = @p0 AND \"second_primary_key\" = @p1) OR (\"order_id\" = @p2 AND \"second_primary_key\" IN (@p3, @p4))) AND \"order_concurrency_token\" = @p5;");
         result.ElementAt(1).NamedBindings.Should()
             .BeEquivalentTo(new Dictionary<string, object>
             {
@@ -154,7 +154,7 @@ public class QueryCompilerServiceTests
 
         // Assert
         result.Should().HaveCount(1);
-        result.ElementAt(0).Sql.Should().Be("INSERT INTO \"order\" (\"order_id\") VALUES (@p0), (@p1)");
+        result.ElementAt(0).Sql.Should().Be("INSERT INTO \"order\" (\"order_id\") VALUES (@p0), (@p1);");
         result.ElementAt(0).NamedBindings.Should()
             .BeEquivalentTo(new Dictionary<string, object> { { "@p0", 1 }, { "@p1", 2 } });
     }
@@ -179,7 +179,7 @@ public class QueryCompilerServiceTests
 
         // Assert
         result.Should().HaveCount(1);
-        result.ElementAt(0).Sql.Should().Be("INSERT INTO \"order\" (\"order_id\") VALUES (@p0), (@p1)");
+        result.ElementAt(0).Sql.Should().Be("INSERT INTO \"order\" (\"order_id\") VALUES (@p0), (@p1);");
         result.ElementAt(0).NamedBindings.Should()
             .BeEquivalentTo(new Dictionary<string, object> { { "@p0", 1 }, { "@p1", 2 } });
     }
@@ -220,9 +220,9 @@ public class QueryCompilerServiceTests
 
         // Assert
         result.Should().HaveCount(2);
-        result.ElementAt(0).Sql.Should().Be("INSERT INTO \"schema1\".\"order\" (\"order_id2\") VALUES (@p0)");
+        result.ElementAt(0).Sql.Should().Be("INSERT INTO \"schema1\".\"order\" (\"order_id2\") VALUES (@p0);");
         result.ElementAt(0).NamedBindings.Should().BeEquivalentTo(new Dictionary<string, object> { { "@p0", 1 } });
-        result.ElementAt(1).Sql.Should().Be("INSERT INTO \"schema1\".\"order\" (\"order_id3\") VALUES (@p0)");
+        result.ElementAt(1).Sql.Should().Be("INSERT INTO \"schema1\".\"order\" (\"order_id3\") VALUES (@p0);");
         result.ElementAt(1).NamedBindings.Should().BeEquivalentTo(new Dictionary<string, object> { { "@p0", 11 } });
     }
 
@@ -321,10 +321,10 @@ public class QueryCompilerServiceTests
 
         // Assert
         result.Should().HaveCount(2);
-        result.ElementAt(0).Sql.Should().Be("UPDATE \"order\" SET \"other\" = @p0 WHERE \"order_id\" = @p1");
+        result.ElementAt(0).Sql.Should().Be("UPDATE \"order\" SET \"other\" = @p0 WHERE \"order_id\" = @p1;");
         result.ElementAt(0).NamedBindings.Should()
             .BeEquivalentTo(new Dictionary<string, object> { { "@p0", 11 }, { "@p1", 1 } });
-        result.ElementAt(1).Sql.Should().Be("UPDATE \"order\" SET \"other\" = @p0 WHERE \"order_id\" = @p1");
+        result.ElementAt(1).Sql.Should().Be("UPDATE \"order\" SET \"other\" = @p0 WHERE \"order_id\" = @p1;");
         result.ElementAt(1).NamedBindings.Should()
             .BeEquivalentTo(new Dictionary<string, object> { { "@p0", 21 }, { "@p1", 2 } });
     }
@@ -360,14 +360,14 @@ public class QueryCompilerServiceTests
 
         // Assert
         result.Should().HaveCount(3);
-        result.ElementAt(0).Sql.Should().Be("UPDATE \"order\" SET \"other\" = @p0 WHERE \"order_id\" IN (@p1, @p2)");
+        result.ElementAt(0).Sql.Should().Be("UPDATE \"order\" SET \"other\" = @p0 WHERE \"order_id\" IN (@p1, @p2);");
         result.ElementAt(0).NamedBindings.Should()
             .BeEquivalentTo(new Dictionary<string, object> { { "@p0", 11 }, { "@p1", 1 }, { "@p2", 5 } });
         result.ElementAt(1).Sql.Should()
-            .Be("UPDATE \"order\" SET \"other\" = @p0 WHERE \"order_id\" IN (@p1, @p2, @p3)");
+            .Be("UPDATE \"order\" SET \"other\" = @p0 WHERE \"order_id\" IN (@p1, @p2, @p3);");
         result.ElementAt(1).NamedBindings.Should()
             .BeEquivalentTo(new Dictionary<string, object> { { "@p0", 21 }, { "@p1", 2 }, { "@p2", 3 }, { "@p3", 4 } });
-        result.ElementAt(2).Sql.Should().Be("UPDATE \"order\" SET \"other\" = @p0 WHERE \"order_id\" = @p1");
+        result.ElementAt(2).Sql.Should().Be("UPDATE \"order\" SET \"other\" = @p0 WHERE \"order_id\" = @p1;");
         result.ElementAt(2).NamedBindings.Should()
             .BeEquivalentTo(new Dictionary<string, object> { { "@p0", 31 }, { "@p1", 6 } });
     }
@@ -411,27 +411,27 @@ public class QueryCompilerServiceTests
         result.Should().HaveCount(4);
         result.ElementAt(0).Sql.Should()
             .Be(
-                "UPDATE \"order\" SET \"other\" = @p0 WHERE \"order_id\" IN (@p1, @p2) AND \"order_concurrency_token\" = @p3");
+                "UPDATE \"order\" SET \"other\" = @p0 WHERE \"order_id\" IN (@p1, @p2) AND \"order_concurrency_token\" = @p3;");
         result.ElementAt(0).NamedBindings.Should().BeEquivalentTo(new Dictionary<string, object>
         {
             { "@p0", 11 }, { "@p1", 1 }, { "@p2", 5 }, { "@p3", "concurrency_token_11" }
         });
         result.ElementAt(1).Sql.Should()
             .Be(
-                "UPDATE \"order\" SET \"other\" = @p0 WHERE \"order_id\" IN (@p1, @p2) AND \"order_concurrency_token\" = @p3");
+                "UPDATE \"order\" SET \"other\" = @p0 WHERE \"order_id\" IN (@p1, @p2) AND \"order_concurrency_token\" = @p3;");
         result.ElementAt(1).NamedBindings.Should().BeEquivalentTo(new Dictionary<string, object>
         {
             { "@p0", 21 }, { "@p1", 2 }, { "@p2", 3 }, { "@p3", "concurrency_token_21" }
         });
         result.ElementAt(2).Sql.Should()
-            .Be("UPDATE \"order\" SET \"other\" = @p0 WHERE \"order_id\" = @p1 AND \"order_concurrency_token\" = @p2");
+            .Be("UPDATE \"order\" SET \"other\" = @p0 WHERE \"order_id\" = @p1 AND \"order_concurrency_token\" = @p2;");
         result.ElementAt(2).NamedBindings.Should()
             .BeEquivalentTo(new Dictionary<string, object>
             {
                 { "@p0", 21 }, { "@p1", 4 }, { "@p2", "concurrency_token_11" }
             });
         result.ElementAt(3).Sql.Should()
-            .Be("UPDATE \"order\" SET \"other\" = @p0 WHERE \"order_id\" = @p1 AND \"order_concurrency_token\" = @p2");
+            .Be("UPDATE \"order\" SET \"other\" = @p0 WHERE \"order_id\" = @p1 AND \"order_concurrency_token\" = @p2;");
         result.ElementAt(3).NamedBindings.Should()
             .BeEquivalentTo(new Dictionary<string, object>
             {
@@ -486,7 +486,7 @@ public class QueryCompilerServiceTests
         result.Should().HaveCount(4);
         result.ElementAt(0).Sql.Should()
             .Be(
-                "UPDATE \"order\" SET \"other\" = @p0 WHERE ((\"order_id\" = @p1 AND \"second_primary_key\" = @p2) OR (\"order_id\" = @p3 AND \"second_primary_key\" = @p4)) AND \"order_concurrency_token\" = @p5");
+                "UPDATE \"order\" SET \"other\" = @p0 WHERE ((\"order_id\" = @p1 AND \"second_primary_key\" = @p2) OR (\"order_id\" = @p3 AND \"second_primary_key\" = @p4)) AND \"order_concurrency_token\" = @p5;");
         result.ElementAt(0).NamedBindings.Should()
             .BeEquivalentTo(new Dictionary<string, object>
             {
@@ -499,7 +499,7 @@ public class QueryCompilerServiceTests
             });
         result.ElementAt(1).Sql.Should()
             .Be(
-                "UPDATE \"order\" SET \"other\" = @p0 WHERE ((\"order_id\" = @p1 AND \"second_primary_key\" = @p2) OR (\"order_id\" = @p3 AND \"second_primary_key\" = @p4)) AND \"order_concurrency_token\" = @p5");
+                "UPDATE \"order\" SET \"other\" = @p0 WHERE ((\"order_id\" = @p1 AND \"second_primary_key\" = @p2) OR (\"order_id\" = @p3 AND \"second_primary_key\" = @p4)) AND \"order_concurrency_token\" = @p5;");
         result.ElementAt(1).NamedBindings.Should()
             .BeEquivalentTo(new Dictionary<string, object>
             {
@@ -512,14 +512,14 @@ public class QueryCompilerServiceTests
             });
         result.ElementAt(2).Sql.Should()
             .Be(
-                "UPDATE \"order\" SET \"other\" = @p0 WHERE ((\"order_id\" = @p1 AND \"second_primary_key\" = @p2)) AND \"order_concurrency_token\" = @p3");
+                "UPDATE \"order\" SET \"other\" = @p0 WHERE ((\"order_id\" = @p1 AND \"second_primary_key\" = @p2)) AND \"order_concurrency_token\" = @p3;");
         result.ElementAt(2).NamedBindings.Should().BeEquivalentTo(new Dictionary<string, object>
         {
             { "@p0", 21 }, { "@p1", 4 }, { "@p2", 114 }, { "@p3", "concurrency_token_11" }
         });
         result.ElementAt(3).Sql.Should()
             .Be(
-                "UPDATE \"order\" SET \"other\" = @p0 WHERE ((\"order_id\" = @p1 AND \"second_primary_key\" IN (@p2, @p3, @p4))) AND \"order_concurrency_token\" = @p5");
+                "UPDATE \"order\" SET \"other\" = @p0 WHERE ((\"order_id\" = @p1 AND \"second_primary_key\" IN (@p2, @p3, @p4))) AND \"order_concurrency_token\" = @p5;");
         result.ElementAt(3).NamedBindings.Should()
             .BeEquivalentTo(new Dictionary<string, object>
             {
@@ -554,14 +554,14 @@ public class QueryCompilerServiceTests
         // Assert
         result.Should().HaveCount(2);
         result.ElementAt(0).Sql.Should()
-            .Be("UPDATE \"order\" SET \"other\" = @p0 WHERE \"order_id\" = @p1 AND \"order_concurrency_token\" = @p2");
+            .Be("UPDATE \"order\" SET \"other\" = @p0 WHERE \"order_id\" = @p1 AND \"order_concurrency_token\" = @p2;");
         result.ElementAt(0).NamedBindings.Should()
             .BeEquivalentTo(new Dictionary<string, object>
             {
                 { "@p0", 11 }, { "@p1", 1 }, { "@p2", "concurrency_token_11" }
             });
         result.ElementAt(1).Sql.Should()
-            .Be("UPDATE \"order\" SET \"other\" = @p0 WHERE \"order_id\" = @p1 AND \"order_concurrency_token\" = @p2");
+            .Be("UPDATE \"order\" SET \"other\" = @p0 WHERE \"order_id\" = @p1 AND \"order_concurrency_token\" = @p2;");
         result.ElementAt(1).NamedBindings.Should()
             .BeEquivalentTo(new Dictionary<string, object>
             {

@@ -27,7 +27,8 @@ public class SqlServerQueryBuilder : BaseQueryBuilder
         { ClauseType.And, "AND" },
         { ClauseType.Set, "SET" },
         { ClauseType.RangeLeft, "(" },
-        { ClauseType.RangeRight, ")" }
+        { ClauseType.RangeRight, ")" },
+        { ClauseType.QueryEnding, ";" }
     };
 
     public SqlServerQueryBuilder() : base(Clauses)

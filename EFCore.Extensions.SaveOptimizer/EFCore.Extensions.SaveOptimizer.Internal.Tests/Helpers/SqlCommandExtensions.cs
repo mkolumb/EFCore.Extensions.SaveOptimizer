@@ -24,6 +24,13 @@ public static class SqlCommandExtensions
             sql = sql.Replace(key, SerializationHelper.Serialize(value));
         }
 
-        return sql.ToLower();
+        sql = sql.ToLower();
+
+        while (sql.EndsWith(";"))
+        {
+            sql = sql[..^1];
+        }
+
+        return sql;
     }
 }

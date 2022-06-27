@@ -131,7 +131,13 @@ public abstract class BaseQueryBuilder : IQueryBuilder
 
     public ISqlCommandModel Build()
     {
-        var sql = _builder.ToString();
+        var sql = _builder.ToString().Trim();
+
+        if (!string.IsNullOrWhiteSpace(_clauses[ClauseType.QueryEnding]) &&
+            !sql.EndsWith(_clauses[ClauseType.QueryEnding]))
+        {
+            sql = $"{sql}{_clauses[ClauseType.QueryEnding]}";
+        }
 
         return new SqlCommandModel { Parameters = _bindings.Values, Sql = sql };
     }
