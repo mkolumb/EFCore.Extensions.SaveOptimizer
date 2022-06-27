@@ -107,7 +107,7 @@ Basically query builders are prepared for multi row statements, but it looks the
 
 ### Oracle serializable transaction
 
-It looks like serializable transaction produces many errors during execution. This is something to investigate. Currently I don't recommend using this library with Oracle in production environment.
+It looks like serializable transaction produces many errors during execution (e.g. ORA-08177 & ORA-06512). This is something to investigate. Currently I don't recommend using this library with Oracle in production environment.
 
 ## Q&A
 

@@ -139,16 +139,25 @@ public abstract class BaseQueryBuilder : IQueryBuilder
     {
         var sql = Builder.ToString().Trim();
 
-        if (!string.IsNullOrWhiteSpace(ClausesConfiguration[ClauseType.QueryEnding]) &&
-            !sql.EndsWith(ClausesConfiguration[ClauseType.QueryEnding]))
+        var queryEnding = ClausesConfiguration[ClauseType.QueryEnding];
+
+        if (!string.IsNullOrWhiteSpace(queryEnding) && !sql.EndsWith(queryEnding))
         {
-            sql = $"{sql}{ClausesConfiguration[ClauseType.QueryEnding]}";
+            sql = $"{sql}{queryEnding}".Trim();
         }
 
         if (ClausesConfiguration.ContainsKey(ClauseType.WrapLeft) &&
             ClausesConfiguration.ContainsKey(ClauseType.WrapRight))
         {
-            sql = $"{ClausesConfiguration[ClauseType.WrapLeft]}{sql}{ClausesConfiguration[ClauseType.WrapRight]}";
+            sql = $"{ClausesConfiguration[ClauseType.WrapLeft]}{sql}{ClausesConfiguration[ClauseType.WrapRight]}".Trim();
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryEnding))
+        {
+            while (sql.Contains($"{queryEnding}{queryEnding}"))
+            {
+                sql = sql.Replace($"{queryEnding}{queryEnding}", queryEnding);
+            }
         }
 
         IReadOnlyCollection<SqlParamModel> parameters = Bindings.SelectMany(x => x.Value).ToArray();

@@ -36,5 +36,5 @@ public class FirebirdQueryBuilder : BaseQueryBuilder
     {
     }
 
-    private static QueryBuilderConfiguration GetConfiguration() => new() { OptimizeParameters = false };
+    private static QueryBuilderConfiguration GetConfiguration() => new() { OptimizeParameters = true };
 }
