@@ -50,21 +50,6 @@ Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer
 dotnet build -c Release
 
-# SqlServer
-Set-Location $workingDir
-Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.SqlServer.Benchmark
-.\benchmark.ps1
-
-# Oracle
-Set-Location $workingDir
-Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Model.Oracle
-.\benchmark.ps1
-
-# SqlLite
-Set-Location $workingDir
-Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.SqlLite.Benchmark
-.\benchmark.ps1
-
 # Postgres
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Postgres.Benchmark
@@ -75,19 +60,14 @@ Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.PomeloMySql.Benchmark
 .\benchmark.ps1
 
-# Firebird3
-Set-Location $workingDir
-Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Model.Firebird3
-.\benchmark.ps1
-
-# Firebird4
-Set-Location $workingDir
-Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Model.Firebird4
-.\benchmark.ps1
-
 # PomeloMariaDb
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.PomeloMariaDb.Benchmark
+.\benchmark.ps1
+
+# SqlLite
+Set-Location $workingDir
+Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.SqlLite.Benchmark
 .\benchmark.ps1
 
 # Cockroach
@@ -98,4 +78,24 @@ Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.C
 # Cockroach Multi
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.CockroachMulti.Benchmark
+.\benchmark.ps1
+
+# SqlServer
+Set-Location $workingDir
+Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.SqlServer.Benchmark
+.\benchmark.ps1
+
+# Oracle
+Set-Location $workingDir
+Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Model.Oracle
+.\benchmark.ps1
+
+# Firebird3
+Set-Location $workingDir
+Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Model.Firebird3
+.\benchmark.ps1
+
+# Firebird4
+Set-Location $workingDir
+Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Model.Firebird4
 .\benchmark.ps1
