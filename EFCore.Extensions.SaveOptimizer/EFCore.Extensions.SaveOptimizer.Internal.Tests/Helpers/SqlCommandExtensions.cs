@@ -33,15 +33,25 @@ public static class SqlCommandExtensions
             sql = sql[..^1];
         }
 
-        if (builderType == typeof(OracleAllQueryBuilder) &&
-            command.GetType() == typeof(SqlKataCommandModel) &&
-            sql.Contains("), ("))
+        if (command.GetType() == typeof(SqlKataCommandModel) && sql.Contains("), ("))
         {
-            var regex = new Regex("insert (.*) values");
+            if (builderType == typeof(OracleAllQueryBuilder))
+            {
+                Regex regex = new("insert (.*) values");
 
-            var match = ") " + regex.Match(sql).Value[7..] + " (";
+                var match = ") " + regex.Match(sql).Value[7..] + " (";
 
-            sql = sql.Replace("insert into", "insert all into").Replace("), (", match) + " select * from dual";
+                sql = sql.Replace("insert into", "insert all into")
+                          .Replace("), (", match)
+                      + " select * from dual";
+            }
+            else if (builderType == typeof(OracleQueryBuilder))
+            {
+                sql = sql.Replace("values (", "select ")
+                          .Replace("), (", " from dual union all select ")
+                          .Trim()[..^1]
+                      + " from dual";
+            }
         }
 
         if (sql.StartsWith("begin"))
