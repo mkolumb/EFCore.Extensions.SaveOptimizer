@@ -44,6 +44,26 @@ public static class SqlCommandExtensions
             sql = sql.Replace("insert into", "insert all into").Replace("), (", match) + " select * from dual";
         }
 
+        if (sql.StartsWith("begin"))
+        {
+            sql = sql[5..].Trim();
+        }
+
+        while (sql.StartsWith(";"))
+        {
+            sql = sql[1..].Trim();
+        }
+
+        if (sql.EndsWith("end"))
+        {
+            sql = sql[..^3].Trim();
+        }
+
+        while (sql.EndsWith(";"))
+        {
+            sql = sql[..^1].Trim();
+        }
+
         return sql;
     }
 }

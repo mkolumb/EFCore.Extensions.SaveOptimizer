@@ -29,7 +29,9 @@ public class OracleQueryBuilder : BaseQueryBuilder
         { ClauseType.Set, "SET" },
         { ClauseType.RangeLeft, "(" },
         { ClauseType.RangeRight, ")" },
-        { ClauseType.QueryEnding, "" }
+        { ClauseType.QueryEnding, "" },
+        { ClauseType.WrapLeft, "BEGIN\r\n" },
+        { ClauseType.WrapRight, "; \r\nEND;" }
     };
 
     public OracleQueryBuilder() : base(Clauses, GetConfiguration())

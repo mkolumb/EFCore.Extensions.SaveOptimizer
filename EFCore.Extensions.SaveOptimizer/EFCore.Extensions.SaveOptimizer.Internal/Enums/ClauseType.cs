@@ -27,5 +27,7 @@ public enum ClauseType
     RangeLeft,
     RangeRight,
     QueryAppendix,
-    QueryEnding
+    QueryEnding,
+    WrapLeft,
+    WrapRight
 }

@@ -34,7 +34,9 @@ public class OracleAllQueryBuilder : BaseQueryBuilder
         { ClauseType.RangeLeft, "(" },
         { ClauseType.RangeRight, ")" },
         { ClauseType.QueryEnding, "" },
-        { ClauseType.QueryAppendix, " SELECT * FROM DUAL" }
+        { ClauseType.QueryAppendix, " SELECT * FROM DUAL" },
+        { ClauseType.WrapLeft, "BEGIN\r\n" },
+        { ClauseType.WrapRight, "; \r\nEND;" }
     };
 
     public OracleAllQueryBuilder() : base(Clauses, GetConfiguration())

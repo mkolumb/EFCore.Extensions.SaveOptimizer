@@ -28,7 +28,7 @@ public class QueryBuilderFactory : IQueryBuilderFactory
 
         if (providerName.Contains("Oracle"))
         {
-            return new OracleQueryBuilder();
+            return new OracleAllQueryBuilder();
         }
 
         if (providerName.Contains("Postgre"))

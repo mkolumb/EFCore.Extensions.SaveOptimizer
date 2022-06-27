@@ -101,9 +101,13 @@ SaveOptimizer approach makes almost impossible refresh data after save, it is on
 I recommend to generate values for primary keys in code, not in db. 
 This will make much easier refresh data after save if necessary, you will be able to use this values for query. 
 
-### Oracle & Firebird insert
+### Firebird insert
 
-Basically query builders are prepared for multi row statements, but it looks there are some issues when executing via DbCommand. Currently for these providers batch is working only on update and delete.
+Basically query builders are prepared for multi row statements, but it looks there are some issues when executing via DbCommand. Currently for this provider batch is working only on update and delete.
+
+### Oracle serializable transaction
+
+It looks like serializable transaction produces many errors during execution. This is something to investigate.
 
 ## Q&A
 

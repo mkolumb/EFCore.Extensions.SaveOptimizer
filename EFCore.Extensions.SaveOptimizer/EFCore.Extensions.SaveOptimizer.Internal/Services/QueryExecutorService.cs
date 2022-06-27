@@ -26,6 +26,12 @@ public class QueryExecutorService : IQueryExecutorService
         {
             return command.ExecuteNonQuery();
         }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error when executing command: {Sql}", sql.Sql);
+
+            throw;
+        }
         finally
         {
             CleanupCommand(command, connection);
@@ -49,6 +55,12 @@ public class QueryExecutorService : IQueryExecutorService
         try
         {
             return await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error when executing command: {Sql}", sql.Sql);
+
+            throw;
         }
         finally
         {

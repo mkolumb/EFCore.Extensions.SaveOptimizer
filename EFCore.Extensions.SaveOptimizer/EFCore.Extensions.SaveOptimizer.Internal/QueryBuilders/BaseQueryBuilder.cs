@@ -145,6 +145,12 @@ public abstract class BaseQueryBuilder : IQueryBuilder
             sql = $"{sql}{ClausesConfiguration[ClauseType.QueryEnding]}";
         }
 
+        if (ClausesConfiguration.ContainsKey(ClauseType.WrapLeft) &&
+            ClausesConfiguration.ContainsKey(ClauseType.WrapRight))
+        {
+            sql = $"{ClausesConfiguration[ClauseType.WrapLeft]}{sql}{ClausesConfiguration[ClauseType.WrapRight]}";
+        }
+
         IReadOnlyCollection<SqlParamModel> parameters = Bindings.SelectMany(x => x.Value).ToArray();
 
         return new SqlCommandModel { Parameters = parameters, Sql = sql };
