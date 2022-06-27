@@ -252,7 +252,7 @@ public class QueryCompilerService : IQueryCompilerService
     {
         IDictionary<string, SqlValueModel?> data = GetUpdateParams(queryResult);
 
-        foreach (var (key, value) in data)
+        foreach ((var key, SqlValueModel? value) in data)
         {
             builder.Append(SerializationHelper.Serialize(key, value?.Value));
         }
@@ -267,7 +267,7 @@ public class QueryCompilerService : IQueryCompilerService
             return builder;
         }
 
-        foreach (var (key, value) in queryResult.ConcurrencyTokens)
+        foreach ((var key, SqlValueModel? value) in queryResult.ConcurrencyTokens)
         {
             builder.Append(SerializationHelper.Serialize(key, value?.Value));
         }
@@ -279,7 +279,7 @@ public class QueryCompilerService : IQueryCompilerService
     {
         Dictionary<string, SqlValueModel?> dict = new();
 
-        foreach (var (key, value) in queryResult.Data)
+        foreach ((var key, SqlValueModel? value) in queryResult.Data)
         {
             if (queryResult.PrimaryKeyNames.Contains(key))
             {

@@ -16,47 +16,49 @@ public class SerializationHelper
 
     public static string Serialize(object? value)
     {
-        while (true)
+        var realValue = value;
+
+        while (realValue is SqlValueModel sqlValue)
         {
-            if (value == null)
-            {
-                return "NULL";
-            }
+            realValue = sqlValue.Value;
+        }
 
-            if (NumberTypes.Contains(value.GetType()))
-            {
-                return $"{value:G}";
-            }
+        if (realValue == null)
+        {
+            return "NULL";
+        }
 
-            switch (value)
-            {
-                case SqlValueModel sqlValue:
-                    value = sqlValue.Value;
-                    continue;
-                case string:
-                    return $"{value}";
-                case byte[] bytes:
-                    return $"{Convert.ToBase64String(bytes)}";
-                case DateTimeOffset dateOffset:
-                    return $"{dateOffset:O}";
-                case DateTime date:
-                    return $"{date:O}";
-                case IEnumerable enumerable:
+        if (NumberTypes.Contains(realValue.GetType()))
+        {
+            return $"{realValue:G}";
+        }
+
+        switch (realValue)
+        {
+            case string stringValue:
+                return stringValue;
+            case byte[] bytes:
+                return Convert.ToBase64String(bytes);
+            case DateTimeOffset dateOffset:
+                return dateOffset.ToString("O");
+            case DateTime date:
+                return date.ToString("O");
+            case IEnumerable enumerable:
+                {
+                    StringBuilder builder = new();
+                    builder.Append('[');
+                    var i = 0;
+                    foreach (var item in enumerable)
                     {
-                        StringBuilder builder = new();
-                        builder.Append('[');
-                        var i = 0;
-                        foreach (var item in enumerable)
-                        {
-                            builder.Append(Serialize(i.ToString(), item) + ",");
-                            i++;
-                        }
-                        builder.Append(']');
-                        return builder.ToString();
+                        builder.Append(Serialize(i.ToString(), item) + ",");
+                        i++;
                     }
-                default:
-                    return $"{value}";
-            }
+
+                    builder.Append(']');
+                    return builder.ToString();
+                }
+            default:
+                return $"{realValue}";
         }
     }
 }

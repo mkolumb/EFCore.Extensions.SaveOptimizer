@@ -29,8 +29,8 @@ public abstract class BaseQueryBuilder : IQueryBuilder
         foreach (var key in data[0].Keys)
         {
             _builder.Append(idx > 0
-                ? $", {_clauses[ClauseType.ValueEscapeLeft]}{key}{_clauses[ClauseType.ValueEscapeRight]}"
-                : $"{_clauses[ClauseType.ValueEscapeLeft]}{key}{_clauses[ClauseType.ValueEscapeRight]}");
+                ? $", {_clauses[ClauseType.ValueEscapeLeft]}{ConvertCase(key)}{_clauses[ClauseType.ValueEscapeRight]}"
+                : $"{_clauses[ClauseType.ValueEscapeLeft]}{ConvertCase(key)}{_clauses[ClauseType.ValueEscapeRight]}");
 
             idx++;
         }
@@ -39,13 +39,12 @@ public abstract class BaseQueryBuilder : IQueryBuilder
 
         for (var i = 0; i < data.Count; i++)
         {
-            var valueSetLeft =
-                data.Count == 1 ? _clauses[ClauseType.ValueSetOneLeft] : _clauses[ClauseType.ValueSetLeft];
-
+            var valueSetLeft = _clauses[ClauseType.ValueSetLeft];
             var valueSetRight = _clauses[ClauseType.ValueSetRight];
 
             if (data.Count == 1)
             {
+                valueSetLeft = _clauses[ClauseType.ValueSetOneLeft];
                 valueSetRight = _clauses[ClauseType.ValueSetOneRight];
             }
             else if (data.Count == i + 1)
@@ -76,7 +75,7 @@ public abstract class BaseQueryBuilder : IQueryBuilder
 
         var idx = 0;
 
-        foreach (var (key, value) in data)
+        foreach ((var key, SqlValueModel? value) in data)
         {
             AppendValue(key, value, idx > 0);
 
@@ -100,7 +99,7 @@ public abstract class BaseQueryBuilder : IQueryBuilder
             return this;
         }
 
-        foreach (var (key, value) in filter)
+        foreach ((var key, SqlValueModel? value) in filter)
         {
             if (_whereAdded)
             {
@@ -132,37 +131,32 @@ public abstract class BaseQueryBuilder : IQueryBuilder
     {
         var sql = _builder.ToString();
 
-        switch (_caseType)
-        {
-            case CaseType.Normal:
-                break;
-            case CaseType.Lowercase:
-                sql = sql
-                    .ToLower()
-                    .Replace(_clauses[ClauseType.ParameterPrefix].ToLower(), _clauses[ClauseType.ParameterPrefix]);
-                break;
-            case CaseType.Uppercase:
-                sql = sql
-                    .ToUpper()
-                    .Replace(_clauses[ClauseType.ParameterPrefix].ToUpper(), _clauses[ClauseType.ParameterPrefix]);
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-
         return new SqlCommandModel { Parameters = _bindings.Values, Sql = sql };
     }
 
-    private string GetTableName(string tableName) =>
-        $"{_clauses[ClauseType.ValueEscapeLeft]}{tableName.Replace(".", _clauses[ClauseType.TableEscape])}{_clauses[ClauseType.ValueEscapeRight]}";
+    private string GetTableName(string tableName)
+    {
+        var value =
+            $"{_clauses[ClauseType.ValueEscapeLeft]}{tableName.Replace(".", _clauses[ClauseType.TableEscape])}{_clauses[ClauseType.ValueEscapeRight]}";
+
+        return ConvertCase(value);
+    }
+
+    private string ConvertCase(string value) =>
+        _caseType switch
+        {
+            CaseType.Lowercase => value.ToLower(),
+            CaseType.Uppercase => value.ToUpper(),
+            _ => value
+        };
 
     private void AppendValue(string key, SqlValueModel? value, bool comma)
     {
         var paramKey = AppendParameterBinding(value);
 
         _builder.Append(comma
-            ? $", {_clauses[ClauseType.ValueEscapeLeft]}{key}{_clauses[ClauseType.ValueEscapeRight]} = {paramKey}"
-            : $"{_clauses[ClauseType.ValueEscapeLeft]}{key}{_clauses[ClauseType.ValueEscapeRight]} = {paramKey}");
+            ? $", {_clauses[ClauseType.ValueEscapeLeft]}{ConvertCase(key)}{_clauses[ClauseType.ValueEscapeRight]} = {paramKey}"
+            : $"{_clauses[ClauseType.ValueEscapeLeft]}{ConvertCase(key)}{_clauses[ClauseType.ValueEscapeRight]} = {paramKey}");
     }
 
     private void AppendValueIn(SqlValueModel? value, bool comma)
@@ -213,7 +207,7 @@ public abstract class BaseQueryBuilder : IQueryBuilder
             if (data.Count > 1)
             {
                 _builder.Append(
-                    $"{_clauses[ClauseType.ValueEscapeLeft]}{firstItem.Key}{_clauses[ClauseType.ValueEscapeRight]} {_clauses[ClauseType.In]} ");
+                    $"{_clauses[ClauseType.ValueEscapeLeft]}{ConvertCase(firstItem.Key)}{_clauses[ClauseType.ValueEscapeRight]} {_clauses[ClauseType.In]} ");
 
                 _builder.Append(_clauses[ClauseType.RangeLeft]);
 

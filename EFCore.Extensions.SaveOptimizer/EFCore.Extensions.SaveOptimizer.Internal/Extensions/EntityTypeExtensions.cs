@@ -74,7 +74,7 @@ public static class EntityTypeExtensions
         }
     }
 
-    private static bool ShouldSwitch(IEntityType firstEntity, IEntityType secondEntity)
+    private static bool ShouldSwitch(IEntityType firstEntity, IReadOnlyTypeBase secondEntity)
     {
         IEnumerable<IForeignKey> keys = firstEntity.GetForeignKeys();
 
