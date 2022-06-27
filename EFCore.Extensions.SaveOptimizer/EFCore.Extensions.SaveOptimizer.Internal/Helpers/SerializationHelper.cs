@@ -12,18 +12,20 @@ public class SerializationHelper
         typeof(ulong)
     };
 
-    public static string Serialize(string key, object? value)
+    public static string Serialize(string key, object? value) => $"{key}={Serialize(value)}";
+
+    public static string Serialize(object? value)
     {
         while (true)
         {
             if (value == null)
             {
-                return $"{key}=NULL";
+                return "NULL";
             }
 
             if (NumberTypes.Contains(value.GetType()))
             {
-                return $"{key}={value:G}";
+                return $"{value:G}";
             }
 
             switch (value)
@@ -32,28 +34,28 @@ public class SerializationHelper
                     value = sqlValue.Value;
                     continue;
                 case string:
-                    return $"{key}={value}";
+                    return $"{value}";
                 case byte[] bytes:
-                    return $"{key}={Convert.ToBase64String(bytes)}";
+                    return $"{Convert.ToBase64String(bytes)}";
                 case DateTimeOffset dateOffset:
-                    return $"{key}={dateOffset:O}";
+                    return $"{dateOffset:O}";
                 case DateTime date:
-                    return $"{key}={date:O}";
+                    return $"{date:O}";
                 case IEnumerable enumerable:
                     {
                         StringBuilder builder = new();
-                        builder.Append(key);
+                        builder.Append('[');
                         var i = 0;
                         foreach (var item in enumerable)
                         {
-                            builder.Append(Serialize(i.ToString(), item));
+                            builder.Append(Serialize(i.ToString(), item) + ",");
                             i++;
                         }
-
+                        builder.Append(']');
                         return builder.ToString();
                     }
                 default:
-                    return $"{key}={value}";
+                    return $"{value}";
             }
         }
     }

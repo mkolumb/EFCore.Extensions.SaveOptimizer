@@ -25,21 +25,21 @@ public abstract class BaseQueryBuilderTests
 
     [Theory]
     [MemberData(nameof(InsertData))]
-    public void GivenInsert_ShouldProduceSameResultsAsSqlKata(string tableName, List<IDictionary<string, SqlValueModel?>> data)
+    public void GivenInsert_ShouldProduceSameResultsAsSqlKata(string tableName,
+        List<IDictionary<string, SqlValueModel?>> data)
     {
         // Arrange
-        ISqlCommandModel expected = new SqlKataBuilder(_compiler)
-            .Insert(tableName, data)
-            .Build();
+        var expected = new SqlKataBuilder(_compiler)
+            .Insert(tableName, data).Build()
+            .CompileSql();
 
         // Act
-        ISqlCommandModel result = _factory()
-            .Insert(tableName, data)
-            .Build();
+        var result = _factory()
+            .Insert(tableName, data).Build()
+            .CompileSql();
 
         // Assert
-        result.Sql.Should().Be(expected.Sql);
-        result.NamedBindings.Should().BeEquivalentTo(expected.NamedBindings);
+        result.Should().Be(expected);
     }
 
     [Theory]
@@ -51,22 +51,21 @@ public abstract class BaseQueryBuilderTests
         Dictionary<string, SqlValueModel?> data)
     {
         // Arrange
-        ISqlCommandModel expected = new SqlKataBuilder(_compiler)
+        var expected = new SqlKataBuilder(_compiler)
             .Update(tableName, data)
             .Where(filter)
-            .Where(keys, queries)
-            .Build();
+            .Where(keys, queries).Build()
+            .CompileSql();
 
         // Act
-        ISqlCommandModel result = _factory()
+        var result = _factory()
             .Update(tableName, data)
             .Where(filter)
-            .Where(keys, queries)
-            .Build();
+            .Where(keys, queries).Build()
+            .CompileSql();
 
         // Assert
-        result.Sql.Should().Be(expected.Sql);
-        result.NamedBindings.Should().BeEquivalentTo(expected.NamedBindings);
+        result.Should().Be(expected);
     }
 
     [Theory]
@@ -78,22 +77,21 @@ public abstract class BaseQueryBuilderTests
         Dictionary<string, SqlValueModel?> data)
     {
         // Arrange
-        ISqlCommandModel expected = new SqlKataBuilder(_compiler)
+        var expected = new SqlKataBuilder(_compiler)
             .Delete(tableName)
             .Where(filter)
-            .Where(keys, queries)
-            .Build();
+            .Where(keys, queries).Build()
+            .CompileSql();
 
         // Act
-        ISqlCommandModel result = _factory()
+        var result = _factory()
             .Delete(tableName)
             .Where(filter)
-            .Where(keys, queries)
-            .Build();
+            .Where(keys, queries).Build()
+            .CompileSql();
 
         // Assert
-        result.Sql.Should().Be(expected.Sql);
-        result.NamedBindings.Should().BeEquivalentTo(expected.NamedBindings);
+        result.Should().Be(expected);
     }
 
     [Theory]
@@ -105,22 +103,21 @@ public abstract class BaseQueryBuilderTests
         Dictionary<string, SqlValueModel?> data)
     {
         // Arrange
-        ISqlCommandModel expected = new SqlKataBuilder(_compiler)
+        var expected = new SqlKataBuilder(_compiler)
             .Update(tableName, data)
             .Where(keys, queries)
-            .Where(filter)
-            .Build();
+            .Where(filter).Build()
+            .CompileSql();
 
         // Act
-        ISqlCommandModel result = _factory()
+        var result = _factory()
             .Update(tableName, data)
             .Where(keys, queries)
-            .Where(filter)
-            .Build();
+            .Where(filter).Build()
+            .CompileSql();
 
         // Assert
-        result.Sql.Should().Be(expected.Sql);
-        result.NamedBindings.Should().BeEquivalentTo(expected.NamedBindings);
+        result.Should().Be(expected);
     }
 
     [Theory]
@@ -132,21 +129,20 @@ public abstract class BaseQueryBuilderTests
         Dictionary<string, SqlValueModel?> data)
     {
         // Arrange
-        ISqlCommandModel expected = new SqlKataBuilder(_compiler)
+        var expected = new SqlKataBuilder(_compiler)
             .Delete(tableName)
             .Where(keys, queries)
-            .Where(filter)
-            .Build();
+            .Where(filter).Build()
+            .CompileSql();
 
         // Act
-        ISqlCommandModel result = _factory()
+        var result = _factory()
             .Delete(tableName)
             .Where(keys, queries)
-            .Where(filter)
-            .Build();
+            .Where(filter).Build()
+            .CompileSql();
 
         // Assert
-        result.Sql.Should().Be(expected.Sql);
-        result.NamedBindings.Should().BeEquivalentTo(expected.NamedBindings);
+        result.Should().Be(expected);
     }
 }

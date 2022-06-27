@@ -6,7 +6,7 @@ namespace EFCore.Extensions.SaveOptimizer.Internal.QueryBuilders;
 
 public abstract class BaseQueryBuilder : IQueryBuilder
 {
-    private readonly IList<SqlParamModel> _bindings;
+    private readonly IDictionary<SqlValueModel, SqlParamModel> _bindings;
     private readonly StringBuilder _builder;
     private readonly CaseType _caseType;
     private readonly IReadOnlyDictionary<ClauseType, string> _clauses;
@@ -17,7 +17,7 @@ public abstract class BaseQueryBuilder : IQueryBuilder
         _clauses = clauses;
         _caseType = caseType;
         _builder = new StringBuilder();
-        _bindings = new List<SqlParamModel>();
+        _bindings = new Dictionary<SqlValueModel, SqlParamModel>();
     }
 
     public IQueryBuilder Insert(string tableName, IReadOnlyList<IDictionary<string, SqlValueModel?>> data)
@@ -150,7 +150,7 @@ public abstract class BaseQueryBuilder : IQueryBuilder
                 throw new ArgumentOutOfRangeException();
         }
 
-        return new SqlCommandModel { Parameters = _bindings, Sql = sql };
+        return new SqlCommandModel { Parameters = _bindings.Values, Sql = sql };
     }
 
     private string GetTableName(string tableName) =>
@@ -158,38 +158,37 @@ public abstract class BaseQueryBuilder : IQueryBuilder
 
     private void AppendValue(string key, SqlValueModel? value, bool comma)
     {
+        var paramKey = AppendParameterBinding(value);
+
         _builder.Append(comma
-            ? $", {_clauses[ClauseType.ValueEscapeLeft]}{key}{_clauses[ClauseType.ValueEscapeRight]} = {_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}"
-            : $"{_clauses[ClauseType.ValueEscapeLeft]}{key}{_clauses[ClauseType.ValueEscapeRight]} = {_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}");
-
-        var paramKey = $"{_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}";
-
-        if (value != null)
-        {
-            _bindings.Add(new SqlParamModel(paramKey, value));
-        }
-        else
-        {
-            throw new ArgumentNullException(nameof(value));
-        }
+            ? $", {_clauses[ClauseType.ValueEscapeLeft]}{key}{_clauses[ClauseType.ValueEscapeRight]} = {paramKey}"
+            : $"{_clauses[ClauseType.ValueEscapeLeft]}{key}{_clauses[ClauseType.ValueEscapeRight]} = {paramKey}");
     }
 
     private void AppendValueIn(SqlValueModel? value, bool comma)
     {
-        _builder.Append(comma
-            ? $", {_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}"
-            : $"{_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}");
+        var paramKey = AppendParameterBinding(value);
 
-        var paramKey = $"{_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}";
+        _builder.Append(comma ? $", {paramKey}" : $"{paramKey}");
+    }
 
-        if (value != null)
-        {
-            _bindings.Add(new SqlParamModel(paramKey, value));
-        }
-        else
+    private string AppendParameterBinding(SqlValueModel? value)
+    {
+        if (value == null)
         {
             throw new ArgumentNullException(nameof(value));
         }
+
+        if (_bindings.ContainsKey(value))
+        {
+            return _bindings[value].Key;
+        }
+
+        var paramKey = $"{_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}";
+
+        _bindings.Add(value, new SqlParamModel(paramKey, value));
+
+        return paramKey;
     }
 
     private void AppendFilter(HashSet<DataGroupModel> data)

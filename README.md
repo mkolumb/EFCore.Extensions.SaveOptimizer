@@ -81,6 +81,7 @@ Please note it is not working exactly as SaveChanges, so you should verify it wo
 - Optimize data retrieval from Change Tracker
 - Add unchecked when possible
 - Low level performance optimizations
+- Batch parameters when multi insert
 - GitHub actions
 - Test databases within container
 - Tests
