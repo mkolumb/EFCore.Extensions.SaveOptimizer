@@ -7,54 +7,59 @@ namespace EFCore.Extensions.SaveOptimizer.Internal.QueryBuilders;
 
 public abstract class BaseQueryBuilder : IQueryBuilder
 {
-    private readonly IDictionary<SqlValueModel, SqlParamModel> _bindings;
-    private readonly StringBuilder _builder;
-    private readonly IReadOnlyDictionary<ClauseType, string> _clauses;
-    private readonly QueryBuilderConfiguration _configuration;
-    private bool _whereAdded;
+    protected readonly IDictionary<SqlValueModel, HashSet<SqlParamModel>> Bindings;
+    protected readonly StringBuilder Builder;
+    protected readonly IReadOnlyDictionary<ClauseType, string> ClausesConfiguration;
+    protected readonly QueryBuilderConfiguration Configuration;
+    protected int BindingsCount;
+    protected bool WhereAdded;
 
-    protected BaseQueryBuilder(IReadOnlyDictionary<ClauseType, string> clauses,
+    protected BaseQueryBuilder(IReadOnlyDictionary<ClauseType, string> clausesConfiguration,
         QueryBuilderConfiguration? configuration = null)
     {
-        _clauses = clauses;
-        _configuration = configuration ?? new QueryBuilderConfiguration();
-        _builder = new StringBuilder();
-        _bindings = new Dictionary<SqlValueModel, SqlParamModel>();
+        ClausesConfiguration = clausesConfiguration;
+        Configuration = configuration ?? new QueryBuilderConfiguration();
+        Builder = new StringBuilder();
+        Bindings = new Dictionary<SqlValueModel, HashSet<SqlParamModel>>();
     }
 
-    public IQueryBuilder Insert(string tableName, IReadOnlyList<IDictionary<string, SqlValueModel?>> data)
+    public virtual IQueryBuilder Insert(string tableName, IReadOnlyList<IDictionary<string, SqlValueModel?>> data)
     {
-        _builder.Append($"{_clauses[ClauseType.Insert]} {GetTableName(tableName)} (");
+        Builder.Append($"{ClausesConfiguration[ClauseType.Insert]} {GetTableName(tableName)} (");
 
         var idx = 0;
 
         foreach (var key in data[0].Keys)
         {
-            _builder.Append(idx > 0
-                ? $", {_clauses[ClauseType.ValueEscapeLeft]}{ConvertCase(key)}{_clauses[ClauseType.ValueEscapeRight]}"
-                : $"{_clauses[ClauseType.ValueEscapeLeft]}{ConvertCase(key)}{_clauses[ClauseType.ValueEscapeRight]}");
+            Builder.Append(idx > 0
+                ? $", {ClausesConfiguration[ClauseType.ValueEscapeLeft]}{ConvertCase(key)}{ClausesConfiguration[ClauseType.ValueEscapeRight]}"
+                : $"{ClausesConfiguration[ClauseType.ValueEscapeLeft]}{ConvertCase(key)}{ClausesConfiguration[ClauseType.ValueEscapeRight]}");
 
             idx++;
         }
 
-        _builder.Append(data.Count == 1 ? $") {_clauses[ClauseType.ValuesOne]}" : $") {_clauses[ClauseType.Values]}");
+        Builder.Append(data.Count == 1
+            ? $") {ClausesConfiguration[ClauseType.ValuesOne]}"
+            : $") {ClausesConfiguration[ClauseType.Values]}");
 
         for (var i = 0; i < data.Count; i++)
         {
-            var valueSetLeft = _clauses[ClauseType.ValueSetLeft];
-            var valueSetRight = _clauses[ClauseType.ValueSetRight];
+            var valueSetLeft = ClausesConfiguration[ClauseType.ValueSetLeft];
+            var valueSetRight = ClausesConfiguration[ClauseType.ValueSetRight];
 
             if (data.Count == 1)
             {
-                valueSetLeft = _clauses[ClauseType.ValueSetOneLeft];
-                valueSetRight = _clauses[ClauseType.ValueSetOneRight];
+                valueSetLeft = ClausesConfiguration[ClauseType.ValueSetOneLeft];
+                valueSetRight = ClausesConfiguration[ClauseType.ValueSetOneRight];
             }
             else if (data.Count == i + 1)
             {
-                valueSetRight = _clauses[ClauseType.ValueSetRightLast];
+                valueSetRight = ClausesConfiguration[ClauseType.ValueSetRightLast];
             }
 
-            _builder.Append(i > 0 ? $"{_clauses[ClauseType.ValueSetSeparator]}{valueSetLeft}" : valueSetLeft);
+            Builder.Append(i > 0
+                ? $"{ClausesConfiguration[ClauseType.ValueSetSeparator]}{valueSetLeft}"
+                : valueSetLeft);
 
             idx = 0;
 
@@ -65,15 +70,16 @@ public abstract class BaseQueryBuilder : IQueryBuilder
                 idx++;
             }
 
-            _builder.Append(valueSetRight);
+            Builder.Append(valueSetRight);
         }
 
         return this;
     }
 
-    public IQueryBuilder Update(string tableName, IDictionary<string, SqlValueModel?> data)
+    public virtual IQueryBuilder Update(string tableName, IDictionary<string, SqlValueModel?> data)
     {
-        _builder.Append($"{_clauses[ClauseType.Update]} {GetTableName(tableName)} {_clauses[ClauseType.Set]} ");
+        Builder.Append(
+            $"{ClausesConfiguration[ClauseType.Update]} {GetTableName(tableName)} {ClausesConfiguration[ClauseType.Set]} ");
 
         var idx = 0;
 
@@ -87,14 +93,14 @@ public abstract class BaseQueryBuilder : IQueryBuilder
         return this;
     }
 
-    public IQueryBuilder Delete(string tableName)
+    public virtual IQueryBuilder Delete(string tableName)
     {
-        _builder.Append($"{_clauses[ClauseType.Delete]} {GetTableName(tableName)}");
+        Builder.Append($"{ClausesConfiguration[ClauseType.Delete]} {GetTableName(tableName)}");
 
         return this;
     }
 
-    public IQueryBuilder Where(IDictionary<string, SqlValueModel?>? filter)
+    public virtual IQueryBuilder Where(IDictionary<string, SqlValueModel?>? filter)
     {
         if (filter == null)
         {
@@ -103,15 +109,15 @@ public abstract class BaseQueryBuilder : IQueryBuilder
 
         foreach ((var key, SqlValueModel? value) in filter)
         {
-            if (_whereAdded)
+            if (WhereAdded)
             {
-                _builder.Append($" {_clauses[ClauseType.And]} ");
+                Builder.Append($" {ClausesConfiguration[ClauseType.And]} ");
             }
             else
             {
-                _builder.Append($" {_clauses[ClauseType.Where]} ");
+                Builder.Append($" {ClausesConfiguration[ClauseType.Where]} ");
 
-                _whereAdded = true;
+                WhereAdded = true;
             }
 
             AppendValue(key, value, false);
@@ -120,7 +126,7 @@ public abstract class BaseQueryBuilder : IQueryBuilder
         return this;
     }
 
-    public IQueryBuilder Where(IReadOnlyList<string> keys, IReadOnlyList<QueryDataModel> results)
+    public virtual IQueryBuilder Where(IReadOnlyList<string> keys, IReadOnlyList<QueryDataModel> results)
     {
         HashSet<DataGroupModel> data = DataGroupModel.CreateDataGroup(results, keys);
 
@@ -129,81 +135,92 @@ public abstract class BaseQueryBuilder : IQueryBuilder
         return this;
     }
 
-    public ISqlCommandModel Build()
+    public virtual ISqlCommandModel Build()
     {
-        var sql = _builder.ToString().Trim();
+        var sql = Builder.ToString().Trim();
 
-        if (!string.IsNullOrWhiteSpace(_clauses[ClauseType.QueryEnding]) &&
-            !sql.EndsWith(_clauses[ClauseType.QueryEnding]))
+        if (!string.IsNullOrWhiteSpace(ClausesConfiguration[ClauseType.QueryEnding]) &&
+            !sql.EndsWith(ClausesConfiguration[ClauseType.QueryEnding]))
         {
-            sql = $"{sql}{_clauses[ClauseType.QueryEnding]}";
+            sql = $"{sql}{ClausesConfiguration[ClauseType.QueryEnding]}";
         }
 
-        return new SqlCommandModel { Parameters = _bindings.Values, Sql = sql };
+        IReadOnlyCollection<SqlParamModel> parameters = Bindings.SelectMany(x => x.Value).ToArray();
+
+        return new SqlCommandModel { Parameters = parameters, Sql = sql };
     }
 
-    private string GetTableName(string tableName)
+    protected string GetTableName(string tableName)
     {
         var value =
-            $"{_clauses[ClauseType.ValueEscapeLeft]}{tableName.Replace(".", _clauses[ClauseType.TableEscape])}{_clauses[ClauseType.ValueEscapeRight]}";
+            $"{ClausesConfiguration[ClauseType.ValueEscapeLeft]}{tableName.Replace(".", ClausesConfiguration[ClauseType.TableEscape])}{ClausesConfiguration[ClauseType.ValueEscapeRight]}";
 
         return ConvertCase(value);
     }
 
-    private string ConvertCase(string value) =>
-        _configuration.CaseType switch
+    protected string ConvertCase(string value) =>
+        Configuration.CaseType switch
         {
             CaseType.Lowercase => value.ToLower(),
             CaseType.Uppercase => value.ToUpper(),
             _ => value
         };
 
-    private void AppendValue(string key, SqlValueModel? value, bool comma)
+    protected void AppendValue(string key, SqlValueModel? value, bool comma)
     {
         var paramKey = AppendParameterBinding(value);
 
-        _builder.Append(comma
-            ? $", {_clauses[ClauseType.ValueEscapeLeft]}{ConvertCase(key)}{_clauses[ClauseType.ValueEscapeRight]} = {paramKey}"
-            : $"{_clauses[ClauseType.ValueEscapeLeft]}{ConvertCase(key)}{_clauses[ClauseType.ValueEscapeRight]} = {paramKey}");
+        Builder.Append(comma
+            ? $", {ClausesConfiguration[ClauseType.ValueEscapeLeft]}{ConvertCase(key)}{ClausesConfiguration[ClauseType.ValueEscapeRight]} = {paramKey}"
+            : $"{ClausesConfiguration[ClauseType.ValueEscapeLeft]}{ConvertCase(key)}{ClausesConfiguration[ClauseType.ValueEscapeRight]} = {paramKey}");
     }
 
-    private void AppendValueIn(SqlValueModel? value, bool comma)
+    protected void AppendValueIn(SqlValueModel? value, bool comma)
     {
         var paramKey = AppendParameterBinding(value);
 
-        _builder.Append(comma ? $", {paramKey}" : $"{paramKey}");
+        Builder.Append(comma ? $", {paramKey}" : $"{paramKey}");
     }
 
-    private string AppendParameterBinding(SqlValueModel? value)
+    protected string AppendParameterBinding(SqlValueModel? value)
     {
         if (value == null)
         {
             throw new ArgumentNullException(nameof(value));
         }
 
-        if (_bindings.ContainsKey(value))
+        if (!Bindings.ContainsKey(value))
         {
-            return _bindings[value].Key;
+            Bindings.Add(value, new HashSet<SqlParamModel>());
         }
 
-        var paramKey = $"{_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}";
+        HashSet<SqlParamModel> set = Bindings[value];
 
-        _bindings.Add(value, new SqlParamModel(paramKey, value));
+        if (Configuration.OptimizeParameters && set.Any())
+        {
+            return set.First().Key;
+        }
+
+        var paramKey = $"{ClausesConfiguration[ClauseType.ParameterPrefix]}{BindingsCount}";
+
+        set.Add(new SqlParamModel(paramKey, value));
+
+        BindingsCount++;
 
         return paramKey;
     }
 
-    private void AppendFilter(HashSet<DataGroupModel> data)
+    protected void AppendFilter(HashSet<DataGroupModel> data)
     {
-        if (_whereAdded)
+        if (WhereAdded)
         {
-            _builder.Append($" {_clauses[ClauseType.And]} ");
+            Builder.Append($" {ClausesConfiguration[ClauseType.And]} ");
         }
         else
         {
-            _builder.Append($" {_clauses[ClauseType.Where]} ");
+            Builder.Append($" {ClausesConfiguration[ClauseType.Where]} ");
 
-            _whereAdded = true;
+            WhereAdded = true;
         }
 
         var idx = 0;
@@ -214,10 +231,10 @@ public abstract class BaseQueryBuilder : IQueryBuilder
         {
             if (data.Count > 1)
             {
-                _builder.Append(
-                    $"{_clauses[ClauseType.ValueEscapeLeft]}{ConvertCase(firstItem.Key)}{_clauses[ClauseType.ValueEscapeRight]} {_clauses[ClauseType.In]} ");
+                Builder.Append(
+                    $"{ClausesConfiguration[ClauseType.ValueEscapeLeft]}{ConvertCase(firstItem.Key)}{ClausesConfiguration[ClauseType.ValueEscapeRight]} {ClausesConfiguration[ClauseType.In]} ");
 
-                _builder.Append(_clauses[ClauseType.RangeLeft]);
+                Builder.Append(ClausesConfiguration[ClauseType.RangeLeft]);
 
                 foreach (DataGroupModel item in data)
                 {
@@ -226,7 +243,7 @@ public abstract class BaseQueryBuilder : IQueryBuilder
                     idx++;
                 }
 
-                _builder.Append(_clauses[ClauseType.RangeRight]);
+                Builder.Append(ClausesConfiguration[ClauseType.RangeRight]);
             }
             else
             {
@@ -236,7 +253,7 @@ public abstract class BaseQueryBuilder : IQueryBuilder
             return;
         }
 
-        _builder.Append(_clauses[ClauseType.RangeLeft]);
+        Builder.Append(ClausesConfiguration[ClauseType.RangeLeft]);
 
         idx = 0;
 
@@ -244,10 +261,10 @@ public abstract class BaseQueryBuilder : IQueryBuilder
         {
             if (idx > 0)
             {
-                _builder.Append($" {_clauses[ClauseType.Or]} ");
+                Builder.Append($" {ClausesConfiguration[ClauseType.Or]} ");
             }
 
-            _builder.Append(_clauses[ClauseType.RangeLeft]);
+            Builder.Append(ClausesConfiguration[ClauseType.RangeLeft]);
 
             AppendValue(item.Key, item.Value, false);
 
@@ -256,11 +273,11 @@ public abstract class BaseQueryBuilder : IQueryBuilder
                 AppendFilter(item.NestedItems);
             }
 
-            _builder.Append(_clauses[ClauseType.RangeRight]);
+            Builder.Append(ClausesConfiguration[ClauseType.RangeRight]);
 
             idx++;
         }
 
-        _builder.Append(_clauses[ClauseType.RangeRight]);
+        Builder.Append(ClausesConfiguration[ClauseType.RangeRight]);
     }
 }

@@ -198,7 +198,7 @@ public class QueryPreparerService : IQueryPreparerService
 
     private static int? GetMaxBatchSize(string providerName, EntityState state)
     {
-        if (providerName.Contains("Firebird") && state == EntityState.Added)
+        if (state == EntityState.Added && (providerName.Contains("Firebird") || providerName.Contains("Oracle")))
         {
             return 1;
         }

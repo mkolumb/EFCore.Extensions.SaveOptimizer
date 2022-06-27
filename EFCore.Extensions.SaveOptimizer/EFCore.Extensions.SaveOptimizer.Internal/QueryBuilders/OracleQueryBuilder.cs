@@ -1,4 +1,5 @@
-﻿using EFCore.Extensions.SaveOptimizer.Internal.Enums;
+﻿using EFCore.Extensions.SaveOptimizer.Internal.Configuration;
+using EFCore.Extensions.SaveOptimizer.Internal.Enums;
 
 namespace EFCore.Extensions.SaveOptimizer.Internal.QueryBuilders;
 
@@ -9,18 +10,18 @@ public class OracleQueryBuilder : BaseQueryBuilder
         { ClauseType.Insert, "INSERT INTO" },
         { ClauseType.Update, "UPDATE" },
         { ClauseType.Delete, "DELETE FROM" },
-        { ClauseType.Values, "VALUES " },
+        { ClauseType.Values, "" },
         { ClauseType.ValuesOne, "VALUES " },
         { ClauseType.ValueEscapeLeft, "\"" },
         { ClauseType.ValueEscapeRight, "\"" },
         { ClauseType.TableEscape, "\".\"" },
         { ClauseType.ParameterPrefix, ":p" },
-        { ClauseType.ValueSetLeft, "(" },
-        { ClauseType.ValueSetRight, ")" },
-        { ClauseType.ValueSetRightLast, ")" },
+        { ClauseType.ValueSetLeft, "SELECT " },
+        { ClauseType.ValueSetRight, " FROM DUAL UNION ALL " },
+        { ClauseType.ValueSetRightLast, " FROM DUAL" },
         { ClauseType.ValueSetOneLeft, "(" },
         { ClauseType.ValueSetOneRight, ")" },
-        { ClauseType.ValueSetSeparator, ", " },
+        { ClauseType.ValueSetSeparator, "" },
         { ClauseType.Where, "WHERE" },
         { ClauseType.In, "IN" },
         { ClauseType.Or, "OR" },
@@ -28,10 +29,12 @@ public class OracleQueryBuilder : BaseQueryBuilder
         { ClauseType.Set, "SET" },
         { ClauseType.RangeLeft, "(" },
         { ClauseType.RangeRight, ")" },
-        { ClauseType.QueryEnding, ";" }
+        { ClauseType.QueryEnding, "" }
     };
 
-    public OracleQueryBuilder() : base(Clauses)
+    public OracleQueryBuilder() : base(Clauses, GetConfiguration())
     {
     }
+
+    private static QueryBuilderConfiguration GetConfiguration() => new() { OptimizeParameters = true };
 }

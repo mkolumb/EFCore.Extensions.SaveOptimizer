@@ -3,6 +3,8 @@
 public enum ClauseType
 {
     Insert,
+    InsertAll,
+    Into,
     Update,
     Delete,
     Values,
@@ -24,5 +26,6 @@ public enum ClauseType
     Set,
     RangeLeft,
     RangeRight,
+    QueryAppendix,
     QueryEnding
 }

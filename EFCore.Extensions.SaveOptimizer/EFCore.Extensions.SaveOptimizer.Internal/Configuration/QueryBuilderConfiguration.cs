@@ -5,4 +5,6 @@ namespace EFCore.Extensions.SaveOptimizer.Internal.Configuration;
 public class QueryBuilderConfiguration
 {
     public CaseType CaseType { get; set; } = CaseType.Normal;
+
+    public bool OptimizeParameters { get; set; } = true;
 }

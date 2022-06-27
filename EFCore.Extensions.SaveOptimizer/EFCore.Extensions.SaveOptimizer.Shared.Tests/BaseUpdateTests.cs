@@ -119,6 +119,63 @@ public abstract class BaseUpdateTests
                 2.52M);
     }
 
+    [Theory]
+    [MemberData(nameof(BaseWriteTheoryData))]
+    public async Task GivenSaveChanges_WhenMultipleObjectsUpdatedAndSomePropertiesAreTheSame_ShouldUpdateData(SaveVariant variant)
+    {
+        // Arrange
+        using DbContextWrapper db = ContextWrapperResolver(_testOutputHelper);
+
+        NonRelatedEntity[] data = await InitialSeed(db, variant, 15);
+
+        for (var i = 0; i < 5; i++)
+        {
+            data[i].SomeNullableIntProperty = i;
+            data[i].SomeNonNullableIntProperty = i;
+        }
+
+        data[5].SomeNullableIntProperty = null;
+        data[5].SomeNonNullableIntProperty = 0;
+
+        for (var i = 0; i < data.Length; i++)
+        {
+            if (i % 3 != 0)
+            {
+                continue;
+            }
+
+            data[i].SomeNullableDecimalProperty = 191;
+            data[i].SomeNonNullableDecimalProperty = 191;
+        }
+
+        // Act
+        await db.Save(variant);
+
+        NonRelatedEntity[] result =
+            await db.Context.NonRelatedEntities.OrderBy(x => x.NonRelatedEntityId).ToArrayAsync();
+
+        var nullableIntProperties = result.Select(x => x.SomeNullableIntProperty).ToArray();
+
+        var nonNullableIntProperties = result.Select(x => x.SomeNonNullableIntProperty).ToArray();
+
+        var nullableDecimalProperties = result.Select(x => x.SomeNullableDecimalProperty).ToArray();
+
+        var nonNullableDecimalProperties = result.Select(x => x.SomeNonNullableDecimalProperty).ToArray();
+
+        // Assert
+        result.Should().HaveCount(15);
+        nullableIntProperties.Should()
+            .ContainInOrder(0, 1, 2, 3, 4, null, 11, 11, 11, 11, 11, 11, 11, 11, 11);
+        nonNullableIntProperties.Should()
+            .ContainInOrder(0, 1, 2, 3, 4, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+        nullableDecimalProperties.Should()
+            .ContainInOrder(191, 4.523M, 4.523M, 191, 4.523M, 4.523M, 191, 4.523M, 4.523M, 191, 4.523M, 4.523M, 191, 4.523M,
+                4.523M);
+        nonNullableDecimalProperties.Should()
+            .ContainInOrder(191, 2.52M, 2.52M, 191, 2.52M, 2.52M, 191, 2.52M, 2.52M, 191, 2.52M, 2.52M, 191, 2.52M,
+                2.52M);
+    }
+
     private static async Task<NonRelatedEntity[]> InitialSeed(DbContextWrapper db, SaveVariant variant, int count)
     {
         for (var i = 0; i < count; i++)

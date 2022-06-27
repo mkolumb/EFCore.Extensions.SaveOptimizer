@@ -1,11 +1,13 @@
-﻿using EFCore.Extensions.SaveOptimizer.Internal.Helpers;
+﻿using System.Text.RegularExpressions;
+using EFCore.Extensions.SaveOptimizer.Internal.Helpers;
 using EFCore.Extensions.SaveOptimizer.Internal.Models;
+using EFCore.Extensions.SaveOptimizer.Internal.QueryBuilders;
 
 namespace EFCore.Extensions.SaveOptimizer.Internal.Tests.Helpers;
 
 public static class SqlCommandExtensions
 {
-    public static string? CompileSql(this ISqlCommandModel command)
+    public static string? CompileSql(this ISqlCommandModel command, Type builderType)
     {
         var sql = command.Sql;
 
@@ -29,6 +31,17 @@ public static class SqlCommandExtensions
         while (sql.EndsWith(";"))
         {
             sql = sql[..^1];
+        }
+
+        if (builderType == typeof(OracleAllQueryBuilder) &&
+            command.GetType() == typeof(SqlKataCommandModel) &&
+            sql.Contains("), ("))
+        {
+            var regex = new Regex("insert (.*) values");
+
+            var match = ") " + regex.Match(sql).Value[7..] + " (";
+
+            sql = sql.Replace("insert into", "insert all into").Replace("), (", match) + " select * from dual";
         }
 
         return sql;

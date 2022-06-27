@@ -6,5 +6,5 @@ public class SqlKataCommandModel : ISqlCommandModel
 {
     public string? Sql { get; set; }
     public IDictionary<string, object?>? NamedBindings { get; set; }
-    public ICollection<SqlParamModel>? Parameters { get; set; }
+    public IReadOnlyCollection<SqlParamModel>? Parameters { get; set; }
 }
