@@ -3,6 +3,7 @@ using EFCore.Extensions.SaveOptimizer.Internal.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Logging;
 
 namespace EFCore.Extensions.SaveOptimizer.Internal.Services;
 
@@ -15,7 +16,9 @@ public class QueryExecutorService : IQueryExecutorService
     {
         IRelationalConnection connection = GetConnection(context);
 
-        DbCommand command = GetCommand(transaction, sql, timeout, connection);
+        ILogger logger = GetLogger(context);
+
+        DbCommand command = GetCommand(transaction, sql, timeout, connection, logger);
 
         connection.Open();
 
@@ -37,7 +40,9 @@ public class QueryExecutorService : IQueryExecutorService
     {
         IRelationalConnection connection = GetConnection(context);
 
-        DbCommand command = GetCommand(transaction, sql, timeout, connection);
+        ILogger logger = GetLogger(context);
+
+        DbCommand command = GetCommand(transaction, sql, timeout, connection, logger);
 
         await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
 
@@ -54,7 +59,8 @@ public class QueryExecutorService : IQueryExecutorService
     private static DbCommand GetCommand(IDbContextTransaction transaction,
         ISqlCommandModel sql,
         int? timeout,
-        IRelationalConnection connection)
+        IRelationalConnection connection,
+        ILogger logger)
     {
         DbCommand command = connection.DbConnection.CreateCommand();
 
@@ -75,16 +81,9 @@ public class QueryExecutorService : IQueryExecutorService
 
         command.Transaction = transaction.GetDbTransaction();
 
+        logger.LogDebug("Executing command: {Sql}", sql.Sql);
+
         return command;
-    }
-
-    private static IRelationalConnection GetConnection(DbContext context)
-    {
-        IRelationalDatabaseFacadeDependencies facadeDependencies = GetDependencies(context);
-
-        IRelationalConnection connection = facadeDependencies.RelationalConnection;
-
-        return connection;
     }
 
     private static void AddParameter(DbCommand command, SqlParamModel param)
@@ -126,6 +125,11 @@ public class QueryExecutorService : IQueryExecutorService
 
         throw new InvalidOperationException(RelationalStrings.RelationalNotInUse);
     }
+
+    private static IRelationalConnection GetConnection(DbContext context) =>
+        GetDependencies(context).RelationalConnection;
+
+    private static ILogger GetLogger(DbContext context) => GetDependencies(context).CommandLogger.Logger;
 
     private static IDatabaseFacadeDependenciesAccessor GetDependenciesAccessor(DbContext context) => context.Database;
 }

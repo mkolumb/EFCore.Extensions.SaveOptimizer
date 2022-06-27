@@ -35,6 +35,10 @@ docker compose --file mysql_pomelo.yml down
 
 docker compose --file mariadb_pomelo.yml down
 
+docker compose --file firebird_3.yml down
+
+docker compose --file firebird_4.yml down
+
 docker volume prune --force
 
 Set-Location $workingDir

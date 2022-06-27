@@ -1,23 +1,27 @@
 ﻿using System.Data;
 using EFCore.Extensions.SaveOptimizer.Internal.Constants;
 using EFCore.Extensions.SaveOptimizer.Model;
+using EFCore.Extensions.SaveOptimizer.TestLogger;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Logging;
+using Xunit.Abstractions;
 
 namespace EFCore.Extensions.SaveOptimizer.Shared.Tests;
 
 public sealed class DbContextWrapper : IDisposable
 {
-    private readonly IDesignTimeDbContextFactory<EntitiesContext> _factory;
+    private readonly ITestTimeDbContextFactory<EntitiesContext> _factory;
+    private readonly ILoggerFactory _loggerFactory;
 
     public EntitiesContext Context { get; private set; }
 
-    public DbContextWrapper(IDesignTimeDbContextFactory<EntitiesContext> factory)
+    public DbContextWrapper(ITestTimeDbContextFactory<EntitiesContext> factory, ITestOutputHelper testOutputHelper)
     {
         _factory = factory;
+        _loggerFactory = new LoggerFactory(new[] { new TestLoggerProvider(testOutputHelper, LogLevel.Trace) });
 
-        Context = _factory.CreateDbContext(Array.Empty<string>());
+        Context = _factory.CreateDbContext(Array.Empty<string>(), _loggerFactory);
     }
 
     public void Dispose() => Context.Dispose();
@@ -33,7 +37,7 @@ public sealed class DbContextWrapper : IDisposable
 
         Context.Dispose();
 
-        Context = _factory.CreateDbContext(new[] { connectionString });
+        Context = _factory.CreateDbContext(new[] { connectionString }, _loggerFactory);
     }
 
     public async Task Save(SaveVariant variant, int batchSize = InternalConstants.DefaultBatchSize)

@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using EFCore.Extensions.SaveOptimizer.Internal.Configuration;
 using EFCore.Extensions.SaveOptimizer.Internal.Enums;
 using EFCore.Extensions.SaveOptimizer.Internal.Models;
 
@@ -8,14 +9,15 @@ public abstract class BaseQueryBuilder : IQueryBuilder
 {
     private readonly IDictionary<SqlValueModel, SqlParamModel> _bindings;
     private readonly StringBuilder _builder;
-    private readonly CaseType _caseType;
     private readonly IReadOnlyDictionary<ClauseType, string> _clauses;
+    private readonly QueryBuilderConfiguration _configuration;
     private bool _whereAdded;
 
-    protected BaseQueryBuilder(IReadOnlyDictionary<ClauseType, string> clauses, CaseType caseType = CaseType.Normal)
+    protected BaseQueryBuilder(IReadOnlyDictionary<ClauseType, string> clauses,
+        QueryBuilderConfiguration? configuration = null)
     {
         _clauses = clauses;
-        _caseType = caseType;
+        _configuration = configuration ?? new QueryBuilderConfiguration();
         _builder = new StringBuilder();
         _bindings = new Dictionary<SqlValueModel, SqlParamModel>();
     }
@@ -143,7 +145,7 @@ public abstract class BaseQueryBuilder : IQueryBuilder
     }
 
     private string ConvertCase(string value) =>
-        _caseType switch
+        _configuration.CaseType switch
         {
             CaseType.Lowercase => value.ToLower(),
             CaseType.Uppercase => value.ToUpper(),

@@ -1,24 +1,32 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Model;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using Xunit.Abstractions;
 
 namespace EFCore.Extensions.SaveOptimizer.Shared.Tests;
 
 public abstract class BaseDeleteTests
 {
-    public Func<DbContextWrapper> ContextWrapperResolver { get; }
+    private readonly ITestOutputHelper _testOutputHelper;
+
+    public Func<ITestOutputHelper, DbContextWrapper> ContextWrapperResolver { get; }
 
     public static IEnumerable<IEnumerable<object?>> BaseWriteTheoryData => TheoryData.BaseWriteTheoryData;
 
-    protected BaseDeleteTests(Func<DbContextWrapper> contextWrapperResolver) =>
+    protected BaseDeleteTests(
+        ITestOutputHelper testOutputHelper,
+        Func<ITestOutputHelper, DbContextWrapper> contextWrapperResolver)
+    {
+        _testOutputHelper = testOutputHelper;
         ContextWrapperResolver = contextWrapperResolver;
+    }
 
     [Theory]
     [MemberData(nameof(BaseWriteTheoryData))]
     public async Task GivenSaveChanges_WhenNoChanges_ShouldDoNothing(SaveVariant variant)
     {
         // Arrange
-        using DbContextWrapper db = ContextWrapperResolver();
+        using DbContextWrapper db = ContextWrapperResolver(_testOutputHelper);
 
         NonRelatedEntity[] data = await InitialSeed(db, variant, 10);
 
@@ -49,7 +57,7 @@ public abstract class BaseDeleteTests
     public async Task GivenSaveChanges_WhenOneObjectDeleted_ShouldDeleteData(SaveVariant variant)
     {
         // Arrange
-        using DbContextWrapper db = ContextWrapperResolver();
+        using DbContextWrapper db = ContextWrapperResolver(_testOutputHelper);
 
         NonRelatedEntity[] data = await InitialSeed(db, variant, 3);
 
@@ -72,7 +80,7 @@ public abstract class BaseDeleteTests
     public async Task GivenSaveChanges_WhenMultipleObjectsDeleted_ShouldDeleteData(SaveVariant variant)
     {
         // Arrange
-        using DbContextWrapper db = ContextWrapperResolver();
+        using DbContextWrapper db = ContextWrapperResolver(_testOutputHelper);
 
         NonRelatedEntity[] data = await InitialSeed(db, variant, 15);
 

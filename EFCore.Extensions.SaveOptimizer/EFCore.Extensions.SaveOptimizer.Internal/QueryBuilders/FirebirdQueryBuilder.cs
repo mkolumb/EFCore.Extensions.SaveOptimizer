@@ -30,7 +30,7 @@ public class FirebirdQueryBuilder : BaseQueryBuilder
         { ClauseType.RangeRight, ")" }
     };
 
-    public FirebirdQueryBuilder() : base(Clauses, CaseType.Uppercase)
+    public FirebirdQueryBuilder() : base(Clauses)
     {
     }
 }

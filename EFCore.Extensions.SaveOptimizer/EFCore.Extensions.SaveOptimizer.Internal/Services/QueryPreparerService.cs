@@ -107,7 +107,8 @@ public class QueryPreparerService : IQueryPreparerService
 
         foreach ((Type type, _) in _orders[name].OrderByDescending(x => x.Value))
         {
-            foreach (IEnumerable<ISqlCommandModel> sqlResults in GetQuery(translations, maxParameters, EntityState.Deleted, type, providerName, batchSize))
+            foreach (IEnumerable<ISqlCommandModel> sqlResults in GetQuery(translations, maxParameters,
+                         EntityState.Deleted, type, providerName, batchSize))
             {
                 results.AddRange(sqlResults);
             }
@@ -115,12 +116,14 @@ public class QueryPreparerService : IQueryPreparerService
 
         foreach ((Type type, _) in _orders[name].OrderBy(x => x.Value))
         {
-            foreach (IEnumerable<ISqlCommandModel> sqlResults in GetQuery(translations, maxParameters, EntityState.Added, type, providerName, batchSize))
+            foreach (IEnumerable<ISqlCommandModel> sqlResults in GetQuery(translations, maxParameters,
+                         EntityState.Added, type, providerName, batchSize))
             {
                 results.AddRange(sqlResults);
             }
 
-            foreach (IEnumerable<ISqlCommandModel> sqlResults in GetQuery(translations, maxParameters, EntityState.Modified, type, providerName, batchSize))
+            foreach (IEnumerable<ISqlCommandModel> sqlResults in GetQuery(translations, maxParameters,
+                         EntityState.Modified, type, providerName, batchSize))
             {
                 results.AddRange(sqlResults);
             }
@@ -166,6 +169,13 @@ public class QueryPreparerService : IQueryPreparerService
 
         batchSize = Math.Min(batchSize, maxBatch);
 
+        var maxBatchSize = GetMaxBatchSize(providerName, state);
+
+        if (maxBatchSize.HasValue)
+        {
+            batchSize = Math.Min(batchSize, maxBatchSize.Value);
+        }
+
         List<List<QueryDataModel>> data = new();
 
         for (var i = 0; i < typedQueries.Count; i++)
@@ -184,6 +194,16 @@ public class QueryPreparerService : IQueryPreparerService
         {
             yield return _compilerService.Compile(q, providerName);
         }
+    }
+
+    private static int? GetMaxBatchSize(string providerName, EntityState state)
+    {
+        if (providerName.Contains("Firebird") && state == EntityState.Added)
+        {
+            return 1;
+        }
+
+        return null;
     }
 
     private static int GetParametersLimit(string providerName)

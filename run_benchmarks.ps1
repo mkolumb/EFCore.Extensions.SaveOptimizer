@@ -39,6 +39,10 @@ docker compose --file mysql_pomelo.yml down
 
 docker compose --file mariadb_pomelo.yml down
 
+docker compose --file firebird_3.yml down
+
+docker compose --file firebird_4.yml down
+
 # solution
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer
@@ -62,6 +66,16 @@ Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.P
 # PomeloMySql
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.PomeloMySql.Benchmark
+.\benchmark.ps1
+
+# Firebird3
+Set-Location $workingDir
+Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Model.Firebird3
+.\benchmark.ps1
+
+# Firebird4
+Set-Location $workingDir
+Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Model.Firebird4
 .\benchmark.ps1
 
 # PomeloMariaDb

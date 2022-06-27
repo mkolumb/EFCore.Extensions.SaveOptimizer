@@ -1,23 +1,31 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Logging;
 
 // ReSharper disable UnusedMember.Global
 
 namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMariaDb;
 
-public class PomeloMariaDbDesignTimeFactory : IDesignTimeDbContextFactory<EntitiesContext>
+public class PomeloMariaDbDesignTimeFactory : IDesignTimeDbContextFactory<EntitiesContext>,
+    ITestTimeDbContextFactory<EntitiesContext>
 {
-    public EntitiesContext CreateDbContext(string[] args)
+    public EntitiesContext CreateDbContext(string[] args) => CreateDbContext(args, null);
+
+    public EntitiesContext CreateDbContext(string[] args, ILoggerFactory? factory)
     {
         var connectionString = args.Any() && !string.IsNullOrWhiteSpace(args[0]) ? args[0] : GetConnectionString();
 
-        DbContextOptions<EntitiesContext> options = new DbContextOptionsBuilder<EntitiesContext>()
+        DbContextOptionsBuilder<EntitiesContext> builder = new DbContextOptionsBuilder<EntitiesContext>()
             .UseMySql(connectionString,
                 ServerVersion.AutoDetect(connectionString),
-                cfg => cfg.MigrationsAssembly("EFCore.Extensions.SaveOptimizer.Model.PomeloMariaDb"))
-            .Options;
+                cfg => cfg.MigrationsAssembly("EFCore.Extensions.SaveOptimizer.Model.PomeloMariaDb"));
 
-        return new EntitiesContext(options);
+        if (factory != null)
+        {
+            builder = builder.UseLoggerFactory(factory);
+        }
+
+        return new EntitiesContext(builder.Options);
     }
 
     private static string GetConnectionString()

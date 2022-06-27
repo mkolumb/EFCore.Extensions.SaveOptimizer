@@ -1,26 +1,34 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Model;
 using FluentAssertions.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Xunit.Abstractions;
 
 namespace EFCore.Extensions.SaveOptimizer.Shared.Tests;
 
 public abstract class BaseInsertTests
 {
-    public Func<DbContextWrapper> ContextWrapperResolver { get; }
+    private readonly ITestOutputHelper _testOutputHelper;
+
+    public Func<ITestOutputHelper, DbContextWrapper> ContextWrapperResolver { get; }
 
     public static IEnumerable<IEnumerable<object?>> InsertData => TheoryData.InsertTheoryData;
 
     public static IEnumerable<IEnumerable<object?>> BaseWriteTheoryData => TheoryData.BaseWriteTheoryData;
 
-    protected BaseInsertTests(Func<DbContextWrapper> contextWrapperResolver) =>
+    protected BaseInsertTests(
+        ITestOutputHelper testOutputHelper,
+        Func<ITestOutputHelper, DbContextWrapper> contextWrapperResolver)
+    {
+        _testOutputHelper = testOutputHelper;
         ContextWrapperResolver = contextWrapperResolver;
+    }
 
     [Theory]
     [MemberData(nameof(InsertData))]
     public async Task GivenSaveChanges_WhenMultipleObjectsInserted_ShouldInsertData(SaveVariant variant, int batchSize, int count)
     {
         // Arrange
-        using DbContextWrapper db = ContextWrapperResolver();
+        using DbContextWrapper db = ContextWrapperResolver(_testOutputHelper);
 
         // Act
         for (var i = 0; i < count; i++)
@@ -48,7 +56,7 @@ public abstract class BaseInsertTests
     public async Task GivenSaveChanges_WhenNoChanges_ShouldDoNothing(SaveVariant variant)
     {
         // Arrange
-        using DbContextWrapper db = ContextWrapperResolver();
+        using DbContextWrapper db = ContextWrapperResolver(_testOutputHelper);
 
         // Act
         await db.Save(variant);
@@ -64,7 +72,7 @@ public abstract class BaseInsertTests
     public async Task GivenSaveChanges_WhenOneObjectInserted_ShouldInsertData(SaveVariant variant)
     {
         // Arrange
-        using DbContextWrapper db = ContextWrapperResolver();
+        using DbContextWrapper db = ContextWrapperResolver(_testOutputHelper);
 
         NonRelatedEntity item = new()
         {

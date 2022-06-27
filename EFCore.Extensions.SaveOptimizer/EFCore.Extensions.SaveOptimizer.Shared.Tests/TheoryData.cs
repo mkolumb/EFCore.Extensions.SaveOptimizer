@@ -21,10 +21,16 @@ public static class TheoryData
             {
                 var item = baseData.First();
 
+                yield return new[] { item, 1000, 1 };
+                yield return new[] { item, 1000, 2 };
                 yield return new[] { item, 1000, 10 };
                 yield return new[] { item, 1000, 1000 };
-                //yield return new[] { item, 100000, 100000 };
             }
+
+            yield return new object[]
+            {
+                SaveVariant.Optimized | SaveVariant.Recreate | SaveVariant.WithTransaction, 100000, 100000
+            };
         }
     }
 }
