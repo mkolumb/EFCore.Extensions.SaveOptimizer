@@ -1,10 +1,3 @@
-param (
-    [string]$name
-)
-
-
-Clear-Host
-
 $ErrorActionPreference = "Stop"
 
 # Ensure that is being run from dir where script locates (helpful when running on remote machine)
@@ -21,26 +14,22 @@ $workingDir = $(Get-Location).Path
 
 # script
 
-Set-Location .\EFCore.Extensions.SaveOptimizer\Containers
+Set-Location ..
 
-docker compose --file cockroach.yml down
+Set-Location "Containers"
 
-docker compose --file cockroach_multi.yml down
+docker compose --file oracle.yml up --detach
 
-docker compose --file sqlserver.yml down
+Set-Location $workingDir
 
-docker compose --file postgres.yml down
+dotnet build -c release
 
-docker compose --file mysql_pomelo.yml down
+dotnet run -c release
 
-docker compose --file mariadb_pomelo.yml down
+Set-Location ..
 
-docker compose --file firebird_3.yml down
-
-docker compose --file firebird_4.yml down
+Set-Location "Containers"
 
 docker compose --file oracle.yml down
-
-docker volume prune --force
 
 Set-Location $workingDir

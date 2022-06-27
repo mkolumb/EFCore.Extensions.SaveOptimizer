@@ -43,6 +43,8 @@ docker compose --file firebird_3.yml up --detach
 
 docker compose --file firebird_4.yml up --detach
 
+docker compose --file oracle.yml up --detach
+
 docker exec -it optimizerroachmulti11 ./cockroach init --insecure
 
 Set-Location $workingDir

@@ -43,6 +43,8 @@ docker compose --file firebird_3.yml down
 
 docker compose --file firebird_4.yml down
 
+docker compose --file oracle.yml down
+
 # solution
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer
@@ -51,6 +53,11 @@ dotnet build -c Release
 # SqlServer
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.SqlServer.Benchmark
+.\benchmark.ps1
+
+# Oracle
+Set-Location $workingDir
+Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Model.Oracle
 .\benchmark.ps1
 
 # SqlLite
