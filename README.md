@@ -107,7 +107,7 @@ This will make much easier refresh data after save if necessary, you will be abl
 2. Why you wrote query executor?
    - I noticed a bug with ExecuteSqlRaw from RelationalExtensions. It looks it cuts precision for decimals. So I created something lightweight using some EF Core features.
 3. Which EF Core version do you support?
-   - I have plan to support only current release and latest LTS version. But as there are only 2 required dependencies (Microsoft.EntityFrameworkCore.Relational and Dapper) you should be able to quickly prepare version for older EF if you need. Maybe some small changes in DataContextModelWrapper would be required.
+   - I have plan to support only current release and latest LTS version. As there is only one required dependency (Microsoft.EntityFrameworkCore.Relational) you should be able to quickly prepare version for older EF if you need. Maybe some small changes in DataContextModelWrapper would be required.
 
 ## Migration command
 
