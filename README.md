@@ -154,144 +154,15 @@ powershell -File run_benchmarks.ps1
 
 #### CockroachDB - single docker node
 
-| Method      | Variant   | Rows  | Mean       | Median     | Min        | Max          |
-|-------------|-----------|-------|------------|------------|------------|--------------|
-| InsertAsync | Optimized | 1     | 2.370 ms   | 2.253 ms   | 1.814 ms   | 3.631 ms     |
-| InsertAsync | Optimized | 10    | 2.876 ms   | 2.729 ms   | 2.290 ms   | 4.420 ms     |
-| InsertAsync | Optimized | 25    | 3.088 ms   | 2.915 ms   | 2.384 ms   | 4.448 ms     |
-| InsertAsync | Optimized | 50    | 3.384 ms   | 3.042 ms   | 2.565 ms   | 9.818 ms     |
-| InsertAsync | Optimized | 100   | 3.665 ms   | 3.581 ms   | 3.057 ms   | 5.054 ms     |
-| InsertAsync | Optimized | 1000  | 16.845 ms  | 16.593 ms  | 12.427 ms  | 25.455 ms    |
-| InsertAsync | Optimized | 10000 | 169.732 ms | 161.884 ms | 136.522 ms | 254.415 ms   |
-| InsertAsync | EfCore    | 1     | 4.020 ms   | 3.805 ms   | 2.950 ms   | 6.011 ms     |
-| InsertAsync | EfCore    | 10    | 6.573 ms   | 7.099 ms   | 2.606 ms   | 10.666 ms    |
-| InsertAsync | EfCore    | 25    | 6.736 ms   | 7.376 ms   | 2.911 ms   | 11.771 ms    |
-| InsertAsync | EfCore    | 50    | 8.034 ms   | 8.292 ms   | 4.320 ms   | 12.800 ms    |
-| InsertAsync | EfCore    | 100   | 10.189 ms  | 10.117 ms  | 5.791 ms   | 19.153 ms    |
-| InsertAsync | EfCore    | 1000  | 43.395 ms  | 42.476 ms  | 36.879 ms  | 56.132 ms    |
-| InsertAsync | EfCore    | 10000 | 430.010 ms | 416.080 ms | 395.476 ms | 503.755 ms   |
-|             |           |       |            |            |            |              |
-| UpdateAsync | Optimized | 1     | 2.144 ms   | 2.093 ms   | 1.895 ms   | 3.301 ms     |
-| UpdateAsync | Optimized | 10    | 2.466 ms   | 2.308 ms   | 2.065 ms   | 3.470 ms     |
-| UpdateAsync | Optimized | 25    | 2.498 ms   | 2.347 ms   | 1.987 ms   | 4.354 ms     |
-| UpdateAsync | Optimized | 50    | 2.758 ms   | 2.519 ms   | 2.090 ms   | 6.869 ms     |
-| UpdateAsync | Optimized | 100   | 3.078 ms   | 2.945 ms   | 2.584 ms   | 7.028 ms     |
-| UpdateAsync | Optimized | 1000  | 17.428 ms  | 16.208 ms  | 13.249 ms  | 35.298 ms    |
-| UpdateAsync | Optimized | 10000 | 198.704 ms | 123.586 ms | 99.704 ms  | 1,378.773 ms |
-| UpdateAsync | EfCore    | 1     | 2.955 ms   | 2.696 ms   | 2.321 ms   | 11.406 ms    |
-| UpdateAsync | EfCore    | 10    | 3.999 ms   | 3.653 ms   | 2.957 ms   | 11.061 ms    |
-| UpdateAsync | EfCore    | 25    | 7.449 ms   | 7.804 ms   | 4.217 ms   | 11.613 ms    |
-| UpdateAsync | EfCore    | 50    | 9.627 ms   | 9.768 ms   | 6.230 ms   | 12.813 ms    |
-| UpdateAsync | EfCore    | 100   | 13.844 ms  | 13.113 ms  | 9.454 ms   | 32.965 ms    |
-| UpdateAsync | EfCore    | 1000  | 92.292 ms  | 90.872 ms  | 79.342 ms  | 116.466 ms   |
-| UpdateAsync | EfCore    | 10000 | 885.685 ms | 905.254 ms | 705.177 ms | 1,207.605 ms |
-|             |           |       |            |            |            |              |
-| DeleteAsync | Optimized | 1     | 2.848 ms   | 2.778 ms   | 2.352 ms   | 3.868 ms     |
-| DeleteAsync | Optimized | 10    | 3.230 ms   | 3.015 ms   | 2.317 ms   | 5.302 ms     |
-| DeleteAsync | Optimized | 25    | 2.988 ms   | 2.771 ms   | 2.431 ms   | 7.200 ms     |
-| DeleteAsync | Optimized | 50    | 3.020 ms   | 2.922 ms   | 2.518 ms   | 6.319 ms     |
-| DeleteAsync | Optimized | 100   | 3.798 ms   | 3.515 ms   | 3.041 ms   | 7.771 ms     |
-| DeleteAsync | Optimized | 1000  | 17.243 ms  | 17.465 ms  | 12.223 ms  | 21.049 ms    |
-| DeleteAsync | Optimized | 10000 | 239.390 ms | 106.417 ms | 89.511 ms  | 1,638.150 ms |
-| DeleteAsync | EfCore    | 1     | 2.513 ms   | 2.416 ms   | 2.018 ms   | 3.492 ms     |
-| DeleteAsync | EfCore    | 10    | 3.119 ms   | 2.947 ms   | 2.504 ms   | 5.291 ms     |
-| DeleteAsync | EfCore    | 25    | 6.444 ms   | 6.872 ms   | 3.303 ms   | 8.669 ms     |
-| DeleteAsync | EfCore    | 50    | 8.625 ms   | 8.544 ms   | 4.903 ms   | 12.759 ms    |
-| DeleteAsync | EfCore    | 100   | 11.368 ms  | 11.158 ms  | 7.849 ms   | 22.400 ms    |
-| DeleteAsync | EfCore    | 1000  | 62.575 ms  | 61.166 ms  | 53.171 ms  | 86.913 ms    |
-| DeleteAsync | EfCore    | 10000 | 653.917 ms | 641.174 ms | 585.624 ms | 811.786 ms   |
+TBD
 
 #### CockroachDB - nine docker nodes
 
-| Method      | Variant   | Rows  | Mean         | Median       | Min          | Max          |
-|-------------|-----------|-------|--------------|--------------|--------------|--------------|
-| InsertAsync | Optimized | 1     | 5.356 ms     | 4.551 ms     | 3.342 ms     | 16.64 ms     |
-| InsertAsync | Optimized | 10    | 7.624 ms     | 6.233 ms     | 4.129 ms     | 17.57 ms     |
-| InsertAsync | Optimized | 25    | 8.699 ms     | 8.076 ms     | 5.226 ms     | 15.15 ms     |
-| InsertAsync | Optimized | 50    | 8.970 ms     | 8.597 ms     | 5.202 ms     | 15.43 ms     |
-| InsertAsync | Optimized | 100   | 9.832 ms     | 8.241 ms     | 5.858 ms     | 31.13 ms     |
-| InsertAsync | Optimized | 1000  | 28.068 ms    | 25.366 ms    | 19.536 ms    | 71.41 ms     |
-| InsertAsync | Optimized | 10000 | 523.521 ms   | 440.253 ms   | 208.526 ms   | 1,227.85 ms  |
-| InsertAsync | EfCore    | 1     | 7.055 ms     | 6.290 ms     | 3.112 ms     | 16.95 ms     |
-| InsertAsync | EfCore    | 10    | 14.405 ms    | 12.831 ms    | 6.908 ms     | 41.59 ms     |
-| InsertAsync | EfCore    | 25    | 15.329 ms    | 12.899 ms    | 8.381 ms     | 32.20 ms     |
-| InsertAsync | EfCore    | 50    | 19.469 ms    | 16.914 ms    | 10.609 ms    | 48.96 ms     |
-| InsertAsync | EfCore    | 100   | 27.260 ms    | 23.934 ms    | 15.071 ms    | 54.78 ms     |
-| InsertAsync | EfCore    | 1000  | 312.206 ms   | 238.954 ms   | 137.904 ms   | 1,154.99 ms  |
-| InsertAsync | EfCore    | 10000 | 2,002.225 ms | 1,773.687 ms | 1,174.984 ms | 5,738.30 ms  |
-|             |           |       |              |              |              |              |
-| UpdateAsync | Optimized | 1     | 13.608 ms    | 6.932 ms     | 3.139 ms     | 71.969 ms    |
-| UpdateAsync | Optimized | 10    | 5.908 ms     | 4.829 ms     | 3.421 ms     | 19.469 ms    |
-| UpdateAsync | Optimized | 25    | 5.562 ms     | 5.398 ms     | 3.374 ms     | 14.500 ms    |
-| UpdateAsync | Optimized | 50    | 5.599 ms     | 5.224 ms     | 3.473 ms     | 9.365 ms     |
-| UpdateAsync | Optimized | 100   | 6.352 ms     | 5.990 ms     | 4.743 ms     | 9.333 ms     |
-| UpdateAsync | Optimized | 1000  | 50.638 ms    | 48.831 ms    | 19.209 ms    | 143.633 ms   |
-| UpdateAsync | Optimized | 10000 | 431.288 ms   | 416.436 ms   | 174.064 ms   | 954.876 ms   |
-| UpdateAsync | EfCore    | 1     | 10.074 ms    | 6.946 ms     | 3.317 ms     | 37.710 ms    |
-| UpdateAsync | EfCore    | 10    | 10.743 ms    | 10.290 ms    | 5.677 ms     | 20.844 ms    |
-| UpdateAsync | EfCore    | 25    | 18.045 ms    | 16.216 ms    | 9.275 ms     | 49.263 ms    |
-| UpdateAsync | EfCore    | 50    | 22.440 ms    | 20.958 ms    | 13.561 ms    | 38.646 ms    |
-| UpdateAsync | EfCore    | 100   | 68.385 ms    | 53.593 ms    | 22.961 ms    | 285.637 ms   |
-| UpdateAsync | EfCore    | 1000  | 661.244 ms   | 590.635 ms   | 291.719 ms   | 1,800.184 ms |
-| UpdateAsync | EfCore    | 10000 | 3,178.785 ms | 3,129.773 ms | 1,140.467 ms | 7,029.094 ms |
-|             |           |       |              |              |              |              |
-| DeleteAsync | Optimized | 1     | 4.584 ms     | 4.254 ms     | 3.142 ms     | 11.590 ms    |
-| DeleteAsync | Optimized | 10    | 4.437 ms     | 3.960 ms     | 2.997 ms     | 8.541 ms     |
-| DeleteAsync | Optimized | 25    | 4.561 ms     | 4.247 ms     | 3.189 ms     | 8.867 ms     |
-| DeleteAsync | Optimized | 50    | 4.962 ms     | 4.706 ms     | 3.485 ms     | 7.742 ms     |
-| DeleteAsync | Optimized | 100   | 5.929 ms     | 5.621 ms     | 4.502 ms     | 8.820 ms     |
-| DeleteAsync | Optimized | 1000  | 24.705 ms    | 23.936 ms    | 18.086 ms    | 41.615 ms    |
-| DeleteAsync | Optimized | 10000 | 182.846 ms   | 180.678 ms   | 118.888 ms   | 261.666 ms   |
-| DeleteAsync | EfCore    | 1     | 6.010 ms     | 4.858 ms     | 2.996 ms     | 19.899 ms    |
-| DeleteAsync | EfCore    | 10    | 8.795 ms     | 7.619 ms     | 4.705 ms     | 18.777 ms    |
-| DeleteAsync | EfCore    | 25    | 11.669 ms    | 11.010 ms    | 5.851 ms     | 23.525 ms    |
-| DeleteAsync | EfCore    | 50    | 16.202 ms    | 15.363 ms    | 7.241 ms     | 29.180 ms    |
-| DeleteAsync | EfCore    | 100   | 32.802 ms    | 30.629 ms    | 13.730 ms    | 71.012 ms    |
-| DeleteAsync | EfCore    | 1000  | 581.582 ms   | 521.002 ms   | 113.653 ms   | 1,798.104 ms |
-| DeleteAsync | EfCore    | 10000 | 2,970.546 ms | 2,762.116 ms | 927.011 ms   | 5,334.432 ms |
+TBD
 
 #### SqlLite
 
-| Method      | Variant   | Rows | Mean        | Median      | Min         | Max         |
-|-------------|-----------|------|-------------|-------------|-------------|-------------|
-| InsertAsync | Optimized | 1    | 446.8 μs    | 440.3 μs    | 392.3 μs    | 724.0 μs    |
-| InsertAsync | Optimized | 10   | 577.5 μs    | 538.2 μs    | 493.7 μs    | 1,037.0 μs  |
-| InsertAsync | Optimized | 25   | 702.8 μs    | 678.3 μs    | 605.3 μs    | 1,159.3 μs  |
-| InsertAsync | Optimized | 50   | 1,222.7 μs  | 1,214.2 μs  | 986.7 μs    | 2,418.6 μs  |
-| InsertAsync | Optimized | 100  | 1,842.3 μs  | 1,868.9 μs  | 1,599.2 μs  | 2,166.3 μs  |
-| InsertAsync | Optimized | 1000 | 82,289.2 μs | 82,524.7 μs | 75,935.9 μs | 94,445.9 μs |
-| InsertAsync | EfCore    | 1    | 405.5 μs    | 405.4 μs    | 346.8 μs    | 467.3 μs    |
-| InsertAsync | EfCore    | 10   | 522.4 μs    | 499.0 μs    | 433.1 μs    | 826.5 μs    |
-| InsertAsync | EfCore    | 25   | 691.4 μs    | 673.0 μs    | 558.3 μs    | 868.3 μs    |
-| InsertAsync | EfCore    | 50   | 1,176.2 μs  | 1,192.2 μs  | 964.4 μs    | 1,470.4 μs  |
-| InsertAsync | EfCore    | 100  | 1,422.0 μs  | 1,421.1 μs  | 1,250.4 μs  | 1,595.6 μs  |
-| InsertAsync | EfCore    | 1000 | 10,017.0 μs | 9,383.3 μs  | 7,550.3 μs  | 19,605.0 μs |
-|             |           |      |             |             |             |             |
-| UpdateAsync | Optimized | 1    | 528.8 μs    | 507.5 μs    | 459.0 μs    | 661.5 μs    |
-| UpdateAsync | Optimized | 10   | 577.3 μs    | 550.0 μs    | 494.9 μs    | 1,312.7 μs  |
-| UpdateAsync | Optimized | 25   | 592.8 μs    | 591.7 μs    | 528.9 μs    | 756.5 μs    |
-| UpdateAsync | Optimized | 50   | 802.6 μs    | 789.4 μs    | 696.7 μs    | 1,122.4 μs  |
-| UpdateAsync | Optimized | 100  | 748.3 μs    | 739.9 μs    | 671.8 μs    | 924.0 μs    |
-| UpdateAsync | Optimized | 1000 | 3,810.1 μs  | 3,767.2 μs  | 3,235.2 μs  | 4,844.1 μs  |
-| UpdateAsync | EfCore    | 1    | 453.5 μs    | 451.5 μs    | 397.5 μs    | 507.5 μs    |
-| UpdateAsync | EfCore    | 10   | 560.9 μs    | 555.2 μs    | 474.1 μs    | 1,063.1 μs  |
-| UpdateAsync | EfCore    | 25   | 726.3 μs    | 712.7 μs    | 607.1 μs    | 1,005.1 μs  |
-| UpdateAsync | EfCore    | 50   | 1,037.4 μs  | 1,026.5 μs  | 896.2 μs    | 1,192.8 μs  |
-| UpdateAsync | EfCore    | 100  | 1,275.4 μs  | 1,287.3 μs  | 1,098.8 μs  | 1,405.0 μs  |
-| UpdateAsync | EfCore    | 1000 | 7,886.5 μs  | 7,917.6 μs  | 5,789.3 μs  | 10,172.1 μs |
-|             |           |      |             |             |             |             |
-| DeleteAsync | Optimized | 1    | 527.5 μs    | 504.2 μs    | 459.7 μs    | 1,019.1 μs  |
-| DeleteAsync | Optimized | 10   | 629.2 μs    | 610.8 μs    | 501.6 μs    | 1,160.4 μs  |
-| DeleteAsync | Optimized | 25   | 640.6 μs    | 633.4 μs    | 545.4 μs    | 827.5 μs    |
-| DeleteAsync | Optimized | 50   | 909.1 μs    | 871.5 μs    | 737.6 μs    | 1,429.0 μs  |
-| DeleteAsync | Optimized | 100  | 914.9 μs    | 911.0 μs    | 752.5 μs    | 1,217.7 μs  |
-| DeleteAsync | Optimized | 1000 | 4,874.2 μs  | 4,637.8 μs  | 3,853.7 μs  | 6,527.1 μs  |
-| DeleteAsync | EfCore    | 1    | 482.5 μs    | 458.1 μs    | 395.1 μs    | 1,695.6 μs  |
-| DeleteAsync | EfCore    | 10   | 572.2 μs    | 558.1 μs    | 480.9 μs    | 1,068.1 μs  |
-| DeleteAsync | EfCore    | 25   | 708.1 μs    | 691.4 μs    | 637.1 μs    | 974.2 μs    |
-| DeleteAsync | EfCore    | 50   | 1,078.1 μs  | 1,069.8 μs  | 894.7 μs    | 1,895.2 μs  |
-| DeleteAsync | EfCore    | 100  | 1,420.0 μs  | 1,397.4 μs  | 1,190.7 μs  | 1,937.2 μs  |
-| DeleteAsync | EfCore    | 1000 | 8,039.9 μs  | 7,849.8 μs  | 6,051.1 μs  | 10,857.1 μs |
+TBD
 
 #### SqlServer
 

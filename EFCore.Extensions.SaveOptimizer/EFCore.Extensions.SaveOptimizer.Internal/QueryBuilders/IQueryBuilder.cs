@@ -4,15 +4,15 @@ namespace EFCore.Extensions.SaveOptimizer.Internal.QueryBuilders;
 
 public interface IQueryBuilder
 {
-    IQueryBuilder Insert(string tableName, IReadOnlyList<IDictionary<string, object?>> data);
+    IQueryBuilder Insert(string tableName, IReadOnlyList<IDictionary<string, SqlValueModel?>> data);
 
-    IQueryBuilder Update(string tableName, IDictionary<string, object?> data);
+    IQueryBuilder Update(string tableName, IDictionary<string, SqlValueModel?> data);
 
     IQueryBuilder Delete(string tableName);
 
-    IQueryBuilder Where(IDictionary<string, object?>? filter);
+    IQueryBuilder Where(IDictionary<string, SqlValueModel?>? filter);
 
     IQueryBuilder Where(IReadOnlyList<string> keys, IReadOnlyList<QueryDataModel> results);
 
-    SqlCommandModel Build();
+    ISqlCommandModel Build();
 }

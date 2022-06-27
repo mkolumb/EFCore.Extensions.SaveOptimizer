@@ -20,10 +20,10 @@ public abstract class BaseInsertTests
     [InlineData(SaveVariant.EfCore | SaveVariant.Recreate | SaveVariant.WithTransaction, 1000, 1000)]
     [InlineData(SaveVariant.Optimized | SaveVariant.Recreate, 1000, 1000)]
     [InlineData(SaveVariant.Optimized | SaveVariant.Recreate | SaveVariant.WithTransaction, 1000, 1000)]
-    [InlineData(SaveVariant.EfCore | SaveVariant.Recreate, 100000, 100000)]
-    [InlineData(SaveVariant.EfCore | SaveVariant.Recreate | SaveVariant.WithTransaction, 100000, 100000)]
-    [InlineData(SaveVariant.Optimized | SaveVariant.Recreate, 100000, 100000)]
-    [InlineData(SaveVariant.Optimized | SaveVariant.Recreate | SaveVariant.WithTransaction, 100000, 100000)]
+    //[InlineData(SaveVariant.EfCore | SaveVariant.Recreate, 100000, 100000)]
+    //[InlineData(SaveVariant.EfCore | SaveVariant.Recreate | SaveVariant.WithTransaction, 100000, 100000)]
+    //[InlineData(SaveVariant.Optimized | SaveVariant.Recreate, 100000, 100000)]
+    //[InlineData(SaveVariant.Optimized | SaveVariant.Recreate | SaveVariant.WithTransaction, 100000, 100000)]
     public async Task GivenSaveChanges_WhenMultipleObjectsInserted_ShouldInsertData(SaveVariant variant, int batchSize, int count)
     {
         // Arrange

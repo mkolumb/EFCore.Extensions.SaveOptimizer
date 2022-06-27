@@ -12,20 +12,22 @@ public class SqlKataBuilder : IQueryBuilder
 
     public SqlKataBuilder(Compiler compiler) => _compiler = compiler;
 
-    public IQueryBuilder Insert(string tableName, IReadOnlyList<IDictionary<string, object?>> data)
+    public IQueryBuilder Insert(string tableName, IReadOnlyList<IDictionary<string, SqlValueModel?>> data)
     {
         ICollection<string> columns = data[0].Keys;
 
-        IEnumerable<ICollection<object?>> rows = data.Select(x => x.Values);
+        IEnumerable<ICollection<object?>> rows = data.Select(x => x.Values.Select(s => s?.Value).ToArray());
 
         _query = new Query(tableName).AsInsert(columns, rows);
 
         return this;
     }
 
-    public IQueryBuilder Update(string tableName, IDictionary<string, object?> data)
+    public IQueryBuilder Update(string tableName, IDictionary<string, SqlValueModel?> data)
     {
-        _query = new Query(tableName).AsUpdate(data);
+        var collection = data.ToDictionary(x => x.Key, x => x.Value?.Value);
+
+        _query = new Query(tableName).AsUpdate(collection);
 
         return this;
     }
@@ -37,11 +39,13 @@ public class SqlKataBuilder : IQueryBuilder
         return this;
     }
 
-    public IQueryBuilder Where(IDictionary<string, object?>? filter)
+    public IQueryBuilder Where(IDictionary<string, SqlValueModel?>? filter)
     {
-        if (filter != null && filter.Any())
+        var collection = filter?.ToDictionary(x => x.Key, x => x.Value?.Value);
+
+        if (collection != null && collection.Any())
         {
-            _query = _query?.Where(filter);
+            _query = _query?.Where(collection);
         }
 
         return this;
@@ -54,10 +58,10 @@ public class SqlKataBuilder : IQueryBuilder
         return this;
     }
 
-    public SqlCommandModel Build()
+    public ISqlCommandModel Build()
     {
         SqlResult? result = _compiler.Compile(_query);
 
-        return new SqlCommandModel { Sql = result.Sql, NamedBindings = result.NamedBindings };
+        return new SqlKataCommandModel { Sql = result.Sql, NamedBindings = result.NamedBindings };
     }
 }

@@ -22,30 +22,30 @@ public class QueryTranslatorService : IQueryTranslatorService
         var tableName = model.GetTableName(entityType);
         var schemaName = model.GetSchema(entityType);
 
-        Dictionary<string, object?> data = new();
+        Dictionary<string, SqlValueModel?> data = new();
 
         HashSet<string> primaryKeyNames = new();
 
-        Dictionary<string, object?> tokens = new();
+        Dictionary<string, SqlValueModel?> tokens = new();
 
         var propertiesCount = 0;
 
         foreach (PropertyEntry property in properties)
         {
-            var columnName = model.GetColumn(entityType, property.Metadata.Name);
+            PropertyTypeModel column = model.GetColumn(entityType, property.Metadata.Name);
 
             if (property.Metadata.IsConcurrencyToken)
             {
-                tokens.Add(columnName, property.CurrentValue);
+                tokens.Add(column.ColumnName, GetSqlValueModel(property, column));
 
                 propertiesCount++;
             }
 
             if (property.Metadata.IsPrimaryKey())
             {
-                primaryKeyNames.Add(columnName);
+                primaryKeyNames.Add(column.ColumnName);
 
-                data.Add(columnName, property.CurrentValue);
+                data.Add(column.ColumnName, GetSqlValueModel(property, column));
 
                 propertiesCount++;
 
@@ -62,7 +62,7 @@ public class QueryTranslatorService : IQueryTranslatorService
                 continue;
             }
 
-            data.Add(columnName, property.CurrentValue);
+            data.Add(column.ColumnName, GetSqlValueModel(property, column));
 
             if (!property.Metadata.IsConcurrencyToken)
             {
@@ -70,6 +70,14 @@ public class QueryTranslatorService : IQueryTranslatorService
             }
         }
 
-        return new QueryDataModel(entityType, entry.State, schemaName, tableName, data, primaryKeyNames, tokens, propertiesCount);
+        return new QueryDataModel(entityType, entry.State, schemaName, tableName, data, primaryKeyNames, tokens,
+            propertiesCount);
+    }
+
+    private static SqlValueModel GetSqlValueModel(MemberEntry property, PropertyTypeModel column)
+    {
+        var value = property.CurrentValue;
+
+        return new SqlValueModel(value, column);
     }
 }

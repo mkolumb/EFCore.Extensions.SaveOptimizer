@@ -29,17 +29,17 @@ public class DataGroupModelTests
                         EntityState.Added,
                         null,
                         "some",
-                        new Dictionary<string, object?>
+                        new Dictionary<string, SqlValueModel?>
                         {
-                            { nameof(entity.InsiderId), entity.InsiderId },
-                            { nameof(entity.InsiderName), entity.InsiderName },
-                            { nameof(entity.InsiderValue), entity.InsiderValue }
+                            { nameof(entity.InsiderId), GetValueModel(entity.InsiderId) },
+                            { nameof(entity.InsiderName), GetValueModel(entity.InsiderName) },
+                            { nameof(entity.InsiderValue), GetValueModel(entity.InsiderValue) }
                         },
                         new HashSet<string>
                         {
                             nameof(entity.InsiderId), nameof(entity.InsiderName), nameof(entity.InsiderValue)
                         },
-                        new Dictionary<string, object?>(),
+                        new Dictionary<string, SqlValueModel?>(),
                         3);
 
                     _items.Add(model);
@@ -64,17 +64,17 @@ public class DataGroupModelTests
                         EntityState.Added,
                         null,
                         "some",
-                        new Dictionary<string, object?>
+                        new Dictionary<string, SqlValueModel?>
                         {
-                            { nameof(entity.InsiderId), entity.InsiderId },
-                            { nameof(entity.InsiderName), entity.InsiderName },
-                            { nameof(entity.InsiderValue), entity.InsiderValue }
+                            { nameof(entity.InsiderId), GetValueModel(entity.InsiderId) },
+                            { nameof(entity.InsiderName), GetValueModel(entity.InsiderName) },
+                            { nameof(entity.InsiderValue), GetValueModel(entity.InsiderValue) }
                         },
                         new HashSet<string>
                         {
                             nameof(entity.InsiderId), nameof(entity.InsiderName), nameof(entity.InsiderValue)
                         },
-                        new Dictionary<string, object?>(),
+                        new Dictionary<string, SqlValueModel?>(),
                         3);
 
                     _items.Add(model);
@@ -91,7 +91,7 @@ public class DataGroupModelTests
 
         for (var i = 0; i < 10; i++)
         {
-            expected.Add(new DataGroupModel("InsiderId", $"i_{i}"));
+            expected.Add(new DataGroupModel("InsiderId", GetValueModel($"i_{i}")));
         }
 
         // Act
@@ -109,15 +109,15 @@ public class DataGroupModelTests
 
         for (var i = 0; i < 10; i++)
         {
-            DataGroupModel item = new("InsiderId", $"i_{i}");
+            DataGroupModel item = new("InsiderId", GetValueModel($"i_{i}"));
 
             for (var j = i; j < 12; j++)
             {
-                DataGroupModel nested = new("InsiderName", $"j_{j}");
+                DataGroupModel nested = new("InsiderName", GetValueModel($"j_{j}"));
 
                 for (var k = j; k < 14; k++)
                 {
-                    nested.NestedItems.Add(new DataGroupModel("InsiderValue", $"k_{k}"));
+                    nested.NestedItems.Add(new DataGroupModel("InsiderValue", GetValueModel($"k_{k}")));
                 }
 
                 item.NestedItems.Add(nested);
@@ -127,7 +127,8 @@ public class DataGroupModelTests
         }
 
         // Act
-        HashSet<DataGroupModel> result = DataGroupModel.CreateDataGroup(_items, new[] { "InsiderId", "InsiderName", "InsiderValue" });
+        HashSet<DataGroupModel> result =
+            DataGroupModel.CreateDataGroup(_items, new[] { "InsiderId", "InsiderName", "InsiderValue" });
 
         // Assert
         JsonSerializer.Serialize(result).Should().BeEquivalentTo(JsonSerializer.Serialize(expected));
@@ -141,11 +142,11 @@ public class DataGroupModelTests
 
         for (var i = 0; i < 10; i++)
         {
-            DataGroupModel item = new("InsiderId", $"i_{i}");
+            DataGroupModel item = new("InsiderId", GetValueModel($"i_{i}"));
 
             for (var j = i; j < 12; j++)
             {
-                item.NestedItems.Add(new DataGroupModel("InsiderName", $"j_{j}"));
+                item.NestedItems.Add(new DataGroupModel("InsiderName", GetValueModel($"j_{j}")));
             }
 
             expected.Add(item);
@@ -157,4 +158,6 @@ public class DataGroupModelTests
         // Assert
         JsonSerializer.Serialize(result).Should().BeEquivalentTo(JsonSerializer.Serialize(expected));
     }
+
+    private static SqlValueModel GetValueModel(object? value) => new(value, new PropertyTypeModel(null!, null!, null!));
 }

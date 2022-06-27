@@ -1,4 +1,6 @@
-﻿namespace EFCore.Extensions.SaveOptimizer.Internal.Wrappers
+﻿using EFCore.Extensions.SaveOptimizer.Internal.Models;
+
+namespace EFCore.Extensions.SaveOptimizer.Internal.Wrappers
 {
     public interface IDataContextModelWrapper
     {
@@ -6,6 +8,6 @@
 
         string? GetSchema(Type entityType);
 
-        string GetColumn(Type entityType, string propertyName);
+        PropertyTypeModel GetColumn(Type entityType, string propertyName);
     }
 }

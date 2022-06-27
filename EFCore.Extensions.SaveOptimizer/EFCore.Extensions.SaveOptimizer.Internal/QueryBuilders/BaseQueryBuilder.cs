@@ -6,7 +6,7 @@ namespace EFCore.Extensions.SaveOptimizer.Internal.QueryBuilders;
 
 public abstract class BaseQueryBuilder : IQueryBuilder
 {
-    private readonly IDictionary<string, object?> _bindings;
+    private readonly IList<SqlParamModel> _bindings;
     private readonly StringBuilder _builder;
     private readonly CaseType _caseType;
     private readonly IReadOnlyDictionary<ClauseType, string> _clauses;
@@ -17,10 +17,10 @@ public abstract class BaseQueryBuilder : IQueryBuilder
         _clauses = clauses;
         _caseType = caseType;
         _builder = new StringBuilder();
-        _bindings = new Dictionary<string, object?>();
+        _bindings = new List<SqlParamModel>();
     }
 
-    public IQueryBuilder Insert(string tableName, IReadOnlyList<IDictionary<string, object?>> data)
+    public IQueryBuilder Insert(string tableName, IReadOnlyList<IDictionary<string, SqlValueModel?>> data)
     {
         _builder.Append($"{_clauses[ClauseType.Insert]} {GetTableName(tableName)} (");
 
@@ -70,7 +70,7 @@ public abstract class BaseQueryBuilder : IQueryBuilder
         return this;
     }
 
-    public IQueryBuilder Update(string tableName, IDictionary<string, object?> data)
+    public IQueryBuilder Update(string tableName, IDictionary<string, SqlValueModel?> data)
     {
         _builder.Append($"{_clauses[ClauseType.Update]} {GetTableName(tableName)} {_clauses[ClauseType.Set]} ");
 
@@ -93,7 +93,7 @@ public abstract class BaseQueryBuilder : IQueryBuilder
         return this;
     }
 
-    public IQueryBuilder Where(IDictionary<string, object?>? filter)
+    public IQueryBuilder Where(IDictionary<string, SqlValueModel?>? filter)
     {
         if (filter == null)
         {
@@ -128,7 +128,7 @@ public abstract class BaseQueryBuilder : IQueryBuilder
         return this;
     }
 
-    public SqlCommandModel Build()
+    public ISqlCommandModel Build()
     {
         var sql = _builder.ToString();
 
@@ -150,28 +150,46 @@ public abstract class BaseQueryBuilder : IQueryBuilder
                 throw new ArgumentOutOfRangeException();
         }
 
-        return new SqlCommandModel { NamedBindings = _bindings, Sql = sql };
+        return new SqlCommandModel { Parameters = _bindings, Sql = sql };
     }
 
     private string GetTableName(string tableName) =>
         $"{_clauses[ClauseType.ValueEscapeLeft]}{tableName.Replace(".", _clauses[ClauseType.TableEscape])}{_clauses[ClauseType.ValueEscapeRight]}";
 
-    private void AppendValue(string key, object? value, bool comma)
+    private void AppendValue(string key, SqlValueModel? value, bool comma)
     {
         _builder.Append(comma
             ? $", {_clauses[ClauseType.ValueEscapeLeft]}{key}{_clauses[ClauseType.ValueEscapeRight]} = {_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}"
             : $"{_clauses[ClauseType.ValueEscapeLeft]}{key}{_clauses[ClauseType.ValueEscapeRight]} = {_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}");
 
-        _bindings.Add($"{_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}", value);
+        var paramKey = $"{_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}";
+
+        if (value != null)
+        {
+            _bindings.Add(new SqlParamModel(paramKey, value));
+        }
+        else
+        {
+            throw new ArgumentNullException(nameof(value));
+        }
     }
 
-    private void AppendValueIn(object? value, bool comma)
+    private void AppendValueIn(SqlValueModel? value, bool comma)
     {
         _builder.Append(comma
             ? $", {_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}"
             : $"{_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}");
 
-        _bindings.Add($"{_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}", value);
+        var paramKey = $"{_clauses[ClauseType.ParameterPrefix]}{_bindings.Count}";
+
+        if (value != null)
+        {
+            _bindings.Add(new SqlParamModel(paramKey, value));
+        }
+        else
+        {
+            throw new ArgumentNullException(nameof(value));
+        }
     }
 
     private void AppendFilter(HashSet<DataGroupModel> data)

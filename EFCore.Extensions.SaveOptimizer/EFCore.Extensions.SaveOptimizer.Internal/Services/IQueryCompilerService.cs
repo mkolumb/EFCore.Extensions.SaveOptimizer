@@ -4,5 +4,5 @@ namespace EFCore.Extensions.SaveOptimizer.Internal.Services;
 
 public interface IQueryCompilerService
 {
-    IEnumerable<SqlCommandModel> Compile(IReadOnlyCollection<QueryDataModel> models, string providerName);
+    IEnumerable<ISqlCommandModel> Compile(IReadOnlyCollection<QueryDataModel> models, string providerName);
 }

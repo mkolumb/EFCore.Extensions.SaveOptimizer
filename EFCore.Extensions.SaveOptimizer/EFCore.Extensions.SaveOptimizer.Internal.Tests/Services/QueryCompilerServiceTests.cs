@@ -3,6 +3,7 @@ using EFCore.Extensions.SaveOptimizer.Internal.Factories;
 using EFCore.Extensions.SaveOptimizer.Internal.Models;
 using EFCore.Extensions.SaveOptimizer.Internal.QueryBuilders;
 using EFCore.Extensions.SaveOptimizer.Internal.Services;
+using EFCore.Extensions.SaveOptimizer.Internal.Tests.Helpers;
 using EFCore.Extensions.SaveOptimizer.Internal.Tests.TestContext.Models;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -34,13 +35,13 @@ public class QueryCompilerServiceTests
         QueryDataModel[] queryResults =
         {
             new(typeof(FirstLevelEntity), EntityState.Deleted, null, "order",
-                new Dictionary<string, object> { { "order_id", 1 } }, new HashSet<string> { "order_id" }, null, 1),
+                new Dictionary<string, object> { { "order_id", 1 } }.Map(), new HashSet<string> { "order_id" }, null, 1),
             new(typeof(FirstLevelEntity), EntityState.Deleted, null, "order",
-                new Dictionary<string, object> { { "order_id", 2 } }, new HashSet<string> { "order_id" }, null, 1)
+                new Dictionary<string, object> { { "order_id", 2 } }.Map(), new HashSet<string> { "order_id" }, null, 1)
         };
 
         // Act
-        IEnumerable<SqlCommandModel> result = _target.Compile(queryResults, string.Empty);
+        IEnumerable<ISqlCommandModel> result = _target.Compile(queryResults, string.Empty);
 
         // Assert
         result.Should().HaveCount(1);
@@ -56,18 +57,18 @@ public class QueryCompilerServiceTests
         QueryDataModel[] queryResults =
         {
             new(typeof(FirstLevelEntity), EntityState.Deleted, null, "order",
-                new Dictionary<string, object> { { "order_id", 1 } }, new HashSet<string> { "order_id" },
-                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_1" } }, 1),
+                new Dictionary<string, object> { { "order_id", 1 } }.Map(), new HashSet<string> { "order_id" },
+                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_1" } }.Map(), 1),
             new(typeof(FirstLevelEntity), EntityState.Deleted, null, "order",
-                new Dictionary<string, object> { { "order_id", 2 } }, new HashSet<string> { "order_id" },
-                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_2" } }, 1),
+                new Dictionary<string, object> { { "order_id", 2 } }.Map(), new HashSet<string> { "order_id" },
+                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_2" } }.Map(), 1),
             new(typeof(FirstLevelEntity), EntityState.Deleted, null, "order",
-                new Dictionary<string, object> { { "order_id", 3 } }, new HashSet<string> { "order_id" },
-                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_2" } }, 1)
+                new Dictionary<string, object> { { "order_id", 3 } }.Map(), new HashSet<string> { "order_id" },
+                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_2" } }.Map(), 1)
         };
 
         // Act
-        IEnumerable<SqlCommandModel> result = _target.Compile(queryResults, string.Empty);
+        IEnumerable<ISqlCommandModel> result = _target.Compile(queryResults, string.Empty);
 
         // Assert
         result.Should().HaveCount(2);
@@ -91,25 +92,25 @@ public class QueryCompilerServiceTests
         QueryDataModel[] queryResults =
         {
             new(typeof(FirstLevelEntity), EntityState.Deleted, null, "order",
-                new Dictionary<string, object> { { "order_id", 1 }, { "second_primary_key", 111 } },
+                new Dictionary<string, object> { { "order_id", 1 }, { "second_primary_key", 111 } }.Map(),
                 new HashSet<string> { "order_id", "second_primary_key" },
-                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_1" } }, 1),
+                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_1" } }.Map(), 1),
             new(typeof(FirstLevelEntity), EntityState.Deleted, null, "order",
-                new Dictionary<string, object> { { "order_id", 2 }, { "second_primary_key", 112 } },
+                new Dictionary<string, object> { { "order_id", 2 }, { "second_primary_key", 112 } }.Map(),
                 new HashSet<string> { "order_id", "second_primary_key" },
-                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_2" } }, 1),
+                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_2" } }.Map(), 1),
             new(typeof(FirstLevelEntity), EntityState.Deleted, null, "order",
-                new Dictionary<string, object> { { "order_id", 3 }, { "second_primary_key", 333 } },
+                new Dictionary<string, object> { { "order_id", 3 }, { "second_primary_key", 333 } }.Map(),
                 new HashSet<string> { "order_id", "second_primary_key" },
-                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_2" } }, 1),
+                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_2" } }.Map(), 1),
             new(typeof(FirstLevelEntity), EntityState.Deleted, null, "order",
-                new Dictionary<string, object> { { "order_id", 3 }, { "second_primary_key", 444 } },
+                new Dictionary<string, object> { { "order_id", 3 }, { "second_primary_key", 444 } }.Map(),
                 new HashSet<string> { "order_id", "second_primary_key" },
-                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_2" } }, 1)
+                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_2" } }.Map(), 1)
         };
 
         // Act
-        IEnumerable<SqlCommandModel> result = _target.Compile(queryResults, string.Empty);
+        IEnumerable<ISqlCommandModel> result = _target.Compile(queryResults, string.Empty);
 
         // Assert
         result.Should().HaveCount(2);
@@ -143,13 +144,13 @@ public class QueryCompilerServiceTests
         QueryDataModel[] queryResults =
         {
             new(typeof(FirstLevelEntity), EntityState.Added, null, "order",
-                new Dictionary<string, object> { { "order_id", 1 } }, new HashSet<string> { "order_id" }, null, 1),
+                new Dictionary<string, object> { { "order_id", 1 } }.Map(), new HashSet<string> { "order_id" }, null, 1),
             new(typeof(FirstLevelEntity), EntityState.Added, null, "order",
-                new Dictionary<string, object> { { "order_id", 2 } }, new HashSet<string> { "order_id" }, null, 1)
+                new Dictionary<string, object> { { "order_id", 2 } }.Map(), new HashSet<string> { "order_id" }, null, 1)
         };
 
         // Act
-        IEnumerable<SqlCommandModel> result = _target.Compile(queryResults, string.Empty);
+        IEnumerable<ISqlCommandModel> result = _target.Compile(queryResults, string.Empty);
 
         // Assert
         result.Should().HaveCount(1);
@@ -166,15 +167,15 @@ public class QueryCompilerServiceTests
         QueryDataModel[] queryResults =
         {
             new(typeof(FirstLevelEntity), EntityState.Added, null, "order",
-                new Dictionary<string, object> { { "order_id", 1 } }, new HashSet<string> { "order_id" },
-                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_1" } }, 1),
+                new Dictionary<string, object> { { "order_id", 1 } }.Map(), new HashSet<string> { "order_id" },
+                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_1" } }.Map(), 1),
             new(typeof(FirstLevelEntity), EntityState.Added, null, "order",
-                new Dictionary<string, object> { { "order_id", 2 } }, new HashSet<string> { "order_id" },
-                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_2" } }, 1)
+                new Dictionary<string, object> { { "order_id", 2 } }.Map(), new HashSet<string> { "order_id" },
+                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_2" } }.Map(), 1)
         };
 
         // Act
-        IEnumerable<SqlCommandModel> result = _target.Compile(queryResults, string.Empty);
+        IEnumerable<ISqlCommandModel> result = _target.Compile(queryResults, string.Empty);
 
         // Assert
         result.Should().HaveCount(1);
@@ -190,9 +191,9 @@ public class QueryCompilerServiceTests
         QueryDataModel[] queryResults =
         {
             new(typeof(FirstLevelEntity), EntityState.Added, null, "order",
-                new Dictionary<string, object>(), new HashSet<string> { "order_id" }, null, 1),
+                new Dictionary<string, object>().Map(), new HashSet<string> { "order_id" }, null, 1),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object>(), new HashSet<string> { "order_id" }, null, 1)
+                new Dictionary<string, object>().Map(), new HashSet<string> { "order_id" }, null, 1)
         };
 
         // Act
@@ -209,13 +210,13 @@ public class QueryCompilerServiceTests
         QueryDataModel[] queryResults =
         {
             new(typeof(FirstLevelEntity), EntityState.Added, "schema1", "order",
-                new Dictionary<string, object> { { "order_id2", 1 } }, new HashSet<string> { "order_id" }, null, 1),
+                new Dictionary<string, object> { { "order_id2", 1 } }.Map(), new HashSet<string> { "order_id" }, null, 1),
             new(typeof(FirstLevelEntity), EntityState.Added, "schema1", "order",
-                new Dictionary<string, object> { { "order_id3", 11 } }, new HashSet<string> { "order_id" }, null, 1)
+                new Dictionary<string, object> { { "order_id3", 11 } }.Map(), new HashSet<string> { "order_id" }, null, 1)
         };
 
         // Act
-        IEnumerable<SqlCommandModel> result = _target.Compile(queryResults, string.Empty);
+        IEnumerable<ISqlCommandModel> result = _target.Compile(queryResults, string.Empty);
 
         // Assert
         result.Should().HaveCount(2);
@@ -232,9 +233,9 @@ public class QueryCompilerServiceTests
         QueryDataModel[] queryResults =
         {
             new(typeof(FirstLevelEntity), EntityState.Added, null, "order",
-                new Dictionary<string, object>(), new HashSet<string> { "order_id" }, null, 1),
+                new Dictionary<string, object>().Map(), new HashSet<string> { "order_id" }, null, 1),
             new(typeof(SecondLevelEntity), EntityState.Added, null, "order",
-                new Dictionary<string, object>(), new HashSet<string> { "order_id" }, null, 1)
+                new Dictionary<string, object>().Map(), new HashSet<string> { "order_id" }, null, 1)
         };
 
         // Act
@@ -251,9 +252,9 @@ public class QueryCompilerServiceTests
         QueryDataModel[] queryResults =
         {
             new(typeof(FirstLevelEntity), EntityState.Added, "schema1", "order",
-                new Dictionary<string, object>(), new HashSet<string> { "order_id1" }, null, 1),
+                new Dictionary<string, object>().Map(), new HashSet<string> { "order_id1" }, null, 1),
             new(typeof(FirstLevelEntity), EntityState.Added, "schema1", "order",
-                new Dictionary<string, object>(), new HashSet<string> { "order_id2" }, null, 1)
+                new Dictionary<string, object>().Map(), new HashSet<string> { "order_id2" }, null, 1)
         };
 
         // Act
@@ -270,9 +271,9 @@ public class QueryCompilerServiceTests
         QueryDataModel[] queryResults =
         {
             new(typeof(FirstLevelEntity), EntityState.Added, "schema1", "order",
-                new Dictionary<string, object>(), new HashSet<string> { "order_id" }, null, 1),
+                new Dictionary<string, object>().Map(), new HashSet<string> { "order_id" }, null, 1),
             new(typeof(FirstLevelEntity), EntityState.Added, "schema2", "order",
-                new Dictionary<string, object>(), new HashSet<string> { "order_id" }, null, 1)
+                new Dictionary<string, object>().Map(), new HashSet<string> { "order_id" }, null, 1)
         };
 
         // Act
@@ -289,9 +290,9 @@ public class QueryCompilerServiceTests
         QueryDataModel[] queryResults =
         {
             new(typeof(FirstLevelEntity), EntityState.Added, "schema1", "order1",
-                new Dictionary<string, object>(), new HashSet<string> { "order_id" }, null, 1),
+                new Dictionary<string, object>().Map(), new HashSet<string> { "order_id" }, null, 1),
             new(typeof(FirstLevelEntity), EntityState.Added, "schema1", "order2",
-                new Dictionary<string, object>(), new HashSet<string> { "order_id" }, null, 1)
+                new Dictionary<string, object>().Map(), new HashSet<string> { "order_id" }, null, 1)
         };
 
         // Act
@@ -308,15 +309,15 @@ public class QueryCompilerServiceTests
         QueryDataModel[] queryResults =
         {
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 1 }, { "other", 11 } },
+                new Dictionary<string, object> { { "order_id", 1 }, { "other", 11 } }.Map(),
                 new HashSet<string> { "order_id" }, null, 1),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 2 }, { "other", 21 } },
+                new Dictionary<string, object> { { "order_id", 2 }, { "other", 21 } }.Map(),
                 new HashSet<string> { "order_id" }, null, 1)
         };
 
         // Act
-        IEnumerable<SqlCommandModel> result = _target.Compile(queryResults, string.Empty);
+        IEnumerable<ISqlCommandModel> result = _target.Compile(queryResults, string.Empty);
 
         // Assert
         result.Should().HaveCount(2);
@@ -335,27 +336,27 @@ public class QueryCompilerServiceTests
         QueryDataModel[] queryResults =
         {
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 1 }, { "other", 11 } },
+                new Dictionary<string, object> { { "order_id", 1 }, { "other", 11 } }.Map(),
                 new HashSet<string> { "order_id" }, null, 1),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 2 }, { "other", 21 } },
+                new Dictionary<string, object> { { "order_id", 2 }, { "other", 21 } }.Map(),
                 new HashSet<string> { "order_id" }, null, 1),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 3 }, { "other", 21 } },
+                new Dictionary<string, object> { { "order_id", 3 }, { "other", 21 } }.Map(),
                 new HashSet<string> { "order_id" }, null, 1),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 4 }, { "other", 21 } },
+                new Dictionary<string, object> { { "order_id", 4 }, { "other", 21 } }.Map(),
                 new HashSet<string> { "order_id" }, null, 1),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 5 }, { "other", 11 } },
+                new Dictionary<string, object> { { "order_id", 5 }, { "other", 11 } }.Map(),
                 new HashSet<string> { "order_id" }, null, 1),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 6 }, { "other", 31 } },
+                new Dictionary<string, object> { { "order_id", 6 }, { "other", 31 } }.Map(),
                 new HashSet<string> { "order_id" }, null, 1)
         };
 
         // Act
-        IEnumerable<SqlCommandModel> result = _target.Compile(queryResults, string.Empty);
+        IEnumerable<ISqlCommandModel> result = _target.Compile(queryResults, string.Empty);
 
         // Assert
         result.Should().HaveCount(3);
@@ -378,33 +379,33 @@ public class QueryCompilerServiceTests
         QueryDataModel[] queryResults =
         {
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 1 }, { "other", 11 } },
+                new Dictionary<string, object> { { "order_id", 1 }, { "other", 11 } }.Map(),
                 new HashSet<string> { "order_id" },
-                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_11" } }, 1),
+                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_11" } }.Map(), 1),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 2 }, { "other", 21 } },
+                new Dictionary<string, object> { { "order_id", 2 }, { "other", 21 } }.Map(),
                 new HashSet<string> { "order_id" },
-                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_21" } }, 1),
+                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_21" } }.Map(), 1),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 3 }, { "other", 21 } },
+                new Dictionary<string, object> { { "order_id", 3 }, { "other", 21 } }.Map(),
                 new HashSet<string> { "order_id" },
-                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_21" } }, 1),
+                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_21" } }.Map(), 1),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 4 }, { "other", 21 } },
+                new Dictionary<string, object> { { "order_id", 4 }, { "other", 21 } }.Map(),
                 new HashSet<string> { "order_id" },
-                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_11" } }, 1),
+                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_11" } }.Map(), 1),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 5 }, { "other", 11 } },
+                new Dictionary<string, object> { { "order_id", 5 }, { "other", 11 } }.Map(),
                 new HashSet<string> { "order_id" },
-                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_11" } }, 1),
+                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_11" } }.Map(), 1),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 6 }, { "other", 31 } },
+                new Dictionary<string, object> { { "order_id", 6 }, { "other", 31 } }.Map(),
                 new HashSet<string> { "order_id" },
-                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_31" } }, 1)
+                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_31" } }.Map(), 1)
         };
 
         // Act
-        IEnumerable<SqlCommandModel> result = _target.Compile(queryResults, string.Empty);
+        IEnumerable<ISqlCommandModel> result = _target.Compile(queryResults, string.Empty);
 
         // Assert
         result.Should().HaveCount(4);
@@ -445,41 +446,41 @@ public class QueryCompilerServiceTests
         QueryDataModel[] queryResults =
         {
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 1 }, { "second_primary_key", 111 }, { "other", 11 } },
+                new Dictionary<string, object> { { "order_id", 1 }, { "second_primary_key", 111 }, { "other", 11 } }.Map(),
                 new HashSet<string> { "order_id", "second_primary_key" },
-                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_11" } }, 1),
+                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_11" } }.Map(), 1),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 2 }, { "second_primary_key", 112 }, { "other", 21 } },
+                new Dictionary<string, object> { { "order_id", 2 }, { "second_primary_key", 112 }, { "other", 21 } }.Map(),
                 new HashSet<string> { "order_id", "second_primary_key" },
-                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_21" } }, 1),
+                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_21" } }.Map(), 1),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 3 }, { "second_primary_key", 113 }, { "other", 21 } },
+                new Dictionary<string, object> { { "order_id", 3 }, { "second_primary_key", 113 }, { "other", 21 } }.Map(),
                 new HashSet<string> { "order_id", "second_primary_key" },
-                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_21" } }, 1),
+                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_21" } }.Map(), 1),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 4 }, { "second_primary_key", 114 }, { "other", 21 } },
+                new Dictionary<string, object> { { "order_id", 4 }, { "second_primary_key", 114 }, { "other", 21 } }.Map(),
                 new HashSet<string> { "order_id", "second_primary_key" },
-                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_11" } }, 1),
+                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_11" } }.Map(), 1),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 5 }, { "second_primary_key", 115 }, { "other", 11 } },
+                new Dictionary<string, object> { { "order_id", 5 }, { "second_primary_key", 115 }, { "other", 11 } }.Map(),
                 new HashSet<string> { "order_id", "second_primary_key" },
-                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_11" } }, 1),
+                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_11" } }.Map(), 1),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 6 }, { "second_primary_key", 116 }, { "other", 31 } },
+                new Dictionary<string, object> { { "order_id", 6 }, { "second_primary_key", 116 }, { "other", 31 } }.Map(),
                 new HashSet<string> { "order_id", "second_primary_key" },
-                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_31" } }, 1),
+                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_31" } }.Map(), 1),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 6 }, { "second_primary_key", 126 }, { "other", 31 } },
+                new Dictionary<string, object> { { "order_id", 6 }, { "second_primary_key", 126 }, { "other", 31 } }.Map(),
                 new HashSet<string> { "order_id", "second_primary_key" },
-                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_31" } }, 1),
+                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_31" } }.Map(), 1),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 6 }, { "second_primary_key", 146 }, { "other", 31 } },
+                new Dictionary<string, object> { { "order_id", 6 }, { "second_primary_key", 146 }, { "other", 31 } }.Map(),
                 new HashSet<string> { "order_id", "second_primary_key" },
-                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_31" } }, 1)
+                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_31" } }.Map(), 1)
         };
 
         // Act
-        IEnumerable<SqlCommandModel> result = _target.Compile(queryResults, string.Empty);
+        IEnumerable<ISqlCommandModel> result = _target.Compile(queryResults, string.Empty);
 
         // Assert
         result.Should().HaveCount(4);
@@ -538,17 +539,17 @@ public class QueryCompilerServiceTests
         QueryDataModel[] queryResults =
         {
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 1 }, { "other", 11 } },
+                new Dictionary<string, object> { { "order_id", 1 }, { "other", 11 } }.Map(),
                 new HashSet<string> { "order_id" },
-                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_11" } }, 1),
+                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_11" } }.Map(), 1),
             new(typeof(FirstLevelEntity), EntityState.Modified, null, "order",
-                new Dictionary<string, object> { { "order_id", 2 }, { "other", 21 } },
+                new Dictionary<string, object> { { "order_id", 2 }, { "other", 21 } }.Map(),
                 new HashSet<string> { "order_id" },
-                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_21" } }, 1)
+                new Dictionary<string, object> { { "order_concurrency_token", "concurrency_token_21" } }.Map(), 1)
         };
 
         // Act
-        IEnumerable<SqlCommandModel> result = _target.Compile(queryResults, string.Empty);
+        IEnumerable<ISqlCommandModel> result = _target.Compile(queryResults, string.Empty);
 
         // Assert
         result.Should().HaveCount(2);

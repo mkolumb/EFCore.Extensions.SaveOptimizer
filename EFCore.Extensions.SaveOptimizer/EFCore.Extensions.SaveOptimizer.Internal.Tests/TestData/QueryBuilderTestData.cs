@@ -1,4 +1,5 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Internal.Models;
+using EFCore.Extensions.SaveOptimizer.Internal.Tests.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 #pragma warning disable CS8625
@@ -47,30 +48,34 @@ public static class QueryBuilderTestData
     {
         get
         {
-            List<IDictionary<string, object?>> data = new()
-            {
-                new Dictionary<string, object?> { { "id_1", "some_val" }, { "id_2", "some_val2" }, { "id_3", 45 } },
-                new Dictionary<string, object?> { { "id_1", "some_val" }, { "id_2", "some_val2" }, { "id_3", 65 } },
-                new Dictionary<string, object?> { { "id_1", "some_val" }, { "id_2", "some_val4" }, { "id_3", 75 } }
-            };
-
-            yield return new object?[] { "table_name", data };
-            yield return new object?[] { "dbo.table_name", data };
-
-            data = new List<IDictionary<string, object?>>
+            List<IDictionary<string, SqlValueModel?>> data = new()
             {
                 new Dictionary<string, object?> { { "id_1", "some_val" }, { "id_2", "some_val2" }, { "id_3", 45 } }
+                    .Map(),
+                new Dictionary<string, object?> { { "id_1", "some_val" }, { "id_2", "some_val2" }, { "id_3", 65 } }
+                    .Map(),
+                new Dictionary<string, object?> { { "id_1", "some_val" }, { "id_2", "some_val4" }, { "id_3", 75 } }
+                    .Map()
             };
 
             yield return new object?[] { "table_name", data };
             yield return new object?[] { "dbo.table_name", data };
 
-            data = new List<IDictionary<string, object?>>
+            data = new List<IDictionary<string, SqlValueModel?>>
+            {
+                new Dictionary<string, object?> { { "id_1", "some_val" }, { "id_2", "some_val2" }, { "id_3", 45 } }
+                    .Map()
+            };
+
+            yield return new object?[] { "table_name", data };
+            yield return new object?[] { "dbo.table_name", data };
+
+            data = new List<IDictionary<string, SqlValueModel?>>
             {
                 new Dictionary<string, object?>
                 {
                     { "id some", "some_val" }, { "id_2", "some_val2" }, { "id_3", 45 }
-                }
+                }.Map()
             };
 
             yield return new object?[] { "table_name", data };
@@ -90,11 +95,11 @@ public static class QueryBuilderTestData
         };
 
         QueryDataModel[] queries = values
-            .Select(v => new QueryDataModel(typeof(object), EntityState.Modified, null, null, v, null, null, 0))
+            .Select(v => new QueryDataModel(typeof(object), EntityState.Modified, null, null, v.Map(), null, null, 0))
             .ToArray();
 
-        yield return new object?[] { "table_name", filter, keys, queries, data };
-        yield return new object?[] { "dbo.table_name", filter, keys, queries, data };
+        yield return new object?[] { "table_name", filter?.Map(), keys, queries, data.Map() };
+        yield return new object?[] { "dbo.table_name", filter?.Map(), keys, queries, data.Map() };
 
         keys = new[] { "idx_1", "idx_3" };
 
@@ -105,11 +110,11 @@ public static class QueryBuilderTestData
         };
 
         queries = values
-            .Select(v => new QueryDataModel(typeof(object), EntityState.Modified, null, null, v, null, null, 0))
+            .Select(v => new QueryDataModel(typeof(object), EntityState.Modified, null, null, v.Map(), null, null, 0))
             .ToArray();
 
-        yield return new object?[] { "table_name", filter, keys, queries, data };
-        yield return new object?[] { "dbo.table_name", filter, keys, queries, data };
+        yield return new object?[] { "table_name", filter?.Map(), keys, queries, data.Map() };
+        yield return new object?[] { "dbo.table_name", filter?.Map(), keys, queries, data.Map() };
 
         keys = new[] { "idx_1", "idx_3" };
 
@@ -124,11 +129,11 @@ public static class QueryBuilderTestData
         };
 
         queries = values
-            .Select(v => new QueryDataModel(typeof(object), EntityState.Modified, null, null, v, null, null, 0))
+            .Select(v => new QueryDataModel(typeof(object), EntityState.Modified, null, null, v.Map(), null, null, 0))
             .ToArray();
 
-        yield return new object?[] { "table_name", filter, keys, queries, data };
-        yield return new object?[] { "dbo.table_name", filter, keys, queries, data };
+        yield return new object?[] { "table_name", filter?.Map(), keys, queries, data.Map() };
+        yield return new object?[] { "dbo.table_name", filter?.Map(), keys, queries, data.Map() };
 
         keys = new[] { "idx_1" };
 
@@ -139,21 +144,21 @@ public static class QueryBuilderTestData
         };
 
         queries = values
-            .Select(v => new QueryDataModel(typeof(object), EntityState.Modified, null, null, v, null, null, 0))
+            .Select(v => new QueryDataModel(typeof(object), EntityState.Modified, null, null, v.Map(), null, null, 0))
             .ToArray();
 
-        yield return new object?[] { "table_name", filter, keys, queries, data };
-        yield return new object?[] { "dbo.table_name", filter, keys, queries, data };
+        yield return new object?[] { "table_name", filter?.Map(), keys, queries, data.Map() };
+        yield return new object?[] { "dbo.table_name", filter?.Map(), keys, queries, data.Map() };
 
         keys = new[] { "idx_1" };
 
         values = new Dictionary<string, object?>[] { new() { { "idx_1", "some" } } };
 
         queries = values
-            .Select(v => new QueryDataModel(typeof(object), EntityState.Modified, null, null, v, null, null, 0))
+            .Select(v => new QueryDataModel(typeof(object), EntityState.Modified, null, null, v.Map(), null, null, 0))
             .ToArray();
 
-        yield return new object?[] { "table_name", filter, keys, queries, data };
-        yield return new object?[] { "dbo.table_name", filter, keys, queries, data };
+        yield return new object?[] { "table_name", filter?.Map(), keys, queries, data.Map() };
+        yield return new object?[] { "dbo.table_name", filter?.Map(), keys, queries, data.Map() };
     }
 }

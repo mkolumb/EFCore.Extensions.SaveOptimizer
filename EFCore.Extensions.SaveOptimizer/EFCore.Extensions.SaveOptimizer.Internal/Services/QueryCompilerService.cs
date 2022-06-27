@@ -15,11 +15,11 @@ public class QueryCompilerService : IQueryCompilerService
 
     public QueryCompilerService(IQueryBuilderFactory queryBuilderFactory) => _queryBuilderFactory = queryBuilderFactory;
 
-    public IEnumerable<SqlCommandModel> Compile(IReadOnlyCollection<QueryDataModel> models, string providerName)
+    public IEnumerable<ISqlCommandModel> Compile(IReadOnlyCollection<QueryDataModel> models, string providerName)
     {
         if (!models.Any())
         {
-            return Array.Empty<SqlCommandModel>();
+            return Array.Empty<ISqlCommandModel>();
         }
 
         HashSet<Type> entityTypes = new();
@@ -29,7 +29,7 @@ public class QueryCompilerService : IQueryCompilerService
         HashSet<string> primaryKeyValidators = new();
         HashSet<string> primaryKeyNames = new();
         HashSet<string> batchKeys = new();
-        Dictionary<string, List<Dictionary<string, object?>>> insertData = new();
+        Dictionary<string, List<Dictionary<string, SqlValueModel?>>> insertData = new();
         Dictionary<string, Dictionary<string, List<QueryDataModel>>> updateData = new();
         Dictionary<string, Dictionary<string, List<QueryDataModel>>> deleteData = new();
 
@@ -57,7 +57,7 @@ public class QueryCompilerService : IQueryCompilerService
                     {
                         if (!insertData.ContainsKey(batchKey))
                         {
-                            insertData.Add(batchKey, new List<Dictionary<string, object?>>());
+                            insertData.Add(batchKey, new List<Dictionary<string, SqlValueModel?>>());
                         }
 
                         insertData[batchKey].Add(model.Data);
@@ -136,7 +136,7 @@ public class QueryCompilerService : IQueryCompilerService
             tableName = $"{schema}.{tableName}";
         }
 
-        List<SqlCommandModel> queries = new();
+        List<ISqlCommandModel> queries = new();
 
         var primaryKeys = primaryKeyNames.ToArray();
 
@@ -162,7 +162,7 @@ public class QueryCompilerService : IQueryCompilerService
         return queries;
     }
 
-    private IEnumerable<SqlCommandModel> GetDeleteQueries(
+    private IEnumerable<ISqlCommandModel> GetDeleteQueries(
         string providerName,
         IDictionary<string, List<QueryDataModel>> queryResultGrouped,
         string tableName,
@@ -186,7 +186,7 @@ public class QueryCompilerService : IQueryCompilerService
         }
     }
 
-    private IEnumerable<SqlCommandModel> GetUpdateQueries(string providerName,
+    private IEnumerable<ISqlCommandModel> GetUpdateQueries(string providerName,
         IDictionary<string, List<QueryDataModel>> queryResultGrouped,
         string tableName,
         IReadOnlyList<string> primaryKeyNames)
@@ -195,7 +195,7 @@ public class QueryCompilerService : IQueryCompilerService
         {
             QueryDataModel firstResult = queryResults[0];
 
-            IDictionary<string, object?> data = GetUpdateParams(firstResult);
+            IDictionary<string, SqlValueModel?> data = GetUpdateParams(firstResult);
 
             if (!data.Any())
             {
@@ -216,8 +216,8 @@ public class QueryCompilerService : IQueryCompilerService
         }
     }
 
-    private SqlCommandModel GetInsertQuery(string providerName,
-        IReadOnlyList<IDictionary<string, object?>> data,
+    private ISqlCommandModel GetInsertQuery(string providerName,
+        IReadOnlyList<IDictionary<string, SqlValueModel?>> data,
         string tableName)
     {
         IQueryBuilder builder = _queryBuilderFactory.Query(providerName)
@@ -250,11 +250,11 @@ public class QueryCompilerService : IQueryCompilerService
 
     private static StringBuilder AddUpdateParamsRepresentation(QueryDataModel queryResult, StringBuilder builder)
     {
-        IDictionary<string, object?> data = GetUpdateParams(queryResult);
+        IDictionary<string, SqlValueModel?> data = GetUpdateParams(queryResult);
 
         foreach (var (key, value) in data)
         {
-            builder.Append(SerializationHelper.Serialize(key, value));
+            builder.Append(SerializationHelper.Serialize(key, value?.Value));
         }
 
         return builder;
@@ -269,15 +269,15 @@ public class QueryCompilerService : IQueryCompilerService
 
         foreach (var (key, value) in queryResult.ConcurrencyTokens)
         {
-            builder.Append(SerializationHelper.Serialize(key, value));
+            builder.Append(SerializationHelper.Serialize(key, value?.Value));
         }
 
         return builder;
     }
 
-    private static IDictionary<string, object?> GetUpdateParams(QueryDataModel queryResult)
+    private static IDictionary<string, SqlValueModel?> GetUpdateParams(QueryDataModel queryResult)
     {
-        Dictionary<string, object?> dict = new();
+        Dictionary<string, SqlValueModel?> dict = new();
 
         foreach (var (key, value) in queryResult.Data)
         {

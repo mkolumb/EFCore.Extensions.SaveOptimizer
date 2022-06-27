@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Text;
+using EFCore.Extensions.SaveOptimizer.Internal.Models;
 
 namespace EFCore.Extensions.SaveOptimizer.Internal.Helpers;
 
@@ -13,41 +14,47 @@ public class SerializationHelper
 
     public static string Serialize(string key, object? value)
     {
-        if (value == null)
+        while (true)
         {
-            return $"{key}=NULL";
-        }
+            if (value == null)
+            {
+                return $"{key}=NULL";
+            }
 
-        if (NumberTypes.Contains(value.GetType()))
-        {
-            return $"{key}={value:G}";
-        }
+            if (NumberTypes.Contains(value.GetType()))
+            {
+                return $"{key}={value:G}";
+            }
 
-        switch (value)
-        {
-            case string:
-                return $"{key}={value}";
-            case byte[] bytes:
-                return $"{key}={Convert.ToBase64String(bytes)}";
-            case DateTimeOffset dateOffset:
-                return $"{key}={dateOffset:O}";
-            case DateTime date:
-                return $"{key}={date:O}";
-            case IEnumerable enumerable:
-                {
-                    StringBuilder builder = new();
-                    builder.Append(key);
-                    var i = 0;
-                    foreach (var item in enumerable)
+            switch (value)
+            {
+                case SqlValueModel sqlValue:
+                    value = sqlValue.Value;
+                    continue;
+                case string:
+                    return $"{key}={value}";
+                case byte[] bytes:
+                    return $"{key}={Convert.ToBase64String(bytes)}";
+                case DateTimeOffset dateOffset:
+                    return $"{key}={dateOffset:O}";
+                case DateTime date:
+                    return $"{key}={date:O}";
+                case IEnumerable enumerable:
                     {
-                        builder.Append(Serialize(i.ToString(), item));
-                        i++;
-                    }
+                        StringBuilder builder = new();
+                        builder.Append(key);
+                        var i = 0;
+                        foreach (var item in enumerable)
+                        {
+                            builder.Append(Serialize(i.ToString(), item));
+                            i++;
+                        }
 
-                    return builder.ToString();
-                }
-            default:
-                return $"{key}={value}";
+                        return builder.ToString();
+                    }
+                default:
+                    return $"{key}={value}";
+            }
         }
     }
 }

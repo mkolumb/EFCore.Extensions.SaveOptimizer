@@ -1,6 +1,4 @@
 ﻿using System.Data;
-using System.Data.Common;
-using Dapper;
 using EFCore.Extensions.SaveOptimizer.Internal.Constants;
 using EFCore.Extensions.SaveOptimizer.Internal.Factories;
 using EFCore.Extensions.SaveOptimizer.Internal.Models;
@@ -16,6 +14,7 @@ namespace EFCore.Extensions.SaveOptimizer;
 public static class DbContextExtensions
 {
     private static readonly IQueryPreparerService QueryPreparerService;
+    private static readonly IQueryExecutorService QueryExecutorService;
 
     static DbContextExtensions()
     {
@@ -24,6 +23,8 @@ public static class DbContextExtensions
         QueryTranslatorService translatorService = new();
 
         QueryPreparerService = new QueryPreparerService(compilerService, translatorService);
+
+        QueryExecutorService = new QueryExecutorService();
     }
 
     public static int SaveChangesOptimized(this DbContext context) =>
@@ -33,7 +34,7 @@ public static class DbContextExtensions
     {
         QueryPreparerService.Init(context);
 
-        IEnumerable<SqlCommandModel> queries = QueryPreparerService.Prepare(context, batchSize);
+        IEnumerable<ISqlCommandModel> queries = QueryPreparerService.Prepare(context, batchSize);
 
         var autoCommit = false;
 
@@ -46,14 +47,16 @@ public static class DbContextExtensions
             autoCommit = true;
         }
 
+        var timeout = context.Database.GetCommandTimeout();
+
         try
         {
             var rows = 0;
 
             // ReSharper disable once LoopCanBeConvertedToQuery
-            foreach (SqlCommandModel sql in queries)
+            foreach (ISqlCommandModel sql in queries)
             {
-                rows += Execute(transaction, context.Database.GetCommandTimeout(), sql);
+                rows += QueryExecutorService.Execute(context, transaction, sql, timeout);
             }
 
             if (autoCommit)
@@ -92,7 +95,7 @@ public static class DbContextExtensions
     {
         QueryPreparerService.Init(context);
 
-        IEnumerable<SqlCommandModel> queries = QueryPreparerService.Prepare(context, batchSize);
+        IEnumerable<ISqlCommandModel> queries = QueryPreparerService.Prepare(context, batchSize);
 
         var autoCommit = false;
 
@@ -106,14 +109,17 @@ public static class DbContextExtensions
             autoCommit = true;
         }
 
+        var timeout = context.Database.GetCommandTimeout();
+
         try
         {
             var rows = 0;
 
             // ReSharper disable once LoopCanBeConvertedToQuery
-            foreach (SqlCommandModel sql in queries)
+            foreach (ISqlCommandModel sql in queries)
             {
-                rows += await ExecuteAsync(transaction, sql, context.Database.GetCommandTimeout(), cancellationToken)
+                rows += await QueryExecutorService
+                    .ExecuteAsync(context, transaction, sql, timeout, cancellationToken)
                     .ConfigureAwait(false);
             }
 
@@ -142,38 +148,6 @@ public static class DbContextExtensions
                 await transaction.DisposeAsync().ConfigureAwait(false);
             }
         }
-    }
-
-    private static int Execute(IDbContextTransaction transaction,
-        int? timeout,
-        SqlCommandModel sql)
-    {
-        DbTransaction dbTransaction = transaction.GetDbTransaction();
-
-        CommandDefinition commandDefinition = new(
-            sql.Sql,
-            sql.NamedBindings,
-            dbTransaction,
-            timeout);
-
-        return dbTransaction.Connection.Execute(commandDefinition);
-    }
-
-    private static async Task<int> ExecuteAsync(IDbContextTransaction transaction,
-        SqlCommandModel sql,
-        int? timeout,
-        CancellationToken cancellationToken)
-    {
-        DbTransaction dbTransaction = transaction.GetDbTransaction();
-
-        CommandDefinition commandDefinition = new(
-            sql.Sql,
-            sql.NamedBindings,
-            dbTransaction,
-            timeout,
-            cancellationToken: cancellationToken);
-
-        return await dbTransaction.Connection.ExecuteAsync(commandDefinition);
     }
 
     private static void MarkEntitiesAfterSave(DbContext context)

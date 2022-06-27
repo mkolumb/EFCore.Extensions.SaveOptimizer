@@ -23,7 +23,7 @@ public static class QueryExtensions
                 {
                     subQuery = subQuery.OrWhere(p =>
                     {
-                        p = p.Where(item.Key, item.Value);
+                        p = p.Where(item.Key, item.Value?.Value);
 
                         p = WhereDataGroupItem(p, item.NestedItems);
 
@@ -39,7 +39,7 @@ public static class QueryExtensions
 
         DataGroupModel firstItem = dataResult.First();
 
-        var items = dataResult.Select(x => x.Value).ToArray();
+        var items = dataResult.Select(x => x.Value?.Value).ToArray();
 
         return items.Length > 1 ? query.WhereIn(firstItem.Key, items) : query.Where(firstItem.Key, items[0]);
     }

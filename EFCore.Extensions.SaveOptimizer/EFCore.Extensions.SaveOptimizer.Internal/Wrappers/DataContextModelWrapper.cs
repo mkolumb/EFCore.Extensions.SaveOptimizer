@@ -1,7 +1,10 @@
 ﻿using System.Collections.Concurrent;
+using System.Data;
+using System.Data.Common;
 using EFCore.Extensions.SaveOptimizer.Internal.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace EFCore.Extensions.SaveOptimizer.Internal.Wrappers;
 
@@ -30,16 +33,18 @@ public class DataContextModelWrapper : IDataContextModelWrapper
         return _entityTypes[key]?.Schema;
     }
 
-    public string GetColumn(Type entityType, string propertyName)
+    public PropertyTypeModel GetColumn(Type entityType, string propertyName)
     {
         var key = entityType.FullName ?? throw new ArgumentNullException(nameof(entityType));
 
-        return _entityTypes[key]?.Properties[propertyName].ColumnName ?? throw new ArgumentException("Property is null");
+        return _entityTypes[key]?.Properties[propertyName] ?? throw new ArgumentException("Property is null");
     }
 
     private void Init(Func<DbContext> resolver)
     {
         DbContext context = resolver();
+
+        var isRelational = context.Database.IsRelational();
 
         foreach (IEntityType entityType in context.Model.GetEntityTypes())
         {
@@ -53,10 +58,58 @@ public class DataContextModelWrapper : IDataContextModelWrapper
 
                 StoreObjectIdentifier identifier = StoreObjectIdentifier.Table(model.Table!, model.Schema!);
 
-                model.Properties[key] = new PropertyTypeModel { ColumnName = property.GetColumnName(identifier) };
+                model.Properties[key] = GetModel(property, identifier, isRelational);
             }
 
             _entityTypes[name] = model;
         }
+    }
+
+    private static PropertyTypeModel GetModel(IReadOnlyProperty property, StoreObjectIdentifier identifier,
+        bool isRelational)
+    {
+        var name = property.GetColumnName(identifier) ?? throw new ArgumentException("Unable to find column name");
+        RelationalTypeMapping? mapping = isRelational ? property.GetRelationalTypeMapping() : null;
+
+        Func<DbCommand, string, object?, DbParameter> resolver;
+
+        if (mapping != null)
+        {
+            resolver = (cmd, key, value) => mapping.CreateParameter(cmd, key, value, property.IsNullable);
+        }
+        else
+        {
+            resolver = (cmd, key, value) => CreateDefaultParameter(cmd, key, value, property);
+        }
+
+        var signature = $"{property.DeclaringType.Name}_{property.ClrType.Name}_{property.IsNullable}_{property.GetScale()}_{property.GetPrecision()}";
+
+        return new PropertyTypeModel(name, resolver, signature);
+    }
+
+    private static DbParameter CreateDefaultParameter(DbCommand cmd, string paramKey, object? value, IReadOnlyProperty property)
+    {
+        DbParameter parameter = cmd.CreateParameter();
+        parameter.ParameterName = paramKey;
+        parameter.Value = value;
+        parameter.DbType = DbType.String;
+        parameter.IsNullable = property.IsNullable;
+        parameter.Direction = ParameterDirection.Input;
+
+        var precision = property.GetPrecision();
+
+        if (precision.HasValue)
+        {
+            parameter.Precision = (byte)precision.Value;
+        }
+
+        var scale = property.GetScale();
+
+        if (scale.HasValue)
+        {
+            parameter.Scale = (byte)scale.Value;
+        }
+
+        return parameter;
     }
 }

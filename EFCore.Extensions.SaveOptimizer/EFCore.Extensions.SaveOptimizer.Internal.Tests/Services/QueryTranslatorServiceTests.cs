@@ -1,10 +1,12 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Internal.Models;
 using EFCore.Extensions.SaveOptimizer.Internal.Services;
+using EFCore.Extensions.SaveOptimizer.Internal.Tests.Helpers;
 using EFCore.Extensions.SaveOptimizer.Internal.Tests.TestContext;
 using EFCore.Extensions.SaveOptimizer.Internal.Tests.TestContext.Models;
 using EFCore.Extensions.SaveOptimizer.Internal.Wrappers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+
 #pragma warning disable CS8602
 
 namespace EFCore.Extensions.SaveOptimizer.Internal.Tests.Services;
@@ -12,9 +14,9 @@ namespace EFCore.Extensions.SaveOptimizer.Internal.Tests.Services;
 public class QueryTranslatorServiceTests
 {
     private readonly TestDataContext _context;
-    private readonly DataContextModelWrapper _wrapper;
 
     private readonly QueryTranslatorService _target;
+    private readonly DataContextModelWrapper _wrapper;
 
     public QueryTranslatorServiceTests()
     {
@@ -64,21 +66,22 @@ public class QueryTranslatorServiceTests
         result.EntityState.Should().Be(EntityState.Added);
         result.EntityType.Should().BeSameAs(typeof(SecondLevelEntity));
         result.PrimaryKeyNames.First().Should().Be("second_level_entity_id");
-        result.ConcurrencyTokens.Should().BeEquivalentTo(new Dictionary<string, object?>
-        {
-            { "updated_date", new DateTime(2010, 01, 01) }
-        });
-        result.Data.Should().BeEquivalentTo(new Dictionary<string, object?>
-        {
-            { "some_second_decimal", 15 },
-            { "created_date", new DateTime(2020, 1, 1) },
-            { "second_level_entity_id", "aaa" },
-            { "another_second_string", null },
-            { "first_level_entity_id", null },
-            { "some_second_long", 0L },
-            { "some_second_string", null },
-            { "updated_date", new DateTime(2010, 01, 01) }
-        });
+        result.ConcurrencyTokens?.Map()
+            .Should()
+            .BeEquivalentTo(new Dictionary<string, object?> { { "updated_date", new DateTime(2010, 01, 01) } });
+        result.Data.Map()
+            .Should()
+            .BeEquivalentTo(new Dictionary<string, object?>
+            {
+                { "some_second_decimal", 15 },
+                { "created_date", new DateTime(2020, 1, 1) },
+                { "second_level_entity_id", "aaa" },
+                { "another_second_string", null },
+                { "first_level_entity_id", null },
+                { "some_second_long", 0L },
+                { "some_second_string", null },
+                { "updated_date", new DateTime(2010, 01, 01) }
+            });
     }
 
     [Fact]
@@ -111,21 +114,22 @@ public class QueryTranslatorServiceTests
         result.EntityState.Should().Be(EntityState.Added);
         result.EntityType.Should().BeSameAs(typeof(SecondLevelEntity));
         result.PrimaryKeyNames.First().Should().Be("second_level_entity_id");
-        result.ConcurrencyTokens.Should().BeEquivalentTo(new Dictionary<string, object?>
-        {
-            { "updated_date", null }
-        });
-        result.Data.Should().BeEquivalentTo(new Dictionary<string, object?>
-        {
-            { "some_second_decimal", 15 },
-            { "created_date", new DateTime(2020, 1, 1) },
-            { "second_level_entity_id", "aaa" },
-            { "another_second_string", null },
-            { "first_level_entity_id", null },
-            { "some_second_long", 0L },
-            { "some_second_string", null },
-            { "updated_date", null }
-        });
+        result.ConcurrencyTokens?.Map()
+            .Should()
+            .BeEquivalentTo(new Dictionary<string, object?> { { "updated_date", null } });
+        result.Data.Map()
+            .Should()
+            .BeEquivalentTo(new Dictionary<string, object?>
+            {
+                { "some_second_decimal", 15 },
+                { "created_date", new DateTime(2020, 1, 1) },
+                { "second_level_entity_id", "aaa" },
+                { "another_second_string", null },
+                { "first_level_entity_id", null },
+                { "some_second_long", 0L },
+                { "some_second_string", null },
+                { "updated_date", null }
+            });
     }
 
     [Fact]
@@ -158,21 +162,22 @@ public class QueryTranslatorServiceTests
         result.EntityState.Should().Be(EntityState.Deleted);
         result.EntityType.Should().BeSameAs(typeof(SecondLevelEntity));
         result.PrimaryKeyNames.First().Should().Be("second_level_entity_id");
-        result.ConcurrencyTokens.Should().BeEquivalentTo(new Dictionary<string, object?>
-        {
-            { "updated_date", null }
-        });
-        result.Data.Should().BeEquivalentTo(new Dictionary<string, object?>
-        {
-            { "some_second_decimal", 15 },
-            { "created_date", new DateTime(2020, 1, 1) },
-            { "second_level_entity_id", "aaa" },
-            { "another_second_string", null },
-            { "first_level_entity_id", null },
-            { "some_second_long", 0L },
-            { "some_second_string", null },
-            { "updated_date", null }
-        });
+        result.ConcurrencyTokens?.Map()
+            .Should()
+            .BeEquivalentTo(new Dictionary<string, object?> { { "updated_date", null } });
+        result.Data.Map()
+            .Should()
+            .BeEquivalentTo(new Dictionary<string, object?>
+            {
+                { "some_second_decimal", 15 },
+                { "created_date", new DateTime(2020, 1, 1) },
+                { "second_level_entity_id", "aaa" },
+                { "another_second_string", null },
+                { "first_level_entity_id", null },
+                { "some_second_long", 0L },
+                { "some_second_string", null },
+                { "updated_date", null }
+            });
     }
 
     [Fact]
@@ -263,15 +268,16 @@ public class QueryTranslatorServiceTests
         result.EntityState.Should().Be(EntityState.Modified);
         result.EntityType.Should().BeSameAs(typeof(SecondLevelEntity));
         result.PrimaryKeyNames.First().Should().Be("second_level_entity_id");
-        result.ConcurrencyTokens.Should().BeEquivalentTo(new Dictionary<string, object?>
-        {
-            { "updated_date", null }
-        });
-        result.Data.Should().BeEquivalentTo(new Dictionary<string, object?>
-        {
-            { "some_second_decimal", 15 },
-            { "created_date", new DateTime(2020, 1, 1) },
-            { "second_level_entity_id", "aaa" }
-        });
+        result.ConcurrencyTokens?.Map()
+            .Should()
+            .BeEquivalentTo(new Dictionary<string, object?> { { "updated_date", null } });
+        result.Data.Map()
+            .Should()
+            .BeEquivalentTo(new Dictionary<string, object?>
+            {
+                { "some_second_decimal", 15 },
+                { "created_date", new DateTime(2020, 1, 1) },
+                { "second_level_entity_id", "aaa" }
+            });
     }
 }

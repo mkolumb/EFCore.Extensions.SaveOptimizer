@@ -45,7 +45,7 @@ public class QueryPreparerService : IQueryPreparerService
         }
     }
 
-    public IEnumerable<SqlCommandModel> Prepare(DbContext context, int batchSize = InternalConstants.DefaultBatchSize)
+    public IEnumerable<ISqlCommandModel> Prepare(DbContext context, int batchSize = InternalConstants.DefaultBatchSize)
     {
         var name = GetKey(context);
 
@@ -101,13 +101,13 @@ public class QueryPreparerService : IQueryPreparerService
             }
         }
 
-        List<SqlCommandModel> results = new();
+        List<ISqlCommandModel> results = new();
 
         var providerName = context.Database.ProviderName ?? throw new ArgumentException("Provider not known");
 
         foreach ((Type type, _) in _orders[name].OrderByDescending(x => x.Value))
         {
-            foreach (IEnumerable<SqlCommandModel> sqlResults in GetQuery(translations, maxParameters, EntityState.Deleted, type, providerName, batchSize))
+            foreach (IEnumerable<ISqlCommandModel> sqlResults in GetQuery(translations, maxParameters, EntityState.Deleted, type, providerName, batchSize))
             {
                 results.AddRange(sqlResults);
             }
@@ -115,12 +115,12 @@ public class QueryPreparerService : IQueryPreparerService
 
         foreach ((Type type, _) in _orders[name].OrderBy(x => x.Value))
         {
-            foreach (IEnumerable<SqlCommandModel> sqlResults in GetQuery(translations, maxParameters, EntityState.Added, type, providerName, batchSize))
+            foreach (IEnumerable<ISqlCommandModel> sqlResults in GetQuery(translations, maxParameters, EntityState.Added, type, providerName, batchSize))
             {
                 results.AddRange(sqlResults);
             }
 
-            foreach (IEnumerable<SqlCommandModel> sqlResults in GetQuery(translations, maxParameters, EntityState.Modified, type, providerName, batchSize))
+            foreach (IEnumerable<ISqlCommandModel> sqlResults in GetQuery(translations, maxParameters, EntityState.Modified, type, providerName, batchSize))
             {
                 results.AddRange(sqlResults);
             }
@@ -138,7 +138,7 @@ public class QueryPreparerService : IQueryPreparerService
         return $"{typeName}_{providerName}";
     }
 
-    private IEnumerable<IEnumerable<SqlCommandModel>> GetQuery(
+    private IEnumerable<IEnumerable<ISqlCommandModel>> GetQuery(
         IReadOnlyDictionary<EntityState, Dictionary<Type, List<QueryDataModel>>> group,
         IReadOnlyDictionary<EntityState, Dictionary<Type, int>> maxParameters,
         EntityState state,

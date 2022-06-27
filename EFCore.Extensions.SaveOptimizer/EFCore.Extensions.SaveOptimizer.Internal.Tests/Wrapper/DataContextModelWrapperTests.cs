@@ -37,7 +37,9 @@ public class DataContextModelWrapperTests
         };
 
         // Assert
-        results.Should()
+        results
+            .Select(x => x.ColumnName)
+            .Should()
             .ContainInOrder(
                 "first_int_nullable",
                 "updated_date",

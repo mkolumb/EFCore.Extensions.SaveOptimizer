@@ -4,11 +4,11 @@ public class DataGroupModel : IEquatable<DataGroupModel>
 {
     public string Key { get; }
 
-    public object? Value { get; }
+    public SqlValueModel? Value { get; }
 
     public HashSet<DataGroupModel> NestedItems { get; set; } = new();
 
-    public DataGroupModel(string key, object? value)
+    public DataGroupModel(string key, SqlValueModel? value)
     {
         Key = key;
         Value = value;

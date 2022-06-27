@@ -25,15 +25,15 @@ public abstract class BaseQueryBuilderTests
 
     [Theory]
     [MemberData(nameof(InsertData))]
-    public void GivenInsert_ShouldProduceSameResultsAsSqlKata(string tableName, List<IDictionary<string, object?>> data)
+    public void GivenInsert_ShouldProduceSameResultsAsSqlKata(string tableName, List<IDictionary<string, SqlValueModel?>> data)
     {
         // Arrange
-        SqlCommandModel expected = new SqlKataBuilder(_compiler)
+        ISqlCommandModel expected = new SqlKataBuilder(_compiler)
             .Insert(tableName, data)
             .Build();
 
         // Act
-        SqlCommandModel result = _factory()
+        ISqlCommandModel result = _factory()
             .Insert(tableName, data)
             .Build();
 
@@ -45,20 +45,20 @@ public abstract class BaseQueryBuilderTests
     [Theory]
     [MemberData(nameof(UpdateDeleteData))]
     public void GivenUpdate_WhenFilterFirst_ShouldProduceSameResultsAsSqlKata(string tableName,
-        Dictionary<string, object?> filter,
+        Dictionary<string, SqlValueModel?> filter,
         IReadOnlyList<string> keys,
         IReadOnlyList<QueryDataModel> queries,
-        Dictionary<string, object?> data)
+        Dictionary<string, SqlValueModel?> data)
     {
         // Arrange
-        SqlCommandModel expected = new SqlKataBuilder(_compiler)
+        ISqlCommandModel expected = new SqlKataBuilder(_compiler)
             .Update(tableName, data)
             .Where(filter)
             .Where(keys, queries)
             .Build();
 
         // Act
-        SqlCommandModel result = _factory()
+        ISqlCommandModel result = _factory()
             .Update(tableName, data)
             .Where(filter)
             .Where(keys, queries)
@@ -72,20 +72,20 @@ public abstract class BaseQueryBuilderTests
     [Theory]
     [MemberData(nameof(UpdateDeleteData))]
     public void GivenDelete_WhenFilterFirst_ShouldProduceSameResultsAsSqlKata(string tableName,
-        Dictionary<string, object?> filter,
+        Dictionary<string, SqlValueModel?> filter,
         IReadOnlyList<string> keys,
         IReadOnlyList<QueryDataModel> queries,
-        Dictionary<string, object?> data)
+        Dictionary<string, SqlValueModel?> data)
     {
         // Arrange
-        SqlCommandModel expected = new SqlKataBuilder(_compiler)
+        ISqlCommandModel expected = new SqlKataBuilder(_compiler)
             .Delete(tableName)
             .Where(filter)
             .Where(keys, queries)
             .Build();
 
         // Act
-        SqlCommandModel result = _factory()
+        ISqlCommandModel result = _factory()
             .Delete(tableName)
             .Where(filter)
             .Where(keys, queries)
@@ -99,20 +99,20 @@ public abstract class BaseQueryBuilderTests
     [Theory]
     [MemberData(nameof(UpdateDeleteData))]
     public void GivenUpdate_WhenFilterLast_ShouldProduceSameResultsAsSqlKata(string tableName,
-        Dictionary<string, object?> filter,
+        Dictionary<string, SqlValueModel?> filter,
         IReadOnlyList<string> keys,
         IReadOnlyList<QueryDataModel> queries,
-        Dictionary<string, object?> data)
+        Dictionary<string, SqlValueModel?> data)
     {
         // Arrange
-        SqlCommandModel expected = new SqlKataBuilder(_compiler)
+        ISqlCommandModel expected = new SqlKataBuilder(_compiler)
             .Update(tableName, data)
             .Where(keys, queries)
             .Where(filter)
             .Build();
 
         // Act
-        SqlCommandModel result = _factory()
+        ISqlCommandModel result = _factory()
             .Update(tableName, data)
             .Where(keys, queries)
             .Where(filter)
@@ -126,20 +126,20 @@ public abstract class BaseQueryBuilderTests
     [Theory]
     [MemberData(nameof(UpdateDeleteData))]
     public void GivenDelete_WhenFilterLast_ShouldProduceSameResultsAsSqlKata(string tableName,
-        Dictionary<string, object?> filter,
+        Dictionary<string, SqlValueModel?> filter,
         IReadOnlyList<string> keys,
         IReadOnlyList<QueryDataModel> queries,
-        Dictionary<string, object?> data)
+        Dictionary<string, SqlValueModel?> data)
     {
         // Arrange
-        SqlCommandModel expected = new SqlKataBuilder(_compiler)
+        ISqlCommandModel expected = new SqlKataBuilder(_compiler)
             .Delete(tableName)
             .Where(keys, queries)
             .Where(filter)
             .Build();
 
         // Act
-        SqlCommandModel result = _factory()
+        ISqlCommandModel result = _factory()
             .Delete(tableName)
             .Where(keys, queries)
             .Where(filter)
