@@ -79,6 +79,8 @@ Please note it is not working exactly as SaveChanges, so you should verify it wo
   - Auto-generated values
 - Dependencies lifecycle optimizations
 - Optimize data retrieval from Change Tracker
+- Add unchecked when possible
+- Low level performance optimizations
 - GitHub actions
 - Test databases within container
 - Tests
