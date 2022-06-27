@@ -8,60 +8,62 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace EFCore.Extensions.SaveOptimizer.Model.SqlLite.Migrations
+namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMySql.Migrations
 {
     [DbContext(typeof(EntitiesContext))]
-    [Migration("20220624125626_InitialCreate")]
+    [Migration("20220627151331_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "6.0.5");
+            modelBuilder
+                .HasAnnotation("ProductVersion", "6.0.1")
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.NonRelatedEntity", b =>
                 {
                     b.Property<Guid>("NonRelatedEntityId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("char(36)");
 
                     b.Property<DateTimeOffset?>("ConcurrencyToken")
                         .IsConcurrencyToken()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<bool?>("SomeNonNullableBooleanProperty")
                         .IsRequired()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<DateTimeOffset?>("SomeNonNullableDateTimeProperty")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<decimal?>("SomeNonNullableDecimalProperty")
                         .IsRequired()
                         .HasPrecision(12, 6)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("decimal(12,6)");
 
                     b.Property<int?>("SomeNonNullableIntProperty")
                         .IsRequired()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<string>("SomeNonNullableStringProperty")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.Property<DateTimeOffset?>("SomeNullableDateTimeProperty")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<decimal?>("SomeNullableDecimalProperty")
                         .HasPrecision(12, 6)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("decimal(12,6)");
 
                     b.Property<int?>("SomeNullableIntProperty")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<string>("SomeNullableStringProperty")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.HasKey("NonRelatedEntityId");
 

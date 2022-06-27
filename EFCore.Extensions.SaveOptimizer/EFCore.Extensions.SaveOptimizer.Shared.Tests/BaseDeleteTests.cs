@@ -8,14 +8,13 @@ public abstract class BaseDeleteTests
 {
     public Func<DbContextWrapper> ContextWrapperResolver { get; }
 
+    public static IEnumerable<IEnumerable<object?>> BaseWriteTheoryData => TheoryData.BaseWriteTheoryData;
+
     protected BaseDeleteTests(Func<DbContextWrapper> contextWrapperResolver) =>
         ContextWrapperResolver = contextWrapperResolver;
 
     [Theory]
-    [InlineData(SaveVariant.EfCore | SaveVariant.Recreate)]
-    [InlineData(SaveVariant.EfCore | SaveVariant.Recreate | SaveVariant.WithTransaction)]
-    [InlineData(SaveVariant.Optimized | SaveVariant.Recreate)]
-    [InlineData(SaveVariant.Optimized | SaveVariant.Recreate | SaveVariant.WithTransaction)]
+    [MemberData(nameof(BaseWriteTheoryData))]
     public async Task GivenSaveChanges_WhenNoChanges_ShouldDoNothing(SaveVariant variant)
     {
         // Arrange
@@ -46,10 +45,7 @@ public abstract class BaseDeleteTests
     }
 
     [Theory]
-    [InlineData(SaveVariant.EfCore | SaveVariant.Recreate)]
-    [InlineData(SaveVariant.EfCore | SaveVariant.Recreate | SaveVariant.WithTransaction)]
-    [InlineData(SaveVariant.Optimized | SaveVariant.Recreate)]
-    [InlineData(SaveVariant.Optimized | SaveVariant.Recreate | SaveVariant.WithTransaction)]
+    [MemberData(nameof(BaseWriteTheoryData))]
     public async Task GivenSaveChanges_WhenOneObjectDeleted_ShouldDeleteData(SaveVariant variant)
     {
         // Arrange
@@ -72,10 +68,7 @@ public abstract class BaseDeleteTests
     }
 
     [Theory]
-    [InlineData(SaveVariant.EfCore | SaveVariant.Recreate)]
-    [InlineData(SaveVariant.EfCore | SaveVariant.Recreate | SaveVariant.WithTransaction)]
-    [InlineData(SaveVariant.Optimized | SaveVariant.Recreate)]
-    [InlineData(SaveVariant.Optimized | SaveVariant.Recreate | SaveVariant.WithTransaction)]
+    [MemberData(nameof(BaseWriteTheoryData))]
     public async Task GivenSaveChanges_WhenMultipleObjectsDeleted_ShouldDeleteData(SaveVariant variant)
     {
         // Arrange

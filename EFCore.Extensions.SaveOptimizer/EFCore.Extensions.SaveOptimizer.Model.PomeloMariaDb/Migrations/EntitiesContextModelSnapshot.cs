@@ -3,70 +3,65 @@ using System;
 using EFCore.Extensions.SaveOptimizer.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace EFCore.Extensions.SaveOptimizer.Model.Postgres.Migrations
+namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMariaDb.Migrations
 {
     [DbContext(typeof(EntitiesContext))]
-    [Migration("20220624125634_InitialCreate")]
-    partial class InitialCreate
+    partial class EntitiesContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.5")
-                .HasAnnotation("Relational:MaxIdentifierLength", 63);
-
-            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+                .HasAnnotation("ProductVersion", "6.0.1")
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.NonRelatedEntity", b =>
                 {
                     b.Property<Guid>("NonRelatedEntityId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("char(36)");
 
                     b.Property<DateTimeOffset?>("ConcurrencyToken")
                         .IsConcurrencyToken()
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<bool?>("SomeNonNullableBooleanProperty")
                         .IsRequired()
-                        .HasColumnType("boolean");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<DateTimeOffset?>("SomeNonNullableDateTimeProperty")
                         .IsRequired()
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<decimal?>("SomeNonNullableDecimalProperty")
                         .IsRequired()
                         .HasPrecision(12, 6)
-                        .HasColumnType("numeric(12,6)");
+                        .HasColumnType("decimal(12,6)");
 
                     b.Property<int?>("SomeNonNullableIntProperty")
                         .IsRequired()
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<string>("SomeNonNullableStringProperty")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("longtext");
 
                     b.Property<DateTimeOffset?>("SomeNullableDateTimeProperty")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<decimal?>("SomeNullableDecimalProperty")
                         .HasPrecision(12, 6)
-                        .HasColumnType("numeric(12,6)");
+                        .HasColumnType("decimal(12,6)");
 
                     b.Property<int?>("SomeNullableIntProperty")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<string>("SomeNullableStringProperty")
-                        .HasColumnType("text");
+                        .HasColumnType("longtext");
 
                     b.HasKey("NonRelatedEntityId");
 

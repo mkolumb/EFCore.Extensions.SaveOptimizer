@@ -36,6 +36,16 @@ Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Model.Postgres
 dotnet ef migrations add $name
 
+# PomeloMySql
+Set-Location $workingDir
+Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Model.PomeloMySql
+dotnet ef migrations add $name
+
+# PomeloMariaDb
+Set-Location $workingDir
+Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Model.PomeloMariaDb
+dotnet ef migrations add $name
+
 # Cockroach
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Model.Cockroach

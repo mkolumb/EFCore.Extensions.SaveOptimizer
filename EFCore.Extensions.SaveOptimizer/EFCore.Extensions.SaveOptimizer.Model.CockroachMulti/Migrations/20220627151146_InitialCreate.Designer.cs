@@ -9,17 +9,17 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace EFCore.Extensions.SaveOptimizer.Model.Cockroach.Migrations
+namespace EFCore.Extensions.SaveOptimizer.Model.CockroachMulti.Migrations
 {
     [DbContext(typeof(EntitiesContext))]
-    [Migration("20220624125642_InitialCreate")]
+    [Migration("20220627151146_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.5")
+                .HasAnnotation("ProductVersion", "6.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);

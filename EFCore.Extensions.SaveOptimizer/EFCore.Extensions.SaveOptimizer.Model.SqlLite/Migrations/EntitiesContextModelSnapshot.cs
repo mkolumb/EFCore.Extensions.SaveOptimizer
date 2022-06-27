@@ -15,7 +15,7 @@ namespace EFCore.Extensions.SaveOptimizer.Model.SqlLite.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "6.0.5");
+            modelBuilder.HasAnnotation("ProductVersion", "6.0.1");
 
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.NonRelatedEntity", b =>
                 {

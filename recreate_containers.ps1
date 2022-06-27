@@ -35,6 +35,10 @@ docker compose --file sqlserver.yml up --detach
 
 docker compose --file postgres.yml up --detach
 
+docker compose --file mysql_pomelo.yml up --detach
+
+docker compose --file mariadb_pomelo.yml up --detach
+
 docker exec -it optimizerroachmulti11 ./cockroach init --insecure
 
 Set-Location $workingDir

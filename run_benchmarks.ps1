@@ -35,6 +35,10 @@ docker compose --file sqlserver.yml down
 
 docker compose --file postgres.yml down
 
+docker compose --file mysql_pomelo.yml down
+
+docker compose --file mariadb_pomelo.yml down
+
 # solution
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer
@@ -53,6 +57,16 @@ Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.S
 # Postgres
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Postgres.Benchmark
+.\benchmark.ps1
+
+# PomeloMySql
+Set-Location $workingDir
+Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.PomeloMySql.Benchmark
+.\benchmark.ps1
+
+# PomeloMariaDb
+Set-Location $workingDir
+Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.PomeloMariaDb.Benchmark
 .\benchmark.ps1
 
 # Cockroach

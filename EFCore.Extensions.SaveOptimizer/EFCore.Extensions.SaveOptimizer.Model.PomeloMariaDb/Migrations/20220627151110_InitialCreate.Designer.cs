@@ -3,44 +3,41 @@ using System;
 using EFCore.Extensions.SaveOptimizer.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace EFCore.Extensions.SaveOptimizer.Model.SqlServer.Migrations
+namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMariaDb.Migrations
 {
     [DbContext(typeof(EntitiesContext))]
-    [Migration("20220624125616_InitialCreate")]
+    [Migration("20220627151110_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.5")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
-
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+                .HasAnnotation("ProductVersion", "6.0.1")
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.NonRelatedEntity", b =>
                 {
                     b.Property<Guid>("NonRelatedEntityId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("char(36)");
 
                     b.Property<DateTimeOffset?>("ConcurrencyToken")
                         .IsConcurrencyToken()
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<bool?>("SomeNonNullableBooleanProperty")
                         .IsRequired()
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<DateTimeOffset?>("SomeNonNullableDateTimeProperty")
                         .IsRequired()
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<decimal?>("SomeNonNullableDecimalProperty")
                         .IsRequired()
@@ -53,10 +50,10 @@ namespace EFCore.Extensions.SaveOptimizer.Model.SqlServer.Migrations
 
                     b.Property<string>("SomeNonNullableStringProperty")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<DateTimeOffset?>("SomeNullableDateTimeProperty")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<decimal?>("SomeNullableDecimalProperty")
                         .HasPrecision(12, 6)
@@ -66,7 +63,7 @@ namespace EFCore.Extensions.SaveOptimizer.Model.SqlServer.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("SomeNullableStringProperty")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.HasKey("NonRelatedEntityId");
 

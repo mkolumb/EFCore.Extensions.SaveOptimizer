@@ -8,22 +8,15 @@ public abstract class BaseInsertTests
 {
     public Func<DbContextWrapper> ContextWrapperResolver { get; }
 
+    public static IEnumerable<IEnumerable<object?>> InsertData => TheoryData.InsertTheoryData;
+
+    public static IEnumerable<IEnumerable<object?>> BaseWriteTheoryData => TheoryData.BaseWriteTheoryData;
+
     protected BaseInsertTests(Func<DbContextWrapper> contextWrapperResolver) =>
         ContextWrapperResolver = contextWrapperResolver;
 
     [Theory]
-    [InlineData(SaveVariant.EfCore | SaveVariant.Recreate, 1000, 10)]
-    [InlineData(SaveVariant.EfCore | SaveVariant.Recreate | SaveVariant.WithTransaction, 1000, 10)]
-    [InlineData(SaveVariant.Optimized | SaveVariant.Recreate, 1000, 10)]
-    [InlineData(SaveVariant.Optimized | SaveVariant.Recreate | SaveVariant.WithTransaction, 1000, 10)]
-    [InlineData(SaveVariant.EfCore | SaveVariant.Recreate, 1000, 1000)]
-    [InlineData(SaveVariant.EfCore | SaveVariant.Recreate | SaveVariant.WithTransaction, 1000, 1000)]
-    [InlineData(SaveVariant.Optimized | SaveVariant.Recreate, 1000, 1000)]
-    [InlineData(SaveVariant.Optimized | SaveVariant.Recreate | SaveVariant.WithTransaction, 1000, 1000)]
-    [InlineData(SaveVariant.EfCore | SaveVariant.Recreate, 100000, 100000)]
-    [InlineData(SaveVariant.EfCore | SaveVariant.Recreate | SaveVariant.WithTransaction, 100000, 100000)]
-    [InlineData(SaveVariant.Optimized | SaveVariant.Recreate, 100000, 100000)]
-    [InlineData(SaveVariant.Optimized | SaveVariant.Recreate | SaveVariant.WithTransaction, 100000, 100000)]
+    [MemberData(nameof(InsertData))]
     public async Task GivenSaveChanges_WhenMultipleObjectsInserted_ShouldInsertData(SaveVariant variant, int batchSize, int count)
     {
         // Arrange
@@ -51,10 +44,7 @@ public abstract class BaseInsertTests
     }
 
     [Theory]
-    [InlineData(SaveVariant.EfCore | SaveVariant.Recreate)]
-    [InlineData(SaveVariant.EfCore | SaveVariant.Recreate | SaveVariant.WithTransaction)]
-    [InlineData(SaveVariant.Optimized | SaveVariant.Recreate)]
-    [InlineData(SaveVariant.Optimized | SaveVariant.Recreate | SaveVariant.WithTransaction)]
+    [MemberData(nameof(BaseWriteTheoryData))]
     public async Task GivenSaveChanges_WhenNoChanges_ShouldDoNothing(SaveVariant variant)
     {
         // Arrange
@@ -70,10 +60,7 @@ public abstract class BaseInsertTests
     }
 
     [Theory]
-    [InlineData(SaveVariant.EfCore | SaveVariant.Recreate)]
-    [InlineData(SaveVariant.EfCore | SaveVariant.Recreate | SaveVariant.WithTransaction)]
-    [InlineData(SaveVariant.Optimized | SaveVariant.Recreate)]
-    [InlineData(SaveVariant.Optimized | SaveVariant.Recreate | SaveVariant.WithTransaction)]
+    [MemberData(nameof(BaseWriteTheoryData))]
     public async Task GivenSaveChanges_WhenOneObjectInserted_ShouldInsertData(SaveVariant variant)
     {
         // Arrange

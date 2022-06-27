@@ -46,12 +46,12 @@ Please note it is not working exactly as SaveChanges, so you should verify it wo
 
 ## Features
 - Providers support
-  - SQL Server
-  - SqlLite
-  - PostgreSQL
-  - Oracle
-  - MySQL
-  - Firebird
+  - [Microsoft.EntityFrameworkCore.SqlServer](https://www.nuget.org/packages/Microsoft.EntityFrameworkCore.SqlServer)
+  - [Microsoft.EntityFrameworkCore.Sqlite](https://www.nuget.org/packages/Microsoft.EntityFrameworkCore.Sqlite)
+  - [Npgsql.EntityFrameworkCore.PostgreSQL](https://www.nuget.org/packages/Npgsql.EntityFrameworkCore.PostgreSQL)
+  - [Oracle.EntityFrameworkCore](https://www.nuget.org/packages/Oracle.EntityFrameworkCore/)
+  - [Pomelo.EntityFrameworkCore.MySql](https://www.nuget.org/packages/Pomelo.EntityFrameworkCore.MySql)
+  - [FirebirdSql.EntityFrameworkCore.Firebird](https://www.nuget.org/packages/FirebirdSql.EntityFrameworkCore.Firebird/)
 - Primary keys
   - Simple
   - Composed
@@ -176,6 +176,10 @@ TBD
 TBD
 
 #### MySql
+
+TBD
+
+#### MariaDB
 
 TBD
 
