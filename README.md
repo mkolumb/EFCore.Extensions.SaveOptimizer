@@ -142,7 +142,7 @@ SaveOptimizer is not always better than pure EF Core methods. EF Core contains t
 
 My advice is to compare results in your real environment. Honestly - the best choice for pure performance is leave EF Core for write operations at all and then write statements from scratch for your scenarios. But this library could bring serious performance benefits in many scenarios without big effort. 
 
-All benchmarks uses serializable isolation level.
+All benchmarks uses serializable isolation level and run databases within containers.
 
 ``` ini
 BenchmarkDotNet=v0.13.1, OS=Windows 10.0.19042.1706 (20H2/October2020Update)
@@ -183,7 +183,7 @@ TBD
 
 TBD
 
-#### Oracle
+#### Oracle Express
 
 TBD
 
