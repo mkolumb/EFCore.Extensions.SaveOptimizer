@@ -34,7 +34,7 @@ ends_with <- function(vars, match, ignore.case = TRUE) {
 }
 std.error <- function(x) sqrt(var(x)/length(x))
 cummean <- function(x) cumsum(x)/(1:length(x))
-BenchmarkDotNetVersionGrob <- textGrob(BenchmarkDotNetVersion, gp = gpar(fontface=3, fontsize=10), hjust=1, x=1)
+BenchmarkDotNetVersionGrob <- textGrob(BenchmarkDotNetVersion, gp = gpar(fontface=3, fontsize=8), hjust=1, x=1)
 nicePlot <- function(p) grid.arrange(p, bottom = BenchmarkDotNetVersionGrob)
 printNice <- function(p) {} # print(nicePlot(p))
 ggsaveNice <- function(fileName, p, ...) {
@@ -48,6 +48,7 @@ args <- commandArgs(trailingOnly = TRUE)
 files <- if (length(args) > 0) args else list.files()[list.files() %>% ends_with("-measurements.csv")]
 for (file in files) {
   title <- gsub("-measurements.csv", "", basename(file))
+  title <- gsub("\\.", " - ", title)
   measurements <- read.csv(file, sep = ";")
 
   result <- measurements %>% filter(Measurement_IterationStage == "Result")
@@ -84,7 +85,6 @@ for (file in files) {
     ylab(paste("Time,", timeUnit)) +
     ggtitle(title, subtitle="(lower is better)") +
     geom_bar(position=position_dodge(), stat="identity")
-    #geom_errorbar(aes(ymin=Value-1.96*se, ymax=Value+1.96*se), width=.2, position=position_dodge(.9))
 
   printNice(benchmarkBarplot)
   ggsaveNice(gsub("-measurements.csv", "-barplot.png", file), benchmarkBarplot)
