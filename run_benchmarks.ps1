@@ -50,7 +50,7 @@ Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer
 dotnet build -c Release
 
-$exportDir = [System.IO.Path]::Combine($workingDir, "export")
+$exportDir = [System.IO.Path]::Combine($workingDir, "results")
 
 if (!(Test-Path -Path $exportDir -PathType Container)) {
     New-Item -ItemType Directory -Path $exportDir
