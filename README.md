@@ -99,15 +99,17 @@ Please note it is not working exactly as SaveChanges, so you should verify it wo
 
 SaveOptimizer approach makes almost impossible refresh data after save, it is on your side. 
 I recommend to generate values for primary keys in code, not in db. 
-This will make much easier refresh data after save if necessary, you will be able to use this values for query. 
+This will make much easier refresh data after save if necessary, you will be able to use this values for query.
 
-### Firebird insert
-
-Basically query builders are prepared for multi row statements, but it looks there are some issues when executing via DbCommand. Currently for this provider batch is working only on update and delete.
+## Known issues
 
 ### Oracle serializable transaction
 
-It looks like serializable transaction produces many errors during execution (e.g. ORA-08177 & ORA-06512). This is something to investigate. Currently I don't recommend using this library with Oracle in production environment.
+It looks like serializable transaction produces many errors during execution, especially during insert (e.g. ORA-08177 & ORA-06512). This is something to investigate. I don't recommend using this library with Oracle in production environment.
+
+### Oracle & Firebird batch insert problem
+
+Basically query builders are prepared for multi row statements, but it looks there are some issues when executing via DbCommand. I think in Firebird case there is something with .NET client used in provider. In Oracle case this comes from transaction problem described above. Currently for these providers batch is working only on update and delete. Insert is working in the same manner as when using EF Core without extensions.
 
 ## Q&A
 
