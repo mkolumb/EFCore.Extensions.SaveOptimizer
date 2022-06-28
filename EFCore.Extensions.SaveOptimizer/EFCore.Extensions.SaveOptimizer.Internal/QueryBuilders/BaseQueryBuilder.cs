@@ -141,19 +141,13 @@ public abstract class BaseQueryBuilder : IQueryBuilder
 
         var queryEnding = ClausesConfiguration[ClauseType.QueryEnding];
 
-        if (!string.IsNullOrWhiteSpace(queryEnding) && !sql.EndsWith(queryEnding))
-        {
-            sql = $"{sql}{queryEnding}".Trim();
-        }
-
-        if (ClausesConfiguration.ContainsKey(ClauseType.WrapLeft) &&
-            ClausesConfiguration.ContainsKey(ClauseType.WrapRight))
-        {
-            sql = $"{ClausesConfiguration[ClauseType.WrapLeft]}{sql}{ClausesConfiguration[ClauseType.WrapRight]}".Trim();
-        }
-
         if (!string.IsNullOrWhiteSpace(queryEnding))
         {
+            if (!sql.EndsWith(queryEnding))
+            {
+                sql = $"{sql}{queryEnding}".Trim();
+            }
+
             while (sql.Contains($"{queryEnding}{queryEnding}"))
             {
                 sql = sql.Replace($"{queryEnding}{queryEnding}", queryEnding);

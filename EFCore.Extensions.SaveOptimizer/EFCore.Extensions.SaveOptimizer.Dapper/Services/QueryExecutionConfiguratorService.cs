@@ -35,7 +35,7 @@ public class QueryExecutionConfiguratorService : IQueryExecutionConfiguratorServ
 
     private static int? GetMaxBatchSize(string providerName, EntityState state)
     {
-        if (state == EntityState.Added && (providerName.Contains("Firebird") || providerName.Contains("Oracle")))
+        if (state == EntityState.Added && providerName.Contains("Firebird"))
         {
             return 1;
         }

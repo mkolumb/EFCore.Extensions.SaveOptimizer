@@ -20,7 +20,7 @@ public class QueryExecutorService : IQueryExecutorService
 
         ILogger logger = GetLogger(context);
 
-        CommandDefinition command = GetCommand(transaction, sql, timeout, logger);
+        CommandDefinition command = GetCommand(context, transaction, sql, timeout, logger);
 
         connection.Open();
 
@@ -50,7 +50,7 @@ public class QueryExecutorService : IQueryExecutorService
 
         ILogger logger = GetLogger(context);
 
-        CommandDefinition command = GetCommand(transaction, sql, timeout, logger);
+        CommandDefinition command = GetCommand(context, transaction, sql, timeout, logger);
 
         await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
 
@@ -70,7 +70,8 @@ public class QueryExecutorService : IQueryExecutorService
         }
     }
 
-    private static CommandDefinition GetCommand(IDbContextTransaction transaction,
+    private static CommandDefinition GetCommand(DbContext context,
+        IDbContextTransaction transaction,
         ISqlCommandModel sql,
         int? timeout,
         ILogger logger)
@@ -79,13 +80,58 @@ public class QueryExecutorService : IQueryExecutorService
 
         CommandDefinition command = new(
             sql.Sql,
-            sql.NamedBindings,
+            ResolveParameters(context, dbTransaction.Connection, sql),
             dbTransaction,
             timeout);
 
         logger.LogDebug("Executing command: {Sql}", sql.Sql);
 
         return command;
+    }
+
+    private static object ResolveParameters(DbContext context, DbConnection? connection, ISqlCommandModel sql)
+    {
+        var providerName = context.Database.ProviderName ?? throw new ArgumentException("Unexpected provider name");
+
+        if (providerName.Contains("Sqlite"))
+        {
+            return sql.NamedBindings ?? new Dictionary<string, object?>();
+        }
+
+        if (connection == null)
+        {
+            throw new ArgumentNullException(nameof(connection));
+        }
+
+        DbCommand command = connection.CreateCommand();
+
+        DynamicParameters parameters = new();
+
+        if (sql.Parameters != null)
+        {
+            foreach (SqlParamModel param in sql.Parameters)
+            {
+                AddParameter(command, parameters, param);
+            }
+        }
+
+        return parameters;
+    }
+
+    private static void AddParameter(DbCommand command, DynamicParameters parameters, SqlParamModel param)
+    {
+        DbParameter parameter =
+            param.SqlValueModel.PropertyTypeModel.ParameterResolver(command, param.Key, param.SqlValueModel.Value);
+
+        command.Parameters.Add(parameter);
+
+        parameters.Add(param.Key,
+            parameter.Value,
+            parameter.DbType,
+            parameter.Direction,
+            parameter.Size,
+            parameter.Precision,
+            parameter.Scale);
     }
 
     private static void CleanupCommand(IRelationalConnection connection) => connection.Close();

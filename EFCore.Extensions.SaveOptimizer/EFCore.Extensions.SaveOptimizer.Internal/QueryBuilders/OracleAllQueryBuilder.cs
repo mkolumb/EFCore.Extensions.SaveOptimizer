@@ -34,10 +34,10 @@ public class OracleAllQueryBuilder : BaseQueryBuilder
         { ClauseType.RangeLeft, "(" },
         { ClauseType.RangeRight, ")" },
         { ClauseType.QueryEnding, "" },
-        { ClauseType.QueryAppendix, " SELECT * FROM DUAL" },
-        { ClauseType.WrapLeft, "BEGIN\r\n" },
-        { ClauseType.WrapRight, "; \r\nEND;" }
+        { ClauseType.QueryAppendix, " SELECT * FROM DUAL" }
     };
+
+    private bool _insertAll;
 
     public OracleAllQueryBuilder() : base(Clauses, GetConfiguration())
     {
@@ -54,6 +54,8 @@ public class OracleAllQueryBuilder : BaseQueryBuilder
 
     private IQueryBuilder InsertAll(string tableName, IReadOnlyList<IDictionary<string, SqlValueModel?>> data)
     {
+        _insertAll = true;
+
         Builder.Append($"{ClausesConfiguration[ClauseType.InsertAll]}");
 
         var idx = 0;
@@ -101,5 +103,19 @@ public class OracleAllQueryBuilder : BaseQueryBuilder
         Builder.Append(ClausesConfiguration[ClauseType.QueryAppendix]);
 
         return this;
+    }
+
+    public override ISqlCommandModel Build()
+    {
+        ISqlCommandModel command = base.Build();
+
+        if (!_insertAll)
+        {
+            return command;
+        }
+
+        var sql = $"BEGIN\r\n{command.Sql};\r\nEND;";
+
+        return new SqlCommandModel { Sql = sql, Parameters = command.Parameters };
     }
 }
