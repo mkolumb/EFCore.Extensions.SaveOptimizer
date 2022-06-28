@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using EFCore.Extensions.SaveOptimizer.Internal.Configuration;
 using EFCore.Extensions.SaveOptimizer.Internal.Constants;
 using EFCore.Extensions.SaveOptimizer.Internal.Extensions;
 using EFCore.Extensions.SaveOptimizer.Internal.Models;
@@ -12,16 +13,21 @@ public class QueryPreparerService : IQueryPreparerService
 {
     private readonly IQueryCompilerService _compilerService;
 
+    private readonly IQueryExecutionConfiguratorService _configuratorService;
+
     private readonly ConcurrentDictionary<string, IDictionary<Type, int>> _orders;
 
     private readonly IQueryTranslatorService _translatorService;
 
     private readonly ConcurrentDictionary<string, DataContextModelWrapper> _wrappers;
 
-    public QueryPreparerService(IQueryCompilerService compilerService, IQueryTranslatorService translatorService)
+    public QueryPreparerService(IQueryCompilerService compilerService,
+        IQueryTranslatorService translatorService,
+        IQueryExecutionConfiguratorService configuratorService)
     {
         _compilerService = compilerService;
         _translatorService = translatorService;
+        _configuratorService = configuratorService;
         _wrappers = new ConcurrentDictionary<string, DataContextModelWrapper>();
         _orders = new ConcurrentDictionary<string, IDictionary<Type, int>>();
     }
@@ -45,7 +51,7 @@ public class QueryPreparerService : IQueryPreparerService
         }
     }
 
-    public IEnumerable<ISqlCommandModel> Prepare(DbContext context, int batchSize = InternalConstants.DefaultBatchSize)
+    public IEnumerable<ISqlCommandModel> Prepare(DbContext context, QueryExecutionConfiguration? configuration = null)
     {
         var name = GetKey(context);
 
@@ -105,10 +111,12 @@ public class QueryPreparerService : IQueryPreparerService
 
         var providerName = context.Database.ProviderName ?? throw new ArgumentException("Provider not known");
 
+        QueryExecutionConfiguration config = _configuratorService.Get(providerName, configuration);
+
         foreach ((Type type, _) in _orders[name].OrderByDescending(x => x.Value))
         {
             foreach (IEnumerable<ISqlCommandModel> sqlResults in GetQuery(translations, maxParameters,
-                         EntityState.Deleted, type, providerName, batchSize))
+                         EntityState.Deleted, type, providerName, config))
             {
                 results.AddRange(sqlResults);
             }
@@ -117,13 +125,13 @@ public class QueryPreparerService : IQueryPreparerService
         foreach ((Type type, _) in _orders[name].OrderBy(x => x.Value))
         {
             foreach (IEnumerable<ISqlCommandModel> sqlResults in GetQuery(translations, maxParameters,
-                         EntityState.Added, type, providerName, batchSize))
+                         EntityState.Added, type, providerName, config))
             {
                 results.AddRange(sqlResults);
             }
 
             foreach (IEnumerable<ISqlCommandModel> sqlResults in GetQuery(translations, maxParameters,
-                         EntityState.Modified, type, providerName, batchSize))
+                         EntityState.Modified, type, providerName, config))
             {
                 results.AddRange(sqlResults);
             }
@@ -147,7 +155,7 @@ public class QueryPreparerService : IQueryPreparerService
         EntityState state,
         Type type,
         string providerName,
-        int batchSize)
+        QueryExecutionConfiguration configuration)
     {
         Dictionary<Type, List<QueryDataModel>> queries = group[state];
 
@@ -163,18 +171,13 @@ public class QueryPreparerService : IQueryPreparerService
             yield break;
         }
 
-        var limit = GetParametersLimit(providerName);
+        var limit = configuration.ParametersLimit ?? InternalConstants.DefaultParametersLimit;
+
+        var batchSize = GetBatchSize(configuration, state);
 
         var maxBatch = limit / maxParameters[state][type];
 
         batchSize = Math.Min(batchSize, maxBatch);
-
-        var maxBatchSize = GetMaxBatchSize(providerName, state);
-
-        if (maxBatchSize.HasValue)
-        {
-            batchSize = Math.Min(batchSize, maxBatchSize.Value);
-        }
 
         List<List<QueryDataModel>> data = new();
 
@@ -196,33 +199,12 @@ public class QueryPreparerService : IQueryPreparerService
         }
     }
 
-    private static int? GetMaxBatchSize(string providerName, EntityState state)
-    {
-        if (state == EntityState.Added && (providerName.Contains("Firebird") || providerName.Contains("Oracle")))
+    private static int GetBatchSize(QueryExecutionConfiguration configuration, EntityState state) =>
+        state switch
         {
-            return 1;
-        }
-
-        return null;
-    }
-
-    private static int GetParametersLimit(string providerName)
-    {
-        if (providerName.Contains("SqlServer"))
-        {
-            return 1024;
-        }
-
-        if (providerName.Contains("Postgre"))
-        {
-            return 31768;
-        }
-
-        if (providerName.Contains("Sqlite") || providerName.Contains("InMemory"))
-        {
-            return 512;
-        }
-
-        return 15384;
-    }
+            EntityState.Added when configuration.InsertBatchSize.HasValue => configuration.InsertBatchSize.Value,
+            EntityState.Modified when configuration.UpdateBatchSize.HasValue => configuration.UpdateBatchSize.Value,
+            EntityState.Deleted when configuration.DeleteBatchSize.HasValue => configuration.DeleteBatchSize.Value,
+            _ => configuration.BatchSize ?? InternalConstants.DefaultBatchSize
+        };
 }

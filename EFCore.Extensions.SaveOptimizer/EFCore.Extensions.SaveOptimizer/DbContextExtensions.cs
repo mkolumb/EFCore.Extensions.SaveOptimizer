@@ -1,5 +1,5 @@
 ﻿using System.Data;
-using EFCore.Extensions.SaveOptimizer.Internal.Constants;
+using EFCore.Extensions.SaveOptimizer.Internal.Configuration;
 using EFCore.Extensions.SaveOptimizer.Internal.Factories;
 using EFCore.Extensions.SaveOptimizer.Internal.Models;
 using EFCore.Extensions.SaveOptimizer.Internal.Services;
@@ -22,19 +22,21 @@ public static class DbContextExtensions
 
         QueryTranslatorService translatorService = new();
 
-        QueryPreparerService = new QueryPreparerService(compilerService, translatorService);
+        QueryExecutionConfiguratorService configuratorService = new();
+
+        QueryPreparerService = new QueryPreparerService(compilerService, translatorService, configuratorService);
 
         QueryExecutorService = new QueryExecutorService();
     }
 
     public static int SaveChangesOptimized(this DbContext context) =>
-        context.SaveChangesOptimized(InternalConstants.DefaultBatchSize);
+        context.SaveChangesOptimized(null);
 
-    public static int SaveChangesOptimized(this DbContext context, int batchSize)
+    public static int SaveChangesOptimized(this DbContext context, QueryExecutionConfiguration? configuration)
     {
         QueryPreparerService.Init(context);
 
-        IEnumerable<ISqlCommandModel> queries = QueryPreparerService.Prepare(context, batchSize);
+        IEnumerable<ISqlCommandModel> queries = QueryPreparerService.Prepare(context, configuration);
 
         var autoCommit = false;
 
@@ -88,14 +90,15 @@ public static class DbContextExtensions
 
     public static async Task<int> SaveChangesOptimizedAsync(this DbContext context,
         CancellationToken cancellationToken = default) =>
-        await context.SaveChangesOptimizedAsync(InternalConstants.DefaultBatchSize, cancellationToken);
+        await context.SaveChangesOptimizedAsync(null, cancellationToken);
 
-    public static async Task<int> SaveChangesOptimizedAsync(this DbContext context, int batchSize,
+    public static async Task<int> SaveChangesOptimizedAsync(this DbContext context,
+        QueryExecutionConfiguration? configuration,
         CancellationToken cancellationToken = default)
     {
         QueryPreparerService.Init(context);
 
-        IEnumerable<ISqlCommandModel> queries = QueryPreparerService.Prepare(context, batchSize);
+        IEnumerable<ISqlCommandModel> queries = QueryPreparerService.Prepare(context, configuration);
 
         var autoCommit = false;
 

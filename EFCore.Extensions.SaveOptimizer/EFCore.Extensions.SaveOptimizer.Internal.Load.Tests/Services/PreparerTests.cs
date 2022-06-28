@@ -25,9 +25,10 @@ public class PreparerTests
         // Arrange
         GetData(out TestDataContext? context,
             out QueryCompilerService? queryCompiler,
-            out QueryTranslatorService queryTranslator);
+            out QueryTranslatorService queryTranslator,
+            out QueryExecutionConfiguratorService queryConfigurator);
 
-        QueryPreparerService queryPreparer = new(queryCompiler, queryTranslator);
+        QueryPreparerService queryPreparer = new(queryCompiler, queryTranslator, queryConfigurator);
 
         queryPreparer.Init(context);
 
@@ -59,7 +60,8 @@ public class PreparerTests
 
     private static void GetData(out TestDataContext context,
         out QueryCompilerService queryCompiler,
-        out QueryTranslatorService translator)
+        out QueryTranslatorService translator,
+        out QueryExecutionConfiguratorService queryConfigurator)
     {
         translator = new QueryTranslatorService();
 
@@ -82,5 +84,7 @@ public class PreparerTests
         QueryBuilderFactory factory = new();
 
         queryCompiler = new QueryCompilerService(factory);
+
+        queryConfigurator = new QueryExecutionConfiguratorService();
     }
 }

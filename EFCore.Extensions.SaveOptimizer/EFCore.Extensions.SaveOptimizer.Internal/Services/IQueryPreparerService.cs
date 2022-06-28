@@ -1,4 +1,4 @@
-﻿using EFCore.Extensions.SaveOptimizer.Internal.Constants;
+﻿using EFCore.Extensions.SaveOptimizer.Internal.Configuration;
 using EFCore.Extensions.SaveOptimizer.Internal.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,5 +8,5 @@ public interface IQueryPreparerService
 {
     void Init(DbContext context);
 
-    IEnumerable<ISqlCommandModel> Prepare(DbContext context, int batchSize = InternalConstants.DefaultBatchSize);
+    IEnumerable<ISqlCommandModel> Prepare(DbContext context, QueryExecutionConfiguration? configuration = null);
 }
