@@ -1,4 +1,5 @@
-﻿using System.Data.Common;
+﻿using System.Data;
+using System.Data.Common;
 
 namespace EFCore.Extensions.SaveOptimizer.Internal.Models;
 
@@ -6,12 +7,12 @@ public class PropertyTypeModel : IEquatable<PropertyTypeModel>
 {
     public string ColumnName { get; }
 
-    public Func<DbCommand, string, object?, DbParameter> ParameterResolver { get; }
+    public Func<IDbCommand, string, object?, DbParameter> ParameterResolver { get; }
 
     public string Signature { get; }
 
     public PropertyTypeModel(string columnName,
-        Func<DbCommand, string, object?, DbParameter> parameterResolver,
+        Func<IDbCommand, string, object?, DbParameter> parameterResolver,
         string signature)
     {
         ColumnName = columnName;

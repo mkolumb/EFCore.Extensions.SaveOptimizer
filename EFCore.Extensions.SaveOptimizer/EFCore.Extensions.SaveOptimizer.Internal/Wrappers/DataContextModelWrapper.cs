@@ -71,15 +71,23 @@ public class DataContextModelWrapper : IDataContextModelWrapper
         var name = property.GetColumnName(identifier) ?? throw new ArgumentException("Unable to find column name");
         RelationalTypeMapping? mapping = isRelational ? property.GetRelationalTypeMapping() : null;
 
-        Func<DbCommand, string, object?, DbParameter> resolver;
+        Func<IDbCommand, string, object?, DbParameter> resolver;
 
         if (mapping != null)
         {
-            resolver = (cmd, key, value) => mapping.CreateParameter(cmd, key, value, property.IsNullable);
+            resolver = (dbCmd, key, value) =>
+            {
+                if (dbCmd is not DbCommand cmd)
+                {
+                    throw new ArgumentException("Unexpected command type", nameof(dbCmd));
+                }
+
+                return mapping.CreateParameter(cmd, key, value, property.IsNullable);
+            };
         }
         else
         {
-            resolver = (cmd, key, value) => CreateDefaultParameter(cmd, key, value, property);
+            resolver = (dbCmd, key, value) => CreateDefaultParameter(dbCmd, key, value, property);
         }
 
         var signature = $"{property.DeclaringType.Name}_{property.ClrType.Name}_{property.IsNullable}_{property.GetScale()}_{property.GetPrecision()}";
@@ -87,9 +95,14 @@ public class DataContextModelWrapper : IDataContextModelWrapper
         return new PropertyTypeModel(name, resolver, signature);
     }
 
-    private static DbParameter CreateDefaultParameter(DbCommand cmd, string paramKey, object? value, IReadOnlyProperty property)
+    private static DbParameter CreateDefaultParameter(IDbCommand dbCmd, string paramKey, object? value, IReadOnlyProperty property)
     {
-        DbParameter parameter = cmd.CreateParameter();
+        if (dbCmd is not DbCommand cmd)
+        {
+            throw new ArgumentException("Unexpected command type", nameof(dbCmd));
+        }
+
+        var parameter = cmd.CreateParameter();
         parameter.ParameterName = paramKey;
         parameter.Value = value;
         parameter.DbType = DbType.String;
