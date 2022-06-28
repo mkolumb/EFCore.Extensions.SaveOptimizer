@@ -10,7 +10,6 @@ namespace EFCore.Extensions.SaveOptimizer.Shared.Benchmark;
 [MedianColumn]
 [MarkdownExporterAttribute.GitHub]
 [CsvMeasurementsExporter]
-[RPlotExporter]
 public abstract class BaseBenchmark
 {
     private readonly IWrapperResolver _contextResolver;
