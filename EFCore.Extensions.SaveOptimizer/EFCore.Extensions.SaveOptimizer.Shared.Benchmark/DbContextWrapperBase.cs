@@ -31,6 +31,20 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
     {
         await Truncate();
 
+        try
+        {
+            await TrySeed(count, repeat, IsolationLevel.ReadUncommitted);
+        }
+        catch
+        {
+            await TrySeed(count / 10, repeat * 10, IsolationLevel.ReadUncommitted);
+        }
+
+        await TrySeed(1, 1, IsolationLevel.Serializable);
+    }
+
+    private async Task TrySeed(long count, int repeat, IsolationLevel isolationLevel)
+    {
         for (var j = 0; j < repeat / 10; j++)
         {
             for (var i = 0; i < count * 10; i++)
@@ -40,19 +54,33 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
                 await Context.AddAsync(item);
             }
 
-            await Save(SaveVariant.Optimized);
+            await SeedSave(isolationLevel);
         }
+    }
+
+    private async Task SeedSave(IsolationLevel isolationLevel)
+    {
+        try
+        {
+            await TrySave(SaveVariant.Optimized, isolationLevel);
+        }
+        catch
+        {
+            await TrySave(SaveVariant.Optimized, isolationLevel);
+        }
+
+        RecreateContext();
     }
 
     public async Task Save(SaveVariant variant)
     {
         try
         {
-            await TrySave(variant);
+            await TrySave(variant, IsolationLevel.Serializable);
         }
         catch
         {
-            await TrySave(variant);
+            await TrySave(variant, IsolationLevel.Serializable);
         }
 
         RecreateContext();
@@ -77,7 +105,7 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
         SomeNullableStringProperty = "other-string"
     };
 
-    private async Task TrySave(SaveVariant variant)
+    private async Task TrySave(SaveVariant variant, IsolationLevel isolationLevel)
     {
         using CancellationTokenSource source = new(TimeSpan.FromMinutes(10));
 
@@ -102,7 +130,7 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
         }
 
         await using IDbContextTransaction transaction =
-            await Context.Database.BeginTransactionAsync(IsolationLevel.Serializable, token);
+            await Context.Database.BeginTransactionAsync(isolationLevel, token);
 
         await InternalSave();
 
