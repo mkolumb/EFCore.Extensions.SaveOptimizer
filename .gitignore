@@ -614,3 +614,6 @@ obj/
 *.db
 *.db-wal
 *.db-shm
+
+# Benchmark result
+export/

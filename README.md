@@ -117,7 +117,9 @@ Basically query builders are prepared for multi row statements, but it looks the
    - The reason behind is performance. I noticed few issues and created [pull request](https://github.com/sqlkata/querybuilder/pull/548). When I started working on this library my pull request was in review without response for few months. Initially I decided to create [.NET 6 fork](https://www.nuget.org/packages/SqlKata.Net6/) and performance improvements were really great. Later I realized I don't need most of SqlKata features so it's better to write something optimized from scratch - this will bring performance & freedom boost. Currently there is reference to SqlKata in test project, just for verify my builder.
 2. Why you wrote query executor?
    - I noticed a bug with ExecuteSqlRaw from RelationalExtensions. It looks it cuts precision for decimals. So I created something lightweight using some EF Core features.
-3. Which EF Core version do you support?
+3. What is EFCore.Extensions.SaveOptimizer.Dapper package purpose?
+   - The default execution use provider described in previous question. Someone could prefer execution using Dapper. It looks this way is better when using Oracle & Firebird.
+4. Which EF Core version do you support?
    - I have plan to support only current release and latest LTS version. As there is only one required dependency (Microsoft.EntityFrameworkCore.Relational) you should be able to quickly prepare version for older EF if you need. Maybe some small changes in DataContextModelWrapper would be required.
 
 ## Migration command
