@@ -40,7 +40,7 @@ printNice <- function(p) {} # print(nicePlot(p))
 ggsaveNice <- function(fileName, p, ...) {
   cat(paste0("*** Plot: ", fileName, " ***\n"))
   # See https://stackoverflow.com/a/51655831/184842
-  suppressGraphics(ggsave(fileName, plot = nicePlot(p), width = 10, height = 5, ...))
+  suppressGraphics(ggsave(fileName, plot = nicePlot(p), width = 12, height = 6, ...))
   cat("------------------------------\n")
 }
 
@@ -79,10 +79,10 @@ for (file in files) {
     summarise(se = std.error(Measurement_Value), Value = mean(Measurement_Value))
 
   benchmarkBarplot <- ggplot(resultStats, aes(x=Target_Method, y=Value, fill=Job_Id)) +
-    guides(fill=guide_legend(title="Job")) +
-    xlab("Target") +
+    guides(fill=guide_legend(title="Variant")) +
+    xlab("Operation") +
     ylab(paste("Time,", timeUnit)) +
-    ggtitle(title) +
+    ggtitle(title, subtitle="(lower is better)") +
     geom_bar(position=position_dodge(), stat="identity")
     #geom_errorbar(aes(ymin=Value-1.96*se, ymax=Value+1.96*se), width=.2, position=position_dodge(.9))
 

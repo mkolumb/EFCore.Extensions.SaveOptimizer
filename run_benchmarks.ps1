@@ -1,8 +1,3 @@
-param (
-    [string]$name
-)
-
-
 Clear-Host
 
 $ErrorActionPreference = "Stop"
@@ -50,119 +45,61 @@ Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer
 dotnet build -c Release
 
-$exportDir = [System.IO.Path]::Combine($workingDir, "results")
-
-if (!(Test-Path -Path $exportDir -PathType Container)) {
-    New-Item -ItemType Directory -Path $exportDir
-}
-
-Set-Location $exportDir
-$exportDir = $(Get-Location).Path
-
 # Postgres
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Postgres.Benchmark
-.\benchmark.ps1 -ExportDir $exportDir
+.\benchmark.ps1
 
 # PomeloMySql
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.PomeloMySql.Benchmark
-.\benchmark.ps1 -ExportDir $exportDir
+.\benchmark.ps1
 
 # PomeloMariaDb
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.PomeloMariaDb.Benchmark
-.\benchmark.ps1 -ExportDir $exportDir
+.\benchmark.ps1
 
 # SqlLite
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.SqlLite.Benchmark
-.\benchmark.ps1 -ExportDir $exportDir
+.\benchmark.ps1
 
 # SqlServer
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.SqlServer.Benchmark
-.\benchmark.ps1 -ExportDir $exportDir
+.\benchmark.ps1
 
 # Oracle
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Oracle.Benchmark
-.\benchmark.ps1 -ExportDir $exportDir
+.\benchmark.ps1
 
 # Firebird3
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Firebird3.Benchmark
-.\benchmark.ps1 -ExportDir $exportDir
+.\benchmark.ps1
 
 # Firebird4
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Firebird4.Benchmark
-.\benchmark.ps1 -ExportDir $exportDir
+.\benchmark.ps1
 
 # Cockroach
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Cockroach.Benchmark
-.\benchmark.ps1 -ExportDir $exportDir
+.\benchmark.ps1
 
 # Cockroach Multi
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.CockroachMulti.Benchmark
-.\benchmark.ps1 -ExportDir $exportDir
+.\benchmark.ps1
 
-# get csv
-
+# plots
 Set-Location $workingDir
-
-$extensions = @('.csv', '.md')
-
-Get-ChildItem -File -Recurse | ForEach-Object {
-    $fileInfo = [System.IO.FileInfo]::new("\\?\$($_.FullName)")
-    
-    if ($fileInfo.FullName.Contains("BenchmarkDotNet.Artifacts") -and $extensions.Contains($fileInfo.Extension)) {
-        $newPath = [System.IO.Path]::Combine($exportDir, $fileInfo.Name)
-
-        $newPath = $newPath.Replace("EFCore.Extensions.SaveOptimizer.", "")
-        
-        $newPath = $newPath.Replace("Benchmark.Standard.", "")
-        
-        $newPath = $newPath.Replace("Benchmark-", "-")
-
-        $fileInfo.CopyTo($newPath, $true)
-    }
-}
-
-Set-Location $workingDir
-
-# fix measurements
-Set-Location $exportDir
-Get-ChildItem -Filter "*report.csv" | Remove-Item
-
-$regex = 'Variant=([A-z]*)&Rows=([0-9]*);'
-$replacer = '$1 ($2);'
-
-$titleRegex = '([A-z]*)Benchmark\.([A-z]*)Async;EFCore\.Extensions\.SaveOptimizer\.([A-z]*)\.Benchmark\.Standard;([A-z]*)Benchmark;([A-z]*)Async'
-$titleReplacer = '$1;$3;$1;$1'
-
-Get-ChildItem -Filter "*measurements.csv" | ForEach-Object {
-    $item = $_
-
-    (Get-Content $item.FullName) `
-        -replace $regex, $replacer `
-        -replace $titleRegex, $titleReplacer |
-    Out-File $item.FullName -Encoding ascii
-}
-
-# generate plots
-Set-Location $workingDir
-Copy-Item -Path "BuildPlots.R" -Destination "$($exportDir)/BuildPlots.R"
-Set-Location $exportDir
-Rscript.exe BuildPlots.R 
+.\generate_plots.ps1
 
 # cleanup
-Set-Location $exportDir
-Get-ChildItem -Filter "*.csv" | Remove-Item
-Get-ChildItem -Filter "*.R" | Remove-Item
-
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer
 git clean -fdX

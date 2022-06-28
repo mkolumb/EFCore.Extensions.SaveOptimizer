@@ -1,8 +1,3 @@
-param (
-    [string]$name
-)
-
-
 Clear-Host
 
 $ErrorActionPreference = "Stop"
