@@ -161,6 +161,7 @@ Rscript.exe BuildPlots.R
 # cleanup
 Set-Location $exportDir
 Get-ChildItem -Filter "*.csv" | Remove-Item
+Get-ChildItem -Filter "*.R" | Remove-Item
 
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer
