@@ -49,6 +49,16 @@ files <- if (length(args) > 0) args else list.files()[list.files() %>% ends_with
 for (file in files) {
   title <- gsub("-measurements.csv", "", basename(file))
   title <- gsub("\\.", " - ", title)
+  title <- gsub("CockroachMulti", "CockroachDB (9 nodes)", title)
+  title <- gsub("Cockroach -", "CockroachDB (1 node) -", title)
+  title <- gsub("SqlServer", "SQL Server", title)
+  title <- gsub("Oracle", "Oracle Express", title)
+  title <- gsub("PomeloMySql", "MySQL", title)
+  title <- gsub("PomeloMariaDb", "MariaDB", title)
+  title <- gsub("Postgres", "PostgreSQL", title)
+  title <- gsub("SqlLite", "SQLite", title)
+  title <- gsub("Firebird3", "Firebird 3", title)
+  title <- gsub("Firebird4", "Firebird 4", title)
   measurements <- read.csv(file, sep = ";")
 
   result <- measurements %>% filter(Measurement_IterationStage == "Result")

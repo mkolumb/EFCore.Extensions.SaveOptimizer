@@ -147,8 +147,8 @@ All benchmarks uses serializable isolation level and run databases within contai
 ``` ini
 BenchmarkDotNet=v0.13.1, OS=Windows 10.0.19042.1706 (20H2/October2020Update)
 Intel Core i7-8850H CPU 2.60GHz (Coffee Lake), 1 CPU, 12 logical and 6 physical cores
-.NET SDK=6.0.300
-  [Host]     : .NET 6.0.5 (6.0.522.21309), X64 RyuJIT
+.NET SDK=6.0.301
+  [Host]     : .NET 6.0.6 (6.0.622.26707), X64 RyuJIT
 
 InvocationCount=10  IterationCount=10  LaunchCount=5  
 RunStrategy=Monitoring  UnrollFactor=1  WarmupCount=2  
@@ -167,42 +167,147 @@ powershell -File run_benchmarks.ps1
 
 ### Results
 
+#### Legend
+- **Optimized** - *Using EFCore.Extensions.SaveOptimizer package*
+- **Dapper / Optimized Dapper** - *Using EFCore.Extensions.SaveOptimizer.Dapper package*
+- **EF Core** - *Using pure EF Core*
+
 #### CockroachDB - single docker node
 
-TBD
+##### [INSERT](/results/Cockroach.Insert-report-github.md)
+
+![CockroachDB - single docker node INSERT](/results/Cockroach.Insert-barplot.png "CockroachDB - single docker node INSERT")
+
+##### [UPDATE](/results/Cockroach.Update-report-github.md)
+
+![CockroachDB - single docker node UPDATE](/results/Cockroach.Update-barplot.png "CockroachDB - single docker node UPDATE")
+
+##### [DELETE](/results/Cockroach.Delete-report-github.md)
+
+![CockroachDB - single docker node DELETE](/results/Cockroach.Delete-barplot.png "CockroachDB - single docker node DELETE")
 
 #### CockroachDB - nine docker nodes
 
-TBD
+##### [INSERT](/results/CockroachMulti.Insert-report-github.md)
 
-#### SqlLite
+![CockroachDB - nine docker nodes INSERT](/results/CockroachMulti.Insert-barplot.png "CockroachDB - nine docker nodes INSERT")
 
-TBD
+##### [UPDATE](/results/CockroachMulti.Update-report-github.md)
 
-#### SqlServer
+![CockroachDB - nine docker nodes UPDATE](/results/CockroachMulti.Update-barplot.png "CockroachDB - nine docker nodes UPDATE")
 
-TBD
+##### [DELETE](/results/CockroachMulti.Delete-report-github.md)
+
+![CockroachDB - nine docker nodes DELETE](/results/CockroachMulti.Delete-barplot.png "CockroachDB - nine docker nodes DELETE")
+
+#### SQLite
+
+##### [INSERT](/results/SqlLite.Insert-report-github.md)
+
+![SQLite INSERT](/results/SqlLite.Insert-barplot.png "SQLite INSERT")
+
+##### [UPDATE](/results/SqlLite.Update-report-github.md)
+
+![SQLite UPDATE](/results/SqlLite.Update-barplot.png "SQLite UPDATE")
+
+##### [DELETE](/results/SqlLite.Delete-report-github.md)
+
+![SQLite DELETE](/results/SqlLite.Delete-barplot.png "SQLite DELETE")
+
+#### SQL Server
+
+##### [INSERT](/results/SqlServer.Insert-report-github.md)
+
+![SQL Server INSERT](/results/SqlServer.Insert-barplot.png "SQL Server INSERT")
+
+##### [UPDATE](/results/SqlServer.Update-report-github.md)
+
+![SQL Server UPDATE](/results/SqlServer.Update-barplot.png "SQL Server UPDATE")
+
+##### [DELETE](/results/SqlServer.Delete-report-github.md)
+
+![SQL Server DELETE](/results/SqlServer.Delete-barplot.png "SQL Server DELETE")
 
 #### Oracle Express
 
-TBD
+##### [INSERT](/results/Oracle.Insert-report-github.md)
 
-#### MySql
+![Oracle Express INSERT](/results/Oracle.Insert-barplot.png "Oracle Express INSERT")
 
-TBD
+##### [UPDATE](/results/Oracle.Update-report-github.md)
+
+![Oracle Express UPDATE](/results/Oracle.Update-barplot.png "Oracle Express UPDATE")
+
+##### [DELETE](/results/Oracle.Delete-report-github.md)
+
+![Oracle Express DELETE](/results/Oracle.Delete-barplot.png "Oracle Express DELETE")
+
+#### MySQL
+
+##### [INSERT](/results/PomeloMySql.Insert-report-github.md)
+
+![MySQL INSERT](/results/PomeloMySql.Insert-barplot.png "MySQL INSERT")
+
+##### [UPDATE](/results/PomeloMySql.Update-report-github.md)
+
+![MySQL UPDATE](/results/PomeloMySql.Update-barplot.png "MySQL UPDATE")
+
+##### [DELETE](/results/PomeloMySql.Delete-report-github.md)
+
+![MySQL DELETE](/results/PomeloMySql.Delete-barplot.png "MySQL DELETE")
 
 #### MariaDB
 
-TBD
+##### [INSERT](/results/PomeloMariaDb.Insert-report-github.md)
+
+![MariaDB INSERT](/results/PomeloMariaDb.Insert-barplot.png "MariaDB INSERT")
+
+##### [UPDATE](/results/PomeloMariaDb.Update-report-github.md)
+
+![MariaDB UPDATE](/results/PomeloMariaDb.Update-barplot.png "MariaDB UPDATE")
+
+##### [DELETE](/results/PomeloMariaDb.Delete-report-github.md)
+
+![MariaDB DELETE](/results/PomeloMariaDb.Delete-barplot.png "MariaDB DELETE")
 
 #### PostgreSQL
 
-TBD
+##### [INSERT](/results/Postgres.Insert-report-github.md)
+
+![PostgreSQL INSERT](/results/Postgres.Insert-barplot.png "PostgreSQL INSERT")
+
+##### [UPDATE](/results/Postgres.Update-report-github.md)
+
+![PostgreSQL UPDATE](/results/Postgres.Update-barplot.png "PostgreSQL UPDATE")
+
+##### [DELETE](/results/Postgres.Delete-report-github.md)
+
+![PostgreSQL DELETE](/results/Postgres.Delete-barplot.png "PostgreSQL DELETE")
 
 #### Firebird 3
 
-TBD
+##### [INSERT](/results/Firebird3.Insert-report-github.md)
+
+![Firebird 3 INSERT](/results/Firebird3.Insert-barplot.png "Firebird 3 INSERT")
+
+##### [UPDATE](/results/Firebird3.Update-report-github.md)
+
+![Firebird 3 UPDATE](/results/Firebird3.Update-barplot.png "Firebird 3 UPDATE")
+
+##### [DELETE](/results/Firebird3.Delete-report-github.md)
+
+![Firebird 3 DELETE](/results/Firebird3.Delete-barplot.png "Firebird 3 DELETE")
 
 #### Firebird 4
 
-TBD
+##### [INSERT](/results/Firebird4.Insert-report-github.md)
+
+![Firebird 4 INSERT](/results/Firebird4.Insert-barplot.png "Firebird 4 INSERT")
+
+##### [UPDATE](/results/Firebird4.Update-report-github.md)
+
+![Firebird 4 UPDATE](/results/Firebird4.Update-barplot.png "Firebird 4 UPDATE")
+
+##### [DELETE](/results/Firebird4.Delete-report-github.md)
+
+![Firebird 4 DELETE](/results/Firebird4.Delete-barplot.png "Firebird 4 DELETE")

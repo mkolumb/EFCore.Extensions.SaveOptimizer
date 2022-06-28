@@ -67,7 +67,10 @@ Get-ChildItem -Filter "*measurements.csv" | ForEach-Object {
 
     (Get-Content $item.FullName) `
         -replace $regex, $replacer `
-        -replace $titleRegex, $titleReplacer |
+        -replace $titleRegex, $titleReplacer `
+        -replace "OptimizedDapper", "Dapper" `
+        -replace "Optimized", "Optimized" `
+        -replace "EfCore", "EF Core" |
     Out-File $item.FullName -Encoding ascii
 }
 
