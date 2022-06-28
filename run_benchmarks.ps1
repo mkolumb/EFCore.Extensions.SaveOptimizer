@@ -113,3 +113,25 @@ Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.C
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer
 git clean -fdX
+
+# fix measurements
+Set-Location $workingDir
+Set-Location .\export
+Get-ChildItem -Filter "*report.csv" | Remove-Item
+
+$regex = 'Variant=([A-z]*)&Rows=([0-9]*);'
+$replacer = '$1 ($2);'
+
+Get-ChildItem -Filter "*measurements.csv" | ForEach-Object {
+    $item = $_
+
+    (Get-Content $item.FullName) `
+        -replace $regex, $replacer |
+    Out-File $item.FullName -Encoding ascii
+}
+
+# generate plots
+Set-Location $workingDir
+Copy-Item -Path "BuildPlots.R" -Destination "export/BuildPlots.R"
+Set-Location .\export
+Rscript.exe BuildPlots.R 

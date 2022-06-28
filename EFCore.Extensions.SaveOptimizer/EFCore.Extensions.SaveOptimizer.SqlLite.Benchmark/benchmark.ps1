@@ -24,7 +24,7 @@ dotnet run -c release
 
 Set-Location $workingDir
 
-$extensions = @('.png', '.md')
+$extensions = @('.csv', '.md')
 
 Get-ChildItem -File -Recurse | ForEach-Object {
     $item = $_

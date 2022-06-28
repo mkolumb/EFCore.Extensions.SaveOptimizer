@@ -38,7 +38,7 @@ docker compose --file postgres.yml down
 
 Set-Location $workingDir
 
-$extensions = @('.png', '.md')
+$extensions = @('.csv', '.md')
 
 Get-ChildItem -File -Recurse | ForEach-Object {
     $item = $_
