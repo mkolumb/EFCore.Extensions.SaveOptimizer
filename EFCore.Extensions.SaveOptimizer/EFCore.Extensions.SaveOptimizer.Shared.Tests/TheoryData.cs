@@ -10,6 +10,8 @@ public static class TheoryData
             yield return new object[] { SaveVariant.EfCore | SaveVariant.Recreate | SaveVariant.WithTransaction };
             yield return new object[] { SaveVariant.Optimized | SaveVariant.Recreate };
             yield return new object[] { SaveVariant.Optimized | SaveVariant.Recreate | SaveVariant.WithTransaction };
+            yield return new object[] { SaveVariant.OptimizedDapper | SaveVariant.Recreate };
+            yield return new object[] { SaveVariant.OptimizedDapper | SaveVariant.Recreate | SaveVariant.WithTransaction };
         }
     }
 
@@ -35,6 +37,11 @@ public static class TheoryData
             yield return new object[]
             {
                 SaveVariant.Optimized | SaveVariant.Recreate | SaveVariant.WithTransaction, 100000, 100000
+            };
+
+            yield return new object[]
+            {
+                SaveVariant.OptimizedDapper | SaveVariant.Recreate | SaveVariant.WithTransaction, 100000, 100000
             };
         }
     }

@@ -22,7 +22,7 @@ public abstract class BaseBenchmark
 
     public abstract long Rows { get; set; }
 
-    [Params(SaveVariant.Optimized, SaveVariant.EfCore)]
+    [Params(SaveVariant.Optimized, SaveVariant.OptimizedDapper, SaveVariant.EfCore)]
     public SaveVariant Variant { get; set; }
 
     protected BaseBenchmark(IWrapperResolver contextResolver) => _contextResolver = contextResolver;

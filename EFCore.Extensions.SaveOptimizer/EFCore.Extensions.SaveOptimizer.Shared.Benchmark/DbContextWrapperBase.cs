@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using EFCore.Extensions.SaveOptimizer.Dapper;
 using EFCore.Extensions.SaveOptimizer.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -88,6 +89,9 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
             {
                 case SaveVariant.Optimized:
                     await Context.SaveChangesOptimizedAsync(token);
+                    break;
+                case SaveVariant.OptimizedDapper:
+                    await Context.SaveChangesDapperOptimizedAsync(token);
                     break;
                 case SaveVariant.EfCore:
                     await Context.SaveChangesAsync(token);

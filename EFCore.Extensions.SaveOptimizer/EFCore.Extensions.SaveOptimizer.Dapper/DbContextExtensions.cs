@@ -1,16 +1,16 @@
 ﻿using System.Data;
+using EFCore.Extensions.SaveOptimizer.Dapper.Services;
 using EFCore.Extensions.SaveOptimizer.Internal.Configuration;
 using EFCore.Extensions.SaveOptimizer.Internal.Factories;
 using EFCore.Extensions.SaveOptimizer.Internal.Models;
 using EFCore.Extensions.SaveOptimizer.Internal.Services;
-using EFCore.Extensions.SaveOptimizer.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage;
 
 // ReSharper disable UnusedMember.Global
 
-namespace EFCore.Extensions.SaveOptimizer;
+namespace EFCore.Extensions.SaveOptimizer.Dapper;
 
 public static class DbContextExtensions
 {
@@ -30,10 +30,10 @@ public static class DbContextExtensions
         QueryExecutorService = new QueryExecutorService();
     }
 
-    public static int SaveChangesOptimized(this DbContext context) =>
-        context.SaveChangesOptimized(null);
+    public static int SaveChangesDapperOptimized(this DbContext context) =>
+        context.SaveChangesDapperOptimized(null);
 
-    public static int SaveChangesOptimized(this DbContext context, QueryExecutionConfiguration? configuration)
+    public static int SaveChangesDapperOptimized(this DbContext context, QueryExecutionConfiguration? configuration)
     {
         QueryPreparerService.Init(context);
 
@@ -89,11 +89,11 @@ public static class DbContextExtensions
         }
     }
 
-    public static async Task<int> SaveChangesOptimizedAsync(this DbContext context,
+    public static async Task<int> SaveChangesDapperOptimizedAsync(this DbContext context,
         CancellationToken cancellationToken = default) =>
-        await context.SaveChangesOptimizedAsync(null, cancellationToken);
+        await context.SaveChangesDapperOptimizedAsync(null, cancellationToken);
 
-    public static async Task<int> SaveChangesOptimizedAsync(this DbContext context,
+    public static async Task<int> SaveChangesDapperOptimizedAsync(this DbContext context,
         QueryExecutionConfiguration? configuration,
         CancellationToken cancellationToken = default)
     {

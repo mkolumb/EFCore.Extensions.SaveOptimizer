@@ -4,7 +4,8 @@
 public enum SaveVariant
 {
     Optimized = 2,
-    EfCore = 4,
-    Recreate = 8,
-    WithTransaction = 16
+    OptimizedDapper = 4,
+    EfCore = 8,
+    Recreate = 16,
+    WithTransaction = 32
 }

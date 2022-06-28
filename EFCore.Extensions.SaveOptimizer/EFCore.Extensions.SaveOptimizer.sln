@@ -110,6 +110,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.Extensions.SaveOptim
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.Extensions.SaveOptimizer.Oracle.Benchmark", "EFCore.Extensions.SaveOptimizer.Oracle.Benchmark\EFCore.Extensions.SaveOptimizer.Oracle.Benchmark.csproj", "{9FC61735-A47B-4D04-BC32-4B793D9536EE}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.Extensions.SaveOptimizer.Dapper", "EFCore.Extensions.SaveOptimizer.Dapper\EFCore.Extensions.SaveOptimizer.Dapper.csproj", "{7090B737-F2E4-4725-9332-6F0E5EA613A4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -268,6 +270,10 @@ Global
 		{9FC61735-A47B-4D04-BC32-4B793D9536EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9FC61735-A47B-4D04-BC32-4B793D9536EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9FC61735-A47B-4D04-BC32-4B793D9536EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7090B737-F2E4-4725-9332-6F0E5EA613A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7090B737-F2E4-4725-9332-6F0E5EA613A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7090B737-F2E4-4725-9332-6F0E5EA613A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7090B737-F2E4-4725-9332-6F0E5EA613A4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -322,6 +328,7 @@ Global
 		{7D39B5A1-52D2-4BAE-80A1-33DD5EF57808} = {A5A02A5B-44AD-4929-BDFC-241D917D5647}
 		{790A25E7-4C4D-4133-B989-1AB21D2D8C38} = {A5A02A5B-44AD-4929-BDFC-241D917D5647}
 		{9FC61735-A47B-4D04-BC32-4B793D9536EE} = {A5A02A5B-44AD-4929-BDFC-241D917D5647}
+		{7090B737-F2E4-4725-9332-6F0E5EA613A4} = {5B9CF003-538D-42B1-847D-56953D6F4AF3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AD2F8CF4-9238-4492-A1F6-495E5B55687D}

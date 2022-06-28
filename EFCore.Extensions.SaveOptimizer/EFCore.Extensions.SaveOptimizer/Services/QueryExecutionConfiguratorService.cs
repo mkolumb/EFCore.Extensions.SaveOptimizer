@@ -1,8 +1,9 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Internal.Configuration;
 using EFCore.Extensions.SaveOptimizer.Internal.Constants;
+using EFCore.Extensions.SaveOptimizer.Internal.Services;
 using Microsoft.EntityFrameworkCore;
 
-namespace EFCore.Extensions.SaveOptimizer.Internal.Services;
+namespace EFCore.Extensions.SaveOptimizer.Services;
 
 public class QueryExecutionConfiguratorService : IQueryExecutionConfiguratorService
 {

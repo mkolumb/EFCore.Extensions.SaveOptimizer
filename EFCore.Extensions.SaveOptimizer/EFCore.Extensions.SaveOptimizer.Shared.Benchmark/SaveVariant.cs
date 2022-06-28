@@ -3,5 +3,6 @@
 public enum SaveVariant
 {
     Optimized = 1,
-    EfCore = 2
+    OptimizedDapper = 2,
+    EfCore = 3
 }

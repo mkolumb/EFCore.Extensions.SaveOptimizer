@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EFCore.Extensions.SaveOptimizer.Dapper\EFCore.Extensions.SaveOptimizer.Dapper.csproj" />
     <ProjectReference Include="..\EFCore.Extensions.SaveOptimizer.Model\EFCore.Extensions.SaveOptimizer.Model.csproj" />
     <ProjectReference Include="..\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.csproj" />
   </ItemGroup>

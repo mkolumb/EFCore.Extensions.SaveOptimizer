@@ -1,11 +1,13 @@
 ﻿using System.Data.Common;
+using Dapper;
 using EFCore.Extensions.SaveOptimizer.Internal.Models;
+using EFCore.Extensions.SaveOptimizer.Internal.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 
-namespace EFCore.Extensions.SaveOptimizer.Internal.Services;
+namespace EFCore.Extensions.SaveOptimizer.Dapper.Services;
 
 public class QueryExecutorService : IQueryExecutorService
 {
@@ -18,13 +20,13 @@ public class QueryExecutorService : IQueryExecutorService
 
         ILogger logger = GetLogger(context);
 
-        DbCommand command = GetCommand(transaction, sql, timeout, connection, logger);
+        CommandDefinition command = GetCommand(transaction, sql, timeout, logger);
 
         connection.Open();
 
         try
         {
-            return command.ExecuteNonQuery();
+            return connection.DbConnection.Execute(command);
         }
         catch (Exception ex)
         {
@@ -34,7 +36,7 @@ public class QueryExecutorService : IQueryExecutorService
         }
         finally
         {
-            CleanupCommand(command, connection);
+            CleanupCommand(connection);
         }
     }
 
@@ -48,13 +50,13 @@ public class QueryExecutorService : IQueryExecutorService
 
         ILogger logger = GetLogger(context);
 
-        DbCommand command = GetCommand(transaction, sql, timeout, connection, logger);
+        CommandDefinition command = GetCommand(transaction, sql, timeout, logger);
 
         await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
 
         try
         {
-            return await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+            return await connection.DbConnection.ExecuteAsync(command).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -64,65 +66,32 @@ public class QueryExecutorService : IQueryExecutorService
         }
         finally
         {
-            await CleanupCommandAsync(command, connection).ConfigureAwait(false);
+            await CleanupCommandAsync(connection).ConfigureAwait(false);
         }
     }
 
-    private static DbCommand GetCommand(IDbContextTransaction transaction,
+    private static CommandDefinition GetCommand(IDbContextTransaction transaction,
         ISqlCommandModel sql,
         int? timeout,
-        IRelationalConnection connection,
         ILogger logger)
     {
-        DbCommand command = connection.DbConnection.CreateCommand();
+        DbTransaction dbTransaction = transaction.GetDbTransaction();
 
-        command.CommandText = sql.Sql;
-
-        if (sql.Parameters != null)
-        {
-            foreach (SqlParamModel param in sql.Parameters)
-            {
-                AddParameter(command, param);
-            }
-        }
-
-        if (timeout.HasValue)
-        {
-            command.CommandTimeout = timeout.Value;
-        }
-
-        command.Transaction = transaction.GetDbTransaction();
+        CommandDefinition command = new(
+            sql.Sql,
+            sql.NamedBindings,
+            dbTransaction,
+            timeout);
 
         logger.LogDebug("Executing command: {Sql}", sql.Sql);
 
         return command;
     }
 
-    private static void AddParameter(DbCommand command, SqlParamModel param)
-    {
-        DbParameter parameter =
-            param.SqlValueModel.PropertyTypeModel.ParameterResolver(command, param.Key, param.SqlValueModel.Value);
+    private static void CleanupCommand(IRelationalConnection connection) => connection.Close();
 
-        command.Parameters.Add(parameter);
-    }
-
-    private static void CleanupCommand(
-        DbCommand command,
-        IRelationalConnection connection)
-    {
-        command.Parameters.Clear();
-        command.Dispose();
-        connection.Close();
-    }
-
-    private static async Task CleanupCommandAsync(
-        DbCommand command,
-        IRelationalConnection connection)
-    {
-        command.Parameters.Clear();
-        await command.DisposeAsync().ConfigureAwait(false);
+    private static async Task CleanupCommandAsync(IRelationalConnection connection) =>
         await connection.CloseAsync().ConfigureAwait(false);
-    }
 
     private static IRelationalDatabaseFacadeDependencies GetDependencies(DbContext context)
     {

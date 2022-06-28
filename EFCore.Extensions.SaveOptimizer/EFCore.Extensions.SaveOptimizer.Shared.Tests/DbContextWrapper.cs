@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using EFCore.Extensions.SaveOptimizer.Dapper;
 using EFCore.Extensions.SaveOptimizer.Internal.Configuration;
 using EFCore.Extensions.SaveOptimizer.Internal.Constants;
 using EFCore.Extensions.SaveOptimizer.Model;
@@ -48,6 +49,10 @@ public sealed class DbContextWrapper : IDisposable
             if ((variant & SaveVariant.Optimized) != 0)
             {
                 await Context.SaveChangesOptimizedAsync(new QueryExecutionConfiguration { BatchSize = batchSize });
+            }
+            else if ((variant & SaveVariant.OptimizedDapper) != 0)
+            {
+                await Context.SaveChangesDapperOptimizedAsync(new QueryExecutionConfiguration { BatchSize = batchSize });
             }
             else if ((variant & SaveVariant.EfCore) != 0)
             {
