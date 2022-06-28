@@ -57,7 +57,7 @@ Set-Location $exportDir
 Get-ChildItem -Filter "*report.csv" | Remove-Item
 
 $regex = 'Variant=([A-z]*)&Rows=([0-9]*);'
-$replacer = '$1 ($2);'
+$replacer = '$1;$2;$1 ($2);'
 
 $titleRegex = '([A-z]*)Benchmark\.([A-z]*)Async;EFCore\.Extensions\.SaveOptimizer\.([A-z]*)\.Benchmark\.Standard;([A-z]*)Benchmark;([A-z]*)Async'
 $titleReplacer = '$1;$3;$1;$1'
@@ -68,8 +68,8 @@ Get-ChildItem -Filter "*measurements.csv" | ForEach-Object {
     (Get-Content $item.FullName) `
         -replace $regex, $replacer `
         -replace $titleRegex, $titleReplacer `
-        -replace "OptimizedDapper", "Dapper" `
-        -replace "Optimized", "Optimized" `
+        -replace "Job_Display;Params", "Job_Display;SaveVariant;SavedRows;Params" `
+        -replace "OptimizedDapper", "Optimized Dapper" `
         -replace "EfCore", "EF Core" |
     Out-File $item.FullName -Encoding ascii
 }

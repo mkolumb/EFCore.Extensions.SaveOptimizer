@@ -169,7 +169,7 @@ powershell -File run_benchmarks.ps1
 
 #### Legend
 - **Optimized** - *Using EFCore.Extensions.SaveOptimizer package*
-- **Dapper / Optimized Dapper** - *Using EFCore.Extensions.SaveOptimizer.Dapper package*
+- **Optimized Dapper** - *Using EFCore.Extensions.SaveOptimizer.Dapper package*
 - **EF Core** - *Using pure EF Core*
 
 #### CockroachDB - single docker node
