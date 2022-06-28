@@ -50,7 +50,7 @@ Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer
 dotnet build -c Release
 
-$exportDir = "..\export"
+$exportDir = [System.IO.Path]::Combine($workingDir, "export")
 
 if (!(Test-Path -Path $exportDir -PathType Container)) {
     New-Item -ItemType Directory -Path $exportDir
@@ -109,29 +109,59 @@ Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.CockroachMulti.Benchmark
 .\benchmark.ps1 -ExportDir $exportDir
 
-# cleanup
+# get csv
+
 Set-Location $workingDir
-Set-Location .\EFCore.Extensions.SaveOptimizer
-git clean -fdX
+
+$extensions = @('.csv', '.md')
+
+Get-ChildItem -File -Recurse | ForEach-Object {
+    $fileInfo = [System.IO.FileInfo]::new("\\?\$($_.FullName)")
+    
+    if ($fileInfo.FullName.Contains("BenchmarkDotNet.Artifacts") -and $extensions.Contains($fileInfo.Extension)) {
+        $newPath = [System.IO.Path]::Combine($exportDir, $fileInfo.Name)
+
+        $newPath = $newPath.Replace("EFCore.Extensions.SaveOptimizer.", "")
+        
+        $newPath = $newPath.Replace("Benchmark.Standard.", "")
+        
+        $newPath = $newPath.Replace("Benchmark-", "-")
+
+        $fileInfo.CopyTo($newPath, $true)
+    }
+}
+
+Set-Location $workingDir
 
 # fix measurements
-Set-Location $workingDir
-Set-Location .\export
+Set-Location $exportDir
 Get-ChildItem -Filter "*report.csv" | Remove-Item
 
 $regex = 'Variant=([A-z]*)&Rows=([0-9]*);'
 $replacer = '$1 ($2);'
 
+$titleRegex = '([A-z]*)Benchmark\.([A-z]*)Async;EFCore\.Extensions\.SaveOptimizer\.([A-z]*)\.Benchmark\.Standard;([A-z]*)Benchmark;([A-z]*)Async'
+$titleReplacer = '$1;$3;$1;$1'
+
 Get-ChildItem -Filter "*measurements.csv" | ForEach-Object {
     $item = $_
 
     (Get-Content $item.FullName) `
-        -replace $regex, $replacer |
+        -replace $regex, $replacer `
+        -replace $titleRegex, $titleReplacer |
     Out-File $item.FullName -Encoding ascii
 }
 
 # generate plots
 Set-Location $workingDir
-Copy-Item -Path "BuildPlots.R" -Destination "export/BuildPlots.R"
-Set-Location .\export
+Copy-Item -Path "BuildPlots.R" -Destination "$($exportDir)/BuildPlots.R"
+Set-Location $exportDir
 Rscript.exe BuildPlots.R 
+
+# cleanup
+Set-Location $exportDir
+Get-ChildItem -Filter "*.csv" | Remove-Item
+
+Set-Location $workingDir
+Set-Location .\EFCore.Extensions.SaveOptimizer
+git clean -fdX
