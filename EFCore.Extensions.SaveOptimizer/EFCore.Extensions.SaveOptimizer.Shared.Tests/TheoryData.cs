@@ -29,7 +29,9 @@ public static class TheoryData
                 yield return new[] { item, 1000, 1000 };
             }
 
-            if (AppDomain.CurrentDomain.GetAssemblies().Any(x => x.FullName!.Contains("Firebird")))
+            var excludedProviders = new[] { "Firebird", "Oracle" };
+
+            if (excludedProviders.Any(p => AppDomain.CurrentDomain.GetAssemblies().Any(x => x.FullName!.Contains(p))))
             {
                 yield break;
             }

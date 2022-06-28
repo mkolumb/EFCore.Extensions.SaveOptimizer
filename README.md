@@ -103,13 +103,13 @@ This will make much easier refresh data after save if necessary, you will be abl
 
 ## Known issues
 
+### Firebird batch insert problem
+
+Basically all query builders are prepared for multi row statements, but it looks there are some issues when executing DbCommand with Firebird provider. I think there is something with .NET Firebird client. Currently for this providers batch is working only on update and delete. Insert is working in the same manner as when using EF Core without extensions as it has InsertBatchSize 1 by default for this provider.
+
 ### Oracle serializable transaction
 
-It looks like serializable transaction produces many errors during execution, especially during insert (e.g. ORA-08177 & ORA-06512). This is something to investigate. I don't recommend using this library with Oracle in production environment.
-
-### Oracle & Firebird batch insert problem
-
-Basically query builders are prepared for multi row statements, but it looks there are some issues when executing via DbCommand. I think in Firebird case there is something with .NET client used in provider. In Oracle case this comes from transaction problem described above. Currently for these providers batch is working only on update and delete. Insert is working in the same manner as when using EF Core without extensions.
+It looks like serializable transaction produces many errors during execution, especially during insert (e.g. ORA-08177 & ORA-06512). This is something to investigate. I don't recommend using this library with Oracle in production environment. Sometimes decrease batch size for insert could help. This is the reason why it has InsertBatchSize 1 by default for this provider.
 
 ## Q&A
 
@@ -118,7 +118,7 @@ Basically query builders are prepared for multi row statements, but it looks the
 2. Why you wrote query executor?
    - I noticed a bug with ExecuteSqlRaw from RelationalExtensions. It looks it cuts precision for decimals. So I created something lightweight using some EF Core features.
 3. What is EFCore.Extensions.SaveOptimizer.Dapper package purpose?
-   - The default execution use provider described in previous question. Someone could prefer execution using Dapper. It looks this way is better when using Oracle & Firebird.
+   - The default execution use provider described in previous question. Someone could prefer execution using Dapper. You can compare performance in your case. 
 4. Which EF Core version do you support?
    - I have plan to support only current release and latest LTS version. As there is only one required dependency (Microsoft.EntityFrameworkCore.Relational) you should be able to quickly prepare version for older EF if you need. Maybe some small changes in DataContextModelWrapper would be required.
 
