@@ -4,17 +4,29 @@ BenchmarkDotNet=v0.13.1, OS=Windows 10.0.19042.1706 (20H2/October2020Update)
 Intel Core i7-8850H CPU 2.60GHz (Coffee Lake), 1 CPU, 12 logical and 6 physical cores
 .NET SDK=6.0.301
   [Host]     : .NET 6.0.6 (6.0.622.26707), X64 RyuJIT
-  Job-IBCNHC : .NET 6.0.6 (6.0.622.26707), X64 RyuJIT
+  Job-HMWWNW : .NET 6.0.6 (6.0.622.26707), X64 RyuJIT
 
 InvocationCount=10  IterationCount=10  LaunchCount=5  
 RunStrategy=Monitoring  UnrollFactor=1  WarmupCount=2  
 
 ```
-|      Method |         Variant | Rows |     Mean |     Error |   StdDev |      Min |      Max |   Median |
-|------------ |---------------- |----- |---------:|----------:|---------:|---------:|---------:|---------:|
-| **DeleteAsync** |       **Optimized** |    **1** | **7.346 ms** | **1.5176 ms** | **3.066 ms** | **4.279 ms** | **20.19 ms** | **6.495 ms** |
-| **DeleteAsync** |       **Optimized** |   **10** | **6.322 ms** | **0.8860 ms** | **1.790 ms** | **4.429 ms** | **12.41 ms** | **5.783 ms** |
-| **DeleteAsync** | **OptimizedDapper** |    **1** | **6.580 ms** | **1.1200 ms** | **2.262 ms** | **4.560 ms** | **17.99 ms** | **6.039 ms** |
-| **DeleteAsync** | **OptimizedDapper** |   **10** | **6.691 ms** | **1.1506 ms** | **2.324 ms** | **4.667 ms** | **14.52 ms** | **5.816 ms** |
-| **DeleteAsync** |          **EfCore** |    **1** | **6.414 ms** | **1.1606 ms** | **2.344 ms** | **4.365 ms** | **17.88 ms** | **5.789 ms** |
-| **DeleteAsync** |          **EfCore** |   **10** | **7.602 ms** | **0.9822 ms** | **1.984 ms** | **5.150 ms** | **13.85 ms** | **7.040 ms** |
+|      Method |         Variant | Rows |       Mean |     Error |    StdDev |        Min |        Max |     Median |
+|------------ |---------------- |----- |-----------:|----------:|----------:|-----------:|-----------:|-----------:|
+| **DeleteAsync** |       **Optimized** |    **1** |   **5.144 ms** | **0.2541 ms** | **0.5132 ms** |   **4.489 ms** |   **7.290 ms** |   **5.060 ms** |
+| **DeleteAsync** |       **Optimized** |   **10** |   **5.348 ms** | **0.2445 ms** | **0.4940 ms** |   **4.215 ms** |   **6.493 ms** |   **5.313 ms** |
+| **DeleteAsync** |       **Optimized** |   **25** |   **5.390 ms** | **0.1679 ms** | **0.3392 ms** |   **4.616 ms** |   **6.277 ms** |   **5.441 ms** |
+| **DeleteAsync** |       **Optimized** |   **50** |   **5.810 ms** | **0.3678 ms** | **0.7430 ms** |   **4.877 ms** |   **8.913 ms** |   **5.684 ms** |
+| **DeleteAsync** |       **Optimized** |  **100** |   **5.941 ms** | **0.2657 ms** | **0.5367 ms** |   **5.400 ms** |   **8.173 ms** |   **5.824 ms** |
+| **DeleteAsync** |       **Optimized** | **1000** |  **12.604 ms** | **1.5272 ms** | **3.0850 ms** |   **9.172 ms** |  **30.626 ms** |  **12.522 ms** |
+| **DeleteAsync** | **OptimizedDapper** |    **1** |   **7.257 ms** | **0.3051 ms** | **0.6163 ms** |   **6.178 ms** |   **8.692 ms** |   **7.222 ms** |
+| **DeleteAsync** | **OptimizedDapper** |   **10** |   **7.323 ms** | **0.3039 ms** | **0.6139 ms** |   **5.782 ms** |   **9.061 ms** |   **7.259 ms** |
+| **DeleteAsync** | **OptimizedDapper** |   **25** |   **7.603 ms** | **0.4070 ms** | **0.8223 ms** |   **6.005 ms** |   **9.838 ms** |   **7.462 ms** |
+| **DeleteAsync** | **OptimizedDapper** |   **50** |   **7.730 ms** | **0.3137 ms** | **0.6338 ms** |   **6.646 ms** |  **10.316 ms** |   **7.710 ms** |
+| **DeleteAsync** | **OptimizedDapper** |  **100** |   **8.342 ms** | **0.3212 ms** | **0.6487 ms** |   **7.440 ms** |  **10.250 ms** |   **8.279 ms** |
+| **DeleteAsync** | **OptimizedDapper** | **1000** |  **24.706 ms** | **1.5438 ms** | **3.1186 ms** |  **20.277 ms** |  **30.925 ms** |  **24.262 ms** |
+| **DeleteAsync** |          **EfCore** |    **1** |   **5.205 ms** | **0.2573 ms** | **0.5197 ms** |   **4.554 ms** |   **6.752 ms** |   **5.110 ms** |
+| **DeleteAsync** |          **EfCore** |   **10** |   **6.441 ms** | **0.3286 ms** | **0.6638 ms** |   **5.682 ms** |  **10.012 ms** |   **6.251 ms** |
+| **DeleteAsync** |          **EfCore** |   **25** |   **7.906 ms** | **0.4224 ms** | **0.8533 ms** |   **7.006 ms** |  **12.880 ms** |   **7.700 ms** |
+| **DeleteAsync** |          **EfCore** |   **50** |  **11.159 ms** | **0.5005 ms** | **1.0110 ms** |   **9.362 ms** |  **14.919 ms** |  **10.973 ms** |
+| **DeleteAsync** |          **EfCore** |  **100** |  **17.217 ms** | **0.5996 ms** | **1.2113 ms** |  **15.231 ms** |  **20.882 ms** |  **17.110 ms** |
+| **DeleteAsync** |          **EfCore** | **1000** | **125.911 ms** | **1.5767 ms** | **3.1851 ms** | **120.701 ms** | **133.612 ms** | **126.060 ms** |
