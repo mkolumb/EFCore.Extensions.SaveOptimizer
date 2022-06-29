@@ -3,7 +3,7 @@ using BenchmarkDotNet.Engines;
 
 namespace EFCore.Extensions.SaveOptimizer.Shared.Benchmark;
 
-[SimpleJob(RunStrategy.Monitoring, 5, 2, 10, 10)]
+[SimpleJob(RunStrategy.Monitoring, 8, 2, 12, 12)]
 [MinColumn]
 [MaxColumn]
 [MeanColumn]
