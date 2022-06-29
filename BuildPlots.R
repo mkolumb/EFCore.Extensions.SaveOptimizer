@@ -72,28 +72,28 @@ for (file in files) {
   result$Method <- factor(result$Method, levels = unique(result$Method))
 
   timeUnit <- "ns"
-  if (min(result$Median) > 1000) {
-    result$Median <- result$Median / 1000
+  if (min(result$Measurement) > 1000) {
+    result$Measurement <- result$Measurement / 1000
     timeUnit <- "us"
   }
-  if (min(result$Median) > 1000) {
-    result$Median <- result$Median / 1000
+  if (min(result$Measurement) > 1000) {
+    result$Measurement <- result$Measurement / 1000
     timeUnit <- "ms"
   }
-  if (min(result$Median) > 1000) {
-    result$Median <- result$Median / 1000
+  if (min(result$Measurement) > 1000) {
+    result$Measurement <- result$Measurement / 1000
     timeUnit <- "sec"
   }
 
   resultStats <- result %>%
     group_by(.dots = c("Variant", "Method")) %>%
-    summarise(se = std.error(Median), Value = mean(Median))
+    summarise(se = std.error(Measurement), Value = mean(Measurement))
 
   benchmarkBarplot <- ggplot(resultStats, aes(x=Variant, y=Value, fill=Method)) +
     guides(fill=guide_legend(title="Rows")) +
     xlab("Save changes") +
     ylab(paste("Time,", timeUnit)) +
-    ggtitle(title, subtitle="(median, lower is better)") +
+    ggtitle(title, subtitle="(lower is better)") +
     geom_bar(position=position_dodge(), stat="identity")
 
   printNice(benchmarkBarplot)

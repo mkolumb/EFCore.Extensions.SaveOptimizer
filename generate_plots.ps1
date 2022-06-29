@@ -74,7 +74,7 @@ Get-ChildItem -Filter "*measurements.csv" | ForEach-Object {
     Out-File $item.FullName -Encoding ascii
 }
 
-Get-ChildItem -Filter "*report-github.md" | ForEach-Object {
+Get-ChildItem -Filter "*report-*.md" | ForEach-Object {
     $item = $_
 
     $newName = $item.FullName.Replace(".md", ".csv")

@@ -1,15 +1,8 @@
 ﻿using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Engines;
+using BenchmarkDotNet.Loggers;
 
 namespace EFCore.Extensions.SaveOptimizer.Shared.Benchmark;
 
-[SimpleJob(RunStrategy.Monitoring, 8, 2, 12, 12)]
-[MinColumn]
-[MaxColumn]
-[MeanColumn]
-[MedianColumn]
-[MarkdownExporterAttribute.GitHub]
-[CsvMeasurementsExporter]
 public abstract class BaseBenchmark
 {
     private readonly IWrapperResolver _contextResolver;
@@ -29,7 +22,7 @@ public abstract class BaseBenchmark
     [GlobalSetup]
     public async Task Setup()
     {
-        Console.WriteLine($"Setup {GetDescription()}");
+        ConsoleLogger.Unicode.WriteLineHint($"Setup {GetDescription()}");
 
         Context = _contextResolver.Resolve();
 
@@ -39,7 +32,7 @@ public abstract class BaseBenchmark
     [GlobalCleanup]
     public async Task Cleanup()
     {
-        Console.WriteLine($"Cleanup {GetDescription()}");
+        ConsoleLogger.Unicode.WriteLineHint($"Cleanup {GetDescription()}");
 
         if (Context != null)
         {

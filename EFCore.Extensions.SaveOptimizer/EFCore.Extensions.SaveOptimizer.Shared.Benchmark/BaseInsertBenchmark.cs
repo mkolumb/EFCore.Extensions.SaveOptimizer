@@ -1,4 +1,5 @@
 ﻿using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Loggers;
 using EFCore.Extensions.SaveOptimizer.Model;
 
 namespace EFCore.Extensions.SaveOptimizer.Shared.Benchmark;
@@ -23,7 +24,7 @@ public abstract class BaseInsertBenchmark : BaseBenchmark
 
         _iterations++;
 
-        Console.WriteLine($"Iteration setup {_iterations} {GetDescription()}");
+        ConsoleLogger.Unicode.WriteLineHint($"Iteration setup {_iterations} {GetDescription()}");
 
         for (var i = 0L; i < Rows; i++)
         {

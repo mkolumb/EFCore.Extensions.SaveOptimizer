@@ -1,4 +1,5 @@
 ﻿using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Loggers;
 using EFCore.Extensions.SaveOptimizer.Model;
 
 namespace EFCore.Extensions.SaveOptimizer.Shared.Benchmark;
@@ -23,19 +24,13 @@ public abstract class BaseDeleteBenchmark : BaseBenchmark
 
         _iterations++;
 
-        Console.WriteLine($"Iteration setup {_iterations} {GetDescription()}");
+        ConsoleLogger.Unicode.WriteLineHint($"Iteration setup {_iterations} {GetDescription()}");
 
         IReadOnlyList<NonRelatedEntity> items = Context.RetrieveData(Rows).GetAwaiter().GetResult();
 
         if (items.Count != Rows)
         {
-            var oldColor = Console.ForegroundColor;
-
-            Console.ForegroundColor = ConsoleColor.DarkRed;
-
-            Console.WriteLine($"Expected {Rows} rows but retrieved {items.Count}");
-
-            Console.ForegroundColor = oldColor;
+            ConsoleLogger.Unicode.WriteLineError($"Expected {Rows} rows but retrieved {items.Count}");
         }
 
         for (var i = 0L; i < Rows; i++)
