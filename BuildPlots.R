@@ -45,9 +45,9 @@ ggsaveNice <- function(fileName, p, ...) {
 }
 
 args <- commandArgs(trailingOnly = TRUE)
-files <- if (length(args) > 0) args else list.files()[list.files() %>% ends_with("-measurements.csv")]
+files <- if (length(args) > 0) args else list.files()[list.files() %>% ends_with("-report-github.csv")]
 for (file in files) {
-  title <- gsub("-measurements.csv", "", basename(file))
+  title <- gsub("-report-github.csv", "", basename(file))
   title <- gsub("\\.", " - ", title)
   title <- gsub("CockroachMulti", "CockroachDB (9 nodes)", title)
   title <- gsub("Cockroach -", "CockroachDB (1 node) -", title)
@@ -61,41 +61,41 @@ for (file in files) {
   title <- gsub("Firebird4", "Firebird 4", title)
   measurements <- read.csv(file, sep = ";")
 
-  result <- measurements %>% filter(Measurement_IterationStage == "Result")
-  if (nrow(result[is.na(result$Job_Id),]) > 0)
-    result[is.na(result$Job_Id),]$Job_Id <- ""
-  if (nrow(result[is.na(result$SavedRows),]) > 0) {
-    result[is.na(result$SavedRows),]$SavedRows <- ""
+  result <- measurements
+  if (nrow(result[is.na(result$Method),]) > 0)
+    result[is.na(result$Method),]$Method <- ""
+  if (nrow(result[is.na(result$Rows),]) > 0) {
+    result[is.na(result$Rows),]$Rows <- ""
   } else {
-    result$Job_Id <- trim(paste(result$SavedRows))
+    result$Method <- trim(paste(result$Rows))
   }
-  result$Job_Id <- factor(result$Job_Id, levels = unique(result$Job_Id))
+  result$Method <- factor(result$Method, levels = unique(result$Method))
 
   timeUnit <- "ns"
-  if (min(result$Measurement_Value) > 1000) {
-    result$Measurement_Value <- result$Measurement_Value / 1000
+  if (min(result$Median) > 1000) {
+    result$Median <- result$Median / 1000
     timeUnit <- "us"
   }
-  if (min(result$Measurement_Value) > 1000) {
-    result$Measurement_Value <- result$Measurement_Value / 1000
+  if (min(result$Median) > 1000) {
+    result$Median <- result$Median / 1000
     timeUnit <- "ms"
   }
-  if (min(result$Measurement_Value) > 1000) {
-    result$Measurement_Value <- result$Measurement_Value / 1000
+  if (min(result$Median) > 1000) {
+    result$Median <- result$Median / 1000
     timeUnit <- "sec"
   }
 
   resultStats <- result %>%
-    group_by_(.dots = c("SaveVariant", "Job_Id")) %>%
-    summarise(se = std.error(Measurement_Value), Value = mean(Measurement_Value))
+    group_by(.dots = c("Variant", "Method")) %>%
+    summarise(se = std.error(Median), Value = mean(Median))
 
-  benchmarkBarplot <- ggplot(resultStats, aes(x=SaveVariant, y=Value, fill=Job_Id)) +
+  benchmarkBarplot <- ggplot(resultStats, aes(x=Variant, y=Value, fill=Method)) +
     guides(fill=guide_legend(title="Rows")) +
     xlab("Save changes") +
     ylab(paste("Time,", timeUnit)) +
-    ggtitle(title, subtitle="(lower is better)") +
+    ggtitle(title, subtitle="(median, lower is better)") +
     geom_bar(position=position_dodge(), stat="identity")
 
   printNice(benchmarkBarplot)
-  ggsaveNice(gsub("-measurements.csv", "-barplot.png", file), benchmarkBarplot)
+  ggsaveNice(gsub("-report-github.csv", "-barplot.png", file), benchmarkBarplot)
 }
