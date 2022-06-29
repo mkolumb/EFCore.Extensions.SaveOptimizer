@@ -39,11 +39,9 @@ public class OracleAllQueryBuilder : BaseQueryBuilder
 
     private bool _insertAll;
 
-    public OracleAllQueryBuilder() : base(Clauses, GetConfiguration())
+    public OracleAllQueryBuilder() : base(Clauses)
     {
     }
-
-    private static QueryBuilderConfiguration GetConfiguration() => new() { OptimizeParameters = true };
 
     public override IQueryBuilder Insert(string tableName, IReadOnlyList<IDictionary<string, SqlValueModel?>> data)
     {

@@ -32,9 +32,7 @@ public class FirebirdQueryBuilder : BaseQueryBuilder
         { ClauseType.QueryEnding, ";" }
     };
 
-    public FirebirdQueryBuilder() : base(Clauses, GetConfiguration())
+    public FirebirdQueryBuilder() : base(Clauses)
     {
     }
-
-    private static QueryBuilderConfiguration GetConfiguration() => new() { OptimizeParameters = true };
 }

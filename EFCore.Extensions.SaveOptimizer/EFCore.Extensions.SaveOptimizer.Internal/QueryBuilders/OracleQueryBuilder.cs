@@ -32,9 +32,7 @@ public class OracleQueryBuilder : BaseQueryBuilder
         { ClauseType.QueryEnding, "" }
     };
 
-    public OracleQueryBuilder() : base(Clauses, GetConfiguration())
+    public OracleQueryBuilder() : base(Clauses)
     {
     }
-
-    private static QueryBuilderConfiguration GetConfiguration() => new() { OptimizeParameters = true };
 }
