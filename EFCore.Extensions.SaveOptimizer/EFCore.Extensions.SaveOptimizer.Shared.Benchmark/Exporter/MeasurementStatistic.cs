@@ -4,7 +4,7 @@ using BenchmarkDotNet.Reports;
 using BenchmarkDotNet.Running;
 using Perfolizer.Common;
 using Perfolizer.Horology;
-using Perfolizer.Mathematics.QuantileEstimators;
+using Perfolizer.Mathematics.Common;
 
 namespace EFCore.Extensions.SaveOptimizer.Shared.Benchmark.Exporter;
 
@@ -12,7 +12,7 @@ public class MeasurementStatisticColumn : IStatisticColumn
 {
     public string Id => nameof(MeasurementStatisticColumn) + "." + ColumnName;
 
-    public string ColumnName => "Measurement";
+    public string ColumnName => "MeanNoOut";
 
     public string GetValue(Summary summary, BenchmarkCase benchmarkCase)
         => Format(summary[benchmarkCase].ResultStatistics, SummaryStyle.Default);
@@ -27,7 +27,7 @@ public class MeasurementStatisticColumn : IStatisticColumn
     public bool IsNumeric => true;
     public UnitType UnitType => UnitType.Time;
 
-    public string Legend => "Median from 0-75% range";
+    public string Legend => "Mean (Q1-Q3 range)";
 
     public List<double> GetAllValues(Summary summary, SummaryStyle style)
         => summary.Reports
@@ -47,12 +47,12 @@ public class MeasurementStatisticColumn : IStatisticColumn
         }
 
         var values = statistics.OriginalValues
-            .Where(s => s <= statistics.Q3)
+            .Where(s => s >= statistics.Q1 && s <= statistics.Q3)
             .ToArray();
 
-        Quartiles quartiles = Quartiles.FromUnsorted(values);
+        Moments moments = Moments.Create(values);
 
-        return quartiles.Median;
+        return moments.Mean;
     }
 
     private string Format(Statistics? statistics, SummaryStyle style)
