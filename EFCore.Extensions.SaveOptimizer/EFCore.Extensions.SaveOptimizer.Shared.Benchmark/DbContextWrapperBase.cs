@@ -33,11 +33,11 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
 
         try
         {
-            await TrySeed(count, repeat, IsolationLevel.ReadUncommitted);
+            await TrySeed(count, repeat, IsolationLevel.ReadCommitted);
         }
         catch
         {
-            await TrySeed(count / 10, repeat * 10, IsolationLevel.ReadUncommitted);
+            await TrySeed(count / 10, repeat * 10, IsolationLevel.ReadCommitted);
         }
 
         await TrySeed(1, 1, IsolationLevel.Serializable);

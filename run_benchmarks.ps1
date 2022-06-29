@@ -90,6 +90,24 @@ Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.S
 Set-Location $workingDir
 .\generate_plots.ps1
 
+# Cockroach
+Set-Location $workingDir
+Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Cockroach.Benchmark
+.\benchmark.ps1
+
+# plots
+Set-Location $workingDir
+.\generate_plots.ps1
+
+# Cockroach Multi
+Set-Location $workingDir
+Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.CockroachMulti.Benchmark
+.\benchmark.ps1
+
+# plots
+Set-Location $workingDir
+.\generate_plots.ps1
+
 # Oracle
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Oracle.Benchmark
@@ -111,24 +129,6 @@ Set-Location $workingDir
 # Firebird4
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Firebird4.Benchmark
-.\benchmark.ps1
-
-# plots
-Set-Location $workingDir
-.\generate_plots.ps1
-
-# Cockroach
-Set-Location $workingDir
-Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Cockroach.Benchmark
-.\benchmark.ps1
-
-# plots
-Set-Location $workingDir
-.\generate_plots.ps1
-
-# Cockroach Multi
-Set-Location $workingDir
-Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.CockroachMulti.Benchmark
 .\benchmark.ps1
 
 # plots
