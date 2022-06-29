@@ -20,6 +20,8 @@ Set-Location "Containers"
 
 docker compose --file postgres.yml up --detach
 
+Start-Sleep -Seconds 10
+
 Set-Location $workingDir
 
 dotnet build -c release

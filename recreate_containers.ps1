@@ -40,6 +40,10 @@ docker compose --file firebird_4.yml up --detach
 
 docker compose --file oracle.yml up --detach
 
+Start-Sleep -Seconds 10
+
 docker exec -it optimizerroachmulti11 ./cockroach init --insecure
+
+Start-Sleep -Seconds 10
 
 Set-Location $workingDir

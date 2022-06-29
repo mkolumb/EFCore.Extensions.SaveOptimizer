@@ -45,15 +45,6 @@ Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer
 dotnet build -c Release
 
-# Postgres
-Set-Location $workingDir
-Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Postgres.Benchmark
-.\benchmark.ps1
-
-# plots
-Set-Location $workingDir
-.\generate_plots.ps1
-
 # PomeloMySql
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.PomeloMySql.Benchmark
@@ -66,6 +57,15 @@ Set-Location $workingDir
 # PomeloMariaDb
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.PomeloMariaDb.Benchmark
+.\benchmark.ps1
+
+# plots
+Set-Location $workingDir
+.\generate_plots.ps1
+
+# Postgres
+Set-Location $workingDir
+Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Postgres.Benchmark
 .\benchmark.ps1
 
 # plots
