@@ -118,7 +118,7 @@ It looks like serializable transaction produces many errors during execution, es
 2. Why you wrote query executor?
    - I noticed a bug with ExecuteSqlRaw from RelationalExtensions. It looks it cuts precision for decimals. So I created something lightweight using some EF Core features.
 3. What is EFCore.Extensions.SaveOptimizer.Dapper package purpose?
-   - The default execution use provider described in previous question. Someone could prefer execution using Dapper. You can compare performance in your case. 
+   - The default execution use provider described in previous question. Someone could prefer execution using Dapper. You can compare performance in your case. From my experience results usually are similar.
 4. Which EF Core version do you support?
    - I have plan to support only current release and latest LTS version. As there is only one required dependency (Microsoft.EntityFrameworkCore.Relational) you should be able to quickly prepare version for older EF if you need. Maybe some small changes in DataContextModelWrapper would be required.
 
