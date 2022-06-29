@@ -12,19 +12,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.Extensions.SaveOptimizer.Model", "EFCore.Extensions.SaveOptimizer.Model\EFCore.Extensions.SaveOptimizer.Model.csproj", "{AEF69D42-0770-45A9-9185-B1751D1B8EB2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.Extensions.SaveOptimizer.Model.SqlLite", "EFCore.Extensions.SaveOptimizer.Model.SqlLite\EFCore.Extensions.SaveOptimizer.Model.SqlLite.csproj", "{C3279DFD-1739-4A50-A46C-D4EDEAD515F3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.Extensions.SaveOptimizer.Model.Sqlite", "EFCore.Extensions.SaveOptimizer.Model.Sqlite\EFCore.Extensions.SaveOptimizer.Model.Sqlite.csproj", "{C3279DFD-1739-4A50-A46C-D4EDEAD515F3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.Extensions.SaveOptimizer.Internal", "EFCore.Extensions.SaveOptimizer.Internal\EFCore.Extensions.SaveOptimizer.Internal.csproj", "{620EB5A1-0E01-49B4-9993-8ED3BA687491}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.Extensions.SaveOptimizer.Shared.Tests", "EFCore.Extensions.SaveOptimizer.Shared.Tests\EFCore.Extensions.SaveOptimizer.Shared.Tests.csproj", "{0234BE18-49EC-44E3-AD80-BDB8BB689BE5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.Extensions.SaveOptimizer.SqlLite.Tests", "EFCore.Extensions.SaveOptimizer.SqlLite.Tests\EFCore.Extensions.SaveOptimizer.SqlLite.Tests.csproj", "{26E7459E-F7DF-4EA3-8F47-D45826927CF1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.Extensions.SaveOptimizer.Sqlite.Tests", "EFCore.Extensions.SaveOptimizer.Sqlite.Tests\EFCore.Extensions.SaveOptimizer.Sqlite.Tests.csproj", "{26E7459E-F7DF-4EA3-8F47-D45826927CF1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.Extensions.SaveOptimizer.Internal.Tests", "EFCore.Extensions.SaveOptimizer.Internal.Tests\EFCore.Extensions.SaveOptimizer.Internal.Tests.csproj", "{7465CE46-13DD-486A-837F-AB3BF055749C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{AAA2E26A-4421-4F88-8A0C-05C13DFB9435}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SqlLite", "SqlLite", "{AE31DEC8-1AAF-4737-B5AE-34EDD3F3D570}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sqlite", "Sqlite", "{AE31DEC8-1AAF-4737-B5AE-34EDD3F3D570}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{BC55F8AA-D7AD-4356-BA53-1ED8D4A15E0F}"
 EndProject
@@ -32,7 +32,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{5B9CF003-5
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.Extensions.SaveOptimizer.Shared.Benchmark", "EFCore.Extensions.SaveOptimizer.Shared.Benchmark\EFCore.Extensions.SaveOptimizer.Shared.Benchmark.csproj", "{5561EDFF-1AAD-48BC-A3DD-B18D432850B8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.Extensions.SaveOptimizer.SqlLite.Benchmark", "EFCore.Extensions.SaveOptimizer.SqlLite.Benchmark\EFCore.Extensions.SaveOptimizer.SqlLite.Benchmark.csproj", "{05FEC65A-023B-4AAC-828A-937659C8DACA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.Extensions.SaveOptimizer.Sqlite.Benchmark", "EFCore.Extensions.SaveOptimizer.Sqlite.Benchmark\EFCore.Extensions.SaveOptimizer.Sqlite.Benchmark.csproj", "{05FEC65A-023B-4AAC-828A-937659C8DACA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Postgres", "Postgres", "{E879B7FD-A72D-4648-B887-B56EC8923D47}"
 EndProject

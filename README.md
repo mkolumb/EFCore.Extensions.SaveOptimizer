@@ -202,17 +202,17 @@ powershell -File run_benchmarks.ps1
 
 #### SQLite
 
-##### [INSERT](/results/SqlLite.Insert-report-github.md)
+##### [INSERT](/results/Sqlite.Insert-report-github.md)
 
-![SQLite INSERT](/results/SqlLite.Insert-barplot.png "SQLite INSERT")
+![SQLite INSERT](/results/Sqlite.Insert-barplot.png "SQLite INSERT")
 
-##### [UPDATE](/results/SqlLite.Update-report-github.md)
+##### [UPDATE](/results/Sqlite.Update-report-github.md)
 
-![SQLite UPDATE](/results/SqlLite.Update-barplot.png "SQLite UPDATE")
+![SQLite UPDATE](/results/Sqlite.Update-barplot.png "SQLite UPDATE")
 
-##### [DELETE](/results/SqlLite.Delete-report-github.md)
+##### [DELETE](/results/Sqlite.Delete-report-github.md)
 
-![SQLite DELETE](/results/SqlLite.Delete-barplot.png "SQLite DELETE")
+![SQLite DELETE](/results/Sqlite.Delete-barplot.png "SQLite DELETE")
 
 #### SQL Server
 

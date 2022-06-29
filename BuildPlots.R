@@ -56,7 +56,7 @@ for (file in files) {
   title <- gsub("PomeloMySql", "MySQL", title)
   title <- gsub("PomeloMariaDb", "MariaDB", title)
   title <- gsub("Postgres", "PostgreSQL", title)
-  title <- gsub("SqlLite", "SQLite", title)
+  title <- gsub("Sqlite", "SQLite", title)
   title <- gsub("Firebird3", "Firebird 3", title)
   title <- gsub("Firebird4", "Firebird 4", title)
   measurements <- read.csv(file, sep = ";")

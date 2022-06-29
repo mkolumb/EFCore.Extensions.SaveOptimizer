@@ -72,9 +72,9 @@ Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.P
 Set-Location $workingDir
 .\generate_plots.ps1
 
-# SqlLite
+# Sqlite
 Set-Location $workingDir
-Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.SqlLite.Benchmark
+Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Sqlite.Benchmark
 .\benchmark.ps1
 
 # plots
