@@ -65,6 +65,8 @@ $titleReplacer = '$1;$3;$1;$1'
 Get-ChildItem -Filter "*measurements.csv" | ForEach-Object {
     $item = $_
 
+    Write-Host "Measurements fix $($item.Name)"
+
     (Get-Content $item.FullName) `
         -replace $regex, $replacer `
         -replace $titleRegex, $titleReplacer `
@@ -76,6 +78,8 @@ Get-ChildItem -Filter "*measurements.csv" | ForEach-Object {
 
 Get-ChildItem -Filter "*report-*.md" | ForEach-Object {
     $item = $_
+
+    Write-Host "Report csv generate $($item.Name)"
 
     $newName = $item.FullName.Replace(".md", ".csv")
 
@@ -156,6 +160,8 @@ Get-ChildItem -Filter "*report-*.md" | ForEach-Object {
 
 Get-ChildItem -Filter "*report-*.md" | ForEach-Object {
     $item = $_
+
+    Write-Host "Report fix $($item.Name)"
 
     (Get-Content $item.FullName) `
         -replace "Async", "" `
