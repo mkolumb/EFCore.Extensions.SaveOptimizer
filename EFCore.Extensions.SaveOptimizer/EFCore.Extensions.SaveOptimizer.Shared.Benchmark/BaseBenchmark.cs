@@ -1,5 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Loggers;
+using EFCore.Extensions.SaveOptimizer.Shared.Benchmark.Exporter;
 
 namespace EFCore.Extensions.SaveOptimizer.Shared.Benchmark;
 
@@ -26,7 +27,7 @@ public abstract class BaseBenchmark
 
         Context = _contextResolver.Resolve();
 
-        await Context.Seed(Rows, 20);
+        await Context.Seed(Rows, BenchmarkConfig.GetSeedRepeat());
     }
 
     [GlobalCleanup]

@@ -11,17 +11,23 @@ namespace EFCore.Extensions.SaveOptimizer.Shared.Benchmark.Exporter;
 
 public class BenchmarkConfig : ManualConfig
 {
+    private const int InvocationCount = 1;
+    private const int IterationCount = 2;
+    private const int LaunchCount = 50;
+    private const int WarmupCount = 2;
+    private const int UnrollFactor = 1;
+
     public BenchmarkConfig(string dbName)
     {
         Job job = new(dbName)
         {
             Run =
             {
-                InvocationCount = 1,
-                IterationCount = 15,
-                LaunchCount = 8,
-                WarmupCount = 2,
-                UnrollFactor = 1,
+                InvocationCount = InvocationCount,
+                IterationCount = IterationCount,
+                LaunchCount = LaunchCount,
+                WarmupCount = WarmupCount,
+                UnrollFactor = UnrollFactor,
                 RunStrategy = RunStrategy.Throughput
             },
             Accuracy = { EvaluateOverhead = true, OutlierMode = OutlierMode.RemoveUpper }
@@ -46,4 +52,6 @@ public class BenchmarkConfig : ManualConfig
 
         AddLogger(ConsoleLogger.Unicode);
     }
+
+    public static int GetSeedRepeat() => InvocationCount * (IterationCount + WarmupCount) * UnrollFactor;
 }

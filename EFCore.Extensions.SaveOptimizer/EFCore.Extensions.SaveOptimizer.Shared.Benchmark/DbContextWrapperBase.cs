@@ -8,6 +8,7 @@ namespace EFCore.Extensions.SaveOptimizer.Shared.Benchmark;
 
 public abstract class DbContextWrapperBase : IDbContextWrapper
 {
+    private const int RunTry = 5;
     private readonly IDbContextFactory<EntitiesContext> _factory;
 
     protected DbContextWrapperBase(IDbContextFactory<EntitiesContext> factory)
@@ -25,7 +26,7 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
         GC.SuppressFinalize(this);
     }
 
-    public async Task Truncate() => await Run(5, TruncateBase);
+    public async Task Truncate() => await Run(RunTry, TruncateBase);
 
     public async Task Seed(long count, int repeat)
     {
@@ -54,14 +55,14 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
 
         await Truncate();
 
-        await Run(5, InternalSeed);
+        await Run(RunTry, InternalSeed);
 
-        await Run(5, () => TrySeed(1, 1, IsolationLevel.Serializable));
+        await Run(RunTry, () => TrySeed(1, 1, IsolationLevel.Serializable));
     }
 
     public async Task Save(SaveVariant variant)
     {
-        await Run(5, () => TrySave(variant, IsolationLevel.Serializable));
+        await TrySave(variant, IsolationLevel.Serializable);
 
         RecreateContext();
     }
@@ -112,7 +113,7 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
 
     private async Task TrySeed(long count, int repeat, IsolationLevel isolationLevel)
     {
-        for (var j = 0; j < Math.Max(repeat / 10, 1); j++)
+        for (var j = 0; j < Math.Max(repeat, 1); j++)
         {
             await TrySeedOnce(Math.Max(count, 1), isolationLevel);
         }
@@ -122,7 +123,7 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
     {
         async Task InternalTrySeedOnce()
         {
-            for (var i = 0; i < count * 10; i++)
+            for (var i = 0; i < count; i++)
             {
                 NonRelatedEntity item = CreateItem(i);
 
@@ -132,12 +133,12 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
             await SeedSave(isolationLevel);
         }
 
-        await Run(5, InternalTrySeedOnce);
+        await Run(RunTry, InternalTrySeedOnce);
     }
 
     private async Task SeedSave(IsolationLevel isolationLevel)
     {
-        await Run(5, () => TrySave(SaveVariant.Optimized, isolationLevel));
+        await Run(RunTry, () => TrySave(SaveVariant.Optimized, isolationLevel));
 
         RecreateContext();
     }
