@@ -154,6 +154,16 @@ Get-ChildItem -Filter "*report-*.md" | ForEach-Object {
     $newContent | Out-File $newName -Encoding utf8
 }
 
+Get-ChildItem -Filter "*report-*.md" | ForEach-Object {
+    $item = $_
+
+    (Get-Content $item.FullName) `
+        -replace "Async", "" `
+        -replace "OptimizedDapper", "Optimized Dapper" `
+        -replace "EfCore", "EF Core" |
+    Out-File $item.FullName -Encoding utf8
+}
+
 # generate plots
 Set-Location $workingDir
 Copy-Item -Path "BuildPlots.R" -Destination "$($exportDir)/BuildPlots.R"
