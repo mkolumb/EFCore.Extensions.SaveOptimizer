@@ -10,7 +10,7 @@ namespace EFCore.Extensions.SaveOptimizer.Shared.Benchmark;
 public abstract class DbContextWrapperBase : IDbContextWrapper
 {
     private const int RunTry = 5;
-    private const int MaxSeed = 1000;
+    private const int MaxSeed = 10000;
     private readonly IDbContextFactory<EntitiesContext> _factory;
 
     protected DbContextWrapperBase(IDbContextFactory<EntitiesContext> factory)
@@ -32,6 +32,8 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
 
     public async Task Seed(long count, int repeat)
     {
+        double delay = Math.Max(count / 1000, 5);
+
         while (count > MaxSeed)
         {
             count /= 10;
@@ -48,13 +50,13 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
             {
                 try
                 {
-                    await Task.Delay(TimeSpan.FromSeconds(2));
+                    await Task.Delay(TimeSpan.FromSeconds(delay));
 
                     await TrySeed(count / 10, repeat * 10, IsolationLevel.ReadCommitted);
                 }
                 catch
                 {
-                    await Task.Delay(TimeSpan.FromSeconds(2));
+                    await Task.Delay(TimeSpan.FromSeconds(delay));
 
                     await TrySeed(count / 100, repeat * 100, IsolationLevel.ReadCommitted);
                 }
@@ -68,9 +70,24 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
         await Run(RunTry, () => TrySeed(1, 1, IsolationLevel.Serializable));
     }
 
-    public async Task Save(SaveVariant variant)
+    public async Task Save(SaveVariant variant, long expectedRows)
     {
-        await Run(2, () => TrySave(variant, IsolationLevel.Serializable));
+        try
+        {
+            await Run(RunTry, () => TrySave(variant, IsolationLevel.Serializable));
+        }
+        catch (Exception ex)
+        {
+            double delay = Math.Max(expectedRows / 100, 10);
+
+            ConsoleLogger.Unicode.WriteLineHint($"Unable to save, wait {delay} seconds to mark as outlier");
+
+            ConsoleLogger.Unicode.WriteLineHint(ex.Message);
+
+            ConsoleLogger.Unicode.WriteLineHint(ex.StackTrace);
+
+            await Task.Delay(TimeSpan.FromSeconds(delay));
+        }
 
         RecreateContext();
     }
@@ -110,7 +127,7 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
             {
                 ConsoleLogger.Unicode.WriteLineHint($"Retry number {i} {method.Method.Name}");
 
-                await Task.Delay(TimeSpan.FromSeconds(2));
+                await Task.Delay(TimeSpan.Zero);
 
                 i++;
             }

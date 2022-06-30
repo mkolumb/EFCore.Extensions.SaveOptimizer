@@ -29,7 +29,7 @@ public abstract class BaseBenchmark
 
         Context = _contextResolver.Resolve();
 
-        await Context.Seed(Rows, BenchmarkConfig.GetSeedRepeat());
+        await Context.Seed(Rows * BenchmarkConfig.GetSeedRepeat(), 1);
     }
 
     [IterationSetup]

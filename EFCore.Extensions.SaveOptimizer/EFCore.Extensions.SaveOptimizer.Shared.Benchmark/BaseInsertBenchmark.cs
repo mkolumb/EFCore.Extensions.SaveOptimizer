@@ -34,6 +34,6 @@ public abstract class BaseInsertBenchmark : BaseBenchmark
             throw new ArgumentNullException(nameof(Context));
         }
 
-        await Context.Save(Variant);
+        await Context.Save(Variant, Rows);
     }
 }

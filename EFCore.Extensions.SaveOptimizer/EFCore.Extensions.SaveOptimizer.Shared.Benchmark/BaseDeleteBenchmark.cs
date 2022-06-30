@@ -40,6 +40,6 @@ public abstract class BaseDeleteBenchmark : BaseBenchmark
             throw new ArgumentNullException(nameof(Context));
         }
 
-        await Context.Save(Variant);
+        await Context.Save(Variant, Rows);
     }
 }
