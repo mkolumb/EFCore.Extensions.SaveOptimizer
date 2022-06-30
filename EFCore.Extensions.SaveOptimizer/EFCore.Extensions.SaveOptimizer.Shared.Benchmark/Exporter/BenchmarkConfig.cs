@@ -7,18 +7,29 @@ using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Loggers;
 using Perfolizer.Mathematics.OutlierDetection;
 
+// ReSharper disable HeuristicUnreachableCode
+
+#pragma warning disable CS0162
+
 namespace EFCore.Extensions.SaveOptimizer.Shared.Benchmark.Exporter;
 
 public class BenchmarkConfig : ManualConfig
 {
     private const int InvocationCount = 1;
-    private const int IterationCount = 3;
+    private const int IterationCount = 4;
     private const int LaunchCount = 25;
-    private const int WarmupCount = 2;
+    private const int WarmupCount = 0;
     private const int UnrollFactor = 1;
 
     public BenchmarkConfig(string dbName)
     {
+        RunStrategy strategy = RunStrategy.ColdStart;
+
+        if (WarmupCount > 0)
+        {
+            strategy = RunStrategy.Monitoring;
+        }
+
         Job job = new(dbName)
         {
             Run =
@@ -28,7 +39,7 @@ public class BenchmarkConfig : ManualConfig
                 LaunchCount = LaunchCount,
                 WarmupCount = WarmupCount,
                 UnrollFactor = UnrollFactor,
-                RunStrategy = RunStrategy.Throughput
+                RunStrategy = strategy
             },
             Accuracy = { EvaluateOverhead = true, OutlierMode = OutlierMode.RemoveUpper }
         };

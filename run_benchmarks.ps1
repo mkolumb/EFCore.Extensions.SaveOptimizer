@@ -50,8 +50,9 @@ Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.CockroachMulti.Benchmark
 .\benchmark.ps1
 
-# plots
+# plots & logs
 Set-Location $workingDir
+.\preserve_logs.ps1
 .\generate_plots.ps1
 
 # Cockroach
@@ -59,8 +60,9 @@ Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Cockroach.Benchmark
 .\benchmark.ps1
 
-# plots
+# plots & logs
 Set-Location $workingDir
+.\preserve_logs.ps1
 .\generate_plots.ps1
 
 # PomeloMySql
@@ -68,8 +70,9 @@ Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.PomeloMySql.Benchmark
 .\benchmark.ps1
 
-# plots
+# plots & logs
 Set-Location $workingDir
+.\preserve_logs.ps1
 .\generate_plots.ps1
 
 # PomeloMariaDb
@@ -77,8 +80,9 @@ Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.PomeloMariaDb.Benchmark
 .\benchmark.ps1
 
-# plots
+# plots & logs
 Set-Location $workingDir
+.\preserve_logs.ps1
 .\generate_plots.ps1
 
 # Postgres
@@ -86,8 +90,9 @@ Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Postgres.Benchmark
 .\benchmark.ps1
 
-# plots
+# plots & logs
 Set-Location $workingDir
+.\preserve_logs.ps1
 .\generate_plots.ps1
 
 # Sqlite
@@ -95,8 +100,9 @@ Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Sqlite.Benchmark
 .\benchmark.ps1
 
-# plots
+# plots & logs
 Set-Location $workingDir
+.\preserve_logs.ps1
 .\generate_plots.ps1
 
 # SqlServer
@@ -104,8 +110,9 @@ Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.SqlServer.Benchmark
 .\benchmark.ps1
 
-# plots
+# plots & logs
 Set-Location $workingDir
+.\preserve_logs.ps1
 .\generate_plots.ps1
 
 # Oracle
@@ -113,8 +120,9 @@ Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Oracle.Benchmark
 .\benchmark.ps1
 
-# plots
+# plots & logs
 Set-Location $workingDir
+.\preserve_logs.ps1
 .\generate_plots.ps1
 
 # Firebird3
@@ -122,8 +130,9 @@ Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Firebird3.Benchmark
 .\benchmark.ps1
 
-# plots
+# plots & logs
 Set-Location $workingDir
+.\preserve_logs.ps1
 .\generate_plots.ps1
 
 # Firebird4
@@ -131,8 +140,9 @@ Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Firebird4.Benchmark
 .\benchmark.ps1
 
-# plots
+# plots & logs
 Set-Location $workingDir
+.\preserve_logs.ps1
 .\generate_plots.ps1
 
 # cleanup
