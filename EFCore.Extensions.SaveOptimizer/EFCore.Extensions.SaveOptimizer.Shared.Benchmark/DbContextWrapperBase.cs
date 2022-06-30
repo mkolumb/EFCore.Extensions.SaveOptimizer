@@ -78,7 +78,7 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
         }
         catch (Exception ex)
         {
-            double delay = Math.Max(expectedRows / 100, 10);
+            double delay = Math.Max(expectedRows / 100, 30);
 
             ConsoleLogger.Unicode.WriteLineHint($"Unable to save, wait {delay} seconds to mark as outlier");
 
