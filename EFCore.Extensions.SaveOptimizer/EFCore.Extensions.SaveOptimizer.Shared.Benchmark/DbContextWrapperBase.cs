@@ -9,7 +9,7 @@ namespace EFCore.Extensions.SaveOptimizer.Shared.Benchmark;
 
 public abstract class DbContextWrapperBase : IDbContextWrapper
 {
-    private const int RunTry = 5;
+    private const int RunTry = 10;
     private const int MaxSeed = 10000;
     private const int MaxFailures = 5;
     private readonly IDbContextFactory<EntitiesContext> _factory;
@@ -89,7 +89,7 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
                 throw new Exception($"Failures limit exceeded, rows {expectedRows}, variant {variant}, failures {_failures}");
             }
 
-            double delay = Math.Max(expectedRows / 100, 60);
+            double delay = Math.Max(expectedRows / 1000, 5);
 
             ConsoleLogger.Unicode.WriteLineHint($"Unable to save, failure {_failures}, wait {delay} seconds to mark as outlier");
 

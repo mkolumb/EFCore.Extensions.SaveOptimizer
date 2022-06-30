@@ -43,7 +43,7 @@ public class QueryExecutionConfiguratorService : IQueryExecutionConfiguratorServ
 
             if (providerName.Contains("Oracle"))
             {
-                return 100;
+                return 20;
             }
         }
 

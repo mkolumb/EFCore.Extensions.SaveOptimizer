@@ -109,7 +109,7 @@ Basically all query builders are prepared for multi row statements, but it looks
 
 ### Oracle serializable transaction
 
-It looks like serializable transaction produces many errors during execution, especially during insert (e.g. ORA-08177 & ORA-06512). This is something to investigate. I don't recommend using this library with Oracle in production environment. Sometimes decrease batch size for insert could help. This is the reason why it has InsertBatchSize 1 by default for this provider.
+It looks like serializable transaction produces many errors during execution, especially during insert (e.g. ORA-08177 & ORA-06512). This is something to investigate, maybe this is dockerized Oracle Express issue. I don't recommend using this library with Oracle in production environment without strong testing. Sometimes decrease batch size for insert could help.
 
 ## Q&A
 
