@@ -13,7 +13,7 @@ public class InsertBenchmark : BaseInsertBenchmark
     [ParamsSource(nameof(ValuesForRows))]
     public override long Rows { get; set; }
 
-    public IEnumerable<long> ValuesForRows => Variables.Rows;
+    public IEnumerable<long> ValuesForRows => Variables.InsertRows;
 
     public InsertBenchmark() : base(BenchmarkHelper.ContextResolver())
     {

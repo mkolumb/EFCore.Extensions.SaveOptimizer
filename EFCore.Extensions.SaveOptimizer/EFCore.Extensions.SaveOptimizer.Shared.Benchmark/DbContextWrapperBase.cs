@@ -84,6 +84,11 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
         {
             _failures++;
 
+            if (_failures > MaxFailures)
+            {
+                throw new Exception($"Failures limit exceeded, rows {expectedRows}, variant {variant}, failures {_failures}");
+            }
+
             double delay = Math.Max(expectedRows / 100, 60);
 
             ConsoleLogger.Unicode.WriteLineHint($"Unable to save, failure {_failures}, wait {delay} seconds to mark as outlier");
@@ -93,11 +98,6 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
             ConsoleLogger.Unicode.WriteLineHint(ex.StackTrace);
 
             await Task.Delay(TimeSpan.FromSeconds(delay));
-        }
-
-        if (_failures > MaxFailures)
-        {
-            throw new Exception($"Failures limit exceeded, rows {expectedRows}, variant {variant}, failures {_failures}");
         }
 
         RecreateContext();
