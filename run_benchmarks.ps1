@@ -45,16 +45,6 @@ Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer
 dotnet build -c Release
 
-# Oracle
-Set-Location $workingDir
-Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Oracle.Benchmark
-.\benchmark.ps1
-
-# plots & logs
-Set-Location $workingDir
-.\preserve_logs.ps1
-.\generate_plots.ps1
-
 # Cockroach Multi
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.CockroachMulti.Benchmark
@@ -68,6 +58,16 @@ Set-Location $workingDir
 # Cockroach
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Cockroach.Benchmark
+.\benchmark.ps1
+
+# plots & logs
+Set-Location $workingDir
+.\preserve_logs.ps1
+.\generate_plots.ps1
+
+# Oracle
+Set-Location $workingDir
+Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Oracle.Benchmark
 .\benchmark.ps1
 
 # plots & logs
