@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using BenchmarkDotNet.Loggers;
 using EFCore.Extensions.SaveOptimizer.Dapper;
 using EFCore.Extensions.SaveOptimizer.Model;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,7 @@ namespace EFCore.Extensions.SaveOptimizer.Shared.Benchmark;
 public abstract class DbContextWrapperBase : IDbContextWrapper
 {
     private const int RunTry = 5;
+    private const int MaxSeed = 1000;
     private readonly IDbContextFactory<EntitiesContext> _factory;
 
     protected DbContextWrapperBase(IDbContextFactory<EntitiesContext> factory)
@@ -30,6 +32,12 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
 
     public async Task Seed(long count, int repeat)
     {
+        while (count > MaxSeed)
+        {
+            count /= 10;
+            repeat *= 10;
+        }
+
         async Task InternalSeed()
         {
             try
@@ -100,6 +108,8 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
             }
             catch
             {
+                ConsoleLogger.Unicode.WriteLineHint($"Retry number {i} {method.Method.Name}");
+
                 await Task.Delay(TimeSpan.FromSeconds(2));
 
                 i++;
@@ -113,6 +123,8 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
 
     private async Task TrySeed(long count, int repeat, IsolationLevel isolationLevel)
     {
+        ConsoleLogger.Unicode.WriteLineHint($"Try seed {count} * {repeat} / {isolationLevel}");
+
         for (var j = 0; j < Math.Max(repeat, 1); j++)
         {
             await TrySeedOnce(Math.Max(count, 1), isolationLevel);

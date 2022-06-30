@@ -16,8 +16,8 @@ namespace EFCore.Extensions.SaveOptimizer.Shared.Benchmark.Exporter;
 public class BenchmarkConfig : ManualConfig
 {
     private const int InvocationCount = 1;
-    private const int IterationCount = 4;
-    private const int LaunchCount = 25;
+    private const int IterationCount = 20;
+    private const int LaunchCount = 5;
     private const int WarmupCount = 0;
     private const int UnrollFactor = 1;
 
