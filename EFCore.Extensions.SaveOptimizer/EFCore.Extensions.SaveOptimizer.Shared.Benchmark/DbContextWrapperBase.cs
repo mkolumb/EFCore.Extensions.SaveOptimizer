@@ -72,9 +72,23 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
         }
         catch
         {
-            await Task.Delay(TimeSpan.FromSeconds(2));
+            try
+            {
+                await Truncate();
+            }
+            catch
+            {
+                try
+                {
+                    await Truncate();
+                }
+                catch
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(2));
 
-            await Truncate();
+                    await Truncate();
+                }
+            }
         }
 
         try
@@ -83,9 +97,16 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
         }
         catch
         {
-            await Task.Delay(TimeSpan.FromSeconds(2));
+            try
+            {
+                await InternalSeed();
+            }
+            catch
+            {
+                await Task.Delay(TimeSpan.FromSeconds(2));
 
-            await InternalSeed();
+                await InternalSeed();
+            }
         }
 
         try
@@ -94,9 +115,16 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
         }
         catch
         {
-            await Task.Delay(TimeSpan.FromSeconds(2));
+            try
+            {
+                await InternalSeedAfter();
+            }
+            catch
+            {
+                await Task.Delay(TimeSpan.FromSeconds(2));
 
-            await InternalSeedAfter();
+                await InternalSeedAfter();
+            }
         }
     }
 
