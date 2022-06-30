@@ -17,8 +17,8 @@ public class BenchmarkConfig : ManualConfig
         {
             Run =
             {
-                InvocationCount = 12,
-                IterationCount = 12,
+                InvocationCount = 1,
+                IterationCount = 15,
                 LaunchCount = 8,
                 WarmupCount = 2,
                 UnrollFactor = 1,
