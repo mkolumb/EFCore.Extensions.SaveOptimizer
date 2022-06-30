@@ -45,6 +45,24 @@ Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer
 dotnet build -c Release
 
+# Cockroach Multi
+Set-Location $workingDir
+Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.CockroachMulti.Benchmark
+.\benchmark.ps1
+
+# plots
+Set-Location $workingDir
+.\generate_plots.ps1
+
+# Cockroach
+Set-Location $workingDir
+Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Cockroach.Benchmark
+.\benchmark.ps1
+
+# plots
+Set-Location $workingDir
+.\generate_plots.ps1
+
 # PomeloMySql
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.PomeloMySql.Benchmark
@@ -84,24 +102,6 @@ Set-Location $workingDir
 # SqlServer
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.SqlServer.Benchmark
-.\benchmark.ps1
-
-# plots
-Set-Location $workingDir
-.\generate_plots.ps1
-
-# Cockroach
-Set-Location $workingDir
-Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Cockroach.Benchmark
-.\benchmark.ps1
-
-# plots
-Set-Location $workingDir
-.\generate_plots.ps1
-
-# Cockroach Multi
-Set-Location $workingDir
-Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.CockroachMulti.Benchmark
 .\benchmark.ps1
 
 # plots

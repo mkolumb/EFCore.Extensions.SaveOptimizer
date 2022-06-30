@@ -6,8 +6,10 @@ namespace EFCore.Extensions.SaveOptimizer.Shared.Benchmark;
 
 public abstract class BaseBenchmark
 {
+    private const int MaxPrepareTry = 5;
     private readonly IWrapperResolver _contextResolver;
     protected IDbContextWrapper? Context;
+    protected int Iterations;
 
     public abstract string Database { get; }
 
@@ -29,6 +31,34 @@ public abstract class BaseBenchmark
 
         await Context.Seed(Rows, BenchmarkConfig.GetSeedRepeat());
     }
+
+    [IterationSetup]
+    public void IterationSetup()
+    {
+        Iterations++;
+
+        ConsoleLogger.Unicode.WriteLineHint($"Iteration setup {Iterations} {GetDescription()}");
+
+        var i = 0;
+
+        while (i < MaxPrepareTry)
+        {
+            try
+            {
+                Prepare();
+
+                return;
+            }
+            catch
+            {
+                i++;
+            }
+        }
+
+        throw new Exception($"Unable to prepare iteration {Iterations} {GetDescription()}");
+    }
+
+    protected abstract void Prepare();
 
     [GlobalCleanup]
     public async Task Cleanup()

@@ -12,8 +12,8 @@ namespace EFCore.Extensions.SaveOptimizer.Shared.Benchmark.Exporter;
 public class BenchmarkConfig : ManualConfig
 {
     private const int InvocationCount = 1;
-    private const int IterationCount = 2;
-    private const int LaunchCount = 50;
+    private const int IterationCount = 3;
+    private const int LaunchCount = 25;
     private const int WarmupCount = 2;
     private const int UnrollFactor = 1;
 
@@ -53,5 +53,5 @@ public class BenchmarkConfig : ManualConfig
         AddLogger(ConsoleLogger.Unicode);
     }
 
-    public static int GetSeedRepeat() => InvocationCount * (IterationCount + WarmupCount) * UnrollFactor;
+    public static int GetSeedRepeat() => (InvocationCount * (IterationCount + WarmupCount) * UnrollFactor) + 1;
 }

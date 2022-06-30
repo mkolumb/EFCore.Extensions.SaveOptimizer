@@ -6,25 +6,18 @@ namespace EFCore.Extensions.SaveOptimizer.Shared.Benchmark;
 
 public abstract class BaseDeleteBenchmark : BaseBenchmark
 {
-    private int _iterations;
-
     public override string Operation => "Delete";
 
     protected BaseDeleteBenchmark(IWrapperResolver contextResolver) : base(contextResolver)
     {
     }
 
-    [IterationSetup]
-    public void IterationSetup()
+    protected override void Prepare()
     {
         if (Context == null)
         {
             throw new ArgumentNullException(nameof(Context));
         }
-
-        _iterations++;
-
-        ConsoleLogger.Unicode.WriteLineHint($"Iteration setup {_iterations} {GetDescription()}");
 
         IReadOnlyList<NonRelatedEntity> items = Context.RetrieveData(Rows).GetAwaiter().GetResult();
 

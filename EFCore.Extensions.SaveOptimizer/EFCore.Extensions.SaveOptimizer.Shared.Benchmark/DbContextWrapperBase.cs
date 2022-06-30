@@ -62,7 +62,7 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
 
     public async Task Save(SaveVariant variant)
     {
-        await TrySave(variant, IsolationLevel.Serializable);
+        await Run(2, () => TrySave(variant, IsolationLevel.Serializable));
 
         RecreateContext();
     }
