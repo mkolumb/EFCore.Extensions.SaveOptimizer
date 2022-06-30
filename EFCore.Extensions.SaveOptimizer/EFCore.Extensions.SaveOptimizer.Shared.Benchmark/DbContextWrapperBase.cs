@@ -29,47 +29,75 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
 
     public async Task Seed(long count, int repeat)
     {
-        await Truncate();
-
-        try
+        async Task InternalSeed()
         {
-            await TrySeed(count, repeat, IsolationLevel.ReadCommitted);
-        }
-        catch
-        {
-            await TrySeed(count / 10, repeat * 10, IsolationLevel.ReadCommitted);
-        }
-
-        await TrySeed(1, 1, IsolationLevel.Serializable);
-    }
-
-    private async Task TrySeed(long count, int repeat, IsolationLevel isolationLevel)
-    {
-        for (var j = 0; j < repeat / 10; j++)
-        {
-            for (var i = 0; i < count * 10; i++)
+            try
             {
-                NonRelatedEntity item = CreateItem(i);
-
-                await Context.AddAsync(item);
+                await TrySeed(count, repeat, IsolationLevel.ReadCommitted);
             }
+            catch
+            {
+                try
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(2));
 
-            await SeedSave(isolationLevel);
+                    await TrySeed(count / 10, repeat * 10, IsolationLevel.ReadCommitted);
+                }
+                catch
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(2));
+
+                    await TrySeed(count / 100, repeat * 100, IsolationLevel.ReadCommitted);
+                }
+            }
         }
-    }
 
-    private async Task SeedSave(IsolationLevel isolationLevel)
-    {
+        async Task InternalSeedAfter()
+        {
+            try
+            {
+                await TrySeed(1, 1, IsolationLevel.Serializable);
+            }
+            catch
+            {
+                await Task.Delay(TimeSpan.FromSeconds(2));
+
+                await TrySeed(1, 1, IsolationLevel.Serializable);
+            }
+        }
+
         try
         {
-            await TrySave(SaveVariant.Optimized, isolationLevel);
+            await Truncate();
         }
         catch
         {
-            await TrySave(SaveVariant.Optimized, isolationLevel);
+            await Task.Delay(TimeSpan.FromSeconds(2));
+
+            await Truncate();
         }
 
-        RecreateContext();
+        try
+        {
+            await InternalSeed();
+        }
+        catch
+        {
+            await Task.Delay(TimeSpan.FromSeconds(2));
+
+            await InternalSeed();
+        }
+
+        try
+        {
+            await InternalSeedAfter();
+        }
+        catch
+        {
+            await Task.Delay(TimeSpan.FromSeconds(2));
+
+            await InternalSeedAfter();
+        }
     }
 
     public async Task Save(SaveVariant variant)
@@ -104,6 +132,52 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
         SomeNonNullableStringProperty = $"some-string-{i}",
         SomeNullableStringProperty = "other-string"
     };
+
+    private async Task TrySeed(long count, int repeat, IsolationLevel isolationLevel)
+    {
+        for (var j = 0; j < Math.Max(repeat / 10, 1); j++)
+        {
+            await TrySeedOnce(Math.Max(count, 1), isolationLevel);
+        }
+    }
+
+    private async Task TrySeedOnce(long count, IsolationLevel isolationLevel)
+    {
+        async Task InternalTrySeedOnce()
+        {
+            for (var i = 0; i < count * 10; i++)
+            {
+                NonRelatedEntity item = CreateItem(i);
+
+                await Context.AddAsync(item);
+            }
+
+            await SeedSave(isolationLevel);
+        }
+
+        try
+        {
+            await InternalTrySeedOnce();
+        }
+        catch
+        {
+            await InternalTrySeedOnce();
+        }
+    }
+
+    private async Task SeedSave(IsolationLevel isolationLevel)
+    {
+        try
+        {
+            await TrySave(SaveVariant.Optimized, isolationLevel);
+        }
+        catch
+        {
+            await TrySave(SaveVariant.Optimized, isolationLevel);
+        }
+
+        RecreateContext();
+    }
 
     private async Task TrySave(SaveVariant variant, IsolationLevel isolationLevel)
     {
