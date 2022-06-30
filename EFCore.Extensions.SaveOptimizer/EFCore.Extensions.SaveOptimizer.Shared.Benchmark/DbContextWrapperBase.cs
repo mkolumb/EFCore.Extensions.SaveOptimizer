@@ -11,10 +11,14 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
 {
     private const int RunTry = 5;
     private const int MaxSeed = 10000;
+    private const int MaxFailures = 5;
     private readonly IDbContextFactory<EntitiesContext> _factory;
+    private int _failures;
 
     protected DbContextWrapperBase(IDbContextFactory<EntitiesContext> factory)
     {
+        _failures = 0;
+
         _factory = factory;
 
         Context = _factory.CreateDbContext();
@@ -78,15 +82,22 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
         }
         catch (Exception ex)
         {
-            double delay = Math.Max(expectedRows / 100, 30);
+            _failures++;
 
-            ConsoleLogger.Unicode.WriteLineHint($"Unable to save, wait {delay} seconds to mark as outlier");
+            double delay = Math.Max(expectedRows / 100, 60);
+
+            ConsoleLogger.Unicode.WriteLineHint($"Unable to save, failure {_failures}, wait {delay} seconds to mark as outlier");
 
             ConsoleLogger.Unicode.WriteLineHint(ex.Message);
 
             ConsoleLogger.Unicode.WriteLineHint(ex.StackTrace);
 
             await Task.Delay(TimeSpan.FromSeconds(delay));
+        }
+
+        if (_failures > MaxFailures)
+        {
+            throw new Exception($"Failures limit exceeded, rows {expectedRows}, variant {variant}, failures {_failures}");
         }
 
         RecreateContext();
