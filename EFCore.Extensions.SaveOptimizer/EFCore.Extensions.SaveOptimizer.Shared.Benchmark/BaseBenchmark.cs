@@ -83,7 +83,7 @@ public abstract class BaseBenchmark
 
         var shouldRecreate = false;
 
-        var description = $"{Database} {Operation} {Variant} / {Rows / 100}".Trim();
+        var description = $"{Database} {Operation} {Variant} / {Rows / 1000}".Trim();
 
         if (dir != null)
         {
