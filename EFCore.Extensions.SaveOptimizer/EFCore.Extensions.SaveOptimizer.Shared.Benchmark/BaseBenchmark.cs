@@ -1,4 +1,5 @@
 ﻿using System.Management.Automation;
+using System.Text;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Loggers;
 using EFCore.Extensions.SaveOptimizer.Shared.Benchmark.Exporter;
@@ -27,8 +28,8 @@ public abstract class BaseBenchmark
     public async Task Setup()
     {
         ConsoleLogger.Unicode.WriteLineHint($"Setup {GetDescription()}");
-        
-        StartContainer();
+
+        RestartContainer();
 
         Context = _contextResolver.Resolve();
 
@@ -74,8 +75,41 @@ public abstract class BaseBenchmark
 
             Context.Dispose();
         }
+    }
+
+    private void RestartContainer()
+    {
+        DirectoryInfo? dir = GetScriptsDirectory();
+
+        var shouldRecreate = false;
+
+        var description = $"{Database} {Operation} {Variant} / {Rows / 100}".Trim();
+
+        if (dir != null)
+        {
+            FileInfo fi = new(Path.Combine(dir.FullName, "bin", "check.txt"));
+
+            if (fi.Exists)
+            {
+                var content = File.ReadAllText(fi.FullName).Trim();
+
+                if (content != description)
+                {
+                    shouldRecreate = true;
+                }
+            }
+
+            File.WriteAllLines(fi.FullName, new[] { description }, Encoding.UTF8);
+        }
+
+        if (!shouldRecreate)
+        {
+            return;
+        }
 
         StopContainer();
+
+        StartContainer();
     }
 
     private static void StartContainer()

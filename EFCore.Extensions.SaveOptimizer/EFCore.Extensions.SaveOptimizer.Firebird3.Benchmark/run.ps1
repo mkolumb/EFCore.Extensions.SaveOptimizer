@@ -16,4 +16,11 @@ $workingDir = $(Get-Location).Path
 
 Set-Location $workingDir
 
+Set-Location $workingDir
+.\start.ps1
+
+Set-Location $workingDir
 dotnet run -c release
+
+Set-Location $workingDir
+.\stop.ps1
