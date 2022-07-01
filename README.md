@@ -150,8 +150,9 @@ Intel Core i7-8850H CPU 2.60GHz (Coffee Lake), 1 CPU, 12 logical and 6 physical 
 .NET SDK=6.0.301
   [Host]     : .NET 6.0.6 (6.0.622.26707), X64 RyuJIT
 
-InvocationCount=12  IterationCount=12  LaunchCount=8  
-RunStrategy=Monitoring  UnrollFactor=1  WarmupCount=2  
+EvaluateOverhead=True  OutlierMode=RemoveUpper  
+InvocationCount=1  IterationCount=20  LaunchCount=3  
+RunStrategy=ColdStart  UnrollFactor=1  WarmupCount=0  
 
 ```
 
