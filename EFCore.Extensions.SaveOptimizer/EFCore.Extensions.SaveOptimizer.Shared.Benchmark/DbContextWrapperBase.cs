@@ -2,6 +2,7 @@
 using BenchmarkDotNet.Loggers;
 using EFCore.Extensions.SaveOptimizer.Dapper;
 using EFCore.Extensions.SaveOptimizer.Model;
+using EFCore.Extensions.SaveOptimizer.Shared.Benchmark.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
@@ -91,11 +92,11 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
 
             double delay = Math.Max(expectedRows / 1000, 5);
 
-            ConsoleLogger.Unicode.WriteLineHint($"Unable to save, failure {_failures}, wait {delay} seconds to mark as outlier");
+            ConsoleLogger.Unicode.WriteLineWithDate($"Unable to save, failure {_failures}, wait {delay} seconds to mark as outlier");
 
-            ConsoleLogger.Unicode.WriteLineHint(ex.Message);
+            ConsoleLogger.Unicode.WriteLineWithDate(ex.Message);
 
-            ConsoleLogger.Unicode.WriteLineHint(ex.StackTrace);
+            ConsoleLogger.Unicode.WriteLineWithDate(ex.StackTrace);
 
             await Task.Delay(TimeSpan.FromSeconds(delay));
         }
@@ -136,7 +137,7 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
             }
             catch
             {
-                ConsoleLogger.Unicode.WriteLineHint($"Retry number {i} {method.Method.Name}");
+                ConsoleLogger.Unicode.WriteLineWithDate($"Retry number {i} {method.Method.Name}");
 
                 await Task.Delay(TimeSpan.Zero);
 
@@ -151,7 +152,7 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
 
     private async Task TrySeed(long count, int repeat, IsolationLevel isolationLevel)
     {
-        ConsoleLogger.Unicode.WriteLineHint($"Try seed {count} * {repeat} / {isolationLevel}");
+        ConsoleLogger.Unicode.WriteLineWithDate($"Try seed {count} * {repeat} / {isolationLevel}");
 
         for (var j = 0; j < Math.Max(repeat, 1); j++)
         {

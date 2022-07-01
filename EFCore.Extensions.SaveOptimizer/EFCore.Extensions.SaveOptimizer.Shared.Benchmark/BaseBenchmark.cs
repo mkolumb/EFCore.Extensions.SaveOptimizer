@@ -3,6 +3,7 @@ using System.Text;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Loggers;
 using EFCore.Extensions.SaveOptimizer.Shared.Benchmark.Exporter;
+using EFCore.Extensions.SaveOptimizer.Shared.Benchmark.Extensions;
 
 namespace EFCore.Extensions.SaveOptimizer.Shared.Benchmark;
 
@@ -28,7 +29,7 @@ public abstract class BaseBenchmark
     [GlobalSetup]
     public async Task Setup()
     {
-        ConsoleLogger.Unicode.WriteLineHint($"Setup {GetDescription()}");
+        ConsoleLogger.Unicode.WriteLineWithDate($"Setup {GetDescription()}");
 
         RestartContainer();
 
@@ -49,11 +50,11 @@ public abstract class BaseBenchmark
             }
             catch (Exception ex)
             {
-                ConsoleLogger.Unicode.WriteLineHint($"Error when creating context for {GetDescription()}, try {i}");
+                ConsoleLogger.Unicode.WriteLineWithDate($"Error when creating context for {GetDescription()}, try {i}");
 
-                ConsoleLogger.Unicode.WriteLineHint(ex.Message);
+                ConsoleLogger.Unicode.WriteLineWithDate(ex.Message);
 
-                ConsoleLogger.Unicode.WriteLineHint(ex.StackTrace);
+                ConsoleLogger.Unicode.WriteLineWithDate(ex.StackTrace);
 
                 await Task.Delay(TimeSpan.FromSeconds(15));
             }
@@ -69,7 +70,7 @@ public abstract class BaseBenchmark
     {
         Iterations++;
 
-        ConsoleLogger.Unicode.WriteLineHint($"Iteration setup {Iterations} {GetDescription()}");
+        ConsoleLogger.Unicode.WriteLineWithDate($"Iteration setup {Iterations} {GetDescription()}");
 
         var i = 0;
 
@@ -95,7 +96,7 @@ public abstract class BaseBenchmark
     [GlobalCleanup]
     public async Task Cleanup()
     {
-        ConsoleLogger.Unicode.WriteLineHint($"Cleanup {GetDescription()}");
+        ConsoleLogger.Unicode.WriteLineWithDate($"Cleanup {GetDescription()}");
 
         if (Context != null)
         {
@@ -170,9 +171,9 @@ public abstract class BaseBenchmark
 
         var cmd = $@"& '{path}'";
 
-        ConsoleLogger.Unicode.WriteLineHint($"Running {path}");
+        ConsoleLogger.Unicode.WriteLineWithDate($"Running {path}");
 
-        ConsoleLogger.Unicode.WriteLineHint(cmd);
+        ConsoleLogger.Unicode.WriteLineWithDate(cmd);
 
         using (PowerShell? powerShell = PowerShell.Create(RunspaceMode.NewRunspace))
         {
@@ -187,14 +188,14 @@ public abstract class BaseBenchmark
             powerShell.Invoke();
         }
 
-        ConsoleLogger.Unicode.WriteLineHint($"Finished {path}");
+        ConsoleLogger.Unicode.WriteLineWithDate($"Finished {path}");
     }
 
     private static void LogProgress<T>(object? sender, DataAddedEventArgs e)
     {
         T? data = (sender as PSDataCollection<T>)![e.Index];
 
-        ConsoleLogger.Unicode.WriteLineHint($"[{typeof(T).Name}] {Convert.ToString(data)}");
+        ConsoleLogger.Unicode.WriteLineWithDate($"[{typeof(T).Name}] {Convert.ToString(data)}");
     }
 
     private static DirectoryInfo? GetScriptsDirectory()
@@ -209,5 +210,5 @@ public abstract class BaseBenchmark
         return di;
     }
 
-    protected string GetDescription() => $"{Database} {Operation} {Variant} {Rows} {DateTimeOffset.UtcNow:T}";
+    protected string GetDescription() => $"{Database} {Operation} {Variant} {Rows}";
 }
