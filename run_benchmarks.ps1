@@ -20,25 +20,7 @@ git clean -fdX
 
 # stop all
 
-Set-Location .\EFCore.Extensions.SaveOptimizer\Containers
-
-docker compose --file cockroach.yml down
-
-docker compose --file cockroach_multi.yml down
-
-docker compose --file sqlserver.yml down
-
-docker compose --file postgres.yml down
-
-docker compose --file mysql_pomelo.yml down
-
-docker compose --file mariadb_pomelo.yml down
-
-docker compose --file firebird_3.yml down
-
-docker compose --file firebird_4.yml down
-
-docker compose --file oracle.yml down
+./remove_containers.ps1
 
 # solution
 Set-Location $workingDir
@@ -48,7 +30,7 @@ dotnet build -c Release
 # Cockroach Multi
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.CockroachMulti.Benchmark
-.\benchmark.ps1
+.\run.ps1
 
 # plots & logs
 Set-Location $workingDir
@@ -58,7 +40,7 @@ Set-Location $workingDir
 # Cockroach
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Cockroach.Benchmark
-.\benchmark.ps1
+.\run.ps1
 
 # plots & logs
 Set-Location $workingDir
@@ -68,7 +50,7 @@ Set-Location $workingDir
 # Oracle
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Oracle.Benchmark
-.\benchmark.ps1
+.\run.ps1
 
 # plots & logs
 Set-Location $workingDir
@@ -78,7 +60,7 @@ Set-Location $workingDir
 # Firebird4
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Firebird4.Benchmark
-.\benchmark.ps1
+.\run.ps1
 
 # plots & logs
 Set-Location $workingDir
@@ -88,7 +70,7 @@ Set-Location $workingDir
 # Firebird3
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Firebird3.Benchmark
-.\benchmark.ps1
+.\run.ps1
 
 # plots & logs
 Set-Location $workingDir
@@ -98,7 +80,7 @@ Set-Location $workingDir
 # PomeloMySql
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.PomeloMySql.Benchmark
-.\benchmark.ps1
+.\run.ps1
 
 # plots & logs
 Set-Location $workingDir
@@ -108,7 +90,7 @@ Set-Location $workingDir
 # PomeloMariaDb
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.PomeloMariaDb.Benchmark
-.\benchmark.ps1
+.\run.ps1
 
 # plots & logs
 Set-Location $workingDir
@@ -118,7 +100,7 @@ Set-Location $workingDir
 # Postgres
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Postgres.Benchmark
-.\benchmark.ps1
+.\run.ps1
 
 # plots & logs
 Set-Location $workingDir
@@ -128,7 +110,7 @@ Set-Location $workingDir
 # Sqlite
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Sqlite.Benchmark
-.\benchmark.ps1
+.\run.ps1
 
 # plots & logs
 Set-Location $workingDir
@@ -138,7 +120,7 @@ Set-Location $workingDir
 # SqlServer
 Set-Location $workingDir
 Set-Location .\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.SqlServer.Benchmark
-.\benchmark.ps1
+.\run.ps1
 
 # plots & logs
 Set-Location $workingDir

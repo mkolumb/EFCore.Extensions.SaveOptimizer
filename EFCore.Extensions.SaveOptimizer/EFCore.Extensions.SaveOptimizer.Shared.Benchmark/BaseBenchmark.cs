@@ -1,4 +1,5 @@
-﻿using BenchmarkDotNet.Attributes;
+﻿using System.Management.Automation;
+using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Loggers;
 using EFCore.Extensions.SaveOptimizer.Shared.Benchmark.Exporter;
 
@@ -26,6 +27,8 @@ public abstract class BaseBenchmark
     public async Task Setup()
     {
         ConsoleLogger.Unicode.WriteLineHint($"Setup {GetDescription()}");
+        
+        StartContainer();
 
         Context = _contextResolver.Resolve();
 
@@ -71,6 +74,77 @@ public abstract class BaseBenchmark
 
             Context.Dispose();
         }
+
+        StopContainer();
+    }
+
+    private static void StartContainer()
+    {
+        DirectoryInfo? di = GetScriptsDirectory();
+
+        if (di == null)
+        {
+            throw new ArgumentException("Unable to find proper PowerShell script");
+        }
+
+        RunScript(di, "start.ps1");
+    }
+
+    private static void StopContainer()
+    {
+        DirectoryInfo? di = GetScriptsDirectory();
+
+        if (di == null)
+        {
+            throw new ArgumentException("Unable to find proper PowerShell script");
+        }
+
+        RunScript(di, "stop.ps1");
+    }
+
+    private static void RunScript(FileSystemInfo di, string scriptPath)
+    {
+        var path = Path.Combine(di.FullName, scriptPath);
+
+        var cmd = $@"& '{path}'";
+
+        ConsoleLogger.Unicode.WriteLineHint($"Running {path}");
+
+        ConsoleLogger.Unicode.WriteLineHint(cmd);
+
+        using (PowerShell? powerShell = PowerShell.Create(RunspaceMode.NewRunspace))
+        {
+            powerShell.Streams.Information.DataAdded += LogProgress<InformationRecord>;
+            powerShell.Streams.Warning.DataAdded += LogProgress<WarningRecord>;
+            powerShell.Streams.Error.DataAdded += LogProgress<ErrorRecord>;
+            powerShell.Streams.Verbose.DataAdded += LogProgress<VerboseRecord>;
+            powerShell.Streams.Debug.DataAdded += LogProgress<DebugRecord>;
+
+            powerShell.AddScript(cmd);
+
+            powerShell.Invoke();
+        }
+
+        ConsoleLogger.Unicode.WriteLineHint($"Finished {path}");
+    }
+
+    private static void LogProgress<T>(object? sender, DataAddedEventArgs e)
+    {
+        T? data = (sender as PSDataCollection<T>)![e.Index];
+
+        ConsoleLogger.Unicode.WriteLineHint($"[{typeof(T).Name}] {Convert.ToString(data)}");
+    }
+
+    private static DirectoryInfo? GetScriptsDirectory()
+    {
+        DirectoryInfo? di = new(Directory.GetCurrentDirectory());
+
+        while (di != null && !di.EnumerateFiles("start.ps1").Any())
+        {
+            di = di.Parent;
+        }
+
+        return di;
     }
 
     protected string GetDescription() => $"{Database} {Operation} {Variant} {Rows} {DateTimeOffset.UtcNow:T}";

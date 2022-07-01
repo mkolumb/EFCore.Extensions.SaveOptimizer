@@ -1,4 +1,4 @@
-$ErrorActionPreference = "Stop"
+﻿$ErrorActionPreference = "Stop"
 
 # Ensure that is being run from dir where script locates (helpful when running on remote machine)
 
@@ -14,6 +14,15 @@ $workingDir = $(Get-Location).Path
 
 # script
 
-dotnet build -c release
+Set-Location $workingDir
 
-dotnet run -c release
+Set-Location ..
+
+Set-Location "Containers"
+
+Write-Host 'Stop container'
+Write-Host 'docker compose --file mariadb_pomelo.yml down'
+docker compose --file mariadb_pomelo.yml down
+Start-Sleep -Seconds 5
+docker volume prune --force
+Write-Host 'Finished stop container'

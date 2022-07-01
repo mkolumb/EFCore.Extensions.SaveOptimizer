@@ -1,4 +1,4 @@
-$ErrorActionPreference = "Stop"
+﻿$ErrorActionPreference = "Stop"
 
 # Ensure that is being run from dir where script locates (helpful when running on remote machine)
 
@@ -14,24 +14,14 @@ $workingDir = $(Get-Location).Path
 
 # script
 
-Set-Location ..
-
-Set-Location "Containers"
-
-docker compose --file sqlserver.yml up --detach
-
-Start-Sleep -Seconds 10
-
 Set-Location $workingDir
-
-dotnet build -c release
-
-dotnet run -c release
 
 Set-Location ..
 
 Set-Location "Containers"
 
-docker compose --file sqlserver.yml down
-
-Set-Location $workingDir
+Write-Host 'Start container'
+Write-Host 'docker compose --file oracle.yml up --detach'
+docker compose --file oracle.yml up --detach
+Start-Sleep -Seconds 5
+Write-Host 'Finished start container'

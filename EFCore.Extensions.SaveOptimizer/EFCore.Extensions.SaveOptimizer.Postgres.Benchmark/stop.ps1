@@ -1,4 +1,4 @@
-$ErrorActionPreference = "Stop"
+﻿$ErrorActionPreference = "Stop"
 
 # Ensure that is being run from dir where script locates (helpful when running on remote machine)
 
@@ -14,28 +14,15 @@ $workingDir = $(Get-Location).Path
 
 # script
 
-Set-Location ..
-
-Set-Location "Containers"
-
-docker compose --file cockroach_multi.yml up --detach
-
-Start-Sleep -Seconds 10
-
-docker exec -it optimizerroachmulti11 ./cockroach init --insecure
-
-Start-Sleep -Seconds 10
-
 Set-Location $workingDir
-
-dotnet build -c release
-
-dotnet run -c release
 
 Set-Location ..
 
 Set-Location "Containers"
 
-docker compose --file cockroach_multi.yml down
-
-Set-Location $workingDir
+Write-Host 'Stop container'
+Write-Host 'docker compose --file postgres.yml down'
+docker compose --file postgres.yml down
+Start-Sleep -Seconds 5
+docker volume prune --force
+Write-Host 'Finished stop container'
