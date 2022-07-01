@@ -25,4 +25,5 @@ Write-Host 'docker compose --file mariadb_pomelo.yml down'
 docker compose --file mariadb_pomelo.yml down
 Start-Sleep -Seconds 5
 docker volume prune --force
+Start-Sleep -Seconds 5
 Write-Host 'Finished stop container'

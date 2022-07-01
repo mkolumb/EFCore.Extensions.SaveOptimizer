@@ -37,5 +37,6 @@ docker compose --file firebird_4.yml down
 docker compose --file oracle.yml down
 
 docker volume prune --force
+Start-Sleep -Seconds 5
 
 Set-Location $workingDir

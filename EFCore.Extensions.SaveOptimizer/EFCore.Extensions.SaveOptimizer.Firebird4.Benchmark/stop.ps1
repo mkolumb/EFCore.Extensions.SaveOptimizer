@@ -25,4 +25,5 @@ Write-Host 'docker compose --file firebird_4.yml down'
 docker compose --file firebird_4.yml down
 Start-Sleep -Seconds 5
 docker volume prune --force
+Start-Sleep -Seconds 5
 Write-Host 'Finished stop container'

@@ -25,4 +25,5 @@ Write-Host 'docker compose --file cockroach_multi.yml down'
 docker compose --file cockroach_multi.yml down
 Start-Sleep -Seconds 5
 docker volume prune --force
+Start-Sleep -Seconds 5
 Write-Host 'Finished stop container'

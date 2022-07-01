@@ -23,5 +23,5 @@ Set-Location "Containers"
 Write-Host 'Start container'
 Write-Host 'docker compose --file oracle.yml up --detach'
 docker compose --file oracle.yml up --detach
-Start-Sleep -Seconds 5
+Start-Sleep -Seconds 15
 Write-Host 'Finished start container'

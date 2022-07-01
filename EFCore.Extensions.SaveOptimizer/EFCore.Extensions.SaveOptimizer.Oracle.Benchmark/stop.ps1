@@ -25,4 +25,5 @@ Write-Host 'docker compose --file oracle.yml down'
 docker compose --file oracle.yml down
 Start-Sleep -Seconds 5
 docker volume prune --force
+Start-Sleep -Seconds 5
 Write-Host 'Finished stop container'
