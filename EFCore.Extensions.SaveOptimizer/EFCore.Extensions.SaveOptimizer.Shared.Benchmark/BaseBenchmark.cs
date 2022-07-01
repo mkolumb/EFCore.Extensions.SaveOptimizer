@@ -9,6 +9,7 @@ namespace EFCore.Extensions.SaveOptimizer.Shared.Benchmark;
 public abstract class BaseBenchmark
 {
     private const int MaxPrepareTry = 5;
+
     private readonly IWrapperResolver _contextResolver;
     protected IDbContextWrapper? Context;
     protected int Iterations;
@@ -31,9 +32,36 @@ public abstract class BaseBenchmark
 
         RestartContainer();
 
-        Context = _contextResolver.Resolve();
+        Context = await GetContext();
 
         await Context.Seed(Rows * BenchmarkConfig.GetSeedRepeat(), 1);
+    }
+
+    private async Task<IDbContextWrapper> GetContext()
+    {
+        var i = 0;
+
+        while (i < MaxPrepareTry)
+        {
+            try
+            {
+                return _contextResolver.Resolve();
+            }
+            catch (Exception ex)
+            {
+                ConsoleLogger.Unicode.WriteLineHint($"Error when creating context for {GetDescription()}, try {i}");
+
+                ConsoleLogger.Unicode.WriteLineHint(ex.Message);
+
+                ConsoleLogger.Unicode.WriteLineHint(ex.StackTrace);
+
+                await Task.Delay(TimeSpan.FromSeconds(15));
+            }
+
+            i++;
+        }
+
+        throw new Exception("Unable to create context");
     }
 
     [IterationSetup]
