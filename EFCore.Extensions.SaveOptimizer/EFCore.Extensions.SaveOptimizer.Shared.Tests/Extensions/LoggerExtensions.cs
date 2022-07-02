@@ -8,6 +8,6 @@ public static class LoggerExtensions
     {
         DateTime date = DateTime.Now;
 
-        logger.Log(LogLevel.Information, "[{date:HH:mm:ss}] {text}", date, text);
+        logger.Log(LogLevel.Warning, "[{date:HH:mm:ss}] {text}", date, text);
     }
 }
