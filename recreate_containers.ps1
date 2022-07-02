@@ -42,7 +42,7 @@ docker compose --file oracle.yml up --detach
 
 Start-Sleep -Seconds 10
 
-docker exec -it optimizerroachmulti11 ./cockroach init --insecure
+docker compose --file cockroach_multi.yml exec optimizerroachmulti11 /cockroach/cockroach init --insecure
 
 Start-Sleep -Seconds 10
 

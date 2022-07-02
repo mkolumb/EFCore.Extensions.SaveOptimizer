@@ -8,7 +8,7 @@ namespace EFCore.Extensions.SaveOptimizer.Internal.Tests.QueryBuilders;
 public class MySqlQueryBuilderTests : BaseQueryBuilderTests
 {
     public MySqlQueryBuilderTests()
-        : base(new MySqlCompiler(), () => new MySqlQueryBuilder())
+        : base(new MySqlCompiler(), () => new MySqlQueryBuilder(null))
     {
     }
 }

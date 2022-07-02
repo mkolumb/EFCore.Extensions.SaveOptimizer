@@ -195,7 +195,7 @@ public class QueryPreparerService : IQueryPreparerService
 
         foreach (List<QueryDataModel> q in data)
         {
-            yield return _compilerService.Compile(q, providerName);
+            yield return _compilerService.Compile(q, providerName, configuration.BuilderConfiguration);
         }
     }
 

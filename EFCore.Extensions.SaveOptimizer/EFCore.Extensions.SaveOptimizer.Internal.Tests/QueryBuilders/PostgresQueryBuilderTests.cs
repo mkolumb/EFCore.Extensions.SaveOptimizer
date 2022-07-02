@@ -8,7 +8,7 @@ namespace EFCore.Extensions.SaveOptimizer.Internal.Tests.QueryBuilders;
 public class PostgresQueryBuilderTests : BaseQueryBuilderTests
 {
     public PostgresQueryBuilderTests()
-        : base(new PostgresCompiler(), () => new PostgresQueryBuilder())
+        : base(new PostgresCompiler(), () => new PostgresQueryBuilder(null))
     {
     }
 }

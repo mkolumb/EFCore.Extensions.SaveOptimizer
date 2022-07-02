@@ -8,7 +8,7 @@ namespace EFCore.Extensions.SaveOptimizer.Internal.Tests.QueryBuilders;
 public class FirebirdQueryBuilderTests : BaseQueryBuilderTests
 {
     public FirebirdQueryBuilderTests()
-        : base(new FirebirdCompiler(), () => new FirebirdQueryBuilder())
+        : base(new FirebirdCompiler(), () => new FirebirdQueryBuilder(null))
     {
     }
 }

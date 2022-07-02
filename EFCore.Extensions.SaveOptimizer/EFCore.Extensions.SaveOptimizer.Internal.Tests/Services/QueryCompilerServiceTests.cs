@@ -1,4 +1,5 @@
-﻿using EFCore.Extensions.SaveOptimizer.Internal.Exceptions;
+﻿using EFCore.Extensions.SaveOptimizer.Internal.Configuration;
+using EFCore.Extensions.SaveOptimizer.Internal.Exceptions;
 using EFCore.Extensions.SaveOptimizer.Internal.Factories;
 using EFCore.Extensions.SaveOptimizer.Internal.Models;
 using EFCore.Extensions.SaveOptimizer.Internal.QueryBuilders;
@@ -23,7 +24,7 @@ public class QueryCompilerServiceTests
     {
         Mock<IQueryBuilderFactory> resolver = new();
 
-        resolver.Setup(x => x.Query(It.IsAny<string>())).Returns(() => new PostgresQueryBuilder());
+        resolver.Setup(x => x.Query(It.IsAny<QueryBuilderConfiguration?>(), It.IsAny<string>())).Returns(() => new PostgresQueryBuilder(null));
 
         _target = new QueryCompilerService(resolver.Object);
     }
@@ -41,7 +42,7 @@ public class QueryCompilerServiceTests
         };
 
         // Act
-        IEnumerable<ISqlCommandModel> result = _target.Compile(queryResults, string.Empty);
+        IEnumerable<ISqlCommandModel> result = _target.Compile(queryResults, string.Empty, null);
 
         // Assert
         result.Should().HaveCount(1);
@@ -68,7 +69,7 @@ public class QueryCompilerServiceTests
         };
 
         // Act
-        IEnumerable<ISqlCommandModel> result = _target.Compile(queryResults, string.Empty);
+        IEnumerable<ISqlCommandModel> result = _target.Compile(queryResults, string.Empty, null);
 
         // Assert
         result.Should().HaveCount(2);
@@ -110,7 +111,7 @@ public class QueryCompilerServiceTests
         };
 
         // Act
-        IEnumerable<ISqlCommandModel> result = _target.Compile(queryResults, string.Empty);
+        IEnumerable<ISqlCommandModel> result = _target.Compile(queryResults, string.Empty, null);
 
         // Assert
         result.Should().HaveCount(2);
@@ -150,7 +151,7 @@ public class QueryCompilerServiceTests
         };
 
         // Act
-        IEnumerable<ISqlCommandModel> result = _target.Compile(queryResults, string.Empty);
+        IEnumerable<ISqlCommandModel> result = _target.Compile(queryResults, string.Empty, null);
 
         // Assert
         result.Should().HaveCount(1);
@@ -175,7 +176,7 @@ public class QueryCompilerServiceTests
         };
 
         // Act
-        IEnumerable<ISqlCommandModel> result = _target.Compile(queryResults, string.Empty);
+        IEnumerable<ISqlCommandModel> result = _target.Compile(queryResults, string.Empty, null);
 
         // Assert
         result.Should().HaveCount(1);
@@ -197,7 +198,7 @@ public class QueryCompilerServiceTests
         };
 
         // Act
-        Action result = () => _target.Compile(queryResults, string.Empty);
+        Action result = () => _target.Compile(queryResults, string.Empty, null);
 
         // Assert
         result.Should().Throw<QueryCompileException>();
@@ -216,7 +217,7 @@ public class QueryCompilerServiceTests
         };
 
         // Act
-        IEnumerable<ISqlCommandModel> result = _target.Compile(queryResults, string.Empty);
+        IEnumerable<ISqlCommandModel> result = _target.Compile(queryResults, string.Empty, null);
 
         // Assert
         result.Should().HaveCount(2);
@@ -239,7 +240,7 @@ public class QueryCompilerServiceTests
         };
 
         // Act
-        Action result = () => _target.Compile(queryResults, string.Empty);
+        Action result = () => _target.Compile(queryResults, string.Empty, null);
 
         // Assert
         result.Should().Throw<QueryCompileException>();
@@ -258,7 +259,7 @@ public class QueryCompilerServiceTests
         };
 
         // Act
-        Action result = () => _target.Compile(queryResults, string.Empty);
+        Action result = () => _target.Compile(queryResults, string.Empty, null);
 
         // Assert
         result.Should().Throw<QueryCompileException>();
@@ -277,7 +278,7 @@ public class QueryCompilerServiceTests
         };
 
         // Act
-        Action result = () => _target.Compile(queryResults, string.Empty);
+        Action result = () => _target.Compile(queryResults, string.Empty, null);
 
         // Assert
         result.Should().Throw<QueryCompileException>();
@@ -296,7 +297,7 @@ public class QueryCompilerServiceTests
         };
 
         // Act
-        Action result = () => _target.Compile(queryResults, string.Empty);
+        Action result = () => _target.Compile(queryResults, string.Empty, null);
 
         // Assert
         result.Should().Throw<QueryCompileException>();
@@ -317,7 +318,7 @@ public class QueryCompilerServiceTests
         };
 
         // Act
-        IEnumerable<ISqlCommandModel> result = _target.Compile(queryResults, string.Empty);
+        IEnumerable<ISqlCommandModel> result = _target.Compile(queryResults, string.Empty, null);
 
         // Assert
         result.Should().HaveCount(2);
@@ -356,7 +357,7 @@ public class QueryCompilerServiceTests
         };
 
         // Act
-        IEnumerable<ISqlCommandModel> result = _target.Compile(queryResults, string.Empty);
+        IEnumerable<ISqlCommandModel> result = _target.Compile(queryResults, string.Empty, null);
 
         // Assert
         result.Should().HaveCount(3);
@@ -405,7 +406,7 @@ public class QueryCompilerServiceTests
         };
 
         // Act
-        IEnumerable<ISqlCommandModel> result = _target.Compile(queryResults, string.Empty);
+        IEnumerable<ISqlCommandModel> result = _target.Compile(queryResults, string.Empty, null);
 
         // Assert
         result.Should().HaveCount(4);
@@ -480,7 +481,7 @@ public class QueryCompilerServiceTests
         };
 
         // Act
-        IEnumerable<ISqlCommandModel> result = _target.Compile(queryResults, string.Empty);
+        IEnumerable<ISqlCommandModel> result = _target.Compile(queryResults, string.Empty, null);
 
         // Assert
         result.Should().HaveCount(4);
@@ -549,7 +550,7 @@ public class QueryCompilerServiceTests
         };
 
         // Act
-        IEnumerable<ISqlCommandModel> result = _target.Compile(queryResults, string.Empty);
+        IEnumerable<ISqlCommandModel> result = _target.Compile(queryResults, string.Empty, null);
 
         // Assert
         result.Should().HaveCount(2);

@@ -8,7 +8,7 @@ namespace EFCore.Extensions.SaveOptimizer.Internal.Tests.QueryBuilders;
 public class SqlServerQueryBuilderTests : BaseQueryBuilderTests
 {
     public SqlServerQueryBuilderTests()
-        : base(new SqlServerCompiler { UseLegacyPagination = false }, () => new SqlServerQueryBuilder())
+        : base(new SqlServerCompiler { UseLegacyPagination = false }, () => new SqlServerQueryBuilder(null))
     {
     }
 }

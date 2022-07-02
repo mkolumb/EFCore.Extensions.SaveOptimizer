@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using EFCore.Extensions.SaveOptimizer.Internal.Configuration;
 using EFCore.Extensions.SaveOptimizer.Internal.Enums;
 using EFCore.Extensions.SaveOptimizer.Internal.Models;
 
@@ -38,7 +39,7 @@ public class OracleAllQueryBuilder : BaseQueryBuilder
 
     private bool _insertAll;
 
-    public OracleAllQueryBuilder() : base(Clauses)
+    public OracleAllQueryBuilder(QueryBuilderConfiguration? configuration) : base(Clauses, configuration)
     {
     }
 

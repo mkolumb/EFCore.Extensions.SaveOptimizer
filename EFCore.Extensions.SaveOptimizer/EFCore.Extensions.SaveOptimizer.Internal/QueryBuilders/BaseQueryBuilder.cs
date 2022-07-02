@@ -15,7 +15,7 @@ public abstract class BaseQueryBuilder : IQueryBuilder
     protected bool WhereAdded;
 
     protected BaseQueryBuilder(IReadOnlyDictionary<ClauseType, string> clausesConfiguration,
-        QueryBuilderConfiguration? configuration = null)
+        QueryBuilderConfiguration? configuration)
     {
         ClausesConfiguration = clausesConfiguration;
         Configuration = configuration ?? new QueryBuilderConfiguration();

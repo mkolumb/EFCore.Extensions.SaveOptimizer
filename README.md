@@ -68,6 +68,7 @@ Please note it is not working exactly as SaveChanges, so you should verify it wo
   - Concurrency token behavior
   - Batch size
   - Auto transaction behavior
+  - Parameter distinct behavior
 - Support for
   - Different cultures
   - Interceptors

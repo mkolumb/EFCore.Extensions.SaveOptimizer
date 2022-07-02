@@ -1,4 +1,5 @@
-﻿using EFCore.Extensions.SaveOptimizer.Internal.Enums;
+﻿using EFCore.Extensions.SaveOptimizer.Internal.Configuration;
+using EFCore.Extensions.SaveOptimizer.Internal.Enums;
 
 namespace EFCore.Extensions.SaveOptimizer.Internal.QueryBuilders;
 
@@ -31,7 +32,7 @@ public class FirebirdQueryBuilder : BaseQueryBuilder
         { ClauseType.QueryEnding, ";" }
     };
 
-    public FirebirdQueryBuilder() : base(Clauses)
+    public FirebirdQueryBuilder(QueryBuilderConfiguration? configuration) : base(Clauses, configuration)
     {
     }
 }

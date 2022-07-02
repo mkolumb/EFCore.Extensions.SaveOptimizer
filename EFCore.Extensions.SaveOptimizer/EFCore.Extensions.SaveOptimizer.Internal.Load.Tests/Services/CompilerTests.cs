@@ -47,7 +47,7 @@ public class CompilerTests
 
             _testOutputHelper.WriteLine($"start insert {insertStart}");
 
-            insertCount += queryCompiler.Compile(batches[EntityState.Added], "InMemory").Count();
+            insertCount += queryCompiler.Compile(batches[EntityState.Added], "InMemory", null).Count();
 
             DateTime insertEnd = DateTime.Now;
 
@@ -57,7 +57,7 @@ public class CompilerTests
 
             _testOutputHelper.WriteLine($"start update {updateStart}");
 
-            updateCount += queryCompiler.Compile(batches[EntityState.Modified], "InMemory").Count();
+            updateCount += queryCompiler.Compile(batches[EntityState.Modified], "InMemory", null).Count();
 
             DateTime updateEnd = DateTime.Now;
 
@@ -67,7 +67,7 @@ public class CompilerTests
 
             _testOutputHelper.WriteLine($"start delete {deleteStart}");
 
-            deleteCount += queryCompiler.Compile(batches[EntityState.Deleted], "InMemory").Count();
+            deleteCount += queryCompiler.Compile(batches[EntityState.Deleted], "InMemory", null).Count();
 
             DateTime deleteEnd = DateTime.Now;
 

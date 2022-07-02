@@ -8,7 +8,7 @@ namespace EFCore.Extensions.SaveOptimizer.Internal.Tests.QueryBuilders;
 public class SqliteQueryBuilderTests : BaseQueryBuilderTests
 {
     public SqliteQueryBuilderTests()
-        : base(new SqliteCompiler(), () => new SqliteQueryBuilder())
+        : base(new SqliteCompiler(), () => new SqliteQueryBuilder(null))
     {
     }
 }

@@ -1,4 +1,5 @@
-﻿using EFCore.Extensions.SaveOptimizer.Internal.Enums;
+﻿using EFCore.Extensions.SaveOptimizer.Internal.Configuration;
+using EFCore.Extensions.SaveOptimizer.Internal.Enums;
 
 namespace EFCore.Extensions.SaveOptimizer.Internal.QueryBuilders;
 
@@ -31,7 +32,7 @@ public class PostgresQueryBuilder : BaseQueryBuilder
         { ClauseType.QueryEnding, ";" }
     };
 
-    public PostgresQueryBuilder() : base(Clauses)
+    public PostgresQueryBuilder(QueryBuilderConfiguration? configuration) : base(Clauses, configuration)
     {
     }
 }

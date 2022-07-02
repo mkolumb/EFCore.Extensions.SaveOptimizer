@@ -8,7 +8,7 @@ namespace EFCore.Extensions.SaveOptimizer.Internal.Tests.QueryBuilders;
 public class OracleQueryBuilderTests : BaseQueryBuilderTests
 {
     public OracleQueryBuilderTests()
-        : base(new OracleCompiler(), () => new OracleQueryBuilder())
+        : base(new OracleCompiler(), () => new OracleQueryBuilder(null))
     {
     }
 }

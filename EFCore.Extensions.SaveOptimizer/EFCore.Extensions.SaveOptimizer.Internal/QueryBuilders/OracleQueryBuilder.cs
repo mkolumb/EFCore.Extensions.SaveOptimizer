@@ -1,4 +1,5 @@
-﻿using EFCore.Extensions.SaveOptimizer.Internal.Enums;
+﻿using EFCore.Extensions.SaveOptimizer.Internal.Configuration;
+using EFCore.Extensions.SaveOptimizer.Internal.Enums;
 
 namespace EFCore.Extensions.SaveOptimizer.Internal.QueryBuilders;
 
@@ -31,7 +32,7 @@ public class OracleQueryBuilder : BaseQueryBuilder
         { ClauseType.QueryEnding, "" }
     };
 
-    public OracleQueryBuilder() : base(Clauses)
+    public OracleQueryBuilder(QueryBuilderConfiguration? configuration) : base(Clauses, configuration)
     {
     }
 }

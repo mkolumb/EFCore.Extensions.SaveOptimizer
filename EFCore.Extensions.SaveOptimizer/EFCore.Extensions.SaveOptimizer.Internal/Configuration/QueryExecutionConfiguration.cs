@@ -11,4 +11,6 @@ public class QueryExecutionConfiguration
     public int? DeleteBatchSize { get; set; }
 
     public int? ParametersLimit { get; set; }
+
+    public QueryBuilderConfiguration? BuilderConfiguration { get; set; }
 }
