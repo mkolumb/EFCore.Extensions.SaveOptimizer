@@ -3,6 +3,7 @@ using EFCore.Extensions.SaveOptimizer.Dapper;
 using EFCore.Extensions.SaveOptimizer.Internal.Configuration;
 using EFCore.Extensions.SaveOptimizer.Internal.Constants;
 using EFCore.Extensions.SaveOptimizer.Model;
+using EFCore.Extensions.SaveOptimizer.Shared.Tests.Extensions;
 using EFCore.Extensions.SaveOptimizer.TestLogger;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -13,7 +14,10 @@ namespace EFCore.Extensions.SaveOptimizer.Shared.Tests;
 
 public sealed class DbContextWrapper : IDisposable
 {
+    private const int RunTry = 10;
+
     private readonly ITestTimeDbContextFactory<EntitiesContext> _factory;
+    private readonly ILogger _logger;
     private readonly ILoggerFactory _loggerFactory;
 
     public EntitiesContext Context { get; private set; }
@@ -24,6 +28,7 @@ public sealed class DbContextWrapper : IDisposable
         _loggerFactory = new LoggerFactory(new[] { new TestLoggerProvider(testOutputHelper, LogLevel.Warning) });
 
         Context = _factory.CreateDbContext(Array.Empty<string>(), _loggerFactory);
+        _logger = _loggerFactory.CreateLogger(nameof(DbContextWrapper));
     }
 
     public void Dispose() => Context.Dispose();
@@ -44,6 +49,16 @@ public sealed class DbContextWrapper : IDisposable
 
     public async Task Save(SaveVariant variant, int batchSize = InternalConstants.DefaultBatchSize)
     {
+        await Run(RunTry, () => TrySave(variant, batchSize));
+
+        if ((variant & SaveVariant.Recreate) != 0)
+        {
+            RecreateContext();
+        }
+    }
+
+    private async Task TrySave(SaveVariant variant, int batchSize)
+    {
         async Task InternalSave()
         {
             if ((variant & SaveVariant.Optimized) != 0)
@@ -52,7 +67,8 @@ public sealed class DbContextWrapper : IDisposable
             }
             else if ((variant & SaveVariant.OptimizedDapper) != 0)
             {
-                await Context.SaveChangesDapperOptimizedAsync(new QueryExecutionConfiguration { BatchSize = batchSize });
+                await Context.SaveChangesDapperOptimizedAsync(
+                    new QueryExecutionConfiguration { BatchSize = batchSize });
             }
             else if ((variant & SaveVariant.EfCore) != 0)
             {
@@ -73,10 +89,30 @@ public sealed class DbContextWrapper : IDisposable
         {
             await InternalSave();
         }
+    }
 
-        if ((variant & SaveVariant.Recreate) != 0)
+    private async Task Run(int max, Func<Task> method)
+    {
+        var i = 0;
+
+        while (i < max)
         {
-            RecreateContext();
+            try
+            {
+                await method();
+
+                return;
+            }
+            catch
+            {
+                _logger.LogWithDate($"Retry number {i} {method.Method.Name}");
+
+                await Task.Delay(TimeSpan.FromSeconds(2));
+
+                i++;
+            }
         }
+
+        throw new Exception("Unable to run method");
     }
 }
