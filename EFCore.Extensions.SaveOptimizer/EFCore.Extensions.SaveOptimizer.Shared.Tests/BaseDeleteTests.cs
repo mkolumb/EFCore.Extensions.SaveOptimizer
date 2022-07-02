@@ -1,4 +1,5 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Model;
+using EFCore.Extensions.SaveOptimizer.Shared.Tests.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Xunit.Abstractions;
@@ -42,7 +43,7 @@ public abstract class BaseDeleteTests
         await db.Save(variant);
 
         NonRelatedEntity[] result =
-            await db.Context.NonRelatedEntities.OrderBy(x => x.SomeNonNullableIntProperty).ToArrayAsync();
+            await db.Context.NonRelatedEntities.OrderBy(x => x.SomeNonNullableIntProperty).ToArrayWithRetry();
 
         var newState = JsonConvert.SerializeObject(result);
 
@@ -67,7 +68,7 @@ public abstract class BaseDeleteTests
         await db.Save(variant);
 
         NonRelatedEntity[] result =
-            await db.Context.NonRelatedEntities.OrderBy(x => x.SomeNonNullableIntProperty).ToArrayAsync();
+            await db.Context.NonRelatedEntities.OrderBy(x => x.SomeNonNullableIntProperty).ToArrayWithRetry();
 
         // Assert
         result.Should().HaveCount(2);
@@ -93,7 +94,7 @@ public abstract class BaseDeleteTests
         await db.Save(variant);
 
         NonRelatedEntity[] result =
-            await db.Context.NonRelatedEntities.OrderBy(x => x.SomeNonNullableIntProperty).ToArrayAsync();
+            await db.Context.NonRelatedEntities.OrderBy(x => x.SomeNonNullableIntProperty).ToArrayWithRetry();
 
         var nonNullableIntProperties = result.Select(x => x.SomeNonNullableIntProperty).ToArray();
 
@@ -111,7 +112,7 @@ public abstract class BaseDeleteTests
 
         await db.Save(variant);
 
-        return await db.Context.NonRelatedEntities.OrderBy(x => x.SomeNonNullableIntProperty).ToArrayAsync();
+        return await db.Context.NonRelatedEntities.OrderBy(x => x.SomeNonNullableIntProperty).ToArrayWithRetry();
     }
 
     private static NonRelatedEntity ItemResolver(int i) =>

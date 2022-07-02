@@ -1,4 +1,5 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Model;
+using EFCore.Extensions.SaveOptimizer.Shared.Tests.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Xunit.Abstractions;
@@ -42,7 +43,7 @@ public abstract class BaseUpdateTests
         await db.Save(variant);
 
         NonRelatedEntity[] result =
-            await db.Context.NonRelatedEntities.OrderBy(x => x.NonRelatedEntityId).ToArrayAsync();
+            await db.Context.NonRelatedEntities.OrderBy(x => x.NonRelatedEntityId).ToArrayWithRetry();
 
         var newState = JsonConvert.SerializeObject(result);
 
@@ -67,7 +68,7 @@ public abstract class BaseUpdateTests
         await db.Save(variant);
 
         NonRelatedEntity[] result =
-            await db.Context.NonRelatedEntities.OrderBy(x => x.NonRelatedEntityId).ToArrayAsync();
+            await db.Context.NonRelatedEntities.OrderBy(x => x.NonRelatedEntityId).ToArrayWithRetry();
 
         // Assert
         result.Should().HaveCount(3);
@@ -104,7 +105,7 @@ public abstract class BaseUpdateTests
         await db.Save(variant);
 
         NonRelatedEntity[] result =
-            await db.Context.NonRelatedEntities.OrderBy(x => x.NonRelatedEntityId).ToArrayAsync();
+            await db.Context.NonRelatedEntities.OrderBy(x => x.NonRelatedEntityId).ToArrayWithRetry();
 
         var nullableIntProperties = result.Select(x => x.SomeNullableIntProperty).ToArray();
 
@@ -152,7 +153,7 @@ public abstract class BaseUpdateTests
         await db.Save(variant);
 
         NonRelatedEntity[] result =
-            await db.Context.NonRelatedEntities.OrderBy(x => x.NonRelatedEntityId).ToArrayAsync();
+            await db.Context.NonRelatedEntities.OrderBy(x => x.NonRelatedEntityId).ToArrayWithRetry();
 
         var nullableIntProperties = result.Select(x => x.SomeNullableIntProperty).ToArray();
 
@@ -185,7 +186,7 @@ public abstract class BaseUpdateTests
 
         await db.Save(variant);
 
-        return await db.Context.NonRelatedEntities.OrderBy(x => x.NonRelatedEntityId).ToArrayAsync();
+        return await db.Context.NonRelatedEntities.OrderBy(x => x.NonRelatedEntityId).ToArrayWithRetry();
     }
 
     private static NonRelatedEntity ItemResolver(int i) =>

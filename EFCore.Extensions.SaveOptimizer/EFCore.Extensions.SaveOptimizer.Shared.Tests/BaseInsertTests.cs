@@ -1,4 +1,5 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Model;
+using EFCore.Extensions.SaveOptimizer.Shared.Tests.Extensions;
 using FluentAssertions.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Xunit.Abstractions;
@@ -43,7 +44,7 @@ public abstract class BaseInsertTests
         var properties = await db.Context.NonRelatedEntities
             .Select(x => x.SomeNonNullableStringProperty)
             .Distinct()
-            .ToArrayAsync();
+            .ToArrayWithRetry();
 
         // Assert
         result.Should().Be(count);
