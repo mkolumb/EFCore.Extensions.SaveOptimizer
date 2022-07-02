@@ -17,8 +17,22 @@ Target.create "Clean" (fun _ -> !! "**/bin" ++ "**/obj" |> Shell.cleanDirs)
 
 Target.create "SolutionBuild" (fun _ -> !! "**/*.sln" |> Seq.iter (DotNet.build id))
 
+Target.create "InternalTests" (fun _ ->
+    !! "**/*Internal*.Tests.csproj"
+    |> Seq.iter (DotNet.test id))
+
+Target.create "DbTest" (fun _ ->
+    (!! "**/*.Tests.csproj"
+     -- "**/*Internal*.Tests.csproj"
+     -- "**/*Shared*.Tests.csproj")
+    |> Seq.iter (DotNet.test id))
+
 Target.create "All" ignore
 
-"Clean" ==> "SolutionBuild" ==> "All"
+"Clean"
+==> "SolutionBuild"
+==> "InternalTests"
+==> "DbTest"
+==> "All"
 
 Target.runOrDefault "All"
