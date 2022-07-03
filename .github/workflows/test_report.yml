@@ -1,7 +1,8 @@
-name: "TestReport"
-on:
+name: Test Report
+'on':
   workflow_run:
-    workflows: ["Build"]
+    workflows:
+      - Build
     types:
       - completed
 jobs:
@@ -12,5 +13,5 @@ jobs:
         with:
           artifact: test-results
           name: Optimizer tests
-          path: "*.trx"
+          path: '*.trx'
           reporter: dotnet-trx
