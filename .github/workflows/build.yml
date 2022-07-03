@@ -25,6 +25,19 @@ jobs:
     steps:
       - name: Get the sources
         uses: actions/checkout@v3
+      - name: Find Tag
+        id: tagger
+        uses: jimschubert/query-tag-action@v1
+        with:
+          include: '*'
+          exclude: '*-rc*'
+          commit-ish: 'HEAD~'
+          # if you unshallow in a separate step, use the following option:
+          # skip-unshallow: 'true'
+      - name: Show Tag
+        id: display
+        run: |
+          echo 'Output from Find Tag: ${{steps.tagger.outputs.tag}}'
       - name: Fetch all history for all tags and branches
         run: git fetch --prune --unshallow
       - name: Install .NET SDK
@@ -33,14 +46,14 @@ jobs:
           dotnet-version: "${{ env.DOTNET_VERSION }}"
       - name: Install Dotnet Tools
         run: dotnet tool restore
-      - name: Run FAKE build
-        run: dotnet fake build
+      # - name: Run FAKE build
+      #   run: dotnet fake build
       - name: Run FAKE pack
         run: |
           arrTag=(${GITHUB_REF//\// })
           VERSION=${{steps.tagger.outputs.tag}}
           echo Version: $VERSION
-          VERSION="${VERSION//v}-${GITHUB_RUN_ID}"
+          VERSION="${VERSION}-${GITHUB_RUN_ID}"
           echo Clean Version: $VERSION
           dotnet fake build -t pack -e PACKAGE_VERSION=$VERSION
   prerelease:
