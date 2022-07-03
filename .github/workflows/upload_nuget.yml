@@ -1,17 +1,20 @@
 name: Upload Nuget
-'on':
+"on":
   workflow_run:
     workflows:
       - Build
     types:
       - completed
+    branches:
+      - main
+      - develop
 env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
   DOTNET_CLI_TELEMETRY_OPTOUT: true
   DOTNET_VERSION: 6.0.301
-  GITHUB_FEED: 'https://nuget.pkg.github.com/mkolumb/index.json'
+  GITHUB_FEED: "https://nuget.pkg.github.com/mkolumb/index.json"
   GITHUB_USER: mkolumb
-  GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+  GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 jobs:
   prerelease:
     needs: build
