@@ -1,11 +1,7 @@
 #r "paket:
 nuget Fake.DotNet.Cli
 nuget Fake.IO.FileSystem
-nuget Fake.Core.Target
-nuget Microsoft.PowerShell.SDK
-nuget Microsoft.Management.Infrastructure
-nuget Microsoft.Management.Infrastructure.CimCmdlets
-nuget System.Management.Automation //"
+nuget Fake.Core.Target //"
 #load ".fake/build.fsx/intellisense.fsx"
 
 open Fake.Core
@@ -14,7 +10,6 @@ open Fake.IO
 open Fake.IO.FileSystemOperators
 open Fake.IO.Globbing.Operators
 open Fake.Core.TargetOperators
-open System.Management.Automation
 
 Target.initEnvironment ()
 
@@ -22,11 +17,10 @@ let scriptRun =
     fun path ->
         Trace.log ("Running script: " + path)
 
-        PowerShell
-            .Create()
-            .AddScript("& '" + path + "'")
-            .Invoke()
-        |> Seq.iter (printfn "%O")
+        Command.RawCommand("pwsh", Arguments.OfArgs [ "-File"; path ])
+        |> CreateProcess.fromCommand
+        |> Proc.run
+        |> ignore
 
 let testRun =
     fun path ->
