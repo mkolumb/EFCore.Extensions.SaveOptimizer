@@ -2,6 +2,9 @@
 
 public static class TheoryData
 {
+    private static bool IsLightMode => Environment.GetEnvironmentVariables().Contains("TEST_LOAD_MODE") &&
+                                       Environment.GetEnvironmentVariable("TEST_LOAD_MODE") == "LIGHT";
+
     public static IEnumerable<IEnumerable<object>> BaseWriteTheoryData
     {
         get
@@ -11,7 +14,10 @@ public static class TheoryData
             yield return new object[] { SaveVariant.Optimized | SaveVariant.Recreate };
             yield return new object[] { SaveVariant.Optimized | SaveVariant.Recreate | SaveVariant.WithTransaction };
             yield return new object[] { SaveVariant.OptimizedDapper | SaveVariant.Recreate };
-            yield return new object[] { SaveVariant.OptimizedDapper | SaveVariant.Recreate | SaveVariant.WithTransaction };
+            yield return new object[]
+            {
+                SaveVariant.OptimizedDapper | SaveVariant.Recreate | SaveVariant.WithTransaction
+            };
         }
     }
 
@@ -26,7 +32,19 @@ public static class TheoryData
                 yield return new[] { item, 1000, 1 };
                 yield return new[] { item, 1000, 2 };
                 yield return new[] { item, 1000, 10 };
+                yield return new[] { item, 1000, 100 };
+
+                if (IsLightMode)
+                {
+                    continue;
+                }
+
                 yield return new[] { item, 1000, 1000 };
+            }
+
+            if (IsLightMode)
+            {
+                yield break;
             }
 
             var excludedProviders = new[] { "Firebird", "Oracle" };

@@ -48,6 +48,12 @@ jobs:
         run: |
           VERSION="${{ env.RELEASE_VERSION }}-${GITHUB_RUN_ID}"
           dotnet fake build -t pack -e PACKAGE_VERSION=$VERSION
+      - name: Upload artifacts
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-artifact@v2
+        with:
+          name: nupkg
+          path: ./packages/*.nupkg
   prerelease:
     needs: build
     if: github.ref == 'refs/heads/develop'

@@ -32,22 +32,17 @@ let scriptRun =
         |> Proc.run
         |> ignore
 
-        Command.RawCommand(
-            "docker",
-            Arguments.OfArgs [ "image"
-                               "prune"
-                               "--all"
-                               "--force" ]
-        )
-        |> CreateProcess.fromCommand
-        |> Proc.run
-        |> ignore
-
 let testRun =
     fun path ->
         Trace.log ("Running test: " + path)
 
-        DotNet.test (fun o -> o) path
+        let dir = Shell.pwd ()
+        let settingsPath = Path.combine dir "github.runsettings"
+
+        let testConfiguration (defaults: DotNet.TestOptions) =
+            { defaults with Settings = Some(settingsPath) }
+
+        DotNet.test testConfiguration path
 
 let buildRun =
     fun path ->
