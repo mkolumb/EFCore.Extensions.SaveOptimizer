@@ -1,5 +1,5 @@
-name: Build
-"on":
+name: "Build"
+on:
   push:
     branches:
       - main
@@ -42,13 +42,21 @@ jobs:
           dotnet-version: "${{ env.DOTNET_VERSION }}"
       - name: Install Dotnet Tools
         run: dotnet tool restore
+      - name: Run FAKE pull images
+        run: dotnet fake build -t PullImages
       - name: Run FAKE build
         run: dotnet fake build
+      - name: Upload test artifacts
+        uses: actions/upload-artifact@v2  
+        if: success() || failure()        
+        with:
+          name: test-results
+          path: ./TestResults/*.trx
       - name: Run FAKE pack
         run: |
           VERSION="${{ env.RELEASE_VERSION }}-${GITHUB_RUN_ID}"
           dotnet fake build -t pack -e PACKAGE_VERSION=$VERSION
-      - name: Upload artifacts
+      - name: Upload nuget artifacts
         if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v2
         with:

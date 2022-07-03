@@ -80,6 +80,11 @@ Target.create "RemoveContainersAfter" (fun _ ->
     let path = Path.combine dir "remove_containers.ps1"
     scriptRun (path))
 
+Target.create "PullImages" (fun _ ->
+    let dir = Shell.pwd ()
+    let path = Path.combine dir "pull_images.ps1"
+    scriptRun (path))
+
 Target.create "SolutionBuild" (fun _ -> !! "**/*.sln" |> Seq.iter (buildRun))
 
 Target.create "InternalTests" (fun _ ->

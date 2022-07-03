@@ -1,0 +1,16 @@
+name: "TestReport"
+on:
+  workflow_run:
+    workflows: ["Build"]
+    types:
+      - completed
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: dorny/test-reporter@v1
+        with:
+          artifact: test-results
+          name: Optimizer tests
+          path: "*.trx"
+          reporter: dotnet-trx
