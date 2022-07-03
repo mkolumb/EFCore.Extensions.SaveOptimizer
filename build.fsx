@@ -2,7 +2,8 @@
 nuget Fake.DotNet.Cli
 nuget Fake.IO.FileSystem
 nuget Fake.Core.Target
-nuget Microsoft.PowerShell.SDK //"
+nuget Microsoft.PowerShell.SDK
+nuget Microsoft.Management.Infrastructure //"
 #load ".fake/build.fsx/intellisense.fsx"
 
 open Fake.Core
