@@ -171,8 +171,10 @@ Get-ChildItem -Filter "*report-*.md" | ForEach-Object {
 # generate plots
 Set-Location $workingDir
 Copy-Item -Path "BuildPlots.R" -Destination "$($exportDir)/BuildPlots.R"
+Copy-Item -Path "ScaleImages.R" -Destination "$($exportDir)/ScaleImages.R"
 Set-Location $exportDir
 Rscript.exe BuildPlots.R 
+Rscript.exe ScaleImages.R
 
 # cleanup
 Set-Location $exportDir

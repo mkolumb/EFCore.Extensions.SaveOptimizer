@@ -193,141 +193,141 @@ powershell -File run_benchmarks.ps1
 
 ##### [INSERT](/results/Cockroach.Insert-report-github.md)
 
-[![CockroachDB - single docker node INSERT](/results/Cockroach.Insert-barplot.png "CockroachDB - single docker node INSERT")](/results/Cockroach.Insert-report-github.md)
+[![CockroachDB - single docker node INSERT](/results/Cockroach.Insert-barplot-small.png "CockroachDB - single docker node INSERT")](/results/Cockroach.Insert-report-github.md)
 
 ##### [UPDATE](/results/Cockroach.Update-report-github.md)
 
-[![CockroachDB - single docker node UPDATE](/results/Cockroach.Update-barplot.png "CockroachDB - single docker node UPDATE")](/results/Cockroach.Update-report-github.md)
+[![CockroachDB - single docker node UPDATE](/results/Cockroach.Update-barplot-small.png "CockroachDB - single docker node UPDATE")](/results/Cockroach.Update-report-github.md)
 
 ##### [DELETE](/results/Cockroach.Delete-report-github.md)
 
-[![CockroachDB - single docker node DELETE](/results/Cockroach.Delete-barplot.png "CockroachDB - single docker node DELETE")](/results/Cockroach.Delete-report-github.md)
+[![CockroachDB - single docker node DELETE](/results/Cockroach.Delete-barplot-small.png "CockroachDB - single docker node DELETE")](/results/Cockroach.Delete-report-github.md)
 
 #### CockroachDB - nine docker nodes
 
 ##### [INSERT](/results/CockroachMulti.Insert-report-github.md)
 
-[![CockroachDB - nine docker nodes INSERT](/results/CockroachMulti.Insert-barplot.png "CockroachDB - nine docker nodes INSERT")](/results/CockroachMulti.Insert-report-github.md)
+[![CockroachDB - nine docker nodes INSERT](/results/CockroachMulti.Insert-barplot-small.png "CockroachDB - nine docker nodes INSERT")](/results/CockroachMulti.Insert-report-github.md)
 
 ##### [UPDATE](/results/CockroachMulti.Update-report-github.md)
 
-[![CockroachDB - nine docker nodes UPDATE](/results/CockroachMulti.Update-barplot.png "CockroachDB - nine docker nodes UPDATE")](/results/CockroachMulti.Update-report-github.md)
+[![CockroachDB - nine docker nodes UPDATE](/results/CockroachMulti.Update-barplot-small.png "CockroachDB - nine docker nodes UPDATE")](/results/CockroachMulti.Update-report-github.md)
 
 ##### [DELETE](/results/CockroachMulti.Delete-report-github.md)
 
-[![CockroachDB - nine docker nodes DELETE](/results/CockroachMulti.Delete-barplot.png "CockroachDB - nine docker nodes DELETE")](/results/CockroachMulti.Delete-report-github.md)
+[![CockroachDB - nine docker nodes DELETE](/results/CockroachMulti.Delete-barplot-small.png "CockroachDB - nine docker nodes DELETE")](/results/CockroachMulti.Delete-report-github.md)
 
 #### SQLite
 
 ##### [INSERT](/results/Sqlite.Insert-report-github.md)
 
-[![SQLite INSERT](/results/Sqlite.Insert-barplot.png "SQLite INSERT")](/results/Sqlite.Insert-report-github.md)
+[![SQLite INSERT](/results/Sqlite.Insert-barplot-small.png "SQLite INSERT")](/results/Sqlite.Insert-report-github.md)
 
 ##### [UPDATE](/results/Sqlite.Update-report-github.md)
 
-[![SQLite UPDATE](/results/Sqlite.Update-barplot.png "SQLite UPDATE")](/results/Sqlite.Update-report-github.md)
+[![SQLite UPDATE](/results/Sqlite.Update-barplot-small.png "SQLite UPDATE")](/results/Sqlite.Update-report-github.md)
 
 ##### [DELETE](/results/Sqlite.Delete-report-github.md)
 
-[![SQLite DELETE](/results/Sqlite.Delete-barplot.png "SQLite DELETE")](/results/Sqlite.Delete-report-github.md)
+[![SQLite DELETE](/results/Sqlite.Delete-barplot-small.png "SQLite DELETE")](/results/Sqlite.Delete-report-github.md)
 
 #### SQL Server
 
 ##### [INSERT](/results/SqlServer.Insert-report-github.md)
 
-[![SQL Server INSERT](/results/SqlServer.Insert-barplot.png "SQL Server INSERT")](/results/SqlServer.Insert-report-github.md)
+[![SQL Server INSERT](/results/SqlServer.Insert-barplot-small.png "SQL Server INSERT")](/results/SqlServer.Insert-report-github.md)
 
 ##### [UPDATE](/results/SqlServer.Update-report-github.md)
 
-[![SQL Server UPDATE](/results/SqlServer.Update-barplot.png "SQL Server UPDATE")](/results/SqlServer.Update-report-github.md)
+[![SQL Server UPDATE](/results/SqlServer.Update-barplot-small.png "SQL Server UPDATE")](/results/SqlServer.Update-report-github.md)
 
 ##### [DELETE](/results/SqlServer.Delete-report-github.md)
 
-[![SQL Server DELETE](/results/SqlServer.Delete-barplot.png "SQL Server DELETE")](/results/SqlServer.Delete-report-github.md)
+[![SQL Server DELETE](/results/SqlServer.Delete-barplot-small.png "SQL Server DELETE")](/results/SqlServer.Delete-report-github.md)
 
 #### Oracle Express
 
 ##### [INSERT](/results/Oracle.Insert-report-github.md)
 
-[![Oracle Express INSERT](/results/Oracle.Insert-barplot.png "Oracle Express INSERT")](/results/Oracle.Insert-report-github.md)
+[![Oracle Express INSERT](/results/Oracle.Insert-barplot-small.png "Oracle Express INSERT")](/results/Oracle.Insert-report-github.md)
 
 ##### [UPDATE](/results/Oracle.Update-report-github.md)
 
-[![Oracle Express UPDATE](/results/Oracle.Update-barplot.png "Oracle Express UPDATE")](/results/Oracle.Update-report-github.md)
+[![Oracle Express UPDATE](/results/Oracle.Update-barplot-small.png "Oracle Express UPDATE")](/results/Oracle.Update-report-github.md)
 
 ##### [DELETE](/results/Oracle.Delete-report-github.md)
 
-[![Oracle Express DELETE](/results/Oracle.Delete-barplot.png "Oracle Express DELETE")](/results/Oracle.Delete-report-github.md)
+[![Oracle Express DELETE](/results/Oracle.Delete-barplot-small.png "Oracle Express DELETE")](/results/Oracle.Delete-report-github.md)
 
 #### MySQL
 
 ##### [INSERT](/results/PomeloMySql.Insert-report-github.md)
 
-[![MySQL INSERT](/results/PomeloMySql.Insert-barplot.png "MySQL INSERT")](/results/PomeloMySql.Insert-report-github.md)
+[![MySQL INSERT](/results/PomeloMySql.Insert-barplot-small.png "MySQL INSERT")](/results/PomeloMySql.Insert-report-github.md)
 
 ##### [UPDATE](/results/PomeloMySql.Update-report-github.md)
 
-[![MySQL UPDATE](/results/PomeloMySql.Update-barplot.png "MySQL UPDATE")](/results/PomeloMySql.Update-report-github.md)
+[![MySQL UPDATE](/results/PomeloMySql.Update-barplot-small.png "MySQL UPDATE")](/results/PomeloMySql.Update-report-github.md)
 
 ##### [DELETE](/results/PomeloMySql.Delete-report-github.md)
 
-[![MySQL DELETE](/results/PomeloMySql.Delete-barplot.png "MySQL DELETE")](/results/PomeloMySql.Delete-report-github.md)
+[![MySQL DELETE](/results/PomeloMySql.Delete-barplot-small.png "MySQL DELETE")](/results/PomeloMySql.Delete-report-github.md)
 
 #### MariaDB
 
 ##### [INSERT](/results/PomeloMariaDb.Insert-report-github.md)
 
-[![MariaDB INSERT](/results/PomeloMariaDb.Insert-barplot.png "MariaDB INSERT")](/results/PomeloMariaDb.Insert-report-github.md)
+[![MariaDB INSERT](/results/PomeloMariaDb.Insert-barplot-small.png "MariaDB INSERT")](/results/PomeloMariaDb.Insert-report-github.md)
 
 ##### [UPDATE](/results/PomeloMariaDb.Update-report-github.md)
 
-[![MariaDB UPDATE](/results/PomeloMariaDb.Update-barplot.png "MariaDB UPDATE")](/results/PomeloMariaDb.Update-report-github.md)
+[![MariaDB UPDATE](/results/PomeloMariaDb.Update-barplot-small.png "MariaDB UPDATE")](/results/PomeloMariaDb.Update-report-github.md)
 
 ##### [DELETE](/results/PomeloMariaDb.Delete-report-github.md)
 
-[![MariaDB DELETE](/results/PomeloMariaDb.Delete-barplot.png "MariaDB DELETE")](/results/PomeloMariaDb.Delete-report-github.md)
+[![MariaDB DELETE](/results/PomeloMariaDb.Delete-barplot-small.png "MariaDB DELETE")](/results/PomeloMariaDb.Delete-report-github.md)
 
 #### PostgreSQL
 
 ##### [INSERT](/results/Postgres.Insert-report-github.md)
 
-[![PostgreSQL INSERT](/results/Postgres.Insert-barplot.png "PostgreSQL INSERT")](/results/Postgres.Insert-report-github.md)
+[![PostgreSQL INSERT](/results/Postgres.Insert-barplot-small.png "PostgreSQL INSERT")](/results/Postgres.Insert-report-github.md)
 
 ##### [UPDATE](/results/Postgres.Update-report-github.md)
 
-[![PostgreSQL UPDATE](/results/Postgres.Update-barplot.png "PostgreSQL UPDATE")](/results/Postgres.Update-report-github.md)
+[![PostgreSQL UPDATE](/results/Postgres.Update-barplot-small.png "PostgreSQL UPDATE")](/results/Postgres.Update-report-github.md)
 
 ##### [DELETE](/results/Postgres.Delete-report-github.md)
 
-[![PostgreSQL DELETE](/results/Postgres.Delete-barplot.png "PostgreSQL DELETE")](/results/Postgres.Delete-report-github.md)
+[![PostgreSQL DELETE](/results/Postgres.Delete-barplot-small.png "PostgreSQL DELETE")](/results/Postgres.Delete-report-github.md)
 
 #### Firebird 3
 
 ##### [INSERT](/results/Firebird3.Insert-report-github.md)
 
-[![Firebird 3 INSERT](/results/Firebird3.Insert-barplot.png "Firebird 3 INSERT")](/results/Firebird3.Insert-report-github.md)
+[![Firebird 3 INSERT](/results/Firebird3.Insert-barplot-small.png "Firebird 3 INSERT")](/results/Firebird3.Insert-report-github.md)
 
 ##### [UPDATE](/results/Firebird3.Update-report-github.md)
 
-[![Firebird 3 UPDATE](/results/Firebird3.Update-barplot.png "Firebird 3 UPDATE")](/results/Firebird3.Update-report-github.md)
+[![Firebird 3 UPDATE](/results/Firebird3.Update-barplot-small.png "Firebird 3 UPDATE")](/results/Firebird3.Update-report-github.md)
 
 ##### [DELETE](/results/Firebird3.Delete-report-github.md)
 
-[![Firebird 3 DELETE](/results/Firebird3.Delete-barplot.png "Firebird 3 DELETE")](/results/Firebird3.Delete-report-github.md)
+[![Firebird 3 DELETE](/results/Firebird3.Delete-barplot-small.png "Firebird 3 DELETE")](/results/Firebird3.Delete-report-github.md)
 
 #### Firebird 4
 
 ##### [INSERT](/results/Firebird4.Insert-report-github.md)
 
-[![Firebird 4 INSERT](/results/Firebird4.Insert-barplot.png "Firebird 4 INSERT")](/results/Firebird4.Insert-report-github.md)
+[![Firebird 4 INSERT](/results/Firebird4.Insert-barplot-small.png "Firebird 4 INSERT")](/results/Firebird4.Insert-report-github.md)
 
 ##### [UPDATE](/results/Firebird4.Update-report-github.md)
 
-[![Firebird 4 UPDATE](/results/Firebird4.Update-barplot.png "Firebird 4 UPDATE")](/results/Firebird4.Update-report-github.md)
+[![Firebird 4 UPDATE](/results/Firebird4.Update-barplot-small.png "Firebird 4 UPDATE")](/results/Firebird4.Update-report-github.md)
 
 ##### [DELETE](/results/Firebird4.Delete-report-github.md)
 
-[![Firebird 4 DELETE](/results/Firebird4.Delete-barplot.png "Firebird 4 DELETE")](/results/Firebird4.Delete-report-github.md)
+[![Firebird 4 DELETE](/results/Firebird4.Delete-barplot-small.png "Firebird 4 DELETE")](/results/Firebird4.Delete-report-github.md)
 
 ## Buy Me A Coffee
 
