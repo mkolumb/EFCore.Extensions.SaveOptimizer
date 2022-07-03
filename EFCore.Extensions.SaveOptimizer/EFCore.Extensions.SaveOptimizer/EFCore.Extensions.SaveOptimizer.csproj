@@ -4,6 +4,25 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+
+    <Title>EFCore.Extensions.SaveOptimizer</Title>
+    <Description>Save optimizer extension for EF Core. It supports multiple EF Core providers and brings serious performance benefits for many scenarios without big effort.</Description>
+    <Authors>Mateusz Abramczyk</Authors>
+    <Copyright>Copyright (c) 2022 Mateusz Abramczyk</Copyright>
+
+    <!-- NuGet settings -->
+    <PackageId>EFCore.Extensions.SaveOptimizer</PackageId>
+    <PackageTags>EntityFrameworkCore;Entity Framework Core;EFCore;EF Core;SQL Server;PostgreSQL;SQLite;Firebird;Postgres;Cockroach;Cockroach DB;Oracle;MySQL;MariaDB;Batch Extensions;Insert;Update;Delete;SaveChanges;SaveOptimizer;SaveOptimized;SaveOptimize;Save Optimizer;Save Optimized;Save Optimize;Dapper;</PackageTags>
+    <PackageReleaseNotes>https://github.com/mkolumb/EFCore.Extensions.SaveOptimizer</PackageReleaseNotes>
+    <PackageProjectUrl>https://github.com/mkolumb/EFCore.Extensions.SaveOptimizer</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/mkolumb/EFCore.Extensions.SaveOptimizer.git</RepositoryUrl>
+
+    <!-- SourceLink settings -->
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
   </PropertyGroup>
 
   <ItemGroup>
