@@ -25,13 +25,6 @@ jobs:
     steps:
       - name: Get the sources
         uses: actions/checkout@v3
-      - name: Find Tag
-        id: tagger
-        uses: jimschubert/query-tag-action@v1
-      - name: Show Tag
-        id: display
-        run: |
-          echo 'Output from Find Tag: ${{steps.tagger.outputs.tag}}'
       - name: Fetch all history for all tags and branches
         run: git fetch --prune --unshallow
       - name: Install .NET SDK
@@ -44,8 +37,7 @@ jobs:
       #   run: dotnet fake build
       - name: Run FAKE pack
         run: |
-          arrTag=(${GITHUB_REF//\// })
-          VERSION=${{steps.tagger.outputs.tag}}
+          VERSION=git describe --tags --abbrev=0
           echo Version: $VERSION
           VERSION="${VERSION}-${GITHUB_RUN_ID}"
           echo Clean Version: $VERSION
