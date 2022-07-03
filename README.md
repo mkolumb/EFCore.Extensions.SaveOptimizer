@@ -24,10 +24,25 @@ Main difference is approach - [EFCore.BulkExtensions](https://github.com/borisdj
 
 Just replace SaveChanges() / SaveChangesAsync() :)
 
+### Optimized
+
 ```csharp
+using EFCore.Extensions.SaveOptimizer;
+
 await using var transaction = await context.Database.BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
 await context.AddAsync(entity);
 await context.SaveChangesOptimizedAsync();
+await transaction.CommitAsync(cancellationToken);
+```
+
+### Optimized Dapper
+
+```csharp
+using EFCore.Extensions.SaveOptimizer.Dapper;
+
+await using var transaction = await context.Database.BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
+await context.AddAsync(entity);
+await context.SaveChangesDapperOptimizedAsync();
 await transaction.CommitAsync(cancellationToken);
 ```
 
@@ -59,6 +74,9 @@ Please note it is not working exactly as SaveChanges, so you should verify it wo
   - Insert
   - Update
   - Delete
+- Configuration
+  - Batch size
+  - Parameters optimization behavior
 - Other
   - Concurrency token
 
@@ -66,9 +84,10 @@ Please note it is not working exactly as SaveChanges, so you should verify it wo
 
 - Configuration
   - Concurrency token behavior
-  - Batch size
   - Auto transaction behavior
   - Parameter distinct behavior
+- Readme
+  - Configuration description
 - Support for
   - Different cultures
   - Interceptors
@@ -78,13 +97,9 @@ Please note it is not working exactly as SaveChanges, so you should verify it wo
   - Shadow properties
   - Tables without primary key
   - Auto-generated values
-- Dependencies lifecycle optimizations
 - Optimize data retrieval from Change Tracker
 - Add unchecked when possible
 - Low level performance optimizations
-- Batch parameters when multi insert
-- GitHub actions
-- Test databases within container
 - Tests
   - Value generated on add
   - Auto increment primary key
