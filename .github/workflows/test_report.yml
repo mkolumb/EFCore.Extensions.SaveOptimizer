@@ -6,9 +6,6 @@ name: Test Report
       - Build
     types:
       - completed
-    branches:
-      - main
-      - develop
 jobs:
   report:
     runs-on: ubuntu-latest
