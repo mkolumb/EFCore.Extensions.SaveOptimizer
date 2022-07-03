@@ -1,5 +1,6 @@
 name: Upload Nuget
 "on":
+  workflow_dispatch:
   workflow_run:
     workflows:
       - Build
