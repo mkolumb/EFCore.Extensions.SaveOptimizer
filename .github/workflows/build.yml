@@ -33,13 +33,5 @@ jobs:
       - name: Install Dotnet Tools
         run: dotnet tool restore
 
-      - name: Compose containers
-        shell: pwsh
-        run: ./recreate_containers.ps1
-
       - name: Run Fake
         run: dotnet fake build
-
-      - name: Stop containers
-        shell: pwsh
-        run: ./remove_containers.ps1
