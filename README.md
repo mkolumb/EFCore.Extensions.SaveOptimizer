@@ -2,6 +2,10 @@
 Save optimizer extension for EF Core. 
 It supports multiple EF Core providers and brings serious performance benefits for many scenarios without big effort.
 
+Currently in BETA
+
+[![GitHub build](https://github.com/mkolumb/EFCore.Extensions.SaveOptimizer/actions/workflows/build.yml/badge.svg "GitHub build")](/actions/workflows/build.yml) 
+
 ## Why another library for batch save?
 
 #### Short version

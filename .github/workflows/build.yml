@@ -1,6 +1,6 @@
 name: Build
 'on':
-  workflow_dispatch:
+  workflow_dispatch: null
   push:
     branches:
       - main
@@ -13,9 +13,11 @@ env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
   DOTNET_CLI_TELEMETRY_OPTOUT: true
   DOTNET_VERSION: 6.0.301
-  GITHUB_FEED: "https://nuget.pkg.github.com/mkolumb/index.json"
+  GITHUB_FEED: 'https://nuget.pkg.github.com/mkolumb/index.json'
   GITHUB_USER: mkolumb
-  GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+  GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+  NUGET_FEED: 'https://api.nuget.org/v3/index.json'
+  NUGET_KEY: '${{ secrets.NUGET_KEY }}'
 jobs:
   build:
     name: Build
@@ -89,3 +91,20 @@ jobs:
             fi
             # curl -X PUT -u "$GITHUB_USER:$GITHUB_TOKEN" -F package=@$f $GITHUB_FEED
           done
+  deploy:
+    needs: build
+    if: github.event_name == 'release'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v1
+        with:
+          name: nupkg
+      - name: Push to GitHub Feed
+        run: >-
+          dotnet nuget push ./nupkg/*.nupkg --skip-duplicate --source
+          $GITHUB_FEED --api-key $GITHUB_TOKEN
+      - name: Push to NuGet Feed
+        run: >-
+          dotnet nuget push ./nupkg/*.nupkg --skip-duplicate --source
+          $NUGET_FEED --api-key $NUGET_KEY
