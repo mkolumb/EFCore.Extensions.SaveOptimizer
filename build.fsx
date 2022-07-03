@@ -22,6 +22,27 @@ let scriptRun =
         |> Proc.run
         |> ignore
 
+        Command.RawCommand(
+            "docker",
+            Arguments.OfArgs [ "volume"
+                               "prune"
+                               "--force" ]
+        )
+        |> CreateProcess.fromCommand
+        |> Proc.run
+        |> ignore
+
+        Command.RawCommand(
+            "docker",
+            Arguments.OfArgs [ "image"
+                               "prune"
+                               "--all"
+                               "--force" ]
+        )
+        |> CreateProcess.fromCommand
+        |> Proc.run
+        |> ignore
+
 let testRun =
     fun path ->
         Trace.log ("Running test: " + path)
