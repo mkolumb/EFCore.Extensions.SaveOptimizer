@@ -20,12 +20,12 @@
             </Logger>
             <Logger friendlyName="trx" enabled="True">
                 <Configuration>
-                    <Verbosity>detailed</Verbosity>
+                    <Verbosity>diagnostic</Verbosity>
                 </Configuration>
             </Logger>
             <Logger friendlyName="html" enabled="True">
                 <Configuration>
-                    <Verbosity>detailed</Verbosity>
+                    <Verbosity>diagnostic</Verbosity>
                 </Configuration>
             </Logger>
             <Logger friendlyName="blame" enabled="True" />
