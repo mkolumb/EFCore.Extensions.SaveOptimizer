@@ -1,37 +1,64 @@
 name: Build
-on:
-  # Trigger the workflow on push or pull request,
-  # but only for the main branch
+"on":
   push:
     branches:
       - main
-      - feature/initial
   pull_request:
     branches:
       - main
-      - feature/initial
+env:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_VERSION: 6.0.301
+  GITHUB_FEED: "https://nuget.pkg.github.com/mkolumb/index.json"
+  GITHUB_USER: mkolumb
+  GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 jobs:
   build:
     name: Build
-    runs-on: ${{ matrix.os }}
+    runs-on: "${{ matrix.os }}"
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
+        os:
+          - ubuntu-latest
     steps:
       - name: Get the sources
         uses: actions/checkout@v3
-
       - name: Fetch all history for all tags and branches
         run: git fetch --prune --unshallow
-
-      - name: Install .NET SDK 6.0.301
+      - name: Install .NET SDK
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: "6.0.301"
-
+          dotnet-version: "${{ env.DOTNET_VERSION }}"
       - name: Install Dotnet Tools
         run: dotnet tool restore
-
-      - name: Run Fake
+      - name: Run FAKE build
         run: dotnet fake build
+      - name: Run FAKE package
+        run: |
+          arrTag=(${GITHUB_REF//\// })
+          VERSION=${{steps.tagger.outputs.tag}}
+          echo Version: $VERSION
+          VERSION="${VERSION//v}-${GITHUB_RUN_ID}"
+          echo Clean Version: $VERSION
+          dotnet fake build -t pack -e PACKAGE_VERSION=$VERSION
+  prerelease:
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v1
+        with:
+          name: nupkg
+      - name: Push to GitHub Feed
+        run: |
+          for f in ./nupkg/*.nupkg
+          do
+            if [[ ${f} != *".symbols."* ]];then
+              echo "Uploading package $f" to $GITHUB_FEED
+              dotnet nuget push $f --api-key=$GITHUB_TOKEN --source=$GITHUB_FEED
+            fi
+            # curl -X PUT -u "$GITHUB_USER:$GITHUB_TOKEN" -F package=@$f $GITHUB_FEED
+          done

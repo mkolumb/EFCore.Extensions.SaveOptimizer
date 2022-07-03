@@ -55,6 +55,24 @@ let buildRun =
 
         DotNet.build (fun o -> o) path
 
+let packRun =
+    fun path ->
+        let version = Environment.environVar ("PACKAGE_VERSION")
+
+        Trace.log ("Running pack: " + path + " - " + version)
+
+        let setMsBuildParams (defaults: MSBuild.CliArguments) =
+            { defaults with Properties = [ "PackageVersion", version ] }
+
+        let packConfiguration (defaults: DotNet.PackOptions) =
+            { defaults with
+                Configuration = DotNet.Release
+                OutputPath = Some "./packages"
+                IncludeSymbols = false
+                MSBuildParams = setMsBuildParams defaults.MSBuildParams }
+
+        DotNet.pack packConfiguration path
+
 Target.create "Clean" (fun _ -> !! "**/bin" ++ "**/obj" |> Shell.cleanDirs)
 
 Target.create "RemoveContainersBefore" (fun _ ->
@@ -89,14 +107,27 @@ Target.create "DbTest" (fun _ ->
 
         scriptRun (Path.combine dir "stop.ps1")))
 
+Target.create "Pack" (fun _ ->
+    (!! "**/EFCore.Extensions.SaveOptimizer.Internal.csproj"
+     ++ "**/EFCore.Extensions.SaveOptimizer.Dapper.csproj"
+     ++ "**/EFCore.Extensions.SaveOptimizer.csproj")
+    |> Seq.iter (packRun))
+
 Target.create "All" ignore
 
-"Clean"
-==> "RemoveContainersBefore"
+"RemoveContainersBefore"
 ==> "SolutionBuild"
 ==> "InternalTests"
 ==> "DbTest"
 ==> "RemoveContainersAfter"
 ==> "All"
+
+"Pack" ==> "All"
+
+"Clean" ==> "Pack"
+
+"Clean" ==> "SolutionBuild"
+
+"DbTest" ?=> "Pack"
 
 Target.runOrDefault "All"
