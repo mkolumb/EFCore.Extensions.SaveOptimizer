@@ -33,12 +33,12 @@ jobs:
           dotnet-version: "${{ env.DOTNET_VERSION }}"
       - name: Install Dotnet Tools
         run: dotnet tool restore
-      # - name: Run FAKE build
-      #   run: dotnet fake build
-      - name: Set env
+      - name: Run FAKE build
+        run: dotnet fake build
+      - name: Set RELEASE_VERSION
         run: |
           echo "RELEASE_VERSION=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
-      - name: Checking release
+      - name: Checking RELEASE_VERSION
         run: |
           echo $RELEASE_VERSION
           echo ${{ env.RELEASE_VERSION }}
