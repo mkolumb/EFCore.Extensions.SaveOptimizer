@@ -37,7 +37,7 @@ jobs:
       #   run: dotnet fake build
       - name: Run FAKE pack
         run: |
-          VERSION=git describe --tags --abbrev=0
+          VERSION=${{ git describe --tags --abbrev=0 }}
           echo Version: $VERSION
           VERSION="${VERSION}-${GITHUB_RUN_ID}"
           echo Clean Version: $VERSION
