@@ -3,9 +3,11 @@ name: Build
   push:
     branches:
       - main
+      - develop
   pull_request:
     branches:
       - main
+      - develop
 env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
   DOTNET_CLI_TELEMETRY_OPTOUT: true
