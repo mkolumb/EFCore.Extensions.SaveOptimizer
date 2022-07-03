@@ -78,12 +78,25 @@ public sealed class DbContextWrapper : IDisposable
 
         if ((variant & SaveVariant.WithTransaction) != 0)
         {
-            await using IDbContextTransaction transaction =
-                await Context.Database.BeginTransactionAsync(IsolationLevel.Serializable);
+            IDbContextTransaction transaction =
+                await Context.Database.BeginTransactionAsync(IsolationLevel.Serializable).ConfigureAwait(false);
 
-            await InternalSave();
+            try
+            {
+                await InternalSave();
 
-            await transaction.CommitAsync();
+                await transaction.CommitAsync().ConfigureAwait(false);
+            }
+            catch
+            {
+                await transaction.RollbackAsync().ConfigureAwait(false);
+
+                throw;
+            }
+            finally
+            {
+                await transaction.DisposeAsync().ConfigureAwait(false);
+            }
         }
         else
         {
