@@ -328,3 +328,7 @@ powershell -File run_benchmarks.ps1
 ##### [DELETE](/results/Firebird4.Delete-report-github.md)
 
 [![Firebird 4 DELETE](/results/Firebird4.Delete-barplot.png "Firebird 4 DELETE")](/results/Firebird4.Delete-report-github.md)
+
+## Buy Me A Coffee
+
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/mkolumb)
