@@ -1,0 +1,98 @@
+version: '3.7'
+services:
+  optimizerroachmulti11:
+    container_name: optimizerroachmulti11
+    hostname: optimizerroachmulti11
+    image: cockroachdb/cockroach:latest-v22.1
+    command: start --insecure --locality=region=us,zone=us-east --join=optimizerroachmulti11,optimizerroachmulti12,optimizerroachmulti13,optimizerroachmulti21,optimizerroachmulti22,optimizerroachmulti23,optimizerroachmulti31,optimizerroachmulti32,optimizerroachmulti33
+    ports:
+      - '26259:26257'
+      - '8082:8080'
+    volumes:
+      - 'optimizerroachmulti11dbdata:/cockroach/cockroach-data'
+    networks:
+      - optimizerroachmultinetwork
+  optimizerroachmulti12:
+    container_name: optimizerroachmulti12
+    hostname: optimizerroachmulti12
+    image: cockroachdb/cockroach:latest-v22.1
+    command: start --insecure --locality=region=us,zone=us-east --join=optimizerroachmulti11,optimizerroachmulti12,optimizerroachmulti13,optimizerroachmulti21,optimizerroachmulti22,optimizerroachmulti23,optimizerroachmulti31,optimizerroachmulti32,optimizerroachmulti33
+    volumes:
+      - 'optimizerroachmulti12dbdata:/cockroach/cockroach-data'
+    networks:
+      - optimizerroachmultinetwork
+  optimizerroachmulti13:
+    container_name: optimizerroachmulti13
+    hostname: optimizerroachmulti13
+    image: cockroachdb/cockroach:latest-v22.1
+    command: start --insecure --locality=region=us,zone=us-east --join=optimizerroachmulti11,optimizerroachmulti12,optimizerroachmulti13,optimizerroachmulti21,optimizerroachmulti22,optimizerroachmulti23,optimizerroachmulti31,optimizerroachmulti32,optimizerroachmulti33
+    volumes:
+      - 'optimizerroachmulti13dbdata:/cockroach/cockroach-data'
+    networks:
+      - optimizerroachmultinetwork
+  optimizerroachmulti21:
+    container_name: optimizerroachmulti21
+    hostname: optimizerroachmulti21
+    image: cockroachdb/cockroach:latest-v22.1
+    command: start --insecure --locality=region=eu,zone=eu-east --join=optimizerroachmulti11,optimizerroachmulti12,optimizerroachmulti13,optimizerroachmulti21,optimizerroachmulti22,optimizerroachmulti23,optimizerroachmulti31,optimizerroachmulti32,optimizerroachmulti33
+    volumes:
+      - 'optimizerroachmulti21dbdata:/cockroach/cockroach-data'
+    networks:
+      - optimizerroachmultinetwork
+  optimizerroachmulti22:
+    container_name: optimizerroachmulti22
+    hostname: optimizerroachmulti22
+    image: cockroachdb/cockroach:latest-v22.1
+    command: start --insecure --locality=region=eu,zone=eu-east --join=optimizerroachmulti11,optimizerroachmulti12,optimizerroachmulti13,optimizerroachmulti21,optimizerroachmulti22,optimizerroachmulti23,optimizerroachmulti31,optimizerroachmulti32,optimizerroachmulti33
+    volumes:
+      - 'optimizerroachmulti22dbdata:/cockroach/cockroach-data'
+    networks:
+      - optimizerroachmultinetwork
+  optimizerroachmulti23:
+    container_name: optimizerroachmulti23
+    hostname: optimizerroachmulti23
+    image: cockroachdb/cockroach:latest-v22.1
+    command: start --insecure --locality=region=eu,zone=eu-east --join=optimizerroachmulti11,optimizerroachmulti12,optimizerroachmulti13,optimizerroachmulti21,optimizerroachmulti22,optimizerroachmulti23,optimizerroachmulti31,optimizerroachmulti32,optimizerroachmulti33
+    volumes:
+      - 'optimizerroachmulti23dbdata:/cockroach/cockroach-data'
+    networks:
+      - optimizerroachmultinetwork
+  optimizerroachmulti31:
+    container_name: optimizerroachmulti31
+    hostname: optimizerroachmulti31
+    image: cockroachdb/cockroach:latest-v22.1
+    command: start --insecure --locality=region=as,zone=as-east --join=optimizerroachmulti11,optimizerroachmulti12,optimizerroachmulti13,optimizerroachmulti21,optimizerroachmulti22,optimizerroachmulti23,optimizerroachmulti31,optimizerroachmulti32,optimizerroachmulti33
+    volumes:
+      - 'optimizerroachmulti31dbdata:/cockroach/cockroach-data'
+    networks:
+      - optimizerroachmultinetwork
+  optimizerroachmulti32:
+    container_name: optimizerroachmulti32
+    hostname: optimizerroachmulti32
+    image: cockroachdb/cockroach:latest-v22.1
+    command: start --insecure --locality=region=as,zone=as-east --join=optimizerroachmulti11,optimizerroachmulti12,optimizerroachmulti13,optimizerroachmulti21,optimizerroachmulti22,optimizerroachmulti23,optimizerroachmulti31,optimizerroachmulti32,optimizerroachmulti33
+    volumes:
+      - 'optimizerroachmulti32dbdata:/cockroach/cockroach-data'
+    networks:
+      - optimizerroachmultinetwork
+  optimizerroachmulti33:
+    container_name: optimizerroachmulti33
+    hostname: optimizerroachmulti33
+    image: cockroachdb/cockroach:latest-v22.1
+    command: start --insecure --locality=region=as,zone=as-east --join=optimizerroachmulti11,optimizerroachmulti12,optimizerroachmulti13,optimizerroachmulti21,optimizerroachmulti22,optimizerroachmulti23,optimizerroachmulti31,optimizerroachmulti32,optimizerroachmulti33
+    volumes:
+      - 'optimizerroachmulti33dbdata:/cockroach/cockroach-data'
+    networks:
+      - optimizerroachmultinetwork
+volumes:
+  optimizerroachmulti11dbdata:
+  optimizerroachmulti12dbdata:
+  optimizerroachmulti13dbdata:
+  optimizerroachmulti21dbdata:
+  optimizerroachmulti22dbdata:
+  optimizerroachmulti23dbdata:
+  optimizerroachmulti31dbdata:
+  optimizerroachmulti32dbdata:
+  optimizerroachmulti33dbdata:
+networks:
+  optimizerroachmultinetwork:

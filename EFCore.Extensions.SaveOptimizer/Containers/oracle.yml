@@ -1,0 +1,19 @@
+version: '3.7'
+services:
+  optimizeroracle:
+    container_name: optimizeroracle
+    hostname: optimizeroracle
+    image: container-registry.oracle.com/database/express:latest
+    environment:
+      ORACLE_PWD: root
+    ports:
+      - '1521:1521'
+      - '5500:5500'
+    volumes:
+      - 'optimizeroracledbdata:/opt/oracle/oradata'
+    networks:
+      - optimizeroraclenetwork
+volumes:
+  optimizeroracledbdata:
+networks:
+  optimizeroraclenetwork:

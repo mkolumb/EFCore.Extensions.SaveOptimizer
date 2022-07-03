@@ -1,0 +1,18 @@
+version: '3.7'
+services:
+  optimizerfirebird3:
+    container_name: optimizerfirebird3
+    hostname: optimizerfirebird3
+    image: jacobalberty/firebird:3.0
+    environment:
+      ISC_PASSWORD: root
+    ports:
+      - '3050:3050'
+    volumes:
+      - 'optimizerfirebird3dbdata:/firebird'
+    networks:
+      - optimizerfirebird3network
+volumes:
+  optimizerfirebird3dbdata:
+networks:
+  optimizerfirebird3network:

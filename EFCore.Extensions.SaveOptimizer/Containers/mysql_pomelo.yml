@@ -1,0 +1,19 @@
+version: '3.7'
+services:
+  optimizerpomelomysql:
+    container_name: optimizerpomelomysql
+    hostname: optimizerpomelomysql
+    image: mysql:8-oracle
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - '3306:3306'
+    volumes:
+      - 'optimizerpomelomysqldbdata:/var/lib/mysql'
+    networks:
+      - optimizerpomelomysqlnetwork
+volumes:
+  optimizerpomelomysqldbdata:
+networks:
+  optimizerpomelomysqlnetwork:

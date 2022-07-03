@@ -1,0 +1,19 @@
+version: '3.7'
+services:
+  optimizerpomelomariadb:
+    container_name: optimizerpomelomariadb
+    hostname: optimizerpomelomariadb
+    image: mariadb:10
+    command: --default-authentication-plugin=mariadb_native_password
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+    ports:
+      - '3307:3306'
+    volumes:
+      - 'optimizerpomelomariadbdbdata:/var/lib/mysql'
+    networks:
+      - optimizerpomelomariadbnetwork
+volumes:
+  optimizerpomelomariadbdbdata:
+networks:
+  optimizerpomelomariadbnetwork:

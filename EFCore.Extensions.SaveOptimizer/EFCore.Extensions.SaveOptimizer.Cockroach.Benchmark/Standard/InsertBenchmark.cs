@@ -1,0 +1,21 @@
+﻿using BenchmarkDotNet.Attributes;
+using EFCore.Extensions.SaveOptimizer.Cockroach.Benchmark.Specific;
+using EFCore.Extensions.SaveOptimizer.Shared.Benchmark;
+
+// ReSharper disable UnusedMember.Global
+
+namespace EFCore.Extensions.SaveOptimizer.Cockroach.Benchmark.Standard;
+
+public class InsertBenchmark : BaseInsertBenchmark
+{
+    public override string Database => Variables.DbName;
+
+    [ParamsSource(nameof(ValuesForRows))]
+    public override long Rows { get; set; }
+
+    public IEnumerable<long> ValuesForRows => Variables.Rows;
+
+    public InsertBenchmark() : base(BenchmarkHelper.ContextResolver())
+    {
+    }
+}

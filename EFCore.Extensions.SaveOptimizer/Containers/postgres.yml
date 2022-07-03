@@ -1,0 +1,21 @@
+version: '3.7'
+services:
+  optimizerpostgres:
+    container_name: optimizerpostgres
+    hostname: optimizerpostgres
+    image: postgres:14.4
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+    ports:
+      - '5432:5432'
+      - '8080:8080'
+    volumes:
+      - 'optimizerpostgresdbdata:/var/lib/postgresql/data'
+    networks:
+      - optimizerpostgresnetwork
+volumes:
+  optimizerpostgresdbdata:
+networks:
+  optimizerpostgresnetwork:
