@@ -122,8 +122,6 @@ Target.create "All" ignore
 ==> "RemoveContainersAfter"
 ==> "All"
 
-"Pack" ==> "All"
-
 "Clean" ==> "Pack"
 
 "Clean" ==> "SolutionBuild"

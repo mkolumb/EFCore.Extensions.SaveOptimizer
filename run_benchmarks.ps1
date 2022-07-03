@@ -1,5 +1,3 @@
-Clear-Host
-
 $ErrorActionPreference = "Stop"
 
 # Ensure that is being run from dir where script locates (helpful when running on remote machine)

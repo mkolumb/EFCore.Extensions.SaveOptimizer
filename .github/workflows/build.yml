@@ -35,7 +35,7 @@ jobs:
         run: dotnet tool restore
       - name: Run FAKE build
         run: dotnet fake build
-      - name: Run FAKE package
+      - name: Run FAKE pack
         run: |
           arrTag=(${GITHUB_REF//\// })
           VERSION=${{steps.tagger.outputs.tag}}
