@@ -4,7 +4,7 @@ It supports multiple EF Core providers and brings serious performance benefits f
 
 Currently in BETA
 
-[![GitHub build](https://github.com/mkolumb/EFCore.Extensions.SaveOptimizer/actions/workflows/build.yml/badge.svg "GitHub build")]([/actions/workflows/build.yml](https://github.com/mkolumb/EFCore.Extensions.SaveOptimizer/actions/workflows/build.yml)) [![NuGet SaveOptimizer](https://img.shields.io/nuget/v/EFCore.Extensions.SaveOptimizer "NuGet SaveOptimizer")](https://www.nuget.org/packages/EFCore.Extensions.SaveOptimizer) [![NuGet SaveOptimizer.Dapper](https://img.shields.io/nuget/v/EFCore.Extensions.SaveOptimizer.Dapper "NuGet SaveOptimizer.Dapper")](https://www.nuget.org/packages/EFCore.Extensions.SaveOptimizer.Dapper) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](code_of_conduct.md)
+[![GitHub build](https://github.com/mkolumb/EFCore.Extensions.SaveOptimizer/actions/workflows/build.yml/badge.svg "GitHub build")](https://github.com/mkolumb/EFCore.Extensions.SaveOptimizer/actions/workflows/build.yml) [![NuGet SaveOptimizer](https://img.shields.io/nuget/v/EFCore.Extensions.SaveOptimizer "NuGet SaveOptimizer")](https://www.nuget.org/packages/EFCore.Extensions.SaveOptimizer) [![NuGet SaveOptimizer.Dapper](https://img.shields.io/nuget/v/EFCore.Extensions.SaveOptimizer.Dapper "NuGet SaveOptimizer.Dapper")](https://www.nuget.org/packages/EFCore.Extensions.SaveOptimizer.Dapper) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](code_of_conduct.md)
 
 ## Why another library for batch save?
 
