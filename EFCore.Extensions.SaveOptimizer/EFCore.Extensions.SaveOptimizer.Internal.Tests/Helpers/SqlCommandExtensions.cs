@@ -21,9 +21,11 @@ public static class SqlCommandExtensions
             return sql;
         }
 
-        foreach (var (key, value) in command.NamedBindings)
+        foreach (var (key, value) in command.NamedBindings
+                     .OrderByDescending(x => x.Key.Length)
+                     .ThenByDescending(x => x.Key))
         {
-            sql = sql.Replace(key, SerializationHelper.Serialize(value));
+            sql = sql.Replace(key, $"'{SerializationHelper.Serialize(value)}'");
         }
 
         sql = sql.ToLower();
