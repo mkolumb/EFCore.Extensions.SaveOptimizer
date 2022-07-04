@@ -1,6 +1,5 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Model;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests.Extensions;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Xunit.Abstractions;
 

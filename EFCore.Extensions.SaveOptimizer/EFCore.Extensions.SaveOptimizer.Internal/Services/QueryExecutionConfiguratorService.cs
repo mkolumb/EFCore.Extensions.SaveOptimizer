@@ -29,42 +29,51 @@ public class QueryExecutionConfiguratorService : IQueryExecutionConfiguratorServ
 
         config.ParametersLimit ??= GetParametersLimit(providerName);
 
+        config.BuilderConfiguration ??= GetBuilderConfiguration(providerName);
+
         return config;
     }
 
-    private static int? GetMaxBatchSize(string providerName, EntityState state)
+    private static QueryBuilderConfiguration GetBuilderConfiguration(string providerName)
     {
-        if (state == EntityState.Added)
-        {
-            if (providerName.Contains("Firebird"))
-            {
-                return 1;
-            }
+        QueryBuilderConfiguration configuration = new();
 
-            if (providerName.Contains("Oracle"))
-            {
-                return 20;
-            }
+        if (providerName.Contains("Firebird"))
+        {
+            configuration.OptimizeParameters = false;
         }
 
-        return null;
+        return configuration;
     }
+
+    private static int? GetMaxBatchSize(string providerName, EntityState state) =>
+        state switch
+        {
+            EntityState.Added when providerName.Contains("Oracle") => InternalConstants.DefaultOracleBatchSize,
+            EntityState.Added when providerName.Contains("Firebird") => InternalConstants.DefaultFirebirdBatchSize,
+            _ => null
+        };
 
     private static int GetParametersLimit(string providerName)
     {
         if (providerName.Contains("SqlServer"))
         {
-            return 1024;
+            return InternalConstants.DefaultSqlServerParametersLimit;
+        }
+
+        if (providerName.Contains("Firebird"))
+        {
+            return InternalConstants.DefaultFirebirdParametersLimit;
         }
 
         if (providerName.Contains("Postgre"))
         {
-            return 31768;
+            return InternalConstants.DefaultPostgresParametersLimit;
         }
 
         if (providerName.Contains("Sqlite") || providerName.Contains("InMemory"))
         {
-            return 512;
+            return InternalConstants.DefaultSqLiteParametersLimit;
         }
 
         return InternalConstants.DefaultParametersLimit;

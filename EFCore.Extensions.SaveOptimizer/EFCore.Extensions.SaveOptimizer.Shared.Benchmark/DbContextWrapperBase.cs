@@ -87,12 +87,14 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
 
             if (_failures > MaxFailures)
             {
-                throw new Exception($"Failures limit exceeded, rows {expectedRows}, variant {variant}, failures {_failures}");
+                throw new Exception(
+                    $"Failures limit exceeded, rows {expectedRows}, variant {variant}, failures {_failures}");
             }
 
             double delay = Math.Max(expectedRows / 1000, 5);
 
-            ConsoleLogger.Unicode.WriteLineWithDate($"Unable to save, failure {_failures}, wait {delay} seconds to mark as outlier");
+            ConsoleLogger.Unicode.WriteLineWithDate(
+                $"Unable to save, failure {_failures}, wait {delay} seconds to mark as outlier");
 
             ConsoleLogger.Unicode.WriteLineWithDate(ex.Message);
 
@@ -135,9 +137,13 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
 
                 return;
             }
-            catch
+            catch (Exception ex)
             {
                 ConsoleLogger.Unicode.WriteLineWithDate($"Retry number {i} {method.Method.Name}");
+
+                ConsoleLogger.Unicode.WriteLineWithDate(ex.Message);
+
+                ConsoleLogger.Unicode.WriteLineWithDate(ex.StackTrace);
 
                 await Task.Delay(TimeSpan.Zero);
 
@@ -162,6 +168,8 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
 
     private async Task TrySeedOnce(long count, IsolationLevel isolationLevel)
     {
+        ConsoleLogger.Unicode.WriteLineWithDate($"Try seed once {count} / {isolationLevel}");
+
         async Task InternalTrySeedOnce()
         {
             for (var i = 0; i < count; i++)

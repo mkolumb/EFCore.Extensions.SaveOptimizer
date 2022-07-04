@@ -123,10 +123,6 @@ This will make much easier refresh data after save if necessary, you will be abl
 
 ## Known issues
 
-### Firebird batch insert problem
-
-Basically all query builders are prepared for multi row statements, but it looks there are some issues when executing DbCommand with Firebird provider. I think there is something with .NET Firebird client. Currently for this providers batch is working only on update and delete. Insert is working in the same manner as when using EF Core without extensions as it has InsertBatchSize 1 by default for this provider.
-
 ### Oracle serializable transaction
 
 It looks like serializable transaction produces many errors during execution, especially during insert (e.g. ORA-08177 & ORA-06512). This is something to investigate, maybe this is dockerized Oracle Express issue. I don't recommend using this library with Oracle in production environment without strong testing. Sometimes decrease batch size for insert could help.

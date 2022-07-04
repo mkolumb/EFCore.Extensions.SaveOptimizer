@@ -159,5 +159,5 @@ public class DataGroupModelTests
         JsonSerializer.Serialize(result).Should().BeEquivalentTo(JsonSerializer.Serialize(expected));
     }
 
-    private static SqlValueModel GetValueModel(object? value) => new(value, new PropertyTypeModel(null!, null!, null!));
+    private static SqlValueModel GetValueModel(object? value) => new(value, new PropertyTypeModel(null!, null, null!, null!));
 }

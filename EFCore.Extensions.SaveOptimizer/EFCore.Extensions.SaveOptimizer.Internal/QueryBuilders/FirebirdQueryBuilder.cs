@@ -1,5 +1,6 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Internal.Configuration;
 using EFCore.Extensions.SaveOptimizer.Internal.Enums;
+using EFCore.Extensions.SaveOptimizer.Internal.Models;
 
 namespace EFCore.Extensions.SaveOptimizer.Internal.QueryBuilders;
 
@@ -29,10 +30,23 @@ public class FirebirdQueryBuilder : BaseQueryBuilder
         { ClauseType.Set, "SET" },
         { ClauseType.RangeLeft, "(" },
         { ClauseType.RangeRight, ")" },
-        { ClauseType.QueryEnding, ";" }
+        { ClauseType.QueryEnding, ";" },
+        { ClauseType.Null, "NULL" }
     };
 
     public FirebirdQueryBuilder(QueryBuilderConfiguration? configuration) : base(Clauses, configuration)
     {
+    }
+
+    protected override string CastParameter(string paramKey, SqlValueModel model)
+    {
+        if (model.PropertyTypeModel.ColumnType == null)
+        {
+            return paramKey;
+        }
+
+        return paramKey == ClausesConfiguration[ClauseType.Null]
+            ? ClausesConfiguration[ClauseType.Null]
+            : $"CAST({paramKey} AS {model.PropertyTypeModel.ColumnType})";
     }
 }

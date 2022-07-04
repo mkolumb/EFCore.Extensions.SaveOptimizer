@@ -191,11 +191,18 @@ public abstract class BaseQueryBuilder : IQueryBuilder
         Builder.Append(comma ? $", {paramKey}" : $"{paramKey}");
     }
 
+    protected virtual string CastParameter(string paramKey, SqlValueModel model) => paramKey;
+
     protected string AppendParameterBinding(SqlValueModel? value)
     {
         if (value == null)
         {
             throw new ArgumentNullException(nameof(value));
+        }
+
+        if (value.Value == null && ClausesConfiguration.ContainsKey(ClauseType.Null))
+        {
+            return CastParameter(ClausesConfiguration[ClauseType.Null], value);
         }
 
         if (!Bindings.ContainsKey(value))
@@ -212,11 +219,13 @@ public abstract class BaseQueryBuilder : IQueryBuilder
 
         var paramKey = $"{ClausesConfiguration[ClauseType.ParameterPrefix]}{BindingsCount}";
 
-        set.Add(new SqlParamModel(paramKey, value));
+        var castParameter = CastParameter(paramKey, value);
+
+        set.Add(new SqlParamModel(paramKey, castParameter, value));
 
         BindingsCount++;
 
-        return paramKey;
+        return castParameter;
     }
 
     protected void AppendFilter(HashSet<DataGroupModel> data)

@@ -73,11 +73,9 @@ public class OracleAllQueryBuilder : BaseQueryBuilder
 
         columnBuilder.Append($") {ClausesConfiguration[ClauseType.Values]}");
 
-        var columns = columnBuilder.ToString();
-
         for (var i = 0; i < data.Count; i++)
         {
-            Builder.Append(columns);
+            Builder.Append(columnBuilder);
 
             var valueSetLeft = ClausesConfiguration[ClauseType.ValueSetLeft];
             var valueSetRight = ClausesConfiguration[ClauseType.ValueSetRight];
