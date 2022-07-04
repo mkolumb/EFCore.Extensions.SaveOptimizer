@@ -112,7 +112,7 @@ public class OracleAllQueryBuilder : BaseQueryBuilder
             return command;
         }
 
-        var sql = $"BEGIN\r\n{command.Sql};\r\nEND;";
+        var sql = $"BEGIN{Environment.NewLine}{command.Sql};{Environment.NewLine}END;";
 
         return new SqlCommandModel { Sql = sql, Parameters = command.Parameters };
     }
