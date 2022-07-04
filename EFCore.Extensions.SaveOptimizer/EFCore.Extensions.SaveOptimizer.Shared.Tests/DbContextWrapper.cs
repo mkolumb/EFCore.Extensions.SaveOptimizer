@@ -116,9 +116,13 @@ public sealed class DbContextWrapper : IDisposable
 
                 return;
             }
-            catch
+            catch (Exception ex)
             {
                 _logger.LogWithDate($"Retry number {i} {method.Method.Name}");
+
+                _logger.LogWithDate(ex.Message);
+
+                _logger.LogWithDate(ex.StackTrace);
 
                 await Task.Delay(TimeSpan.FromSeconds(2));
 

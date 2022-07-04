@@ -7,15 +7,19 @@ public class PropertyTypeModel : IEquatable<PropertyTypeModel>
 {
     public string ColumnName { get; }
 
+    public string? ColumnType { get; }
+
     public Func<IDbCommand, string, object?, DbParameter> ParameterResolver { get; }
 
     public string Signature { get; }
 
     public PropertyTypeModel(string columnName,
+        string? columnType,
         Func<IDbCommand, string, object?, DbParameter> parameterResolver,
         string signature)
     {
         ColumnName = columnName;
+        ColumnType = columnType;
         ParameterResolver = parameterResolver;
         Signature = signature;
     }
@@ -32,7 +36,7 @@ public class PropertyTypeModel : IEquatable<PropertyTypeModel>
             return true;
         }
 
-        return ColumnName == other.ColumnName && Signature == other.Signature;
+        return ColumnName == other.ColumnName && ColumnType == other.ColumnType && Signature == other.Signature;
     }
 
     public override bool Equals(object? obj)
@@ -50,5 +54,5 @@ public class PropertyTypeModel : IEquatable<PropertyTypeModel>
         return obj.GetType() == GetType() && Equals((PropertyTypeModel)obj);
     }
 
-    public override int GetHashCode() => HashCode.Combine(ColumnName, Signature);
+    public override int GetHashCode() => HashCode.Combine(ColumnName, ColumnType, Signature);
 }

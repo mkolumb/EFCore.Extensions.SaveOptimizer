@@ -70,6 +70,7 @@ public class DataContextModelWrapper : IDataContextModelWrapper
     {
         var name = property.GetColumnName(identifier) ?? throw new ArgumentException("Unable to find column name");
         RelationalTypeMapping? mapping = isRelational ? property.GetRelationalTypeMapping() : null;
+        var type = isRelational ? property.GetColumnType() : null;
 
         Func<IDbCommand, string, object?, DbParameter> resolver;
 
@@ -92,7 +93,7 @@ public class DataContextModelWrapper : IDataContextModelWrapper
 
         var signature = $"{property.DeclaringType.Name}_{property.ClrType.Name}_{property.IsNullable}_{property.GetScale()}_{property.GetPrecision()}";
 
-        return new PropertyTypeModel(name, resolver, signature);
+        return new PropertyTypeModel(name, type, resolver, signature);
     }
 
     private static DbParameter CreateDefaultParameter(IDbCommand dbCmd, string paramKey, object? value, IReadOnlyProperty property)
