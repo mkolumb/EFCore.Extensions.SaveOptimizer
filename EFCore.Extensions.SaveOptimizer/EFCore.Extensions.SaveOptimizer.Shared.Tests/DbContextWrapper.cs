@@ -46,9 +46,9 @@ public sealed class DbContextWrapper : IDisposable
         Context = _factory.CreateDbContext(new[] { connectionString }, _loggerFactory);
     }
 
-    public async Task Save(SaveVariant variant, int? batchSize)
+    public async Task Save(SaveVariant variant, int? batchSize, int retries = RunTry)
     {
-        await Run(RunTry, () => TrySave(variant, batchSize)).ConfigureAwait(false);
+        await Run(retries, () => TrySave(variant, batchSize)).ConfigureAwait(false);
 
         if ((variant & SaveVariant.Recreate) != 0)
         {
@@ -116,7 +116,7 @@ public sealed class DbContextWrapper : IDisposable
     {
         var i = 0;
 
-        while (i < max)
+        do
         {
             try
             {
@@ -135,9 +135,15 @@ public sealed class DbContextWrapper : IDisposable
                 await Task.Delay(TimeSpan.FromSeconds(2)).ConfigureAwait(false);
 
                 i++;
-            }
-        }
 
-        throw new Exception("Unable to run method");
+                if (i >= max)
+                {
+                    throw;
+                }
+            }
+        } while (i < max);
+
+
+        throw new Exception("Unable to run method - something weird happened");
     }
 }

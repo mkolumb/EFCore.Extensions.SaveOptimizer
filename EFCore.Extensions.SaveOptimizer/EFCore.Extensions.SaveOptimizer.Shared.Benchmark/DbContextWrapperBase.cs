@@ -129,11 +129,11 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
     {
         var i = 0;
 
-        while (i < max)
+        do
         {
             try
             {
-                await method();
+                await method().ConfigureAwait(false);
 
                 return;
             }
@@ -148,10 +148,15 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
                 await Task.Delay(TimeSpan.Zero);
 
                 i++;
-            }
-        }
 
-        throw new Exception("Unable to run method");
+                if (i >= max)
+                {
+                    throw;
+                }
+            }
+        } while (i < max);
+
+        throw new Exception("Unable to run method - something weird happened");
     }
 
     protected abstract Task TruncateBase();
