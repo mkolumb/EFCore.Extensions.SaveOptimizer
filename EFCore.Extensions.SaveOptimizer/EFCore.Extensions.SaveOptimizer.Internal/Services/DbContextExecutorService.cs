@@ -5,26 +5,32 @@ using EFCore.Extensions.SaveOptimizer.Internal.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Logging;
 
 namespace EFCore.Extensions.SaveOptimizer.Internal.Services;
 
 public class DbContextExecutorService : IDbContextExecutorService
 {
+    private readonly IDbContextDependencyResolverService _dbContextDependencyResolverService;
     private readonly IQueryExecutionConfiguratorService _queryExecutionConfiguratorService;
     private readonly IQueryExecutorService _queryExecutorService;
     private readonly IQueryPreparerService _queryPreparerService;
 
     public DbContextExecutorService(IQueryPreparerService queryPreparerService,
         IQueryExecutorService queryExecutorService,
-        IQueryExecutionConfiguratorService queryExecutionConfiguratorService)
+        IQueryExecutionConfiguratorService queryExecutionConfiguratorService,
+        IDbContextDependencyResolverService dbContextDependencyResolverService)
     {
         _queryPreparerService = queryPreparerService;
         _queryExecutorService = queryExecutorService;
         _queryExecutionConfiguratorService = queryExecutionConfiguratorService;
+        _dbContextDependencyResolverService = dbContextDependencyResolverService;
     }
 
     public int SaveChangesOptimized(DbContext context, QueryExecutionConfiguration? configuration)
     {
+        ILogger logger = _dbContextDependencyResolverService.GetLogger(context);
+
         configuration = Init(context, configuration);
 
         QueryPreparationModel queries = _queryPreparerService.Prepare(context, configuration);
@@ -62,14 +68,28 @@ public class DbContextExecutorService : IDbContextExecutorService
         {
             var rows = 0;
 
+            ConcurrencyTokenBehavior? behavior = configuration.ConcurrencyTokenBehavior;
+
             // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (ISqlCommandModel sql in queries.Queries)
             {
-                rows += _queryExecutorService.Execute(context, configuration, transaction, sql, timeout);
+                var affected = _queryExecutorService.Execute(context, configuration, transaction, sql, timeout);
+
+                rows += affected;
+
+                if (affected >= 0 || behavior == ConcurrencyTokenBehavior.SaveWhatPossible)
+                {
+                    continue;
+                }
+
+                behavior = ConcurrencyTokenBehavior.SaveWhatPossible;
+
+                logger.LogWarning(
+                    "Returned {affected} affected rows, switch behavior to {behavior} for the current execution",
+                    affected, behavior);
             }
 
-            if (rows != queries.ExpectedRows &&
-                configuration.ConcurrencyTokenBehavior == ConcurrencyTokenBehavior.ThrowException)
+            if (rows != queries.ExpectedRows && behavior == ConcurrencyTokenBehavior.ThrowException)
             {
                 throw new DBConcurrencyException($"Expected rows to change {queries.ExpectedRows} but changed {rows}");
             }
@@ -105,6 +125,8 @@ public class DbContextExecutorService : IDbContextExecutorService
         QueryExecutionConfiguration? configuration,
         CancellationToken cancellationToken)
     {
+        ILogger logger = _dbContextDependencyResolverService.GetLogger(context);
+
         configuration = Init(context, configuration);
 
         QueryPreparationModel queries = _queryPreparerService.Prepare(context, configuration);
@@ -144,16 +166,30 @@ public class DbContextExecutorService : IDbContextExecutorService
         {
             var rows = 0;
 
+            ConcurrencyTokenBehavior? behavior = configuration.ConcurrencyTokenBehavior;
+
             // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (ISqlCommandModel sql in queries.Queries)
             {
-                rows += await _queryExecutorService
+                var affected = await _queryExecutorService
                     .ExecuteAsync(context, configuration, transaction, sql, timeout, cancellationToken)
                     .ConfigureAwait(false);
+
+                rows += affected;
+
+                if (affected >= 0 || behavior == ConcurrencyTokenBehavior.SaveWhatPossible)
+                {
+                    continue;
+                }
+
+                behavior = ConcurrencyTokenBehavior.SaveWhatPossible;
+
+                logger.LogWarning(
+                    "Returned {affected} affected rows, switch behavior to {behavior} for the current execution",
+                    affected, behavior);
             }
 
-            if (rows != queries.ExpectedRows &&
-                configuration.ConcurrencyTokenBehavior == ConcurrencyTokenBehavior.ThrowException)
+            if (rows != queries.ExpectedRows && behavior == ConcurrencyTokenBehavior.ThrowException)
             {
                 throw new DBConcurrencyException($"Expected rows to change {queries.ExpectedRows} but changed {rows}");
             }

@@ -24,11 +24,15 @@ public static class DbContextExtensions
 
         IQueryPreparerService queryPreparerService = new QueryPreparerService(compilerService, translatorService);
 
-        IQueryExecutorService queryExecutorService = new QueryExecutorService();
+        IDbContextDependencyResolverService dbContextDependencyResolverService =
+            new DbContextDependencyResolverService();
+
+        IQueryExecutorService queryExecutorService = new QueryExecutorService(dbContextDependencyResolverService);
 
         DbContextExecutorService = new DbContextExecutorService(queryPreparerService,
             queryExecutorService,
-            queryExecutionConfiguratorService);
+            queryExecutionConfiguratorService,
+            dbContextDependencyResolverService);
     }
 
     public static int SaveChangesDapperOptimized(this DbContext context) =>
