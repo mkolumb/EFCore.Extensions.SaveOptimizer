@@ -15,7 +15,7 @@
     <PackageTags>EntityFrameworkCore;Entity Framework Core;EFCore;EF Core;SQL Server;PostgreSQL;SQLite;Firebird;Postgres;Cockroach;Cockroach DB;Oracle;MySQL;MariaDB;Batch Extensions;Insert;Update;Delete;SaveChanges;SaveOptimizer;SaveOptimized;SaveOptimize;Save Optimizer;Save Optimized;Save Optimize;Dapper;</PackageTags>
     <PackageReleaseNotes>https://github.com/mkolumb/EFCore.Extensions.SaveOptimizer</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/mkolumb/EFCore.Extensions.SaveOptimizer</PackageProjectUrl>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/mkolumb/EFCore.Extensions.SaveOptimizer.git</RepositoryUrl>
