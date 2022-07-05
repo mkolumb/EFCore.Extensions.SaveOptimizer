@@ -8,6 +8,7 @@ namespace EFCore.Extensions.SaveOptimizer.Internal.Tests.Helpers;
 public class SqlKataBuilder : IQueryBuilder
 {
     private readonly Compiler _compiler;
+    private int? _expectedRows;
     private Query? _query;
 
     public SqlKataBuilder(Compiler compiler) => _compiler = compiler;
@@ -15,6 +16,8 @@ public class SqlKataBuilder : IQueryBuilder
     public IQueryBuilder Insert(string tableName, IReadOnlyList<IDictionary<string, SqlValueModel?>> data)
     {
         ICollection<string> columns = data[0].Keys;
+
+        _expectedRows = data.Count;
 
         IEnumerable<ICollection<object?>> rows = data.Select(x => x.Values.Select(s => s?.Value).ToArray());
 
@@ -25,7 +28,7 @@ public class SqlKataBuilder : IQueryBuilder
 
     public IQueryBuilder Update(string tableName, IDictionary<string, SqlValueModel?> data)
     {
-        var collection = data.ToDictionary(x => x.Key, x => x.Value?.Value);
+        Dictionary<string, object?> collection = data.ToDictionary(x => x.Key, x => x.Value?.Value);
 
         _query = new Query(tableName).AsUpdate(collection);
 
@@ -41,7 +44,7 @@ public class SqlKataBuilder : IQueryBuilder
 
     public IQueryBuilder Where(IDictionary<string, SqlValueModel?>? filter)
     {
-        var collection = filter?.ToDictionary(x => x.Key, x => x.Value?.Value);
+        Dictionary<string, object?>? collection = filter?.ToDictionary(x => x.Key, x => x.Value?.Value);
 
         if (collection != null && collection.Any())
         {
@@ -62,6 +65,11 @@ public class SqlKataBuilder : IQueryBuilder
     {
         SqlResult? result = _compiler.Compile(_query);
 
-        return new SqlKataCommandModel { Sql = result.Sql, NamedBindings = result.NamedBindings };
+        return new SqlKataCommandModel
+        {
+            Sql = result.Sql,
+            NamedBindings = result.NamedBindings,
+            ExpectedRows = _expectedRows
+        };
     }
 }

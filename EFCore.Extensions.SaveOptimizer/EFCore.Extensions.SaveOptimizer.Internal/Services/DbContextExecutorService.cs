@@ -5,32 +5,26 @@ using EFCore.Extensions.SaveOptimizer.Internal.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.Extensions.Logging;
 
 namespace EFCore.Extensions.SaveOptimizer.Internal.Services;
 
 public class DbContextExecutorService : IDbContextExecutorService
 {
-    private readonly IDbContextDependencyResolverService _dbContextDependencyResolverService;
     private readonly IQueryExecutionConfiguratorService _queryExecutionConfiguratorService;
     private readonly IQueryExecutorService _queryExecutorService;
     private readonly IQueryPreparerService _queryPreparerService;
 
     public DbContextExecutorService(IQueryPreparerService queryPreparerService,
         IQueryExecutorService queryExecutorService,
-        IQueryExecutionConfiguratorService queryExecutionConfiguratorService,
-        IDbContextDependencyResolverService dbContextDependencyResolverService)
+        IQueryExecutionConfiguratorService queryExecutionConfiguratorService)
     {
         _queryPreparerService = queryPreparerService;
         _queryExecutorService = queryExecutorService;
         _queryExecutionConfiguratorService = queryExecutionConfiguratorService;
-        _dbContextDependencyResolverService = dbContextDependencyResolverService;
     }
 
     public int SaveChangesOptimized(DbContext context, QueryExecutionConfiguration? configuration)
     {
-        ILogger logger = _dbContextDependencyResolverService.GetLogger(context);
-
         configuration = Init(context, configuration);
 
         QueryPreparationModel queries = _queryPreparerService.Prepare(context, configuration);
@@ -75,18 +69,12 @@ public class DbContextExecutorService : IDbContextExecutorService
             {
                 var affected = _queryExecutorService.Execute(context, configuration, transaction, sql, timeout);
 
-                rows += affected;
-
-                if (affected >= 0 || behavior == ConcurrencyTokenBehavior.SaveWhatPossible)
+                if (affected < 0 && sql.ExpectedRows.HasValue) // Oracle insert many fallback
                 {
-                    continue;
+                    affected = sql.ExpectedRows.Value;
                 }
 
-                behavior = ConcurrencyTokenBehavior.SaveWhatPossible;
-
-                logger.LogWarning(
-                    "Returned {affected} affected rows, switch behavior to {behavior} for the current execution",
-                    affected, behavior);
+                rows += affected;
             }
 
             if (rows != queries.ExpectedRows && behavior == ConcurrencyTokenBehavior.ThrowException)
@@ -125,8 +113,6 @@ public class DbContextExecutorService : IDbContextExecutorService
         QueryExecutionConfiguration? configuration,
         CancellationToken cancellationToken)
     {
-        ILogger logger = _dbContextDependencyResolverService.GetLogger(context);
-
         configuration = Init(context, configuration);
 
         QueryPreparationModel queries = _queryPreparerService.Prepare(context, configuration);
@@ -175,18 +161,12 @@ public class DbContextExecutorService : IDbContextExecutorService
                     .ExecuteAsync(context, configuration, transaction, sql, timeout, cancellationToken)
                     .ConfigureAwait(false);
 
-                rows += affected;
-
-                if (affected >= 0 || behavior == ConcurrencyTokenBehavior.SaveWhatPossible)
+                if (affected < 0 && sql.ExpectedRows.HasValue) // Oracle insert many fallback
                 {
-                    continue;
+                    affected = sql.ExpectedRows.Value;
                 }
 
-                behavior = ConcurrencyTokenBehavior.SaveWhatPossible;
-
-                logger.LogWarning(
-                    "Returned {affected} affected rows, switch behavior to {behavior} for the current execution",
-                    affected, behavior);
+                rows += affected;
             }
 
             if (rows != queries.ExpectedRows && behavior == ConcurrencyTokenBehavior.ThrowException)

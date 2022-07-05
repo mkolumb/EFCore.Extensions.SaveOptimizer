@@ -31,8 +31,7 @@ public static class DbContextExtensions
 
         DbContextExecutorService = new DbContextExecutorService(queryPreparerService,
             queryExecutorService,
-            queryExecutionConfiguratorService,
-            dbContextDependencyResolverService);
+            queryExecutionConfiguratorService);
     }
 
     public static int SaveChangesDapperOptimized(this DbContext context) =>

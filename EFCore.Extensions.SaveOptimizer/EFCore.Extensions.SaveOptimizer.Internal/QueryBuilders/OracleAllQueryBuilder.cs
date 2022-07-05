@@ -52,6 +52,8 @@ public class OracleAllQueryBuilder : BaseQueryBuilder
 
     private IQueryBuilder InsertAll(string tableName, IReadOnlyList<IDictionary<string, SqlValueModel?>> data)
     {
+        ExpectedRows = 0;
+
         _insertAll = true;
 
         Builder.Append($"{ClausesConfiguration[ClauseType.InsertAll]}");
@@ -75,6 +77,8 @@ public class OracleAllQueryBuilder : BaseQueryBuilder
 
         for (var i = 0; i < data.Count; i++)
         {
+            ExpectedRows++;
+
             Builder.Append(columnBuilder);
 
             var valueSetLeft = ClausesConfiguration[ClauseType.ValueSetLeft];
@@ -112,6 +116,6 @@ public class OracleAllQueryBuilder : BaseQueryBuilder
 
         var sql = $"BEGIN{Environment.NewLine}{command.Sql};{Environment.NewLine}END;";
 
-        return new SqlCommandModel { Sql = sql, Parameters = command.Parameters };
+        return new SqlCommandModel(sql, command.Parameters, ExpectedRows);
     }
 }

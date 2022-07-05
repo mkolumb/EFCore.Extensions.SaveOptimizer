@@ -126,7 +126,7 @@ It looks like serializable transaction produces many errors during execution, es
 
 ### Oracle concurrency token behavior
 
-Sometimes Oracle returns -1 as affected rows. This will disable throwing DBConcurrencyException.
+Sometimes Oracle returns -1 as affected rows. In that case affected rows would be assumed as equal to expected for the statement.
 
 ## Q&A
 
