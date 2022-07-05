@@ -145,7 +145,7 @@ It looks like serializable transaction produces many errors during execution, es
 |  |  | _Other - NULL_ |
 | Update batch size | When defined override batch size for update operations | _All - NULL_ |
 | Delete batch size | When defined override batch size for delete operations | _All - NULL_ |
-| Parameters limit | Limit parameters for statement, when exceeded batch size decreased for operation | _SqlServer - 1024_ |
+| Parameters limit | Limit parameters for statement, when exceeded batch size decreased for operation to prevent exceptions | _SqlServer - 1024_ |
 |  |  | _Firebird - 2048_ |
 |  |  | _SqLite - 512_ |
 |  |  | _Postgres - 31768_ |
