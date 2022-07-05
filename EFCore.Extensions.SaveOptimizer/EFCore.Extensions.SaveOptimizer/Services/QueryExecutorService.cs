@@ -1,4 +1,5 @@
 ﻿using System.Data.Common;
+using EFCore.Extensions.SaveOptimizer.Internal.Configuration;
 using EFCore.Extensions.SaveOptimizer.Internal.Models;
 using EFCore.Extensions.SaveOptimizer.Internal.Services;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,7 @@ namespace EFCore.Extensions.SaveOptimizer.Services;
 public class QueryExecutorService : IQueryExecutorService
 {
     public int Execute(DbContext context,
+        QueryExecutionConfiguration configuration,
         IDbContextTransaction transaction,
         ISqlCommandModel sql,
         int? timeout)
@@ -40,6 +42,7 @@ public class QueryExecutorService : IQueryExecutorService
     }
 
     public async Task<int> ExecuteAsync(DbContext context,
+        QueryExecutionConfiguration configuration,
         IDbContextTransaction transaction,
         ISqlCommandModel sql,
         int? timeout,

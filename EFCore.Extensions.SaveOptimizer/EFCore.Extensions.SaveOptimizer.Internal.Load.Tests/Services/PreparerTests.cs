@@ -1,4 +1,5 @@
-﻿using EFCore.Extensions.SaveOptimizer.Internal.Factories;
+﻿using EFCore.Extensions.SaveOptimizer.Internal.Configuration;
+using EFCore.Extensions.SaveOptimizer.Internal.Factories;
 using EFCore.Extensions.SaveOptimizer.Internal.Load.Tests.Context;
 using EFCore.Extensions.SaveOptimizer.Internal.Load.Tests.Helpers;
 using EFCore.Extensions.SaveOptimizer.Internal.Models;
@@ -25,12 +26,13 @@ public class PreparerTests
         // Arrange
         GetData(out TestDataContext? context,
             out QueryCompilerService? queryCompiler,
-            out QueryTranslatorService queryTranslator,
-            out QueryExecutionConfiguratorService queryConfigurator);
+            out QueryTranslatorService queryTranslator);
 
-        QueryPreparerService queryPreparer = new(queryCompiler, queryTranslator, queryConfigurator);
+        QueryPreparerService queryPreparer = new(queryCompiler, queryTranslator);
 
         queryPreparer.Init(context);
+
+        QueryExecutionConfiguration configuration = new QueryExecutionConfiguratorService().Get("Sqlite", null);
 
         // Act
         const int howManyTimes = 5;
@@ -43,7 +45,7 @@ public class PreparerTests
         {
             DateTime start = DateTime.Now;
 
-            count += queryPreparer.Prepare(context).ToArray().Length;
+            count += queryPreparer.Prepare(context, configuration).Queries.ToArray().Length;
 
             DateTime end = DateTime.Now;
 
@@ -60,8 +62,7 @@ public class PreparerTests
 
     private static void GetData(out TestDataContext context,
         out QueryCompilerService queryCompiler,
-        out QueryTranslatorService translator,
-        out QueryExecutionConfiguratorService queryConfigurator)
+        out QueryTranslatorService translator)
     {
         translator = new QueryTranslatorService();
 
@@ -84,7 +85,5 @@ public class PreparerTests
         QueryBuilderFactory factory = new();
 
         queryCompiler = new QueryCompilerService(factory);
-
-        queryConfigurator = new QueryExecutionConfiguratorService();
     }
 }

@@ -1,4 +1,5 @@
-﻿using EFCore.Extensions.SaveOptimizer.Internal.Factories;
+﻿using EFCore.Extensions.SaveOptimizer.Internal.Configuration;
+using EFCore.Extensions.SaveOptimizer.Internal.Factories;
 using EFCore.Extensions.SaveOptimizer.Internal.Load.Tests.Context;
 using EFCore.Extensions.SaveOptimizer.Internal.Load.Tests.Helpers;
 using EFCore.Extensions.SaveOptimizer.Internal.Models;
@@ -26,6 +27,9 @@ public class CompilerTests
 
         QueryCompilerService queryCompiler = new(factory);
 
+        QueryBuilderConfiguration? configuration =
+            new QueryExecutionConfiguratorService().Get("Sqlite", null).BuilderConfiguration;
+
         // Act
         const int howManyTimes = 5;
 
@@ -47,7 +51,9 @@ public class CompilerTests
 
             _testOutputHelper.WriteLine($"start insert {insertStart}");
 
-            insertCount += queryCompiler.Compile(batches[EntityState.Added], "InMemory", null).Count();
+            insertCount += queryCompiler
+                .Compile(batches[EntityState.Added], configuration)
+                .Count();
 
             DateTime insertEnd = DateTime.Now;
 
@@ -57,7 +63,9 @@ public class CompilerTests
 
             _testOutputHelper.WriteLine($"start update {updateStart}");
 
-            updateCount += queryCompiler.Compile(batches[EntityState.Modified], "InMemory", null).Count();
+            updateCount += queryCompiler
+                .Compile(batches[EntityState.Modified], configuration)
+                .Count();
 
             DateTime updateEnd = DateTime.Now;
 
@@ -67,7 +75,9 @@ public class CompilerTests
 
             _testOutputHelper.WriteLine($"start delete {deleteStart}");
 
-            deleteCount += queryCompiler.Compile(batches[EntityState.Deleted], "InMemory", null).Count();
+            deleteCount += queryCompiler
+                .Compile(batches[EntityState.Deleted], configuration)
+                .Count();
 
             DateTime deleteEnd = DateTime.Now;
 

@@ -39,7 +39,7 @@ public abstract class BaseDeleteTests
         }
 
         // Act
-        await db.Save(variant);
+        await db.Save(variant, null);
 
         NonRelatedEntity[] result =
             await db.Context.NonRelatedEntities.OrderBy(x => x.SomeNonNullableIntProperty).ToArrayWithRetry();
@@ -64,7 +64,7 @@ public abstract class BaseDeleteTests
         db.Context.NonRelatedEntities.Remove(data[0]);
 
         // Act
-        await db.Save(variant);
+        await db.Save(variant, null);
 
         NonRelatedEntity[] result =
             await db.Context.NonRelatedEntities.OrderBy(x => x.SomeNonNullableIntProperty).ToArrayWithRetry();
@@ -90,7 +90,7 @@ public abstract class BaseDeleteTests
         }
 
         // Act
-        await db.Save(variant);
+        await db.Save(variant, null);
 
         NonRelatedEntity[] result =
             await db.Context.NonRelatedEntities.OrderBy(x => x.SomeNonNullableIntProperty).ToArrayWithRetry();
@@ -109,7 +109,7 @@ public abstract class BaseDeleteTests
             await db.Context.AddAsync(ItemResolver(i));
         }
 
-        await db.Save(variant);
+        await db.Save(variant, null);
 
         return await db.Context.NonRelatedEntities.OrderBy(x => x.SomeNonNullableIntProperty).ToArrayWithRetry();
     }

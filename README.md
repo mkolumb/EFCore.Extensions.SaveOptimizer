@@ -120,6 +120,7 @@ Please note it is not working exactly as SaveChanges, so you should verify it wo
 SaveOptimizer approach makes almost impossible refresh data after save, it is on your side. 
 I recommend to generate values for primary keys in code, not in db. 
 This will make much easier refresh data after save if necessary, you will be able to use this values for query.
+Also DatabaseValues for entry will not be retrieved from db when ConcurrencyTokenException is thrown.
 
 ## Known issues
 
@@ -137,6 +138,28 @@ It looks like serializable transaction produces many errors during execution, es
    - The default execution use provider described in previous question. Someone could prefer execution using Dapper. You can compare performance in your case. From my experience results usually are similar.
 4. Which EF Core version do you support?
    - I have plan to support only current release and latest LTS version. As there is only one required dependency (Microsoft.EntityFrameworkCore.Relational) you should be able to quickly prepare version for older EF if you need. Maybe some small changes in DataContextModelWrapper would be required.
+
+## Configuration
+
+| Parameter | Description | Provider default value |
+|---|---|---|
+| Batch size | Default batch size  | _All - 1000_ |
+| Insert batch size | When defined override batch size for insert operations | _Firebird - 500_ |
+|  |  | _Oracle - 50_ |
+|  |  | _Other - NULL_ |
+| Update batch size | When defined override batch size for update operations | _All - NULL_ |
+| Delete batch size | When defined override batch size for delete operations | _All - NULL_ |
+| Parameters limit | Limit parameters for statement, when exceeded batch size decreased for operation | _SqlServer - 1024_ |
+|  |  | _Firebird - 2048_ |
+|  |  | _SqLite - 512_ |
+|  |  | _Postgres - 31768_ |
+|  |  | _Other - 15384_ |
+| Concurrency token behavior | When concurrency token is defined for entity it is included in update / delete statements. When flag is set to throws exception it will throws exception when statements affected less / more rows than expected. | _All - throw exception_ |
+| Auto transaction enabled | If enabled it will start transaction when no transaction attached to DbContext | _All - enabled_ |
+| Auto transaction isolation level | Isolation level for auto transaction | _All - serializable_ |
+| Builder configuration -> case type | Case type used when building statements, if normal it will not change case to upper / lower | _All - normal_ |
+| Builder configuration -> optimize parameters | Optimize parameters usage in statements, sometimes can lead to unexpected exception in db | _Firebird - false_ |
+|  |  | _Other - true_ |
 
 ## Migration command
 

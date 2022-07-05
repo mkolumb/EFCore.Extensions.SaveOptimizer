@@ -16,7 +16,7 @@ public class QueryCompilerService : IQueryCompilerService
 
     public QueryCompilerService(IQueryBuilderFactory queryBuilderFactory) => _queryBuilderFactory = queryBuilderFactory;
 
-    public IEnumerable<ISqlCommandModel> Compile(IReadOnlyCollection<QueryDataModel> models, string providerName, QueryBuilderConfiguration? configuration)
+    public IEnumerable<ISqlCommandModel> Compile(IReadOnlyCollection<QueryDataModel> models, QueryBuilderConfiguration? configuration)
     {
         if (!models.Any())
         {
@@ -147,13 +147,13 @@ public class QueryCompilerService : IQueryCompilerService
             switch (queryType)
             {
                 case EntityState.Added:
-                    queries.Add(GetInsertQuery(providerName, configuration, insertData[batchKey], tableName));
+                    queries.Add(GetInsertQuery(configuration, insertData[batchKey], tableName));
                     break;
                 case EntityState.Modified:
-                    queries.AddRange(GetUpdateQueries(providerName, configuration, updateData[batchKey], tableName, primaryKeys));
+                    queries.AddRange(GetUpdateQueries(configuration, updateData[batchKey], tableName, primaryKeys));
                     break;
                 case EntityState.Deleted:
-                    queries.AddRange(GetDeleteQueries(providerName, configuration, deleteData[batchKey], tableName, primaryKeys));
+                    queries.AddRange(GetDeleteQueries(configuration, deleteData[batchKey], tableName, primaryKeys));
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(models), "Unrecognized query type");
@@ -164,7 +164,6 @@ public class QueryCompilerService : IQueryCompilerService
     }
 
     private IEnumerable<ISqlCommandModel> GetDeleteQueries(
-        string providerName,
         QueryBuilderConfiguration? configuration,
         IDictionary<string, List<QueryDataModel>> queryResultGrouped,
         string tableName,
@@ -179,7 +178,7 @@ public class QueryCompilerService : IQueryCompilerService
                 throw new QueryCompileException("Query needs to have primary keys");
             }
 
-            IQueryBuilder builder = _queryBuilderFactory.Query(configuration, providerName)
+            IQueryBuilder builder = _queryBuilderFactory.Query(configuration)
                 .Delete(tableName)
                 .Where(primaryKeyNames, queryResults)
                 .Where(firstResult.ConcurrencyTokens);
@@ -189,7 +188,6 @@ public class QueryCompilerService : IQueryCompilerService
     }
 
     private IEnumerable<ISqlCommandModel> GetUpdateQueries(
-        string providerName,
         QueryBuilderConfiguration? configuration,
         IDictionary<string, List<QueryDataModel>> queryResultGrouped,
         string tableName,
@@ -211,7 +209,7 @@ public class QueryCompilerService : IQueryCompilerService
                 throw new QueryCompileException("Query needs to have primary keys");
             }
 
-            IQueryBuilder builder = _queryBuilderFactory.Query(configuration, providerName)
+            IQueryBuilder builder = _queryBuilderFactory.Query(configuration)
                 .Update(tableName, data)
                 .Where(primaryKeyNames, queryResults)
                 .Where(firstResult.ConcurrencyTokens);
@@ -221,12 +219,11 @@ public class QueryCompilerService : IQueryCompilerService
     }
 
     private ISqlCommandModel GetInsertQuery(
-        string providerName,
         QueryBuilderConfiguration? configuration,
         IReadOnlyList<IDictionary<string, SqlValueModel?>> data,
         string tableName)
     {
-        IQueryBuilder builder = _queryBuilderFactory.Query(configuration, providerName)
+        IQueryBuilder builder = _queryBuilderFactory.Query(configuration)
             .Insert(tableName, data);
 
         return builder.Build();

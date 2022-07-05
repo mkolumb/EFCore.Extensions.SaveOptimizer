@@ -26,7 +26,7 @@ public abstract class BaseInsertTests
 
     [Theory]
     [MemberData(nameof(InsertData))]
-    public async Task GivenSaveChanges_WhenMultipleObjectsInserted_ShouldInsertData(SaveVariant variant, int batchSize, int count)
+    public async Task GivenSaveChanges_WhenMultipleObjectsInserted_ShouldInsertData(SaveVariant variant, int? batchSize, int count)
     {
         // Arrange
         using DbContextWrapper db = ContextWrapperResolver(_testOutputHelper);
@@ -60,7 +60,7 @@ public abstract class BaseInsertTests
         using DbContextWrapper db = ContextWrapperResolver(_testOutputHelper);
 
         // Act
-        await db.Save(variant);
+        await db.Save(variant, null);
 
         var result = await db.Context.NonRelatedEntities.CountAsync();
 
@@ -92,7 +92,7 @@ public abstract class BaseInsertTests
         // Act
         await db.Context.AddAsync(item);
 
-        await db.Save(variant);
+        await db.Save(variant, null);
 
         NonRelatedEntity result = await db.Context.NonRelatedEntities.FirstAsync();
 

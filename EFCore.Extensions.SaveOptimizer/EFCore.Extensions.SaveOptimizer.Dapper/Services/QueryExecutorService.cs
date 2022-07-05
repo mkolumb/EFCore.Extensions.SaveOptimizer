@@ -2,6 +2,7 @@
 using System.Data.Common;
 using Dapper;
 using EFCore.Extensions.SaveOptimizer.Dapper.Models;
+using EFCore.Extensions.SaveOptimizer.Internal.Configuration;
 using EFCore.Extensions.SaveOptimizer.Internal.Models;
 using EFCore.Extensions.SaveOptimizer.Internal.Services;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,7 @@ namespace EFCore.Extensions.SaveOptimizer.Dapper.Services;
 public class QueryExecutorService : IQueryExecutorService
 {
     public int Execute(DbContext context,
+        QueryExecutionConfiguration configuration,
         IDbContextTransaction transaction,
         ISqlCommandModel sql,
         int? timeout)
@@ -43,6 +45,7 @@ public class QueryExecutorService : IQueryExecutorService
     }
 
     public async Task<int> ExecuteAsync(DbContext context,
+        QueryExecutionConfiguration configuration,
         IDbContextTransaction transaction,
         ISqlCommandModel sql,
         int? timeout,

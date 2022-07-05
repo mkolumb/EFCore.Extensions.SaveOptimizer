@@ -39,7 +39,7 @@ public abstract class BaseUpdateTests
         }
 
         // Act
-        await db.Save(variant);
+        await db.Save(variant, null);
 
         NonRelatedEntity[] result =
             await db.Context.NonRelatedEntities.OrderBy(x => x.NonRelatedEntityId).ToArrayWithRetry();
@@ -64,7 +64,7 @@ public abstract class BaseUpdateTests
         data[0].SomeNonNullableDecimalProperty = 191;
 
         // Act
-        await db.Save(variant);
+        await db.Save(variant, null);
 
         NonRelatedEntity[] result =
             await db.Context.NonRelatedEntities.OrderBy(x => x.NonRelatedEntityId).ToArrayWithRetry();
@@ -101,7 +101,7 @@ public abstract class BaseUpdateTests
         }
 
         // Act
-        await db.Save(variant);
+        await db.Save(variant, null);
 
         NonRelatedEntity[] result =
             await db.Context.NonRelatedEntities.OrderBy(x => x.NonRelatedEntityId).ToArrayWithRetry();
@@ -149,7 +149,7 @@ public abstract class BaseUpdateTests
         }
 
         // Act
-        await db.Save(variant);
+        await db.Save(variant, null);
 
         NonRelatedEntity[] result =
             await db.Context.NonRelatedEntities.OrderBy(x => x.NonRelatedEntityId).ToArrayWithRetry();
@@ -183,7 +183,7 @@ public abstract class BaseUpdateTests
             await db.Context.AddAsync(ItemResolver(i));
         }
 
-        await db.Save(variant);
+        await db.Save(variant, null);
 
         return await db.Context.NonRelatedEntities.OrderBy(x => x.NonRelatedEntityId).ToArrayWithRetry();
     }
