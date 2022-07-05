@@ -1,5 +1,4 @@
 ﻿using System.Data;
-using System.Text.Json;
 using EFCore.Extensions.SaveOptimizer.Internal.Configuration;
 using EFCore.Extensions.SaveOptimizer.Internal.Constants;
 using EFCore.Extensions.SaveOptimizer.Internal.Enums;
@@ -49,17 +48,30 @@ public class QueryExecutionConfiguratorService : IQueryExecutionConfiguratorServ
         return config;
     }
 
-    private static QueryExecutionConfiguration Clone(QueryExecutionConfiguration? configuration)
-    {
-        if (configuration == null)
+    private static QueryExecutionConfiguration Clone(QueryExecutionConfiguration? configuration) =>
+        configuration switch
         {
-            return new QueryExecutionConfiguration();
-        }
-
-        var data = JsonSerializer.Serialize(configuration);
-
-        return JsonSerializer.Deserialize<QueryExecutionConfiguration>(data) ?? new QueryExecutionConfiguration();
-    }
+            null => new QueryExecutionConfiguration(),
+            _ => new QueryExecutionConfiguration
+            {
+                AutoTransactionEnabled = configuration.AutoTransactionEnabled,
+                AutoTransactionIsolationLevel = configuration.AutoTransactionIsolationLevel,
+                BatchSize = configuration.BatchSize,
+                ConcurrencyTokenBehavior = configuration.ConcurrencyTokenBehavior,
+                DeleteBatchSize = configuration.DeleteBatchSize,
+                InsertBatchSize = configuration.InsertBatchSize,
+                ParametersLimit = configuration.ParametersLimit,
+                UpdateBatchSize = configuration.UpdateBatchSize,
+                BuilderConfiguration = configuration.BuilderConfiguration != null
+                    ? new QueryBuilderConfiguration
+                    {
+                        CaseType = configuration.BuilderConfiguration.CaseType,
+                        QueryBuilderType = configuration.BuilderConfiguration.QueryBuilderType,
+                        OptimizeParameters = configuration.BuilderConfiguration.OptimizeParameters
+                    }
+                    : new QueryBuilderConfiguration()
+            }
+        };
 
     private static QueryBuilderConfiguration GetBuilderConfiguration(string providerName)
     {
