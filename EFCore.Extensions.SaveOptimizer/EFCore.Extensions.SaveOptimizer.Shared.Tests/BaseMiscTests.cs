@@ -25,7 +25,7 @@ public abstract class BaseMiscTests
     [Theory]
     [InlineData(SaveVariant.Optimized | SaveVariant.NoAutoTransaction)]
     [InlineData(SaveVariant.OptimizedDapper | SaveVariant.NoAutoTransaction)]
-    public async Task GivenSaveChanges_WhenNoTransaction_ShouldThrowsException(SaveVariant variant)
+    public async Task GivenSaveChangesAsync_WhenNoTransaction_ShouldThrowsException(SaveVariant variant)
     {
         // Arrange
         using DbContextWrapper db = ContextWrapperResolver(_testOutputHelper);
@@ -33,7 +33,7 @@ public abstract class BaseMiscTests
         await db.Context.AddAsync(ItemResolver(1));
 
         // Act
-        Func<Task> result = () => db.Save(variant, null, 0);
+        Func<Task> result = () => db.SaveAsync(variant, null, 0);
 
         // Assert
         await result.Should().ThrowExactlyAsync<ArgumentException>();
@@ -41,12 +41,12 @@ public abstract class BaseMiscTests
 
     [Theory]
     [MemberData(nameof(BaseWriteTheoryData))]
-    public async Task GivenSaveChanges_WhenDifferentOperations_ShouldStoreData(SaveVariant variant)
+    public async Task GivenSaveChangesAsync_WhenDifferentOperations_ShouldStoreData(SaveVariant variant)
     {
         // Arrange
         using DbContextWrapper db = ContextWrapperResolver(_testOutputHelper);
 
-        NonRelatedEntity[] data = await InitialSeed(db, variant, 10);
+        NonRelatedEntity[] data = await InitialSeedAsync(db, variant, 10);
 
         var toAdd = new object[] { ItemResolver(11), ItemResolver(12), ItemResolver(13) };
         NonRelatedEntity toEdit = data[3];
@@ -58,10 +58,10 @@ public abstract class BaseMiscTests
         db.Context.Remove(toRemove);
 
         // Act
-        await db.Save(variant, null);
+        await db.SaveAsync(variant, null);
 
         NonRelatedEntity[] result =
-            await db.Context.NonRelatedEntities.OrderBy(x => x.SomeNonNullableIntProperty).ToArrayWithRetry();
+            await db.Context.NonRelatedEntities.OrderBy(x => x.SomeNonNullableIntProperty).ToArrayWithRetryAsync();
 
         var properties = result.Select(x => x.SomeNonNullableIntProperty).ToArray();
 
@@ -74,16 +74,80 @@ public abstract class BaseMiscTests
         result[3].SomeNullableStringProperty.Should().BeEquivalentTo("new-prop");
     }
 
-    private static async Task<NonRelatedEntity[]> InitialSeed(DbContextWrapper db, SaveVariant variant, int count)
+    [Theory]
+    [InlineData(SaveVariant.Optimized | SaveVariant.NoAutoTransaction)]
+    [InlineData(SaveVariant.OptimizedDapper | SaveVariant.NoAutoTransaction)]
+    public void GivenSaveChanges_WhenNoTransaction_ShouldThrowsException(SaveVariant variant)
+    {
+        // Arrange
+        using DbContextWrapper db = ContextWrapperResolver(_testOutputHelper);
+
+        db.Context.Add(ItemResolver(1));
+
+        // Act
+        Action result = () => db.Save(variant, null, 0);
+
+        // Assert
+        result.Should().ThrowExactly<ArgumentException>();
+    }
+
+    [Theory]
+    [MemberData(nameof(BaseWriteTheoryData))]
+    public void GivenSaveChanges_WhenDifferentOperations_ShouldStoreData(SaveVariant variant)
+    {
+        // Arrange
+        using DbContextWrapper db = ContextWrapperResolver(_testOutputHelper);
+
+        NonRelatedEntity[] data = InitialSeed(db, variant, 10);
+
+        var toAdd = new object[] { ItemResolver(11), ItemResolver(12), ItemResolver(13) };
+        NonRelatedEntity toEdit = data[3];
+        toEdit.SomeNullableStringProperty = "new-prop";
+        NonRelatedEntity toRemove = data[6];
+
+        db.Context.AddRange(toAdd);
+        db.Context.Update(toEdit);
+        db.Context.Remove(toRemove);
+
+        // Act
+        db.Save(variant, null);
+
+        NonRelatedEntity[] result =
+            db.Context.NonRelatedEntities.OrderBy(x => x.SomeNonNullableIntProperty).ToArrayWithRetry();
+
+        var properties = result.Select(x => x.SomeNonNullableIntProperty).ToArray();
+
+        // Assert
+        result.Should().HaveCount(12);
+
+        properties.Should()
+            .ContainInOrder(0, 1, 2, 3, 4, 5, 7, 8, 9, 11, 12, 13);
+
+        result[3].SomeNullableStringProperty.Should().BeEquivalentTo("new-prop");
+    }
+
+    private static async Task<NonRelatedEntity[]> InitialSeedAsync(DbContextWrapper db, SaveVariant variant, int count)
     {
         for (var i = 0; i < count; i++)
         {
             await db.Context.AddAsync(ItemResolver(i));
         }
 
-        await db.Save(variant, null);
+        await db.SaveAsync(variant, null);
 
-        return await db.Context.NonRelatedEntities.OrderBy(x => x.SomeNonNullableIntProperty).ToArrayWithRetry();
+        return await db.Context.NonRelatedEntities.OrderBy(x => x.SomeNonNullableIntProperty).ToArrayWithRetryAsync();
+    }
+
+    private static NonRelatedEntity[] InitialSeed(DbContextWrapper db, SaveVariant variant, int count)
+    {
+        for (var i = 0; i < count; i++)
+        {
+            db.Context.Add(ItemResolver(i));
+        }
+
+        db.Save(variant, null);
+
+        return db.Context.NonRelatedEntities.OrderBy(x => x.SomeNonNullableIntProperty).ToArrayWithRetry();
     }
 
     private static NonRelatedEntity ItemResolver(int i) =>

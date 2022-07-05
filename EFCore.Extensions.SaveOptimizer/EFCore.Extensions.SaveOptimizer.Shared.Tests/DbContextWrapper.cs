@@ -46,9 +46,9 @@ public sealed class DbContextWrapper : IDisposable
         Context = _factory.CreateDbContext(new[] { connectionString }, _loggerFactory);
     }
 
-    public async Task Save(SaveVariant variant, int? batchSize, int retries = RunTry)
+    public async Task SaveAsync(SaveVariant variant, int? batchSize, int retries = RunTry)
     {
-        await Run(retries, () => TrySave(variant, batchSize)).ConfigureAwait(false);
+        await RunAsync(retries, () => TrySaveAsync(variant, batchSize)).ConfigureAwait(false);
 
         if ((variant & SaveVariant.Recreate) != 0)
         {
@@ -56,7 +56,7 @@ public sealed class DbContextWrapper : IDisposable
         }
     }
 
-    private async Task TrySave(SaveVariant variant, int? batchSize)
+    private async Task TrySaveAsync(SaveVariant variant, int? batchSize)
     {
         QueryExecutionConfiguration? configuration =
             batchSize.HasValue ? new QueryExecutionConfiguration { BatchSize = batchSize } : null;
@@ -112,7 +112,7 @@ public sealed class DbContextWrapper : IDisposable
         }
     }
 
-    private async Task Run(int max, Func<Task> method)
+    private async Task RunAsync(int max, Func<Task> method)
     {
         var i = 0;
 
@@ -132,7 +132,104 @@ public sealed class DbContextWrapper : IDisposable
 
                 _logger.LogWithDate(ex.StackTrace);
 
+                i++;
+
+                if (i >= max)
+                {
+                    throw;
+                }
+
                 await Task.Delay(TimeSpan.FromSeconds(2)).ConfigureAwait(false);
+            }
+        } while (i < max);
+
+        throw new Exception("Unable to run method - something weird happened");
+    }
+
+    public void Save(SaveVariant variant, int? batchSize, int retries = RunTry)
+    {
+        Run(retries, () => TrySave(variant, batchSize));
+
+        if ((variant & SaveVariant.Recreate) != 0)
+        {
+            RecreateContext();
+        }
+    }
+
+    private void TrySave(SaveVariant variant, int? batchSize)
+    {
+        QueryExecutionConfiguration? configuration =
+            batchSize.HasValue ? new QueryExecutionConfiguration { BatchSize = batchSize } : null;
+
+        if ((variant & SaveVariant.NoAutoTransaction) != 0)
+        {
+            configuration ??= new QueryExecutionConfiguration();
+
+            configuration.AutoTransactionEnabled = false;
+        }
+
+        void InternalSave()
+        {
+            if ((variant & SaveVariant.Optimized) != 0)
+            {
+                Context.SaveChangesOptimized(configuration);
+            }
+            else if ((variant & SaveVariant.OptimizedDapper) != 0)
+            {
+                Context.SaveChangesDapperOptimized(configuration);
+            }
+            else if ((variant & SaveVariant.EfCore) != 0)
+            {
+                Context.SaveChanges();
+            }
+        }
+
+        if ((variant & SaveVariant.WithTransaction) != 0)
+        {
+            IDbContextTransaction transaction = Context.Database.BeginTransaction(IsolationLevel.Serializable);
+
+            try
+            {
+                InternalSave();
+
+                transaction.Commit();
+            }
+            catch
+            {
+                transaction.Rollback();
+
+                throw;
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+        else
+        {
+            InternalSave();
+        }
+    }
+
+    private void Run(int max, Action method)
+    {
+        var i = 0;
+
+        do
+        {
+            try
+            {
+                method();
+
+                return;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWithDate($"Retry number {i} {method.Method.Name}");
+
+                _logger.LogWithDate(ex.Message);
+
+                _logger.LogWithDate(ex.StackTrace);
 
                 i++;
 
@@ -140,9 +237,10 @@ public sealed class DbContextWrapper : IDisposable
                 {
                     throw;
                 }
+
+                Task.Delay(TimeSpan.FromSeconds(2)).ConfigureAwait(false).GetAwaiter().GetResult();
             }
         } while (i < max);
-
 
         throw new Exception("Unable to run method - something weird happened");
     }
