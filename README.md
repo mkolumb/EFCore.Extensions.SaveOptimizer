@@ -86,12 +86,6 @@ Please note it is not working exactly as SaveChanges, so you should verify it wo
 
 ## What to do next
 
-- Configuration
-  - Concurrency token behavior
-  - Auto transaction behavior
-  - Parameter distinct behavior
-- Readme
-  - Configuration description
 - Support for
   - Different cultures
   - Interceptors
@@ -104,6 +98,7 @@ Please note it is not working exactly as SaveChanges, so you should verify it wo
 - Optimize data retrieval from Change Tracker
 - Add unchecked when possible
 - Low level performance optimizations
+- Configure await
 - Tests
   - Value generated on add
   - Auto increment primary key
@@ -112,6 +107,7 @@ Please note it is not working exactly as SaveChanges, so you should verify it wo
   - Hierarchical operations
   - Data types precision (date, decimal etc.)
   - Update concurrency tokens
+  - Different configuration types
 
 ## Limitations
 
