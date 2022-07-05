@@ -33,9 +33,9 @@ public class DbContextExecutorService : IDbContextExecutorService
 
         IDbContextTransaction? transaction = context.Database.CurrentTransaction;
 
-        if (configuration.AutoTransactionEnabled == true)
+        if (transaction == null)
         {
-            if (transaction == null)
+            if (configuration.AutoTransactionEnabled == true)
             {
                 IsolationLevel? isolationLevel = configuration.AutoTransactionIsolationLevel;
 
@@ -48,12 +48,11 @@ public class DbContextExecutorService : IDbContextExecutorService
 
                 autoCommit = true;
             }
-        }
-
-        if (transaction == null)
-        {
-            throw new ArgumentException(
-                "There is no transaction on DbContext, enable auto transaction or attach transaction to DbContext");
+            else
+            {
+                throw new ArgumentException(
+                    "There is no transaction on DbContext, enable auto transaction or attach transaction to DbContext");
+            }
         }
 
         var timeout = context.Database.GetCommandTimeout();
@@ -121,9 +120,9 @@ public class DbContextExecutorService : IDbContextExecutorService
 
         IDbContextTransaction? transaction = context.Database.CurrentTransaction;
 
-        if (configuration.AutoTransactionEnabled == true)
+        if (transaction == null)
         {
-            if (transaction == null)
+            if (configuration.AutoTransactionEnabled == true)
             {
                 IsolationLevel? isolationLevel = configuration.AutoTransactionIsolationLevel;
 
@@ -132,18 +131,15 @@ public class DbContextExecutorService : IDbContextExecutorService
                     throw new ArgumentException("Auto transaction isolation level should be set");
                 }
 
-                transaction = await context.Database
-                    .BeginTransactionAsync(isolationLevel.Value, cancellationToken)
-                    .ConfigureAwait(false);
+                transaction = await context.Database.BeginTransactionAsync(isolationLevel.Value, cancellationToken).ConfigureAwait(false);
 
                 autoCommit = true;
             }
-        }
-
-        if (transaction == null)
-        {
-            throw new ArgumentException(
-                "There is no transaction on DbContext, enable auto transaction or attach transaction to DbContext");
+            else
+            {
+                throw new ArgumentException(
+                    "There is no transaction on DbContext, enable auto transaction or attach transaction to DbContext");
+            }
         }
 
         var timeout = context.Database.GetCommandTimeout();

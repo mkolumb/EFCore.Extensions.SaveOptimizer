@@ -48,7 +48,7 @@ public sealed class DbContextWrapper : IDisposable
 
     public async Task Save(SaveVariant variant, int? batchSize)
     {
-        await Run(RunTry, () => TrySave(variant, batchSize));
+        await Run(RunTry, () => TrySave(variant, batchSize)).ConfigureAwait(false);
 
         if ((variant & SaveVariant.Recreate) != 0)
         {
@@ -61,19 +61,26 @@ public sealed class DbContextWrapper : IDisposable
         QueryExecutionConfiguration? configuration =
             batchSize.HasValue ? new QueryExecutionConfiguration { BatchSize = batchSize } : null;
 
+        if ((variant & SaveVariant.NoAutoTransaction) != 0)
+        {
+            configuration ??= new QueryExecutionConfiguration();
+
+            configuration.AutoTransactionEnabled = false;
+        }
+
         async Task InternalSave()
         {
             if ((variant & SaveVariant.Optimized) != 0)
             {
-                await Context.SaveChangesOptimizedAsync(configuration);
+                await Context.SaveChangesOptimizedAsync(configuration).ConfigureAwait(false);
             }
             else if ((variant & SaveVariant.OptimizedDapper) != 0)
             {
-                await Context.SaveChangesDapperOptimizedAsync(configuration);
+                await Context.SaveChangesDapperOptimizedAsync(configuration).ConfigureAwait(false);
             }
             else if ((variant & SaveVariant.EfCore) != 0)
             {
-                await Context.SaveChangesAsync();
+                await Context.SaveChangesAsync().ConfigureAwait(false);
             }
         }
 
@@ -84,7 +91,7 @@ public sealed class DbContextWrapper : IDisposable
 
             try
             {
-                await InternalSave();
+                await InternalSave().ConfigureAwait(false);
 
                 await transaction.CommitAsync().ConfigureAwait(false);
             }
@@ -101,7 +108,7 @@ public sealed class DbContextWrapper : IDisposable
         }
         else
         {
-            await InternalSave();
+            await InternalSave().ConfigureAwait(false);
         }
     }
 
@@ -113,7 +120,7 @@ public sealed class DbContextWrapper : IDisposable
         {
             try
             {
-                await method();
+                await method().ConfigureAwait(false);
 
                 return;
             }
@@ -125,7 +132,7 @@ public sealed class DbContextWrapper : IDisposable
 
                 _logger.LogWithDate(ex.StackTrace);
 
-                await Task.Delay(TimeSpan.FromSeconds(2));
+                await Task.Delay(TimeSpan.FromSeconds(2)).ConfigureAwait(false);
 
                 i++;
             }

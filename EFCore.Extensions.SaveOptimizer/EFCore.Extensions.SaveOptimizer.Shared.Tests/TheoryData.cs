@@ -9,15 +9,21 @@ public static class TheoryData
     {
         get
         {
-            yield return new object[] { SaveVariant.EfCore | SaveVariant.Recreate };
-            yield return new object[] { SaveVariant.EfCore | SaveVariant.Recreate | SaveVariant.WithTransaction };
-            yield return new object[] { SaveVariant.Optimized | SaveVariant.Recreate };
-            yield return new object[] { SaveVariant.Optimized | SaveVariant.Recreate | SaveVariant.WithTransaction };
-            yield return new object[] { SaveVariant.OptimizedDapper | SaveVariant.Recreate };
-            yield return new object[]
+            SaveVariant[] frameworks = { SaveVariant.EfCore, SaveVariant.Optimized, SaveVariant.OptimizedDapper };
+
+            SaveVariant[] transactions =
             {
-                SaveVariant.OptimizedDapper | SaveVariant.Recreate | SaveVariant.WithTransaction
+                SaveVariant.Default, SaveVariant.WithTransaction,
+                SaveVariant.WithTransaction | SaveVariant.NoAutoTransaction
             };
+
+            foreach (SaveVariant framework in frameworks)
+            {
+                foreach (SaveVariant transaction in transactions)
+                {
+                    yield return new object[] { framework | SaveVariant.Recreate | transaction };
+                }
+            }
         }
     }
 

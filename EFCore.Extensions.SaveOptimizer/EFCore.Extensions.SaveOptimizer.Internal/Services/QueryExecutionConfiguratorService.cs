@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Text.Json;
 using EFCore.Extensions.SaveOptimizer.Internal.Configuration;
 using EFCore.Extensions.SaveOptimizer.Internal.Constants;
 using EFCore.Extensions.SaveOptimizer.Internal.Enums;
@@ -23,16 +24,7 @@ public class QueryExecutionConfiguratorService : IQueryExecutionConfiguratorServ
 
     public QueryExecutionConfiguration Get(string providerName, QueryExecutionConfiguration? configuration)
     {
-        QueryExecutionConfiguration config = new();
-
-        if (configuration != null)
-        {
-            config.BatchSize = configuration.BatchSize;
-            config.InsertBatchSize = configuration.InsertBatchSize;
-            config.UpdateBatchSize = configuration.UpdateBatchSize;
-            config.DeleteBatchSize = configuration.DeleteBatchSize;
-            config.ParametersLimit = configuration.ParametersLimit;
-        }
+        QueryExecutionConfiguration config = Clone(configuration);
 
         config.BatchSize ??= InternalConstants.DefaultBatchSize;
 
@@ -52,12 +44,26 @@ public class QueryExecutionConfiguratorService : IQueryExecutionConfiguratorServ
 
         config.BuilderConfiguration ??= GetBuilderConfiguration(providerName);
 
+        config.BuilderConfiguration.QueryBuilderType ??= GetBuilderType(providerName);
+
         return config;
+    }
+
+    private static QueryExecutionConfiguration Clone(QueryExecutionConfiguration? configuration)
+    {
+        if (configuration == null)
+        {
+            return new QueryExecutionConfiguration();
+        }
+
+        var data = JsonSerializer.Serialize(configuration);
+
+        return JsonSerializer.Deserialize<QueryExecutionConfiguration>(data) ?? new QueryExecutionConfiguration();
     }
 
     private static QueryBuilderConfiguration GetBuilderConfiguration(string providerName)
     {
-        QueryBuilderConfiguration configuration = new() { QueryBuilderType = GetBuilderType(providerName) };
+        QueryBuilderConfiguration configuration = new();
 
         if (providerName.Contains("Firebird"))
         {
@@ -86,7 +92,8 @@ public class QueryExecutionConfiguratorService : IQueryExecutionConfiguratorServ
         state switch
         {
             EntityState.Added when providerName.Contains("Oracle") => InternalConstants.DefaultOracleInsertBatchSize,
-            EntityState.Added when providerName.Contains("Firebird") => InternalConstants.DefaultFirebirdInsertBatchSize,
+            EntityState.Added when providerName.Contains("Firebird") =>
+                InternalConstants.DefaultFirebirdInsertBatchSize,
             _ => null
         };
 
