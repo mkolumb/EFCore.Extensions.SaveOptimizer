@@ -34,13 +34,24 @@ ends_with <- function(vars, match, ignore.case = TRUE) {
 }
 std.error <- function(x) sqrt(var(x)/length(x))
 cummean <- function(x) cumsum(x)/(1:length(x))
+
 BenchmarkDotNetVersionGrob <- textGrob(BenchmarkDotNetVersion, gp = gpar(fontface=3, fontsize=8), hjust=1, x=1)
 nicePlot <- function(p) grid.arrange(p, bottom = BenchmarkDotNetVersionGrob)
-printNice <- function(p) {} # print(nicePlot(p))
+
+BenchmarkSmallDotNetVersionGrob <- textGrob(BenchmarkDotNetVersion, gp = gpar(fontface=3, fontsize=14), hjust=1, x=1)
+nicePlotSmall <- function(p) grid.arrange(p, bottom = BenchmarkSmallDotNetVersionGrob)
+
 ggsaveNice <- function(fileName, p, ...) {
   cat(paste0("*** Plot: ", fileName, " ***\n"))
   # See https://stackoverflow.com/a/51655831/184842
   suppressGraphics(ggsave(fileName, plot = nicePlot(p), width = 8, height = 4, ...))
+  cat("------------------------------\n")
+}
+
+ggsaveNiceSmall <- function(fileName, p, ...) {
+  cat(paste0("*** Plot: ", fileName, " ***\n"))
+  # See https://stackoverflow.com/a/51655831/184842
+  suppressGraphics(ggsave(fileName, plot = nicePlotSmall(p), width = 16, height = 8, scale = 1, dpi = 72, ...))
   cat("------------------------------\n")
 }
 
@@ -97,6 +108,23 @@ for (file in files) {
     geom_bar(position=position_dodge(), stat="identity")
     #geom_errorbar(aes(ymin=Value-1.96*se, ymax=Value+1.96*se), width=.2, position=position_dodge(.9))
 
-  printNice(benchmarkBarplot)
+  smallBenchmarkBarplot <- ggplot(resultStats, aes(x=SaveVariant, y=Value, fill=Job_Id)) +
+    guides(fill=guide_legend(title="Rows")) +
+    xlab("Save changes") +
+    ylab(paste("Time,", timeUnit)) +
+    ggtitle(title, subtitle="(median, lower is better)") +
+    geom_bar(position=position_dodge(), stat="identity") + 
+    theme(plot.title = element_text(size=26, margin=margin(t=10,r=0,b=0,l=0)), 
+    plot.subtitle = element_text(size=20, margin=margin(t=10,r=0,b=10,l=0)), 
+    axis.title.x = element_text(size=22, margin=margin(t=10,r=10,b=0,l=10)), 
+    axis.title.y = element_text(size=22, margin=margin(t=10,r=10,b=10,l=10)), 
+    axis.text.x = element_text(size=16, margin=margin(t=10,r=10,b=0,l=10)), 
+    axis.text.y = element_text(size=16, margin=margin(t=10,r=10,b=10,l=0)), 
+    legend.title = element_text(size=18, margin=margin(t=10,r=0,b=10,l=0)), 
+    legend.text = element_text(size=15, margin=margin(t=5,r=0,b=5,l=0)),
+    legend.key.width = unit(25, "pt"),
+    legend.key.height = unit(25, "pt"))
+
   ggsaveNice(gsub("-measurements.csv", "-barplot.png", file), benchmarkBarplot)
+  ggsaveNiceSmall(gsub("-measurements.csv", "-barplot-small.png", file), smallBenchmarkBarplot)
 }
