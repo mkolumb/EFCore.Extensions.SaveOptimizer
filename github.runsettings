@@ -5,9 +5,6 @@
         <ResultsDirectory>./TestResults</ResultsDirectory>
         <TargetFrameworkVersion>net6.0</TargetFrameworkVersion>
         <TreatNoTestsAsError>true</TreatNoTestsAsError>
-        <EnvironmentVariables>
-            <TEST_LOAD_MODE>HEAVY</TEST_LOAD_MODE>
-        </EnvironmentVariables>
     </RunConfiguration>
 
     <!-- Configuration for loggers -->

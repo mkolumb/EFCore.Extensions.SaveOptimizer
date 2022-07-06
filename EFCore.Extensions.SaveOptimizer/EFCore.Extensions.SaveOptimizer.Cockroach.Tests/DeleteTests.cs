@@ -6,10 +6,11 @@ using Xunit.Abstractions;
 
 namespace EFCore.Extensions.SaveOptimizer.Cockroach.Tests;
 
-[Collection("Cockroach")]
+[Collection(Variables.ProviderName)]
 public class DeleteTests : BaseDeleteTests
 {
-    public DeleteTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper, WrapperResolver.ContextWrapperResolver)
+    public DeleteTests(ITestOutputHelper testOutputHelper)
+        : base(testOutputHelper, WrapperResolver.ContextWrapperResolver)
     {
     }
 }

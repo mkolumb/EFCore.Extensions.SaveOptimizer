@@ -7,9 +7,9 @@ public abstract class BaseTests
 {
     private const int MaxPrepareTry = 5;
 
-    protected readonly ITestOutputHelper TestOutputHelper;
-
     private readonly Func<ITestOutputHelper, DbContextWrapper> _contextWrapperResolver;
+
+    protected readonly ITestOutputHelper TestOutputHelper;
 
     protected BaseTests(
         ITestOutputHelper testOutputHelper,

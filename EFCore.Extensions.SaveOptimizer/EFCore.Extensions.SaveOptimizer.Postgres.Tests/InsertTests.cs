@@ -6,10 +6,11 @@ using Xunit.Abstractions;
 
 namespace EFCore.Extensions.SaveOptimizer.Postgres.Tests;
 
-[Collection("Postgres")]
+[Collection(Variables.ProviderName)]
 public class InsertTests : BaseInsertTests
 {
-    public InsertTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper, WrapperResolver.ContextWrapperResolver)
+    public InsertTests(ITestOutputHelper testOutputHelper)
+        : base(testOutputHelper, WrapperResolver.ContextWrapperResolver)
     {
     }
 }

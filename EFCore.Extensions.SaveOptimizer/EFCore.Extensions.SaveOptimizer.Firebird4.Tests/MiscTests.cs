@@ -6,10 +6,11 @@ using Xunit.Abstractions;
 
 namespace EFCore.Extensions.SaveOptimizer.Firebird4.Tests;
 
-[Collection("Firebird4")]
+[Collection(Variables.ProviderName)]
 public class MiscTests : BaseMiscTests
 {
-    public MiscTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper, WrapperResolver.ContextWrapperResolver)
+    public MiscTests(ITestOutputHelper testOutputHelper)
+        : base(testOutputHelper, WrapperResolver.ContextWrapperResolver)
     {
     }
 }
