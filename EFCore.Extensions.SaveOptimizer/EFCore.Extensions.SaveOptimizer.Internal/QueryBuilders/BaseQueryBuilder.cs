@@ -219,7 +219,7 @@ public abstract class BaseQueryBuilder : IQueryBuilder
 
         if (Configuration.OptimizeParameters && set.Any())
         {
-            return set.First().Key;
+            return set.First().CastValue;
         }
 
         var paramKey = $"{ClausesConfiguration[ClauseType.ParameterPrefix]}{BindingsCount}";

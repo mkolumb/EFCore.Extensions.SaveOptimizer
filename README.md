@@ -158,8 +158,7 @@ Oracle returns -1 as affected rows when using INSERT ALL, likely due to using BE
 | Auto transaction enabled | If enabled it will start transaction when no transaction attached to DbContext | _All - enabled_ |
 | Auto transaction isolation level | Isolation level for auto transaction | _All - serializable_ |
 | Builder configuration -> case type | Case type used when building statements, if normal it will not change case to upper / lower | _All - normal_ |
-| Builder configuration -> optimize parameters | Optimize parameters usage in statements, sometimes can lead to unexpected exception in db | _Firebird - false_ |
-|  |  | _Other - true_ |
+| Builder configuration -> optimize parameters | Optimize parameters usage in statements, sometimes can lead to unexpected exception in db | _All - true_ |
 
 ## Migration command
 

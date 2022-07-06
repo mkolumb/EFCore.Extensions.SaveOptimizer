@@ -6,20 +6,14 @@ using Xunit.Abstractions;
 
 namespace EFCore.Extensions.SaveOptimizer.Shared.Tests;
 
-public abstract class BaseMiscTests
+public abstract class BaseMiscTests : BaseTests
 {
-    private readonly ITestOutputHelper _testOutputHelper;
-
-    public Func<ITestOutputHelper, DbContextWrapper> ContextWrapperResolver { get; }
-
     public static IEnumerable<IEnumerable<object?>> BaseWriteTheoryData => TheoryData.BaseWriteTheoryData;
 
-    protected BaseMiscTests(
-        ITestOutputHelper testOutputHelper,
+    protected BaseMiscTests(ITestOutputHelper testOutputHelper,
         Func<ITestOutputHelper, DbContextWrapper> contextWrapperResolver)
+        : base(testOutputHelper, contextWrapperResolver)
     {
-        _testOutputHelper = testOutputHelper;
-        ContextWrapperResolver = contextWrapperResolver;
     }
 
     [Theory]
@@ -28,7 +22,7 @@ public abstract class BaseMiscTests
     public async Task GivenSaveChangesAsync_WhenNoTransaction_ShouldThrowsException(SaveVariant variant)
     {
         // Arrange
-        using DbContextWrapper db = ContextWrapperResolver(_testOutputHelper);
+        using DbContextWrapper db = ContextWrapperResolver();
 
         await db.Context.AddAsync(ItemResolver(1));
 
@@ -44,7 +38,7 @@ public abstract class BaseMiscTests
     public async Task GivenSaveChangesAsync_WhenDifferentOperations_ShouldStoreData(SaveVariant variant)
     {
         // Arrange
-        using DbContextWrapper db = ContextWrapperResolver(_testOutputHelper);
+        using DbContextWrapper db = ContextWrapperResolver();
 
         NonRelatedEntity[] data = await InitialSeedAsync(db, variant, 10);
 
@@ -80,7 +74,7 @@ public abstract class BaseMiscTests
     public void GivenSaveChanges_WhenNoTransaction_ShouldThrowsException(SaveVariant variant)
     {
         // Arrange
-        using DbContextWrapper db = ContextWrapperResolver(_testOutputHelper);
+        using DbContextWrapper db = ContextWrapperResolver();
 
         db.Context.Add(ItemResolver(1));
 
@@ -96,7 +90,7 @@ public abstract class BaseMiscTests
     public void GivenSaveChanges_WhenDifferentOperations_ShouldStoreData(SaveVariant variant)
     {
         // Arrange
-        using DbContextWrapper db = ContextWrapperResolver(_testOutputHelper);
+        using DbContextWrapper db = ContextWrapperResolver();
 
         NonRelatedEntity[] data = InitialSeed(db, variant, 10);
 

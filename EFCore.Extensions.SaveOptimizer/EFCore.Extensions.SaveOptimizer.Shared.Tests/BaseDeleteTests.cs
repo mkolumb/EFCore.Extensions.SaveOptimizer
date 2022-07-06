@@ -5,20 +5,14 @@ using Xunit.Abstractions;
 
 namespace EFCore.Extensions.SaveOptimizer.Shared.Tests;
 
-public abstract class BaseDeleteTests
+public abstract class BaseDeleteTests : BaseTests
 {
-    private readonly ITestOutputHelper _testOutputHelper;
-
-    public Func<ITestOutputHelper, DbContextWrapper> ContextWrapperResolver { get; }
-
     public static IEnumerable<IEnumerable<object?>> BaseWriteTheoryData => TheoryData.BaseWriteTheoryData;
 
-    protected BaseDeleteTests(
-        ITestOutputHelper testOutputHelper,
+    protected BaseDeleteTests(ITestOutputHelper testOutputHelper,
         Func<ITestOutputHelper, DbContextWrapper> contextWrapperResolver)
+        : base(testOutputHelper, contextWrapperResolver)
     {
-        _testOutputHelper = testOutputHelper;
-        ContextWrapperResolver = contextWrapperResolver;
     }
 
     [Theory]
@@ -26,7 +20,7 @@ public abstract class BaseDeleteTests
     public async Task GivenSaveChangesAsync_WhenNoChanges_ShouldDoNothing(SaveVariant variant)
     {
         // Arrange
-        using DbContextWrapper db = ContextWrapperResolver(_testOutputHelper);
+        using DbContextWrapper db = ContextWrapperResolver();
 
         NonRelatedEntity[] data = await InitialSeedAsync(db, variant, 10);
 
@@ -57,7 +51,7 @@ public abstract class BaseDeleteTests
     public async Task GivenSaveChangesAsync_WhenOneObjectDeleted_ShouldDeleteData(SaveVariant variant)
     {
         // Arrange
-        using DbContextWrapper db = ContextWrapperResolver(_testOutputHelper);
+        using DbContextWrapper db = ContextWrapperResolver();
 
         NonRelatedEntity[] data = await InitialSeedAsync(db, variant, 3);
 
@@ -80,7 +74,7 @@ public abstract class BaseDeleteTests
     public async Task GivenSaveChangesAsync_WhenMultipleObjectsDeleted_ShouldDeleteData(SaveVariant variant)
     {
         // Arrange
-        using DbContextWrapper db = ContextWrapperResolver(_testOutputHelper);
+        using DbContextWrapper db = ContextWrapperResolver();
 
         NonRelatedEntity[] data = await InitialSeedAsync(db, variant, 15);
 
@@ -107,7 +101,7 @@ public abstract class BaseDeleteTests
     public void GivenSaveChanges_WhenNoChanges_ShouldDoNothing(SaveVariant variant)
     {
         // Arrange
-        using DbContextWrapper db = ContextWrapperResolver(_testOutputHelper);
+        using DbContextWrapper db = ContextWrapperResolver();
 
         NonRelatedEntity[] data = InitialSeed(db, variant, 10);
 
@@ -138,7 +132,7 @@ public abstract class BaseDeleteTests
     public void GivenSaveChanges_WhenOneObjectDeleted_ShouldDeleteData(SaveVariant variant)
     {
         // Arrange
-        using DbContextWrapper db = ContextWrapperResolver(_testOutputHelper);
+        using DbContextWrapper db = ContextWrapperResolver();
 
         NonRelatedEntity[] data = InitialSeed(db, variant, 3);
 
@@ -161,7 +155,7 @@ public abstract class BaseDeleteTests
     public void GivenSaveChanges_WhenMultipleObjectsDeleted_ShouldDeleteData(SaveVariant variant)
     {
         // Arrange
-        using DbContextWrapper db = ContextWrapperResolver(_testOutputHelper);
+        using DbContextWrapper db = ContextWrapperResolver();
 
         NonRelatedEntity[] data = InitialSeed(db, variant, 15);
 

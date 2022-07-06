@@ -31,7 +31,7 @@ public static class TheoryData
     {
         get
         {
-            int?[] batches = { 1000, 100, default };
+            int?[] batches = { 1000, 100, 10, 1, default };
 
             foreach (IEnumerable<object> baseData in BaseWriteTheoryData)
             {
@@ -65,18 +65,15 @@ public static class TheoryData
                 yield break;
             }
 
-            foreach (var batch in batches)
+            yield return new object?[]
             {
-                yield return new object?[]
-                {
-                    SaveVariant.Optimized | SaveVariant.Recreate | SaveVariant.WithTransaction, batch, 100000
-                };
+                SaveVariant.Optimized | SaveVariant.Recreate | SaveVariant.WithTransaction, 100000, 100000
+            };
 
-                yield return new object?[]
-                {
-                    SaveVariant.OptimizedDapper | SaveVariant.Recreate | SaveVariant.WithTransaction, batch, 100000
-                };
-            }
+            yield return new object?[]
+            {
+                SaveVariant.OptimizedDapper | SaveVariant.Recreate | SaveVariant.WithTransaction, 100000, 100000
+            };
         }
     }
 }
