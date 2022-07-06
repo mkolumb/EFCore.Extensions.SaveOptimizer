@@ -38,7 +38,9 @@ public static class TheoryData
 
     private static IEnumerable<IEnumerable<object?>> GetInsertLightMode()
     {
-        int?[] batches = { 100, default };
+        int?[] batches = { default, 1, 100 };
+
+        int[] loadCounters = { 1, 2, 10, 100 };
 
         foreach (IEnumerable<object> baseData in BaseWriteTheoryData)
         {
@@ -46,17 +48,21 @@ public static class TheoryData
 
             foreach (var batch in batches)
             {
-                yield return new[] { item, batch, 1 };
-                yield return new[] { item, batch, 2 };
-                yield return new[] { item, batch, 10 };
-                yield return new[] { item, batch, 100 };
+                foreach (var counter in loadCounters)
+                {
+                    yield return new[] { item, batch, counter };
+                }
             }
         }
     }
 
     private static IEnumerable<IEnumerable<object?>> GetInsertFullMode()
     {
-        int?[] batches = { 1000, 100, 10, 1, default };
+        int?[] batches = { default, 1, 10, 100, 1000 };
+
+        int[] normalLoadCounters = { 1, 2, 10, 100, 1000 };
+
+        int[] heavyLoadCounters = { 10000, 100000 };
 
         foreach (IEnumerable<object> baseData in BaseWriteTheoryData)
         {
@@ -64,11 +70,10 @@ public static class TheoryData
 
             foreach (var batch in batches)
             {
-                yield return new[] { item, batch, 1 };
-                yield return new[] { item, batch, 2 };
-                yield return new[] { item, batch, 10 };
-                yield return new[] { item, batch, 100 };
-                yield return new[] { item, batch, 1000 };
+                foreach (var counter in normalLoadCounters)
+                {
+                    yield return new[] { item, batch, counter };
+                }
             }
         }
 
@@ -76,8 +81,6 @@ public static class TheoryData
         {
             yield break;
         }
-
-        var heavyLoadCounters = new[] { 10000, 100000 };
 
         foreach (var counter in heavyLoadCounters)
         {
