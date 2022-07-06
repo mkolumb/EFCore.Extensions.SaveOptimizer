@@ -6,22 +6,16 @@ using Xunit.Abstractions;
 
 namespace EFCore.Extensions.SaveOptimizer.Shared.Tests;
 
-public abstract class BaseInsertTests
+public abstract class BaseInsertTests : BaseTests
 {
-    private readonly ITestOutputHelper _testOutputHelper;
-
-    public Func<ITestOutputHelper, DbContextWrapper> ContextWrapperResolver { get; }
-
     public static IEnumerable<IEnumerable<object?>> InsertData => TheoryData.InsertTheoryData;
 
     public static IEnumerable<IEnumerable<object?>> BaseWriteTheoryData => TheoryData.BaseWriteTheoryData;
 
-    protected BaseInsertTests(
-        ITestOutputHelper testOutputHelper,
+    protected BaseInsertTests(ITestOutputHelper testOutputHelper,
         Func<ITestOutputHelper, DbContextWrapper> contextWrapperResolver)
+        : base(testOutputHelper, contextWrapperResolver)
     {
-        _testOutputHelper = testOutputHelper;
-        ContextWrapperResolver = contextWrapperResolver;
     }
 
     [Theory]
@@ -30,7 +24,7 @@ public abstract class BaseInsertTests
         int? batchSize, int count)
     {
         // Arrange
-        using DbContextWrapper db = ContextWrapperResolver(_testOutputHelper);
+        using DbContextWrapper db = ContextWrapperResolver();
 
         // Act
         for (var i = 0; i < count; i++)
@@ -58,7 +52,7 @@ public abstract class BaseInsertTests
     public async Task GivenSaveChangesAsync_WhenNoChanges_ShouldDoNothing(SaveVariant variant)
     {
         // Arrange
-        using DbContextWrapper db = ContextWrapperResolver(_testOutputHelper);
+        using DbContextWrapper db = ContextWrapperResolver();
 
         // Act
         await db.SaveAsync(variant, null);
@@ -74,7 +68,7 @@ public abstract class BaseInsertTests
     public async Task GivenSaveChangesAsync_WhenOneObjectInserted_ShouldInsertData(SaveVariant variant)
     {
         // Arrange
-        using DbContextWrapper db = ContextWrapperResolver(_testOutputHelper);
+        using DbContextWrapper db = ContextWrapperResolver();
 
         NonRelatedEntity item = new()
         {
@@ -119,7 +113,7 @@ public abstract class BaseInsertTests
         int count)
     {
         // Arrange
-        using DbContextWrapper db = ContextWrapperResolver(_testOutputHelper);
+        using DbContextWrapper db = ContextWrapperResolver();
 
         // Act
         for (var i = 0; i < count; i++)
@@ -147,7 +141,7 @@ public abstract class BaseInsertTests
     public void GivenSaveChanges_WhenNoChanges_ShouldDoNothing(SaveVariant variant)
     {
         // Arrange
-        using DbContextWrapper db = ContextWrapperResolver(_testOutputHelper);
+        using DbContextWrapper db = ContextWrapperResolver();
 
         // Act
         db.Save(variant, null);
@@ -163,7 +157,7 @@ public abstract class BaseInsertTests
     public void GivenSaveChanges_WhenOneObjectInserted_ShouldInsertData(SaveVariant variant)
     {
         // Arrange
-        using DbContextWrapper db = ContextWrapperResolver(_testOutputHelper);
+        using DbContextWrapper db = ContextWrapperResolver();
 
         NonRelatedEntity item = new()
         {
