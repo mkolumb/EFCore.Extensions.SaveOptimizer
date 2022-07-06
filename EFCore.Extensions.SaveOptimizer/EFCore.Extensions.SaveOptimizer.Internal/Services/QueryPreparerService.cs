@@ -13,8 +13,6 @@ public class QueryPreparerService : IQueryPreparerService
 {
     private readonly IQueryCompilerService _compilerService;
 
-    private readonly IQueryExecutionConfiguratorService _configuratorService;
-
     private readonly ConcurrentDictionary<string, IDictionary<Type, int>> _orders;
 
     private readonly IQueryTranslatorService _translatorService;
@@ -22,12 +20,10 @@ public class QueryPreparerService : IQueryPreparerService
     private readonly ConcurrentDictionary<string, DataContextModelWrapper> _wrappers;
 
     public QueryPreparerService(IQueryCompilerService compilerService,
-        IQueryTranslatorService translatorService,
-        IQueryExecutionConfiguratorService configuratorService)
+        IQueryTranslatorService translatorService)
     {
         _compilerService = compilerService;
         _translatorService = translatorService;
-        _configuratorService = configuratorService;
         _wrappers = new ConcurrentDictionary<string, DataContextModelWrapper>();
         _orders = new ConcurrentDictionary<string, IDictionary<Type, int>>();
     }
@@ -51,9 +47,11 @@ public class QueryPreparerService : IQueryPreparerService
         }
     }
 
-    public IEnumerable<ISqlCommandModel> Prepare(DbContext context, QueryExecutionConfiguration? configuration = null)
+    public QueryPreparationModel Prepare(DbContext context, QueryExecutionConfiguration configuration)
     {
         var name = GetKey(context);
+
+        var expectedRows = 0;
 
         IEnumerable<EntityEntry> entries = context.ChangeTracker.Entries();
 
@@ -85,6 +83,8 @@ public class QueryPreparerService : IQueryPreparerService
                 continue;
             }
 
+            expectedRows++;
+
             Dictionary<Type, int> paramsDictionary = maxParameters[entry.State];
 
             if (!paramsDictionary.ContainsKey(translation.EntityType))
@@ -109,14 +109,9 @@ public class QueryPreparerService : IQueryPreparerService
 
         List<ISqlCommandModel> results = new();
 
-        var providerName = context.Database.ProviderName ?? throw new ArgumentException("Provider not known");
-
-        QueryExecutionConfiguration config = _configuratorService.Get(providerName, configuration);
-
         foreach ((Type type, _) in _orders[name].OrderByDescending(x => x.Value))
         {
-            foreach (IEnumerable<ISqlCommandModel> sqlResults in GetQuery(translations, maxParameters,
-                         EntityState.Deleted, type, providerName, config))
+            foreach (IEnumerable<ISqlCommandModel> sqlResults in GetQuery(translations, maxParameters, EntityState.Deleted, type, configuration))
             {
                 results.AddRange(sqlResults);
             }
@@ -124,20 +119,18 @@ public class QueryPreparerService : IQueryPreparerService
 
         foreach ((Type type, _) in _orders[name].OrderBy(x => x.Value))
         {
-            foreach (IEnumerable<ISqlCommandModel> sqlResults in GetQuery(translations, maxParameters,
-                         EntityState.Added, type, providerName, config))
+            foreach (IEnumerable<ISqlCommandModel> sqlResults in GetQuery(translations, maxParameters, EntityState.Added, type, configuration))
             {
                 results.AddRange(sqlResults);
             }
 
-            foreach (IEnumerable<ISqlCommandModel> sqlResults in GetQuery(translations, maxParameters,
-                         EntityState.Modified, type, providerName, config))
+            foreach (IEnumerable<ISqlCommandModel> sqlResults in GetQuery(translations, maxParameters, EntityState.Modified, type, configuration))
             {
                 results.AddRange(sqlResults);
             }
         }
 
-        return results;
+        return new QueryPreparationModel(results, expectedRows);
     }
 
     private static string GetKey(DbContext context)
@@ -154,7 +147,6 @@ public class QueryPreparerService : IQueryPreparerService
         IReadOnlyDictionary<EntityState, Dictionary<Type, int>> maxParameters,
         EntityState state,
         Type type,
-        string providerName,
         QueryExecutionConfiguration configuration)
     {
         Dictionary<Type, List<QueryDataModel>> queries = group[state];
@@ -195,7 +187,7 @@ public class QueryPreparerService : IQueryPreparerService
 
         foreach (List<QueryDataModel> q in data)
         {
-            yield return _compilerService.Compile(q, providerName, configuration.BuilderConfiguration);
+            yield return _compilerService.Compile(q, configuration.BuilderConfiguration);
         }
     }
 

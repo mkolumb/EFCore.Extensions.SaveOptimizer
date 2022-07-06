@@ -1,12 +1,8 @@
-﻿using System.Data;
-using EFCore.Extensions.SaveOptimizer.Dapper.Services;
+﻿using EFCore.Extensions.SaveOptimizer.Dapper.Services;
 using EFCore.Extensions.SaveOptimizer.Internal.Configuration;
 using EFCore.Extensions.SaveOptimizer.Internal.Factories;
-using EFCore.Extensions.SaveOptimizer.Internal.Models;
 using EFCore.Extensions.SaveOptimizer.Internal.Services;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.Storage;
 
 // ReSharper disable UnusedMember.Global
 
@@ -14,80 +10,35 @@ namespace EFCore.Extensions.SaveOptimizer.Dapper;
 
 public static class DbContextExtensions
 {
-    private static readonly IQueryPreparerService QueryPreparerService;
-    private static readonly IQueryExecutorService QueryExecutorService;
+    private static readonly IDbContextExecutorService DbContextExecutorService;
 
     static DbContextExtensions()
     {
-        QueryCompilerService compilerService = new(new QueryBuilderFactory());
+        QueryBuilderFactory factory = new();
+
+        QueryCompilerService compilerService = new(factory);
 
         QueryTranslatorService translatorService = new();
 
-        QueryExecutionConfiguratorService configuratorService = new();
+        IQueryExecutionConfiguratorService queryExecutionConfiguratorService = new QueryExecutionConfiguratorService();
 
-        QueryPreparerService = new QueryPreparerService(compilerService, translatorService, configuratorService);
+        IQueryPreparerService queryPreparerService = new QueryPreparerService(compilerService, translatorService);
 
-        QueryExecutorService = new QueryExecutorService();
+        IDbContextDependencyResolverService dbContextDependencyResolverService =
+            new DbContextDependencyResolverService();
+
+        IQueryExecutorService queryExecutorService = new QueryExecutorService(dbContextDependencyResolverService);
+
+        DbContextExecutorService = new DbContextExecutorService(queryPreparerService,
+            queryExecutorService,
+            queryExecutionConfiguratorService);
     }
 
     public static int SaveChangesDapperOptimized(this DbContext context) =>
         context.SaveChangesDapperOptimized(null);
 
-    public static int SaveChangesDapperOptimized(this DbContext context, QueryExecutionConfiguration? configuration)
-    {
-        QueryPreparerService.Init(context);
-
-        IEnumerable<ISqlCommandModel> queries = QueryPreparerService.Prepare(context, configuration);
-
-        var autoCommit = false;
-
-        IDbContextTransaction? transaction = context.Database.CurrentTransaction;
-
-        if (transaction == null)
-        {
-            transaction = context.Database.BeginTransaction(IsolationLevel.Serializable);
-
-            autoCommit = true;
-        }
-
-        var timeout = context.Database.GetCommandTimeout();
-
-        try
-        {
-            var rows = 0;
-
-            // ReSharper disable once LoopCanBeConvertedToQuery
-            foreach (ISqlCommandModel sql in queries)
-            {
-                rows += QueryExecutorService.Execute(context, transaction, sql, timeout);
-            }
-
-            if (autoCommit)
-            {
-                transaction.Commit();
-            }
-
-            MarkEntitiesAfterSave(context);
-
-            return rows;
-        }
-        catch
-        {
-            if (autoCommit)
-            {
-                transaction.Rollback();
-            }
-
-            throw;
-        }
-        finally
-        {
-            if (autoCommit)
-            {
-                transaction.Dispose();
-            }
-        }
-    }
+    public static int SaveChangesDapperOptimized(this DbContext context, QueryExecutionConfiguration? configuration) =>
+        DbContextExecutorService.SaveChangesOptimized(context, configuration);
 
     public static async Task<int> SaveChangesDapperOptimizedAsync(this DbContext context,
         CancellationToken cancellationToken = default) =>
@@ -95,70 +46,6 @@ public static class DbContextExtensions
 
     public static async Task<int> SaveChangesDapperOptimizedAsync(this DbContext context,
         QueryExecutionConfiguration? configuration,
-        CancellationToken cancellationToken = default)
-    {
-        QueryPreparerService.Init(context);
-
-        IEnumerable<ISqlCommandModel> queries = QueryPreparerService.Prepare(context, configuration);
-
-        var autoCommit = false;
-
-        IDbContextTransaction? transaction = context.Database.CurrentTransaction;
-
-        if (transaction == null)
-        {
-            transaction = await context.Database.BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken)
-                .ConfigureAwait(false);
-
-            autoCommit = true;
-        }
-
-        var timeout = context.Database.GetCommandTimeout();
-
-        try
-        {
-            var rows = 0;
-
-            // ReSharper disable once LoopCanBeConvertedToQuery
-            foreach (ISqlCommandModel sql in queries)
-            {
-                rows += await QueryExecutorService
-                    .ExecuteAsync(context, transaction, sql, timeout, cancellationToken)
-                    .ConfigureAwait(false);
-            }
-
-            if (autoCommit)
-            {
-                await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
-            }
-
-            MarkEntitiesAfterSave(context);
-
-            return rows;
-        }
-        catch
-        {
-            if (autoCommit)
-            {
-                await transaction.RollbackAsync(cancellationToken).ConfigureAwait(false);
-            }
-
-            throw;
-        }
-        finally
-        {
-            if (autoCommit)
-            {
-                await transaction.DisposeAsync().ConfigureAwait(false);
-            }
-        }
-    }
-
-    private static void MarkEntitiesAfterSave(DbContext context)
-    {
-        foreach (EntityEntry entityEntry in context.ChangeTracker.Entries())
-        {
-            entityEntry.State = EntityState.Detached;
-        }
-    }
+        CancellationToken cancellationToken = default) =>
+        await DbContextExecutorService.SaveChangesOptimizedAsync(context, configuration, cancellationToken);
 }

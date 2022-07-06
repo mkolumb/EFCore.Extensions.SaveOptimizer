@@ -10,7 +10,7 @@ public class DbContextWrapper : DbContextWrapperBase
     {
     }
 
-    protected override async Task TruncateBase()
+    protected override async Task TruncateBaseAsync()
     {
         const string query = "truncate \"NonRelatedEntities\";";
 

@@ -33,9 +33,9 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
         GC.SuppressFinalize(this);
     }
 
-    public async Task Truncate() => await Run(RunTry, TruncateBase);
+    public async Task TruncateAsync() => await RunAsync(RunTry, TruncateBaseAsync);
 
-    public async Task Seed(long count, int repeat)
+    public async Task SeedAsync(long count, int repeat)
     {
         double delay = Math.Max(count / 1000, 5);
 
@@ -49,7 +49,7 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
         {
             try
             {
-                await TrySeed(count, repeat, IsolationLevel.ReadCommitted);
+                await TrySeedAsync(count, repeat, IsolationLevel.ReadCommitted);
             }
             catch
             {
@@ -57,29 +57,29 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
                 {
                     await Task.Delay(TimeSpan.FromSeconds(delay));
 
-                    await TrySeed(count / 10, repeat * 10, IsolationLevel.ReadCommitted);
+                    await TrySeedAsync(count / 10, repeat * 10, IsolationLevel.ReadCommitted);
                 }
                 catch
                 {
                     await Task.Delay(TimeSpan.FromSeconds(delay));
 
-                    await TrySeed(count / 100, repeat * 100, IsolationLevel.ReadCommitted);
+                    await TrySeedAsync(count / 100, repeat * 100, IsolationLevel.ReadCommitted);
                 }
             }
         }
 
-        await Truncate();
+        await TruncateAsync();
 
-        await Run(RunTry, InternalSeed);
+        await RunAsync(RunTry, InternalSeed);
 
-        await Run(RunTry, () => TrySeed(1, 1, IsolationLevel.Serializable));
+        await RunAsync(RunTry, () => TrySeedAsync(1, 1, IsolationLevel.Serializable));
     }
 
-    public async Task Save(SaveVariant variant, long expectedRows)
+    public async Task SaveAsync(SaveVariant variant, long expectedRows)
     {
         try
         {
-            await Run(RunTry, () => TrySave(variant, IsolationLevel.Serializable));
+            await RunAsync(RunTry, () => TrySaveAsync(variant, IsolationLevel.Serializable));
         }
         catch (Exception ex)
         {
@@ -106,7 +106,7 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
         RecreateContext();
     }
 
-    public async Task<IReadOnlyList<NonRelatedEntity>> RetrieveData(long count) =>
+    public async Task<IReadOnlyList<NonRelatedEntity>> RetrieveDataAsync(long count) =>
         await Context.NonRelatedEntities
             .Take((int)(count % int.MaxValue))
             .ToArrayAsync();
@@ -125,15 +125,15 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
         SomeNullableStringProperty = "other-string"
     };
 
-    private static async Task Run(int max, Func<Task> method)
+    private static async Task RunAsync(int max, Func<Task> method)
     {
         var i = 0;
 
-        while (i < max)
+        do
         {
             try
             {
-                await method();
+                await method().ConfigureAwait(false);
 
                 return;
             }
@@ -145,28 +145,33 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
 
                 ConsoleLogger.Unicode.WriteLineWithDate(ex.StackTrace);
 
-                await Task.Delay(TimeSpan.Zero);
-
                 i++;
-            }
-        }
 
-        throw new Exception("Unable to run method");
+                if (i >= max)
+                {
+                    throw;
+                }
+
+                await Task.Delay(TimeSpan.Zero);
+            }
+        } while (i < max);
+
+        throw new Exception("Unable to run method - something weird happened");
     }
 
-    protected abstract Task TruncateBase();
+    protected abstract Task TruncateBaseAsync();
 
-    private async Task TrySeed(long count, int repeat, IsolationLevel isolationLevel)
+    private async Task TrySeedAsync(long count, int repeat, IsolationLevel isolationLevel)
     {
         ConsoleLogger.Unicode.WriteLineWithDate($"Try seed {count} * {repeat} / {isolationLevel}");
 
         for (var j = 0; j < Math.Max(repeat, 1); j++)
         {
-            await TrySeedOnce(Math.Max(count, 1), isolationLevel);
+            await TrySeedOnceAsync(Math.Max(count, 1), isolationLevel);
         }
     }
 
-    private async Task TrySeedOnce(long count, IsolationLevel isolationLevel)
+    private async Task TrySeedOnceAsync(long count, IsolationLevel isolationLevel)
     {
         ConsoleLogger.Unicode.WriteLineWithDate($"Try seed once {count} / {isolationLevel}");
 
@@ -179,20 +184,20 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
                 await Context.AddAsync(item);
             }
 
-            await SeedSave(isolationLevel);
+            await SeedSaveAsync(isolationLevel);
         }
 
-        await Run(RunTry, InternalTrySeedOnce);
+        await RunAsync(RunTry, InternalTrySeedOnce);
     }
 
-    private async Task SeedSave(IsolationLevel isolationLevel)
+    private async Task SeedSaveAsync(IsolationLevel isolationLevel)
     {
-        await Run(RunTry, () => TrySave(SaveVariant.Optimized, isolationLevel));
+        await RunAsync(RunTry, () => TrySaveAsync(SaveVariant.Optimized, isolationLevel));
 
         RecreateContext();
     }
 
-    private async Task TrySave(SaveVariant variant, IsolationLevel isolationLevel)
+    private async Task TrySaveAsync(SaveVariant variant, IsolationLevel isolationLevel)
     {
         using CancellationTokenSource source = new(TimeSpan.FromMinutes(10));
 

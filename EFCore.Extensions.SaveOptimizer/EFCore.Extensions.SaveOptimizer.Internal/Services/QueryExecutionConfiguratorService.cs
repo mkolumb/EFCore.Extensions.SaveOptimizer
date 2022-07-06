@@ -1,23 +1,30 @@
-﻿using EFCore.Extensions.SaveOptimizer.Internal.Configuration;
+﻿using System.Data;
+using System.Text.Json;
+using EFCore.Extensions.SaveOptimizer.Internal.Configuration;
 using EFCore.Extensions.SaveOptimizer.Internal.Constants;
+using EFCore.Extensions.SaveOptimizer.Internal.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace EFCore.Extensions.SaveOptimizer.Internal.Services;
 
 public class QueryExecutionConfiguratorService : IQueryExecutionConfiguratorService
 {
-    public QueryExecutionConfiguration Get(string providerName, QueryExecutionConfiguration? configuration = null)
-    {
-        QueryExecutionConfiguration config = new();
-
-        if (configuration != null)
+    private static readonly IReadOnlyDictionary<string, QueryBuilderType> QueryBuilders =
+        new Dictionary<string, QueryBuilderType>
         {
-            config.BatchSize = configuration.BatchSize;
-            config.InsertBatchSize = configuration.InsertBatchSize;
-            config.UpdateBatchSize = configuration.UpdateBatchSize;
-            config.DeleteBatchSize = configuration.DeleteBatchSize;
-            config.ParametersLimit = configuration.ParametersLimit;
-        }
+            { "SqlServer", QueryBuilderType.SqlServer },
+            { "Firebird", QueryBuilderType.Firebird },
+            { "MySql", QueryBuilderType.MySql },
+            { "Maria", QueryBuilderType.MySql },
+            { "Oracle", QueryBuilderType.Oracle },
+            { "Postgre", QueryBuilderType.Postgres },
+            { "SqLite", QueryBuilderType.SqLite },
+            { "InMemory", QueryBuilderType.SqLite }
+        };
+
+    public QueryExecutionConfiguration Get(string providerName, QueryExecutionConfiguration? configuration)
+    {
+        QueryExecutionConfiguration config = Clone(configuration);
 
         config.BatchSize ??= InternalConstants.DefaultBatchSize;
 
@@ -29,9 +36,29 @@ public class QueryExecutionConfiguratorService : IQueryExecutionConfiguratorServ
 
         config.ParametersLimit ??= GetParametersLimit(providerName);
 
+        config.ConcurrencyTokenBehavior ??= ConcurrencyTokenBehavior.ThrowException;
+
+        config.AutoTransactionEnabled ??= true;
+
+        config.AutoTransactionIsolationLevel ??= IsolationLevel.Serializable;
+
         config.BuilderConfiguration ??= GetBuilderConfiguration(providerName);
 
+        config.BuilderConfiguration.QueryBuilderType ??= GetBuilderType(providerName);
+
         return config;
+    }
+
+    private static QueryExecutionConfiguration Clone(QueryExecutionConfiguration? configuration)
+    {
+        if (configuration == null)
+        {
+            return new QueryExecutionConfiguration();
+        }
+
+        var data = JsonSerializer.Serialize(configuration);
+
+        return JsonSerializer.Deserialize<QueryExecutionConfiguration>(data) ?? new QueryExecutionConfiguration();
     }
 
     private static QueryBuilderConfiguration GetBuilderConfiguration(string providerName)
@@ -46,11 +73,27 @@ public class QueryExecutionConfiguratorService : IQueryExecutionConfiguratorServ
         return configuration;
     }
 
+    private static QueryBuilderType GetBuilderType(string providerName)
+    {
+        try
+        {
+            var key = QueryBuilders.Keys
+                .SingleOrDefault(x => providerName.Contains(x, StringComparison.InvariantCultureIgnoreCase));
+
+            return QueryBuilders[key ?? throw new InvalidOperationException()];
+        }
+        catch
+        {
+            throw new ArgumentException("Unexpected provider", nameof(providerName));
+        }
+    }
+
     private static int? GetMaxBatchSize(string providerName, EntityState state) =>
         state switch
         {
-            EntityState.Added when providerName.Contains("Oracle") => InternalConstants.DefaultOracleBatchSize,
-            EntityState.Added when providerName.Contains("Firebird") => InternalConstants.DefaultFirebirdBatchSize,
+            EntityState.Added when providerName.Contains("Oracle") => InternalConstants.DefaultOracleInsertBatchSize,
+            EntityState.Added when providerName.Contains("Firebird") =>
+                InternalConstants.DefaultFirebirdInsertBatchSize,
             _ => null
         };
 

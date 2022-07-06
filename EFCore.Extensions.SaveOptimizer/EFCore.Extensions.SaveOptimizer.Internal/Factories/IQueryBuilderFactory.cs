@@ -5,5 +5,5 @@ namespace EFCore.Extensions.SaveOptimizer.Internal.Factories;
 
 public interface IQueryBuilderFactory
 {
-    IQueryBuilder Query(QueryBuilderConfiguration? configuration, string providerName);
+    IQueryBuilder Query(QueryBuilderConfiguration? configuration);
 }

@@ -8,5 +8,5 @@ public interface IQueryPreparerService
 {
     void Init(DbContext context);
 
-    IEnumerable<ISqlCommandModel> Prepare(DbContext context, QueryExecutionConfiguration? configuration = null);
+    QueryPreparationModel Prepare(DbContext context, QueryExecutionConfiguration configuration);
 }

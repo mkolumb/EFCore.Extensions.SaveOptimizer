@@ -6,5 +6,7 @@ public interface ISqlCommandModel
 
     IDictionary<string, object?>? NamedBindings { get; }
 
-    public IReadOnlyCollection<SqlParamModel>? Parameters { get; }
+    IReadOnlyCollection<SqlParamModel>? Parameters { get; }
+
+    int? ExpectedRows { get; }
 }

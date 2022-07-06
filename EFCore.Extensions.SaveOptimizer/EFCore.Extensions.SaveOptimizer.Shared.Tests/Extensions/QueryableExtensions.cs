@@ -6,27 +6,60 @@ public static class QueryableExtensions
 {
     private const int RunTry = 10;
 
-    public static async Task<T[]> ToArrayWithRetry<T>(this IQueryable<T> source) =>
-        await Run(RunTry, () => source.ToArrayAsync());
+    public static async Task<T[]> ToArrayWithRetryAsync<T>(this IQueryable<T> source) =>
+        await RunAsync(RunTry, () => source.ToArrayAsync());
 
-    private static async Task<T> Run<T>(int max, Func<Task<T>> method)
+    public static T[] ToArrayWithRetry<T>(this IQueryable<T> source) => Run(RunTry, source.ToArray);
+
+    private static async Task<T> RunAsync<T>(int max, Func<Task<T>> method)
     {
         var i = 0;
 
-        while (i < max)
+        do
         {
             try
             {
-                return await method();
+                return await method().ConfigureAwait(false);
             }
             catch
             {
-                await Task.Delay(TimeSpan.FromSeconds(2));
-
                 i++;
-            }
-        }
 
-        throw new Exception("Unable to run method");
+                if (i >= max)
+                {
+                    throw;
+                }
+
+                await Task.Delay(TimeSpan.FromSeconds(2)).ConfigureAwait(false);
+            }
+        } while (i < max);
+
+        throw new Exception("Unable to run method - something weird happened");
+    }
+
+    private static T Run<T>(int max, Func<T> method)
+    {
+        var i = 0;
+
+        do
+        {
+            try
+            {
+                return method();
+            }
+            catch
+            {
+                i++;
+
+                if (i >= max)
+                {
+                    throw;
+                }
+
+                Task.Delay(TimeSpan.FromSeconds(2)).ConfigureAwait(false).GetAwaiter().GetResult();
+            }
+        } while (i < max);
+
+        throw new Exception("Unable to run method - something weird happened");
     }
 }

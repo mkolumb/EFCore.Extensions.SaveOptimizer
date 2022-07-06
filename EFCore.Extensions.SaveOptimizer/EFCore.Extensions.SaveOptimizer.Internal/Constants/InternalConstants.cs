@@ -4,9 +4,9 @@ public class InternalConstants
 {
     public const int DefaultBatchSize = 1000;
 
-    public const int DefaultFirebirdBatchSize = 500;
+    public const int DefaultFirebirdInsertBatchSize = 500;
 
-    public const int DefaultOracleBatchSize = 50;
+    public const int DefaultOracleInsertBatchSize = 50;
 
     public const int DefaultParametersLimit = 15384;
 

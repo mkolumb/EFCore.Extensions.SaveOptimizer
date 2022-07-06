@@ -26,7 +26,8 @@ public abstract class BaseInsertTests
 
     [Theory]
     [MemberData(nameof(InsertData))]
-    public async Task GivenSaveChanges_WhenMultipleObjectsInserted_ShouldInsertData(SaveVariant variant, int batchSize, int count)
+    public async Task GivenSaveChangesAsync_WhenMultipleObjectsInserted_ShouldInsertData(SaveVariant variant,
+        int? batchSize, int count)
     {
         // Arrange
         using DbContextWrapper db = ContextWrapperResolver(_testOutputHelper);
@@ -37,14 +38,14 @@ public abstract class BaseInsertTests
             await db.Context.AddAsync(ItemResolver(i));
         }
 
-        await db.Save(variant, batchSize);
+        await db.SaveAsync(variant, batchSize);
 
         var result = await db.Context.NonRelatedEntities.CountAsync();
 
         var properties = await db.Context.NonRelatedEntities
             .Select(x => x.SomeNonNullableStringProperty)
             .Distinct()
-            .ToArrayWithRetry();
+            .ToArrayWithRetryAsync();
 
         // Assert
         result.Should().Be(count);
@@ -54,13 +55,13 @@ public abstract class BaseInsertTests
 
     [Theory]
     [MemberData(nameof(BaseWriteTheoryData))]
-    public async Task GivenSaveChanges_WhenNoChanges_ShouldDoNothing(SaveVariant variant)
+    public async Task GivenSaveChangesAsync_WhenNoChanges_ShouldDoNothing(SaveVariant variant)
     {
         // Arrange
         using DbContextWrapper db = ContextWrapperResolver(_testOutputHelper);
 
         // Act
-        await db.Save(variant);
+        await db.SaveAsync(variant, null);
 
         var result = await db.Context.NonRelatedEntities.CountAsync();
 
@@ -70,7 +71,7 @@ public abstract class BaseInsertTests
 
     [Theory]
     [MemberData(nameof(BaseWriteTheoryData))]
-    public async Task GivenSaveChanges_WhenOneObjectInserted_ShouldInsertData(SaveVariant variant)
+    public async Task GivenSaveChangesAsync_WhenOneObjectInserted_ShouldInsertData(SaveVariant variant)
     {
         // Arrange
         using DbContextWrapper db = ContextWrapperResolver(_testOutputHelper);
@@ -92,9 +93,98 @@ public abstract class BaseInsertTests
         // Act
         await db.Context.AddAsync(item);
 
-        await db.Save(variant);
+        await db.SaveAsync(variant, null);
 
         NonRelatedEntity result = await db.Context.NonRelatedEntities.FirstAsync();
+
+        // Assert
+        result.Should().NotBeNull();
+        result.NonRelatedEntityId.Should().NotBeEmpty();
+        result.ConcurrencyToken.Should().BeCloseTo(item.ConcurrencyToken.Value, 1.Seconds());
+        result.SomeNonNullableBooleanProperty.Should().Be(item.SomeNonNullableBooleanProperty);
+        result.SomeNonNullableDateTimeProperty.Should()
+            .BeCloseTo(item.SomeNonNullableDateTimeProperty.Value, 1.Seconds());
+        result.SomeNullableDateTimeProperty.Should().BeCloseTo(item.SomeNullableDateTimeProperty.Value, 1.Seconds());
+        result.SomeNonNullableDecimalProperty.Should().Be(item.SomeNonNullableDecimalProperty);
+        result.SomeNullableDecimalProperty.Should().Be(item.SomeNullableDecimalProperty);
+        result.SomeNonNullableIntProperty.Should().Be(item.SomeNonNullableIntProperty);
+        result.SomeNullableIntProperty.Should().Be(item.SomeNullableIntProperty);
+        result.SomeNonNullableStringProperty.Should().Be(item.SomeNonNullableStringProperty);
+        result.SomeNullableStringProperty.Should().Be(item.SomeNullableStringProperty);
+    }
+
+    [Theory]
+    [MemberData(nameof(InsertData))]
+    public void GivenSaveChanges_WhenMultipleObjectsInserted_ShouldInsertData(SaveVariant variant, int? batchSize,
+        int count)
+    {
+        // Arrange
+        using DbContextWrapper db = ContextWrapperResolver(_testOutputHelper);
+
+        // Act
+        for (var i = 0; i < count; i++)
+        {
+            db.Context.Add(ItemResolver(i));
+        }
+
+        db.Save(variant, batchSize);
+
+        var result = db.Context.NonRelatedEntities.Count();
+
+        var properties = db.Context.NonRelatedEntities
+            .Select(x => x.SomeNonNullableStringProperty)
+            .Distinct()
+            .ToArrayWithRetry();
+
+        // Assert
+        result.Should().Be(count);
+
+        properties.Should().HaveCount(count);
+    }
+
+    [Theory]
+    [MemberData(nameof(BaseWriteTheoryData))]
+    public void GivenSaveChanges_WhenNoChanges_ShouldDoNothing(SaveVariant variant)
+    {
+        // Arrange
+        using DbContextWrapper db = ContextWrapperResolver(_testOutputHelper);
+
+        // Act
+        db.Save(variant, null);
+
+        var result = db.Context.NonRelatedEntities.Count();
+
+        // Assert
+        result.Should().Be(0);
+    }
+
+    [Theory]
+    [MemberData(nameof(BaseWriteTheoryData))]
+    public void GivenSaveChanges_WhenOneObjectInserted_ShouldInsertData(SaveVariant variant)
+    {
+        // Arrange
+        using DbContextWrapper db = ContextWrapperResolver(_testOutputHelper);
+
+        NonRelatedEntity item = new()
+        {
+            ConcurrencyToken = new DateTimeOffset(2033, 11, 11, 2, 3, 4, 5, TimeSpan.Zero),
+            SomeNonNullableBooleanProperty = true,
+            SomeNonNullableDateTimeProperty = new DateTimeOffset(2010, 10, 10, 1, 2, 3, 0, TimeSpan.Zero),
+            SomeNullableDateTimeProperty = new DateTimeOffset(2012, 11, 11, 1, 2, 3, 0, TimeSpan.Zero),
+            SomeNonNullableDecimalProperty = 2.52M,
+            SomeNullableDecimalProperty = 4.523435M,
+            SomeNonNullableIntProperty = 1,
+            SomeNullableIntProperty = 11,
+            SomeNonNullableStringProperty = "some-string",
+            SomeNullableStringProperty = "other-string"
+        };
+
+        // Act
+        db.Context.Add(item);
+
+        db.Save(variant, null);
+
+        NonRelatedEntity result = db.Context.NonRelatedEntities.First();
 
         // Assert
         result.Should().NotBeNull();

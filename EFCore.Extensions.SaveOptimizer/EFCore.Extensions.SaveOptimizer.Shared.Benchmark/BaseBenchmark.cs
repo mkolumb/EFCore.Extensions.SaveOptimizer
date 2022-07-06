@@ -35,7 +35,7 @@ public abstract class BaseBenchmark
 
         Context = await GetContext();
 
-        await Context.Seed(Rows * BenchmarkConfig.GetSeedRepeat(), 1);
+        await Context.SeedAsync(Rows * BenchmarkConfig.GetSeedRepeat(), 1);
     }
 
     private async Task<IDbContextWrapper> GetContext()
@@ -100,7 +100,7 @@ public abstract class BaseBenchmark
 
         if (Context != null)
         {
-            await Context.Truncate();
+            await Context.TruncateAsync();
 
             Context.Dispose();
         }

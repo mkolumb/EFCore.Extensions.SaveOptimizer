@@ -9,37 +9,48 @@ public static class TheoryData
     {
         get
         {
-            yield return new object[] { SaveVariant.EfCore | SaveVariant.Recreate };
-            yield return new object[] { SaveVariant.EfCore | SaveVariant.Recreate | SaveVariant.WithTransaction };
-            yield return new object[] { SaveVariant.Optimized | SaveVariant.Recreate };
-            yield return new object[] { SaveVariant.Optimized | SaveVariant.Recreate | SaveVariant.WithTransaction };
-            yield return new object[] { SaveVariant.OptimizedDapper | SaveVariant.Recreate };
-            yield return new object[]
+            SaveVariant[] frameworks = { SaveVariant.EfCore, SaveVariant.Optimized, SaveVariant.OptimizedDapper };
+
+            SaveVariant[] transactions =
             {
-                SaveVariant.OptimizedDapper | SaveVariant.Recreate | SaveVariant.WithTransaction
+                SaveVariant.Default, SaveVariant.WithTransaction,
+                SaveVariant.WithTransaction | SaveVariant.NoAutoTransaction
             };
+
+            foreach (SaveVariant framework in frameworks)
+            {
+                foreach (SaveVariant transaction in transactions)
+                {
+                    yield return new object[] { framework | SaveVariant.Recreate | transaction };
+                }
+            }
         }
     }
 
-    public static IEnumerable<IEnumerable<object>> InsertTheoryData
+    public static IEnumerable<IEnumerable<object?>> InsertTheoryData
     {
         get
         {
+            int?[] batches = { 1000, 100, default };
+
             foreach (IEnumerable<object> baseData in BaseWriteTheoryData)
             {
                 var item = baseData.First();
 
-                yield return new[] { item, 1000, 1 };
-                yield return new[] { item, 1000, 2 };
-                yield return new[] { item, 1000, 10 };
-                yield return new[] { item, 1000, 100 };
-
-                if (IsLightMode)
+                foreach (var batch in batches)
                 {
-                    continue;
-                }
+                    yield return new[] { item, batch, 1 };
+                    yield return new[] { item, batch, 2 };
+                    yield return new[] { item, batch, 10 };
+                    yield return new[] { item, batch, 100 };
 
-                yield return new[] { item, 1000, 1000 };
+                    if (IsLightMode)
+                    {
+                        continue;
+                    }
+
+                    yield return new[] { item, batch, 1000 };
+                }
             }
 
             if (IsLightMode)
@@ -54,15 +65,18 @@ public static class TheoryData
                 yield break;
             }
 
-            yield return new object[]
+            foreach (var batch in batches)
             {
-                SaveVariant.Optimized | SaveVariant.Recreate | SaveVariant.WithTransaction, 100000, 100000
-            };
+                yield return new object?[]
+                {
+                    SaveVariant.Optimized | SaveVariant.Recreate | SaveVariant.WithTransaction, batch, 100000
+                };
 
-            yield return new object[]
-            {
-                SaveVariant.OptimizedDapper | SaveVariant.Recreate | SaveVariant.WithTransaction, 100000, 100000
-            };
+                yield return new object?[]
+                {
+                    SaveVariant.OptimizedDapper | SaveVariant.Recreate | SaveVariant.WithTransaction, batch, 100000
+                };
+            }
         }
     }
 }

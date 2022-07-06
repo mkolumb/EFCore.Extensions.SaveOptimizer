@@ -4,5 +4,5 @@ namespace EFCore.Extensions.SaveOptimizer.Internal.Services;
 
 public interface IQueryExecutionConfiguratorService
 {
-    QueryExecutionConfiguration Get(string providerName, QueryExecutionConfiguration? configuration = null);
+    QueryExecutionConfiguration Get(string providerName, QueryExecutionConfiguration? configuration);
 }
