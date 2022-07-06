@@ -2,8 +2,14 @@
 
 public static class TheoryData
 {
-    private static bool IsLightMode => Environment.GetEnvironmentVariables().Contains("TEST_LOAD_MODE") &&
-                                       Environment.GetEnvironmentVariable("TEST_LOAD_MODE") == "LIGHT";
+    private const string TestLoadMode = "TEST_LOAD_MODE";
+    private const string TestFullLoadDisabledProviders = "TEST_FULL_LOAD_DISABLED_PROVIDERS";
+    private const string FullLoadValue = "FULL";
+
+    private static bool IsFullMode => TestDataHelper.GetValue(TestLoadMode) == FullLoadValue;
+
+    private static IEnumerable<string> DisabledFullLoadProviders =>
+        TestDataHelper.GetValues(TestFullLoadDisabledProviders);
 
     public static IEnumerable<IEnumerable<object>> BaseWriteTheoryData
     {
@@ -27,52 +33,62 @@ public static class TheoryData
         }
     }
 
-    public static IEnumerable<IEnumerable<object?>> InsertTheoryData
+    public static IEnumerable<IEnumerable<object?>> InsertTheoryData =>
+        IsFullMode ? GetInsertFullMode() : GetInsertLightMode();
+
+    private static IEnumerable<IEnumerable<object?>> GetInsertLightMode()
     {
-        get
+        int?[] batches = { 100, default };
+
+        foreach (IEnumerable<object> baseData in BaseWriteTheoryData)
         {
-            int?[] batches = { 1000, 100, 10, 1, default };
+            var item = baseData.First();
 
-            foreach (IEnumerable<object> baseData in BaseWriteTheoryData)
+            foreach (var batch in batches)
             {
-                var item = baseData.First();
-
-                foreach (var batch in batches)
-                {
-                    yield return new[] { item, batch, 1 };
-                    yield return new[] { item, batch, 2 };
-                    yield return new[] { item, batch, 10 };
-                    yield return new[] { item, batch, 100 };
-
-                    if (IsLightMode)
-                    {
-                        continue;
-                    }
-
-                    yield return new[] { item, batch, 1000 };
-                }
+                yield return new[] { item, batch, 1 };
+                yield return new[] { item, batch, 2 };
+                yield return new[] { item, batch, 10 };
+                yield return new[] { item, batch, 100 };
             }
+        }
+    }
 
-            if (IsLightMode)
+    private static IEnumerable<IEnumerable<object?>> GetInsertFullMode()
+    {
+        int?[] batches = { 1000, 100, 10, 1, default };
+
+        foreach (IEnumerable<object> baseData in BaseWriteTheoryData)
+        {
+            var item = baseData.First();
+
+            foreach (var batch in batches)
             {
-                yield break;
+                yield return new[] { item, batch, 1 };
+                yield return new[] { item, batch, 2 };
+                yield return new[] { item, batch, 10 };
+                yield return new[] { item, batch, 100 };
+                yield return new[] { item, batch, 1000 };
             }
+        }
 
-            var excludedProviders = new[] { "Firebird", "Oracle" };
+        if (TestDataHelper.IsDisabled(DisabledFullLoadProviders))
+        {
+            yield break;
+        }
 
-            if (excludedProviders.Any(p => AppDomain.CurrentDomain.GetAssemblies().Any(x => x.FullName!.Contains(p))))
-            {
-                yield break;
-            }
+        var heavyLoadCounters = new[] { 10000, 100000 };
 
+        foreach (var counter in heavyLoadCounters)
+        {
             yield return new object?[]
             {
-                SaveVariant.Optimized | SaveVariant.Recreate | SaveVariant.WithTransaction, 100000, 100000
+                SaveVariant.Optimized | SaveVariant.Recreate | SaveVariant.WithTransaction, counter, counter
             };
 
             yield return new object?[]
             {
-                SaveVariant.OptimizedDapper | SaveVariant.Recreate | SaveVariant.WithTransaction, 100000, 100000
+                SaveVariant.OptimizedDapper | SaveVariant.Recreate | SaveVariant.WithTransaction, counter, counter
             };
         }
     }

@@ -6,10 +6,11 @@ using Xunit.Abstractions;
 
 namespace EFCore.Extensions.SaveOptimizer.PomeloMariaDb.Tests;
 
-[Collection("PomeloMariaDb")]
+[Collection(Variables.ProviderName)]
 public class UpdateTests : BaseUpdateTests
 {
-    public UpdateTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper, WrapperResolver.ContextWrapperResolver)
+    public UpdateTests(ITestOutputHelper testOutputHelper)
+        : base(testOutputHelper, WrapperResolver.ContextWrapperResolver)
     {
     }
 }
