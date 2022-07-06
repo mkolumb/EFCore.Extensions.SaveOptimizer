@@ -41,7 +41,7 @@ public class QueryExecutionConfiguratorService : IQueryExecutionConfiguratorServ
 
         config.AutoTransactionIsolationLevel ??= IsolationLevel.Serializable;
 
-        config.BuilderConfiguration ??= GetBuilderConfiguration(providerName);
+        config.BuilderConfiguration ??= new QueryBuilderConfiguration();
 
         config.BuilderConfiguration.QueryBuilderType ??= GetBuilderType(providerName);
 
@@ -72,18 +72,6 @@ public class QueryExecutionConfiguratorService : IQueryExecutionConfiguratorServ
                     : new QueryBuilderConfiguration()
             }
         };
-
-    private static QueryBuilderConfiguration GetBuilderConfiguration(string providerName)
-    {
-        QueryBuilderConfiguration configuration = new();
-
-        if (providerName.Contains("Firebird"))
-        {
-            configuration.OptimizeParameters = false;
-        }
-
-        return configuration;
-    }
 
     private static QueryBuilderType GetBuilderType(string providerName)
     {
