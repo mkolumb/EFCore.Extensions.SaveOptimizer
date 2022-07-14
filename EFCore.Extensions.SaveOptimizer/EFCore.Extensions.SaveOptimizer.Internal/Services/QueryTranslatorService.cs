@@ -45,19 +45,17 @@ public class QueryTranslatorService : IQueryTranslatorService
             {
                 primaryKeyNames.Add(column.ColumnName);
 
-                data.Add(column.ColumnName, GetSqlValueModel(property, column));
+                if (ShouldStoreValue(property, entry))
+                {
+                    data.Add(column.ColumnName, GetSqlValueModel(property, column));
+                }
 
                 propertiesCount++;
 
                 continue;
             }
 
-            if (entry.State == EntityState.Modified && !property.IsModified)
-            {
-                continue;
-            }
-
-            if (property.Metadata.ValueGenerated != ValueGenerated.Never)
+            if (!ShouldStoreValue(property, entry))
             {
                 continue;
             }
@@ -72,6 +70,31 @@ public class QueryTranslatorService : IQueryTranslatorService
 
         return new QueryDataModel(entityType, entry.State, schemaName, tableName, data, primaryKeyNames, tokens,
             propertiesCount);
+    }
+
+    private static bool ShouldStoreValue(PropertyEntry property, EntityEntry entry)
+    {
+        if (property.Metadata.IsPrimaryKey() && entry.State != EntityState.Added)
+        {
+            return true;
+        }
+
+        if (entry.State == EntityState.Modified && !property.IsModified)
+        {
+            return false;
+        }
+
+        if (property.Metadata.ValueGenerated == ValueGenerated.Never)
+        {
+            return true;
+        }
+
+        if (property.Metadata.GetBeforeSaveBehavior() != PropertySaveBehavior.Save)
+        {
+            return false;
+        }
+
+        return !property.IsTemporary;
     }
 
     private static SqlValueModel GetSqlValueModel(MemberEntry property, PropertyTypeModel column)

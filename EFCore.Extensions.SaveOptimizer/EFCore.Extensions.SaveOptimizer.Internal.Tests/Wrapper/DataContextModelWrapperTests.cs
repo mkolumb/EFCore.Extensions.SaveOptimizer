@@ -1,4 +1,5 @@
-﻿using EFCore.Extensions.SaveOptimizer.Internal.Tests.TestContext;
+﻿using EFCore.Extensions.SaveOptimizer.Internal.Tests.Extensions;
+using EFCore.Extensions.SaveOptimizer.Internal.Tests.TestContext;
 using EFCore.Extensions.SaveOptimizer.Internal.Tests.TestContext.LogEntities;
 using EFCore.Extensions.SaveOptimizer.Internal.Tests.TestContext.Models;
 using EFCore.Extensions.SaveOptimizer.Internal.Wrappers;
@@ -13,8 +14,7 @@ public class DataContextModelWrapperTests
     public DataContextModelWrapperTests()
     {
         DbContextOptionsBuilder<TestDataContext> options =
-            new DbContextOptionsBuilder<TestDataContext>().UseInMemoryDatabase("in_memory_db")
-                .UseSnakeCaseNamingConvention();
+            new DbContextOptionsBuilder<TestDataContext>().UseDynamicSqlLite();
         TestDataContext context = new(options.Options);
         _sut = new DataContextModelWrapper(() => context);
     }
@@ -90,11 +90,11 @@ public class DataContextModelWrapperTests
         // Assert
         results.Should()
             .ContainInOrder(
-                "first_level_entity",
-                "first_level_entity",
-                "second_level_entity",
-                "first_level_entity",
-                "second_level_entity",
-                "third_level_entity");
+                "first_level_entities",
+                "first_level_entities",
+                "second_level_entities",
+                "first_level_entities",
+                "second_level_entities",
+                "third_level_entities");
     }
 }

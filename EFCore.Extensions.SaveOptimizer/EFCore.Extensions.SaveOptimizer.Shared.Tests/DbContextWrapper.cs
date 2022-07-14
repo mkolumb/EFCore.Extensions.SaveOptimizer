@@ -21,6 +21,10 @@ public sealed class DbContextWrapper : IDisposable
 
     public EntitiesContext Context { get; private set; }
 
+    public string[] EntitiesList { get; } = { "NonRelatedEntities", "AutoIncrementPrimaryKeyEntities" };
+
+    public Dictionary<string, string> SequencesList { get; } = new() { { "AutoIncrementPrimaryKeyEntities", "Id" } };
+
     public DbContextWrapper(ITestTimeDbContextFactory<EntitiesContext> factory, ITestOutputHelper testOutputHelper)
     {
         _factory = factory;
@@ -53,6 +57,28 @@ public sealed class DbContextWrapper : IDisposable
         if ((variant & SaveVariant.Recreate) != 0)
         {
             RecreateContext();
+        }
+    }
+
+    public void CleanDb(string truncateFormat, string? resetSequenceFormat = null)
+    {
+        foreach (var entity in EntitiesList)
+        {
+            var query = string.Format(truncateFormat, entity);
+
+            Run(RunTry, () => Context.Database.ExecuteSqlRaw(query));
+        }
+
+        if (resetSequenceFormat == null)
+        {
+            return;
+        }
+
+        foreach (var (table, column) in SequencesList)
+        {
+            var query = string.Format(resetSequenceFormat, table, column);
+
+            Run(RunTry, () => Context.Database.ExecuteSqlRaw(query));
         }
     }
 

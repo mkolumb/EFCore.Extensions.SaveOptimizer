@@ -10,6 +10,19 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Sqlite.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "AutoIncrementPrimaryKeyEntities",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Some = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AutoIncrementPrimaryKeyEntities", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "NonRelatedEntities",
                 columns: table => new
                 {
@@ -38,6 +51,9 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Sqlite.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "AutoIncrementPrimaryKeyEntities");
+
             migrationBuilder.DropTable(
                 name: "NonRelatedEntities");
         }

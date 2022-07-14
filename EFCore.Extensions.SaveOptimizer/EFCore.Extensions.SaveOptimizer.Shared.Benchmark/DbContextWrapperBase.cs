@@ -16,6 +16,8 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
     private readonly IDbContextFactory<EntitiesContext> _factory;
     private int _failures;
 
+    protected string[] EntitiesList { get; } = { "NonRelatedEntities", "AutoIncrementPrimaryKeyEntities" };
+
     protected DbContextWrapperBase(IDbContextFactory<EntitiesContext> factory)
     {
         _failures = 0;

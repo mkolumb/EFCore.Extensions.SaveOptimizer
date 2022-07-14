@@ -17,6 +17,9 @@ public class TestDataContext : DbContext
 
     public DbSet<AttributeEntityLog> AttributeEntityLogs { get; set; }
 
+    public DbSet<InsertablePrimaryKeyEntity> InsertablePrimaryKeyEntities { get; set; }
+    public DbSet<NonInsertablePrimaryKeyEntity> NonInsertablePrimaryKeyEntities { get; set; }
+
     public TestDataContext(DbContextOptions options) : base(options)
     {
     }

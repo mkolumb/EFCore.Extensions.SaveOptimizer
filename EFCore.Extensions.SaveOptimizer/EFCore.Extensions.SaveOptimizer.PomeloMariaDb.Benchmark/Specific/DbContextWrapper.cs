@@ -12,8 +12,11 @@ public class DbContextWrapper : DbContextWrapperBase
 
     protected override async Task TruncateBaseAsync()
     {
-        const string query = "truncate `NonRelatedEntities`;";
+        foreach (var entity in EntitiesList)
+        {
+            var query = $"truncate `{entity}`;";
 
-        await Context.Database.ExecuteSqlRawAsync(query);
+            await Context.Database.ExecuteSqlRawAsync(query);
+        }
     }
 }

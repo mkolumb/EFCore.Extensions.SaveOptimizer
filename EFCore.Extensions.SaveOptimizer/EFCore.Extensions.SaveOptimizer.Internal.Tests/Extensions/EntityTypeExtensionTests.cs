@@ -14,7 +14,7 @@ public class EntityTypeExtensionTests
     public EntityTypeExtensionTests()
     {
         DbContextOptionsBuilder options =
-            new DbContextOptionsBuilder<TestDataContext>().UseInMemoryDatabase("in_memory_db");
+            new DbContextOptionsBuilder<TestDataContext>().UseDynamicSqlLite();
         _sut = new TestDataContext(options.Options);
     }
 
