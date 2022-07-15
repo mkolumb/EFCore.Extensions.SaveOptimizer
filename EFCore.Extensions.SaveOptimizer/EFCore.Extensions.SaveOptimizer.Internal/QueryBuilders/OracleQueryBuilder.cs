@@ -1,5 +1,6 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Internal.Configuration;
 using EFCore.Extensions.SaveOptimizer.Internal.Enums;
+using EFCore.Extensions.SaveOptimizer.Internal.Models;
 
 namespace EFCore.Extensions.SaveOptimizer.Internal.QueryBuilders;
 
@@ -29,10 +30,23 @@ public class OracleQueryBuilder : BaseQueryBuilder
         { ClauseType.Set, "SET" },
         { ClauseType.RangeLeft, "(" },
         { ClauseType.RangeRight, ")" },
-        { ClauseType.QueryEnding, "" }
+        { ClauseType.QueryEnding, "" },
+        { ClauseType.Null, "NULL" }
     };
 
     public OracleQueryBuilder(QueryBuilderConfiguration? configuration) : base(Clauses, configuration)
     {
+    }
+
+    protected override string CastParameter(string paramKey, SqlValueModel model)
+    {
+        if (model.PropertyTypeModel.ColumnType == null)
+        {
+            return paramKey;
+        }
+
+        return paramKey == ClausesConfiguration[ClauseType.Null]
+            ? $"CAST({ClausesConfiguration[ClauseType.Null]} AS {model.PropertyTypeModel.ColumnType})"
+            : paramKey;
     }
 }

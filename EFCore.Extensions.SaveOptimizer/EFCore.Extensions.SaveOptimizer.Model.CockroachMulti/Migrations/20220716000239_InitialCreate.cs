@@ -44,6 +44,35 @@ namespace EFCore.Extensions.SaveOptimizer.Model.CockroachMulti.Migrations
                     table.PrimaryKey("PK_NonRelatedEntities", x => x.NonRelatedEntityId);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "VariousTypeEntities",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false),
+                    SomeString = table.Column<string>(type: "text", nullable: true),
+                    SomeGuid = table.Column<Guid>(type: "uuid", nullable: true),
+                    SomeBool = table.Column<bool>(type: "boolean", nullable: true),
+                    SomeEnum = table.Column<int>(type: "integer", nullable: true),
+                    SomeDateTime = table.Column<DateTime>(type: "timestamp(5) with time zone", precision: 5, nullable: true),
+                    SomeDateTimeOffset = table.Column<DateTimeOffset>(type: "timestamp(5) with time zone", precision: 5, nullable: true),
+                    SomeTimeSpan = table.Column<TimeSpan>(type: "interval(5)", precision: 5, nullable: true),
+                    SomeShort = table.Column<short>(type: "smallint", nullable: true),
+                    SomeUnsignedShort = table.Column<int>(type: "integer", nullable: true),
+                    SomeInt = table.Column<int>(type: "integer", nullable: true),
+                    SomeUnsignedInt = table.Column<long>(type: "bigint", nullable: true),
+                    SomeLong = table.Column<long>(type: "bigint", nullable: true),
+                    SomeUnsignedLong = table.Column<decimal>(type: "numeric(20,0)", nullable: true),
+                    SomeSignedByte = table.Column<short>(type: "smallint", nullable: true),
+                    SomeByte = table.Column<byte>(type: "smallint", nullable: true),
+                    SomeFloat = table.Column<float>(type: "real", nullable: true),
+                    SomeDouble = table.Column<double>(type: "double precision", nullable: true),
+                    SomeDecimal = table.Column<decimal>(type: "numeric(12,6)", precision: 12, scale: 6, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VariousTypeEntities", x => x.Id);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_NonRelatedEntities_ConcurrencyToken_NonRelatedEntityId",
                 table: "NonRelatedEntities",
@@ -57,6 +86,9 @@ namespace EFCore.Extensions.SaveOptimizer.Model.CockroachMulti.Migrations
 
             migrationBuilder.DropTable(
                 name: "NonRelatedEntities");
+
+            migrationBuilder.DropTable(
+                name: "VariousTypeEntities");
         }
     }
 }

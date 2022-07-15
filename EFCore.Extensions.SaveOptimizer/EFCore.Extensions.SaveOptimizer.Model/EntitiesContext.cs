@@ -12,6 +12,8 @@ public class EntitiesContext : DbContext
 
     public DbSet<AutoIncrementPrimaryKeyEntity> AutoIncrementPrimaryKeyEntities { get; set; }
 
+    public DbSet<VariousTypeEntity> VariousTypeEntities { get; set; }
+
     public EntitiesContext(DbContextOptions<EntitiesContext> options)
         : base(options)
     {

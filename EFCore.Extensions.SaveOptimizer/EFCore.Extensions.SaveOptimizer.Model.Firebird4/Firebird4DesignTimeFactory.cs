@@ -30,6 +30,13 @@ public class Firebird4DesignTimeFactory : IDesignTimeDbContextFactory<EntitiesCo
                     .HasColumnType(decimalColumnType);
             });
 
+            modelBuilder.Entity<VariousTypeEntity>(eb =>
+            {
+                eb.Property(b => b.SomeDecimal)
+                    .HasPrecision(12, 6)
+                    .HasColumnType(decimalColumnType);
+            });
+
             modelBuilder.Entity<AutoIncrementPrimaryKeyEntity>(eb =>
             {
                 eb.Property(b => b.Id)
