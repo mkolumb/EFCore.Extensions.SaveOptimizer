@@ -53,7 +53,7 @@ public class QueryPreparerService : IQueryPreparerService
 
         var expectedRows = 0;
 
-        IEnumerable<EntityEntry> entries = context.ChangeTracker.Entries();
+        EntityEntry[] entries = context.ChangeTracker.Entries().ToArray();
 
         Dictionary<EntityState, Dictionary<Type, List<QueryDataModel>>> translations = new()
         {
@@ -111,7 +111,8 @@ public class QueryPreparerService : IQueryPreparerService
 
         foreach ((Type type, _) in _orders[name].OrderByDescending(x => x.Value))
         {
-            foreach (IEnumerable<ISqlCommandModel> sqlResults in GetQuery(translations, maxParameters, EntityState.Deleted, type, configuration))
+            foreach (IEnumerable<ISqlCommandModel> sqlResults in GetQuery(translations, maxParameters,
+                         EntityState.Deleted, type, configuration))
             {
                 results.AddRange(sqlResults);
             }
@@ -119,18 +120,20 @@ public class QueryPreparerService : IQueryPreparerService
 
         foreach ((Type type, _) in _orders[name].OrderBy(x => x.Value))
         {
-            foreach (IEnumerable<ISqlCommandModel> sqlResults in GetQuery(translations, maxParameters, EntityState.Added, type, configuration))
+            foreach (IEnumerable<ISqlCommandModel> sqlResults in GetQuery(translations, maxParameters,
+                         EntityState.Added, type, configuration))
             {
                 results.AddRange(sqlResults);
             }
 
-            foreach (IEnumerable<ISqlCommandModel> sqlResults in GetQuery(translations, maxParameters, EntityState.Modified, type, configuration))
+            foreach (IEnumerable<ISqlCommandModel> sqlResults in GetQuery(translations, maxParameters,
+                         EntityState.Modified, type, configuration))
             {
                 results.AddRange(sqlResults);
             }
         }
 
-        return new QueryPreparationModel(results, expectedRows);
+        return new QueryPreparationModel(results, entries, expectedRows);
     }
 
     private static string GetKey(DbContext context)

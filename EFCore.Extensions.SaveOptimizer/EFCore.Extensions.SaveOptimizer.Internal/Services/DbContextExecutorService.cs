@@ -3,6 +3,7 @@ using EFCore.Extensions.SaveOptimizer.Internal.Configuration;
 using EFCore.Extensions.SaveOptimizer.Internal.Enums;
 using EFCore.Extensions.SaveOptimizer.Internal.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace EFCore.Extensions.SaveOptimizer.Internal.Services;
@@ -80,7 +81,7 @@ public class DbContextExecutorService : IDbContextExecutorService
                 transaction.Commit();
             }
 
-            AcceptOnSuccess(configuration, context);
+            PrepareAfterSave(queries, configuration, context);
 
             return rows;
         }
@@ -165,7 +166,7 @@ public class DbContextExecutorService : IDbContextExecutorService
                 await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
             }
 
-            AcceptOnSuccess(configuration, context);
+            PrepareAfterSave(queries, configuration, context);
 
             return rows;
         }
@@ -198,11 +199,32 @@ public class DbContextExecutorService : IDbContextExecutorService
         return configuration;
     }
 
-    private static void AcceptOnSuccess(QueryExecutionConfiguration configuration, DbContext context)
+    private static void PrepareAfterSave(QueryPreparationModel queries, QueryExecutionConfiguration configuration,
+        DbContext context)
     {
-        if (configuration.AcceptAllChangesOnSuccess == true)
+        foreach (EntityEntry entry in queries.Entries)
         {
-            context.ChangeTracker.AcceptAllChanges();
+            if (entry.State != EntityState.Added)
+            {
+                continue;
+            }
+
+            foreach (PropertyEntry property in entry.Properties)
+            {
+                if (!property.IsTemporary)
+                {
+                    continue;
+                }
+
+                property.IsTemporary = false;
+            }
         }
+
+        if (configuration.AcceptAllChangesOnSuccess != true)
+        {
+            return;
+        }
+
+        context.ChangeTracker.AcceptAllChanges();
     }
 }
