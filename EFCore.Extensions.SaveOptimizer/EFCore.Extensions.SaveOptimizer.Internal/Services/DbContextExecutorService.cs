@@ -3,7 +3,6 @@ using EFCore.Extensions.SaveOptimizer.Internal.Configuration;
 using EFCore.Extensions.SaveOptimizer.Internal.Enums;
 using EFCore.Extensions.SaveOptimizer.Internal.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace EFCore.Extensions.SaveOptimizer.Internal.Services;
@@ -67,7 +66,7 @@ public class DbContextExecutorService : IDbContextExecutorService
             foreach (ISqlCommandModel sql in queries.Queries)
             {
                 var affected = _queryExecutorService.Execute(context, configuration, transaction, sql, timeout);
-                
+
                 rows += affected;
             }
 
@@ -81,7 +80,7 @@ public class DbContextExecutorService : IDbContextExecutorService
                 transaction.Commit();
             }
 
-            MarkEntitiesAfterSave(context);
+            AcceptOnSuccess(configuration, context);
 
             return rows;
         }
@@ -126,7 +125,8 @@ public class DbContextExecutorService : IDbContextExecutorService
                     throw new ArgumentException("Auto transaction isolation level should be set");
                 }
 
-                transaction = await context.Database.BeginTransactionAsync(isolationLevel.Value, cancellationToken).ConfigureAwait(false);
+                transaction = await context.Database.BeginTransactionAsync(isolationLevel.Value, cancellationToken)
+                    .ConfigureAwait(false);
 
                 autoCommit = true;
             }
@@ -165,7 +165,7 @@ public class DbContextExecutorService : IDbContextExecutorService
                 await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
             }
 
-            MarkEntitiesAfterSave(context);
+            AcceptOnSuccess(configuration, context);
 
             return rows;
         }
@@ -198,11 +198,11 @@ public class DbContextExecutorService : IDbContextExecutorService
         return configuration;
     }
 
-    private static void MarkEntitiesAfterSave(DbContext context)
+    private static void AcceptOnSuccess(QueryExecutionConfiguration configuration, DbContext context)
     {
-        foreach (EntityEntry entityEntry in context.ChangeTracker.Entries())
+        if (configuration.AcceptAllChangesOnSuccess == true)
         {
-            entityEntry.State = EntityState.Detached;
+            context.ChangeTracker.AcceptAllChanges();
         }
     }
 }

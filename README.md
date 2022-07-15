@@ -171,6 +171,7 @@ This is not a SaveOptimizer issue, however I experienced some problems with Fire
 |  |  | _Other - 15384_ |
 | Concurrency token behavior | When concurrency token is defined for entity it is included in update / delete statements. When flag is set to throws exception it will throws exception when statements affected less / more rows than expected. | _All - throw exception_ |
 | Auto transaction enabled | If enabled it will start transaction when no transaction attached to DbContext | _All - enabled_ |
+| Accept all changes on success | If enabled it will accept all changes after successfull save | _All - enabled_ |
 | Auto transaction isolation level | Isolation level for auto transaction | _All - serializable_ |
 | Builder configuration -> case type | Case type used when building statements, if normal it will not change case to upper / lower | _All - normal_ |
 | Builder configuration -> optimize parameters | Optimize parameters usage in statements, sometimes can lead to unexpected exception in db | _All - true_ |
