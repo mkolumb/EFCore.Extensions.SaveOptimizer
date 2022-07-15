@@ -2,11 +2,10 @@
 
 public class SqlCommandModel : ISqlCommandModel
 {
-    public SqlCommandModel(string? sql, IReadOnlyCollection<SqlParamModel>? parameters, int? expectedRows)
+    public SqlCommandModel(string? sql, IReadOnlyCollection<SqlParamModel>? parameters)
     {
         Sql = sql;
         Parameters = parameters;
-        ExpectedRows = expectedRows;
     }
 
     public string? Sql { get; }
@@ -15,6 +14,4 @@ public class SqlCommandModel : ISqlCommandModel
         Parameters?.ToDictionary(x => x.Key, x => x.SqlValueModel.Value);
 
     public IReadOnlyCollection<SqlParamModel>? Parameters { get; }
-
-    public int? ExpectedRows { get; }
 }

@@ -1,11 +1,14 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Model;
+using EFCore.Extensions.SaveOptimizer.Shared.Tests.Attributes;
+using EFCore.Extensions.SaveOptimizer.Shared.Tests.Enums;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests.Extensions;
+using EFCore.Extensions.SaveOptimizer.Shared.Tests.Wrappers;
 
-namespace EFCore.Extensions.SaveOptimizer.Shared.Tests;
+namespace EFCore.Extensions.SaveOptimizer.Shared.Tests.Tests;
 
 public abstract partial class BaseMiscTests
 {
-    [Theory]
+    [SkippableTheory]
     [MemberData(nameof(BaseWriteTheoryData))]
     public async Task GivenSaveChangesAsync_WhenInsertAutoIncrementPrimaryKey_ShouldStoreData(SaveVariant variant)
     {
@@ -34,7 +37,7 @@ public abstract partial class BaseMiscTests
         properties.Should().ContainInOrder("x1", "x2", "x3");
     }
 
-    [Theory]
+    [SkippableTheory]
     [MemberData(nameof(BaseWriteTheoryData))]
     public async Task GivenSaveChangesAsync_WhenUpdateAutoIncrementPrimaryKey_ShouldStoreData(SaveVariant variant)
     {
@@ -72,7 +75,7 @@ public abstract partial class BaseMiscTests
         properties.Should().ContainInOrder("a_x1_1", "a_x2_2", "a_x3_3");
     }
 
-    [Theory]
+    [SkippableTheory]
     [MemberData(nameof(BaseWriteTheoryData))]
     public async Task GivenSaveChangesAsync_WhenDeleteAutoIncrementPrimaryKey_ShouldStoreData(SaveVariant variant)
     {

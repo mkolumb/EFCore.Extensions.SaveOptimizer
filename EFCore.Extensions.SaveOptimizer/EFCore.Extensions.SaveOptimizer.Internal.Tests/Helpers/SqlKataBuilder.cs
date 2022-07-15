@@ -8,7 +8,6 @@ namespace EFCore.Extensions.SaveOptimizer.Internal.Tests.Helpers;
 public class SqlKataBuilder : IQueryBuilder
 {
     private readonly Compiler _compiler;
-    private int? _expectedRows;
     private Query? _query;
 
     public SqlKataBuilder(Compiler compiler) => _compiler = compiler;
@@ -16,8 +15,6 @@ public class SqlKataBuilder : IQueryBuilder
     public IQueryBuilder Insert(string tableName, IReadOnlyList<IDictionary<string, SqlValueModel?>> data)
     {
         ICollection<string> columns = data[0].Keys;
-
-        _expectedRows = data.Count;
 
         IEnumerable<ICollection<object?>> rows = data.Select(x => x.Values.Select(s => s?.Value).ToArray());
 
@@ -65,11 +62,6 @@ public class SqlKataBuilder : IQueryBuilder
     {
         SqlResult? result = _compiler.Compile(_query);
 
-        return new SqlKataCommandModel
-        {
-            Sql = result.Sql,
-            NamedBindings = result.NamedBindings,
-            ExpectedRows = _expectedRows
-        };
+        return new SqlKataCommandModel { Sql = result.Sql, NamedBindings = result.NamedBindings };
     }
 }

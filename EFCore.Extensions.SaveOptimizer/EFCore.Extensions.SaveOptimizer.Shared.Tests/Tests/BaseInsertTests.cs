@@ -1,16 +1,20 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Model;
+using EFCore.Extensions.SaveOptimizer.Shared.Tests.Attributes;
+using EFCore.Extensions.SaveOptimizer.Shared.Tests.Data;
+using EFCore.Extensions.SaveOptimizer.Shared.Tests.Enums;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests.Extensions;
+using EFCore.Extensions.SaveOptimizer.Shared.Tests.Wrappers;
 using FluentAssertions.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Xunit.Abstractions;
 
-namespace EFCore.Extensions.SaveOptimizer.Shared.Tests;
+namespace EFCore.Extensions.SaveOptimizer.Shared.Tests.Tests;
 
 public abstract class BaseInsertTests : BaseTests
 {
-    public static IEnumerable<IEnumerable<object?>> InsertData => TheoryData.InsertTheoryData;
+    public static IEnumerable<IEnumerable<object?>> InsertData => SharedTheoryData.InsertTheoryData;
 
-    public static IEnumerable<IEnumerable<object?>> BaseWriteTheoryData => TheoryData.BaseWriteTheoryData;
+    public static IEnumerable<IEnumerable<object?>> BaseWriteTheoryData => SharedTheoryData.BaseWriteTheoryData;
 
     protected BaseInsertTests(ITestOutputHelper testOutputHelper,
         Func<ITestOutputHelper, DbContextWrapper> contextWrapperResolver)
@@ -18,7 +22,7 @@ public abstract class BaseInsertTests : BaseTests
     {
     }
 
-    [Theory]
+    [SkippableTheory]
     [MemberData(nameof(InsertData))]
     public async Task GivenSaveChangesAsync_WhenMultipleObjectsInserted_ShouldInsertData(SaveVariant variant,
         int? batchSize, int count)
@@ -47,7 +51,7 @@ public abstract class BaseInsertTests : BaseTests
         properties.Should().HaveCount(count);
     }
 
-    [Theory]
+    [SkippableTheory]
     [MemberData(nameof(BaseWriteTheoryData))]
     public async Task GivenSaveChangesAsync_WhenNoChanges_ShouldDoNothing(SaveVariant variant)
     {
@@ -63,7 +67,7 @@ public abstract class BaseInsertTests : BaseTests
         result.Should().Be(0);
     }
 
-    [Theory]
+    [SkippableTheory]
     [MemberData(nameof(BaseWriteTheoryData))]
     public async Task GivenSaveChangesAsync_WhenOneObjectInserted_ShouldInsertData(SaveVariant variant)
     {
@@ -107,7 +111,7 @@ public abstract class BaseInsertTests : BaseTests
         result.SomeNullableStringProperty.Should().Be(item.SomeNullableStringProperty);
     }
 
-    [Theory]
+    [SkippableTheory]
     [MemberData(nameof(InsertData))]
     public void GivenSaveChanges_WhenMultipleObjectsInserted_ShouldInsertData(SaveVariant variant, int? batchSize,
         int count)
@@ -136,7 +140,7 @@ public abstract class BaseInsertTests : BaseTests
         properties.Should().HaveCount(count);
     }
 
-    [Theory]
+    [SkippableTheory]
     [MemberData(nameof(BaseWriteTheoryData))]
     public void GivenSaveChanges_WhenNoChanges_ShouldDoNothing(SaveVariant variant)
     {
@@ -152,7 +156,7 @@ public abstract class BaseInsertTests : BaseTests
         result.Should().Be(0);
     }
 
-    [Theory]
+    [SkippableTheory]
     [MemberData(nameof(BaseWriteTheoryData))]
     public void GivenSaveChanges_WhenOneObjectInserted_ShouldInsertData(SaveVariant variant)
     {

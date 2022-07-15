@@ -1,14 +1,18 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Model;
+using EFCore.Extensions.SaveOptimizer.Shared.Tests.Attributes;
+using EFCore.Extensions.SaveOptimizer.Shared.Tests.Data;
+using EFCore.Extensions.SaveOptimizer.Shared.Tests.Enums;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests.Extensions;
+using EFCore.Extensions.SaveOptimizer.Shared.Tests.Wrappers;
 using Xunit.Abstractions;
 
 // ReSharper disable AccessToDisposedClosure
 
-namespace EFCore.Extensions.SaveOptimizer.Shared.Tests;
+namespace EFCore.Extensions.SaveOptimizer.Shared.Tests.Tests;
 
 public abstract partial class BaseMiscTests : BaseTests
 {
-    public static IEnumerable<IEnumerable<object?>> BaseWriteTheoryData => TheoryData.BaseWriteTheoryData;
+    public static IEnumerable<IEnumerable<object?>> BaseWriteTheoryData => SharedTheoryData.BaseWriteTheoryData;
 
     protected BaseMiscTests(ITestOutputHelper testOutputHelper,
         Func<ITestOutputHelper, DbContextWrapper> contextWrapperResolver)
@@ -16,7 +20,7 @@ public abstract partial class BaseMiscTests : BaseTests
     {
     }
 
-    [Theory]
+    [SkippableTheory]
     [InlineData(SaveVariant.Optimized | SaveVariant.NoAutoTransaction)]
     [InlineData(SaveVariant.OptimizedDapper | SaveVariant.NoAutoTransaction)]
     public async Task GivenSaveChangesAsync_WhenNoTransaction_ShouldThrowsException(SaveVariant variant)
@@ -33,7 +37,7 @@ public abstract partial class BaseMiscTests : BaseTests
         await result.Should().ThrowExactlyAsync<ArgumentException>();
     }
 
-    [Theory]
+    [SkippableTheory]
     [MemberData(nameof(BaseWriteTheoryData))]
     public async Task GivenSaveChangesAsync_WhenDifferentOperations_ShouldStoreData(SaveVariant variant)
     {
@@ -68,7 +72,7 @@ public abstract partial class BaseMiscTests : BaseTests
         result[3].SomeNullableStringProperty.Should().BeEquivalentTo("new-prop");
     }
 
-    [Theory]
+    [SkippableTheory]
     [InlineData(SaveVariant.Optimized | SaveVariant.NoAutoTransaction)]
     [InlineData(SaveVariant.OptimizedDapper | SaveVariant.NoAutoTransaction)]
     public void GivenSaveChanges_WhenNoTransaction_ShouldThrowsException(SaveVariant variant)
@@ -85,7 +89,7 @@ public abstract partial class BaseMiscTests : BaseTests
         result.Should().ThrowExactly<ArgumentException>();
     }
 
-    [Theory]
+    [SkippableTheory]
     [MemberData(nameof(BaseWriteTheoryData))]
     public void GivenSaveChanges_WhenDifferentOperations_ShouldStoreData(SaveVariant variant)
     {

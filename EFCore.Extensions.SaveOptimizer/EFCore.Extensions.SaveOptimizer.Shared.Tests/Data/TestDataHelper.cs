@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace EFCore.Extensions.SaveOptimizer.Shared.Tests;
+namespace EFCore.Extensions.SaveOptimizer.Shared.Tests.Data;
 
 public class TestDataHelper
 {

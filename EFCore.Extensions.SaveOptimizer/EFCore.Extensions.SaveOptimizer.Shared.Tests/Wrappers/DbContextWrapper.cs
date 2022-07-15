@@ -2,6 +2,7 @@
 using EFCore.Extensions.SaveOptimizer.Dapper;
 using EFCore.Extensions.SaveOptimizer.Internal.Configuration;
 using EFCore.Extensions.SaveOptimizer.Model;
+using EFCore.Extensions.SaveOptimizer.Shared.Tests.Enums;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests.Extensions;
 using EFCore.Extensions.SaveOptimizer.TestLogger;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
 
-namespace EFCore.Extensions.SaveOptimizer.Shared.Tests;
+namespace EFCore.Extensions.SaveOptimizer.Shared.Tests.Wrappers;
 
 public sealed class DbContextWrapper : IDisposable
 {
@@ -21,9 +22,15 @@ public sealed class DbContextWrapper : IDisposable
 
     public EntitiesContext Context { get; private set; }
 
-    public string[] EntitiesList { get; } = { "NonRelatedEntities", "AutoIncrementPrimaryKeyEntities" };
+    public string[] EntitiesList { get; } =
+    {
+        nameof(EntitiesContext.NonRelatedEntities), nameof(EntitiesContext.AutoIncrementPrimaryKeyEntities)
+    };
 
-    public Dictionary<string, string> SequencesList { get; } = new() { { "AutoIncrementPrimaryKeyEntities", "Id" } };
+    public Dictionary<string, string> SequencesList { get; } = new()
+    {
+        { nameof(EntitiesContext.AutoIncrementPrimaryKeyEntities), nameof(AutoIncrementPrimaryKeyEntity.Id) }
+    };
 
     public DbContextWrapper(ITestTimeDbContextFactory<EntitiesContext> factory, ITestOutputHelper testOutputHelper)
     {

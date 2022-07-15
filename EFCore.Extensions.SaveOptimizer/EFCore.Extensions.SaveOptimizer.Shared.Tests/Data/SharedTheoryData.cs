@@ -1,6 +1,8 @@
-﻿namespace EFCore.Extensions.SaveOptimizer.Shared.Tests;
+﻿using EFCore.Extensions.SaveOptimizer.Shared.Tests.Enums;
 
-public static class TheoryData
+namespace EFCore.Extensions.SaveOptimizer.Shared.Tests.Data;
+
+public static class SharedTheoryData
 {
     private const string TestLoadMode = "TEST_LOAD_MODE";
     private const string TestFullLoadDisabledProviders = "TEST_FULL_LOAD_DISABLED_PROVIDERS";
