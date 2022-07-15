@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EFCore.Extensions.SaveOptimizer.Model.Postgres.Migrations
 {
     [DbContext(typeof(EntitiesContext))]
-    [Migration("20220715065230_InitialCreate")]
+    [Migration("20220715101313_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
