@@ -59,6 +59,7 @@ public sealed class DbContextWrapper : IDisposable
         configuration.AfterSaveBehavior = variant.HasFlag(SaveVariant.WithTransaction)
             ? AfterSaveBehavior.DoNothing
             : AfterSaveBehavior.AcceptChanges;
+
         return configuration;
     }
 
