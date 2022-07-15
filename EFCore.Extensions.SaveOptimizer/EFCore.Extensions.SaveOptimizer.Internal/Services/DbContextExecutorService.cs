@@ -67,12 +67,7 @@ public class DbContextExecutorService : IDbContextExecutorService
             foreach (ISqlCommandModel sql in queries.Queries)
             {
                 var affected = _queryExecutorService.Execute(context, configuration, transaction, sql, timeout);
-
-                if (affected < 0 && sql.ExpectedRows.HasValue) // Oracle insert many fallback
-                {
-                    affected = sql.ExpectedRows.Value;
-                }
-
+                
                 rows += affected;
             }
 
@@ -156,11 +151,6 @@ public class DbContextExecutorService : IDbContextExecutorService
                 var affected = await _queryExecutorService
                     .ExecuteAsync(context, configuration, transaction, sql, timeout, cancellationToken)
                     .ConfigureAwait(false);
-
-                if (affected < 0 && sql.ExpectedRows.HasValue) // Oracle insert many fallback
-                {
-                    affected = sql.ExpectedRows.Value;
-                }
 
                 rows += affected;
             }

@@ -15,9 +15,9 @@ public static class WrapperResolver
 
         wrapper.Context.Database.Migrate();
 
-        const string query = "truncate table \"NonRelatedEntities\";";
+        const string query = "truncate table \"{0}\";";
 
-        wrapper.Context.Database.ExecuteSqlRaw(query);
+        wrapper.CleanDb(query);
 
         return wrapper;
     }

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EFCore.Extensions.SaveOptimizer.Model.Firebird3.Migrations
 {
     [DbContext(typeof(EntitiesContext))]
-    [Migration("20220629141107_InitialCreate")]
+    [Migration("20220715101346_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -22,6 +22,21 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Firebird3.Migrations
                 .HasAnnotation("Fb:ValueGenerationStrategy", FbValueGenerationStrategy.IdentityColumn)
                 .HasAnnotation("ProductVersion", "6.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 31);
+
+            modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.AutoIncrementPrimaryKeyEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasAnnotation("Fb:ValueGenerationStrategy", FbValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Some")
+                        .HasColumnType("BLOB SUB_TYPE TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AutoIncrementPrimaryKeyEntities");
+                });
 
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.NonRelatedEntity", b =>
                 {

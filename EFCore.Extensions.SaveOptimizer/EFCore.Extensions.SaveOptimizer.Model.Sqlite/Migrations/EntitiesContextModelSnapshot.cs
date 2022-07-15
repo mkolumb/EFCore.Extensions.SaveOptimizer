@@ -17,6 +17,20 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Sqlite.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.0");
 
+            modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.AutoIncrementPrimaryKeyEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Some")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AutoIncrementPrimaryKeyEntities");
+                });
+
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.NonRelatedEntity", b =>
                 {
                     b.Property<Guid>("NonRelatedEntityId")

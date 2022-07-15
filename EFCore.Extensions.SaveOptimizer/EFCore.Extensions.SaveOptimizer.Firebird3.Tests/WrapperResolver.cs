@@ -15,9 +15,11 @@ public static class WrapperResolver
 
         wrapper.Context.Database.Migrate();
 
-        const string query = "DELETE FROM \"NonRelatedEntities\";";
+        const string truncateQuery = "DELETE FROM \"{0}\";";
 
-        wrapper.Context.Database.ExecuteSqlRaw(query);
+        const string resetSequenceQuery = "ALTER TABLE \"{0}\" ALTER COLUMN \"{1}\" RESTART WITH 0;";
+
+        wrapper.CleanDb(truncateQuery, resetSequenceQuery);
 
         return wrapper;
     }

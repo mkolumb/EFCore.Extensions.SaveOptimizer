@@ -11,7 +11,7 @@ public class QueryBuilderFactory : IQueryBuilderFactory
         {
             QueryBuilderType.SqlServer => new SqlServerQueryBuilder(configuration),
             QueryBuilderType.SqLite => new SqliteQueryBuilder(configuration),
-            QueryBuilderType.Oracle => new OracleAllQueryBuilder(configuration),
+            QueryBuilderType.Oracle => new OracleQueryBuilder(configuration),
             QueryBuilderType.Firebird => new FirebirdQueryBuilder(configuration),
             QueryBuilderType.MySql => new MySqlQueryBuilder(configuration),
             QueryBuilderType.Postgres => new PostgresQueryBuilder(configuration),

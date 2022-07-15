@@ -22,6 +22,22 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Oracle.Migrations
 
             OracleModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
+            modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.AutoIncrementPrimaryKeyEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("NUMBER(10)");
+
+                    OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Some")
+                        .HasColumnType("NVARCHAR2(2000)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AutoIncrementPrimaryKeyEntities");
+                });
+
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.NonRelatedEntity", b =>
                 {
                     b.Property<Guid>("NonRelatedEntityId")

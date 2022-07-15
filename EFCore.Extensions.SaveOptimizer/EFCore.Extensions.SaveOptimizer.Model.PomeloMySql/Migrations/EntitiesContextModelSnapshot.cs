@@ -19,6 +19,20 @@ namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMySql.Migrations
                 .HasAnnotation("ProductVersion", "6.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
+            modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.AutoIncrementPrimaryKeyEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Some")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AutoIncrementPrimaryKeyEntities");
+                });
+
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.NonRelatedEntity", b =>
                 {
                     b.Property<Guid>("NonRelatedEntityId")

@@ -1,4 +1,5 @@
 ﻿using System.Data.Common;
+using System.Reflection;
 using EFCore.Extensions.SaveOptimizer.Internal.Configuration;
 using EFCore.Extensions.SaveOptimizer.Internal.Models;
 using EFCore.Extensions.SaveOptimizer.Internal.Services;
@@ -103,7 +104,28 @@ public class QueryExecutorService : IQueryExecutorService
 
         logger.LogDebug("Executing command: {Sql}", sql.Sql);
 
-        return command;
+        return SetDbSpecificProperties(command);
+    }
+
+    private static DbCommand SetDbSpecificProperties(DbCommand command)
+    {
+        Type type = command.GetType();
+
+        switch (type.Name)
+        {
+            case "OracleCommand":
+                PropertyInfo? property = type.GetProperty("BindByName");
+
+                if (property == null)
+                {
+                    return command;
+                }
+
+                property.SetValue(command, true);
+
+                return command;
+            default: return command;
+        }
     }
 
     private static void AddParameter(DbCommand command, SqlParamModel param)

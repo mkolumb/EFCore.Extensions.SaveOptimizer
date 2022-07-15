@@ -1,5 +1,6 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Internal.Models;
 using EFCore.Extensions.SaveOptimizer.Internal.Services;
+using EFCore.Extensions.SaveOptimizer.Internal.Tests.Extensions;
 using EFCore.Extensions.SaveOptimizer.Internal.Tests.Helpers;
 using EFCore.Extensions.SaveOptimizer.Internal.Tests.TestContext;
 using EFCore.Extensions.SaveOptimizer.Internal.Tests.TestContext.Models;
@@ -21,8 +22,7 @@ public class QueryTranslatorServiceTests
     public QueryTranslatorServiceTests()
     {
         DbContextOptionsBuilder<TestDataContext> options =
-            new DbContextOptionsBuilder<TestDataContext>().UseInMemoryDatabase("in_memory_db")
-                .UseSnakeCaseNamingConvention();
+            new DbContextOptionsBuilder<TestDataContext>().UseDynamicSqlLite();
         _context = new TestDataContext(options.Options);
 
         _wrapper = new DataContextModelWrapper(() => _context);
@@ -62,7 +62,7 @@ public class QueryTranslatorServiceTests
 
         // Assert
         result.SchemaName.Should().BeNull();
-        result.TableName.Should().Be("second_level_entity");
+        result.TableName.Should().Be("second_level_entities");
         result.EntityState.Should().Be(EntityState.Added);
         result.EntityType.Should().BeSameAs(typeof(SecondLevelEntity));
         result.PrimaryKeyNames.First().Should().Be("second_level_entity_id");
@@ -110,7 +110,7 @@ public class QueryTranslatorServiceTests
 
         // Assert
         result.SchemaName.Should().BeNull();
-        result.TableName.Should().Be("second_level_entity");
+        result.TableName.Should().Be("second_level_entities");
         result.EntityState.Should().Be(EntityState.Added);
         result.EntityType.Should().BeSameAs(typeof(SecondLevelEntity));
         result.PrimaryKeyNames.First().Should().Be("second_level_entity_id");
@@ -158,7 +158,7 @@ public class QueryTranslatorServiceTests
 
         // Assert
         result.SchemaName.Should().BeNull();
-        result.TableName.Should().Be("second_level_entity");
+        result.TableName.Should().Be("second_level_entities");
         result.EntityState.Should().Be(EntityState.Deleted);
         result.EntityType.Should().BeSameAs(typeof(SecondLevelEntity));
         result.PrimaryKeyNames.First().Should().Be("second_level_entity_id");
@@ -264,7 +264,7 @@ public class QueryTranslatorServiceTests
 
         // Assert
         result.SchemaName.Should().BeNull();
-        result.TableName.Should().Be("second_level_entity");
+        result.TableName.Should().Be("second_level_entities");
         result.EntityState.Should().Be(EntityState.Modified);
         result.EntityType.Should().BeSameAs(typeof(SecondLevelEntity));
         result.PrimaryKeyNames.First().Should().Be("second_level_entity_id");
@@ -279,5 +279,61 @@ public class QueryTranslatorServiceTests
                 { "created_date", new DateTime(2020, 1, 1) },
                 { "second_level_entity_id", "aaa" }
             });
+    }
+
+    [Fact]
+    public void GivenTranslate_WhenNonInsertablePrimaryKeyEntity_ShouldPropertyTranslate()
+    {
+        // Arrange
+        NonInsertablePrimaryKeyEntity entity = new()
+        {
+            SomeProperty = "Property"
+        };
+
+        EntityEntry<NonInsertablePrimaryKeyEntity> entry = _context.Entry(entity);
+        entry.State = EntityState.Added;
+        entry.Property(x => x.SomeProperty).IsModified = true;
+
+        // Act
+        QueryDataModel? result = _target.Translate(_wrapper, entry);
+
+        // Assert
+        result.SchemaName.Should().BeNull();
+        result.TableName.Should().Be("non_insertable_primary_key_entities");
+        result.EntityState.Should().Be(EntityState.Added);
+        result.EntityType.Should().BeSameAs(typeof(NonInsertablePrimaryKeyEntity));
+        result.PrimaryKeyNames.First().Should().Be("non_insertable_primary_key_entity_id");
+        result.ConcurrencyTokens?.Map().Should().BeNullOrEmpty();
+        result.Data.Keys
+            .Should()
+            .BeEquivalentTo("some_property");
+    }
+
+    [Fact]
+    public void GivenTranslate_WhenInsertablePrimaryKeyEntity_ShouldPropertyTranslate()
+    {
+        // Arrange
+        InsertablePrimaryKeyEntity entity = new()
+        {
+            SomeProperty = "Property"
+        };
+
+        EntityEntry<InsertablePrimaryKeyEntity> entry = _context.Entry(entity);
+        entry.State = EntityState.Added;
+        entry.Property(x => x.SomeProperty).IsModified = true;
+
+        // Act
+        QueryDataModel? result = _target.Translate(_wrapper, entry);
+
+        // Assert
+        result.SchemaName.Should().BeNull();
+        result.TableName.Should().Be("insertable_primary_key_entities");
+        result.EntityState.Should().Be(EntityState.Added);
+        result.EntityType.Should().BeSameAs(typeof(InsertablePrimaryKeyEntity));
+        result.PrimaryKeyNames.First().Should().Be("insertable_primary_key_entity_id");
+        result.ConcurrencyTokens?.Map().Should().BeNullOrEmpty();
+        result.Data.Keys
+            .Should()
+            .BeEquivalentTo("insertable_primary_key_entity_id", "some_property");
     }
 }

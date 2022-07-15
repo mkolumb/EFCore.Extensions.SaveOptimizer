@@ -6,7 +6,7 @@ using Xunit.Abstractions;
 
 namespace EFCore.Extensions.SaveOptimizer.Shared.Tests;
 
-public abstract class BaseMiscTests : BaseTests
+public abstract partial class BaseMiscTests : BaseTests
 {
     public static IEnumerable<IEnumerable<object?>> BaseWriteTheoryData => TheoryData.BaseWriteTheoryData;
 

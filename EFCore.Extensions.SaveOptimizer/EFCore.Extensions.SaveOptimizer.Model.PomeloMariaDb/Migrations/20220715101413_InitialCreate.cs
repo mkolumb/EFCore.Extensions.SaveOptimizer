@@ -1,15 +1,31 @@
 ﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMySql.Migrations
+namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMariaDb.Migrations
 {
     public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterDatabase()
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "AutoIncrementPrimaryKeyEntities",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Some = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AutoIncrementPrimaryKeyEntities", x => x.Id);
+                })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
@@ -44,6 +60,9 @@ namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMySql.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "AutoIncrementPrimaryKeyEntities");
+
             migrationBuilder.DropTable(
                 name: "NonRelatedEntities");
         }

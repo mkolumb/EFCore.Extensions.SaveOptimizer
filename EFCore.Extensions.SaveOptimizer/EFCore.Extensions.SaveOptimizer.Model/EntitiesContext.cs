@@ -6,7 +6,11 @@ namespace EFCore.Extensions.SaveOptimizer.Model;
 
 public class EntitiesContext : DbContext
 {
+    public static List<Action<ModelBuilder>> AdditionalBuilders = new();
+
     public DbSet<NonRelatedEntity> NonRelatedEntities { get; set; }
+
+    public DbSet<AutoIncrementPrimaryKeyEntity> AutoIncrementPrimaryKeyEntities { get; set; }
 
     public EntitiesContext(DbContextOptions<EntitiesContext> options)
         : base(options)
@@ -15,37 +19,13 @@ public class EntitiesContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        if (Database.ProviderName != null && Database.ProviderName.Contains("Firebird"))
-        {
-            const string columnType = "DECIMAL(12,6)";
-
-            modelBuilder.Entity<NonRelatedEntity>(
-                eb =>
-                {
-                    eb.Property(b => b.SomeNullableDecimalProperty)
-                        .HasPrecision(12, 6)
-                        .HasColumnType(columnType);
-
-                    eb.Property(b => b.SomeNonNullableDecimalProperty)
-                        .HasPrecision(12, 6)
-                        .HasColumnType(columnType);
-                });
-        }
-        else
-        {
-            modelBuilder.Entity<NonRelatedEntity>(
-                eb =>
-                {
-                    eb.Property(b => b.SomeNullableDecimalProperty)
-                        .HasPrecision(12, 6);
-
-                    eb.Property(b => b.SomeNonNullableDecimalProperty)
-                        .HasPrecision(12, 6);
-                });
-        }
-
         modelBuilder.Entity<NonRelatedEntity>()
             .HasIndex(x => new { x.ConcurrencyToken, x.NonRelatedEntityId })
             .IsUnique(false);
+
+        foreach (Action<ModelBuilder> builder in AdditionalBuilders)
+        {
+            builder(modelBuilder);
+        }
     }
 }

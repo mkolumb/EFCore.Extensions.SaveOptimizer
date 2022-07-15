@@ -78,11 +78,8 @@ Please note it is not working exactly as SaveChanges, so you should verify it wo
   - Insert
   - Update
   - Delete
-- Configuration
-  - Batch size
-  - Parameters optimization behavior
-- Other
-  - Concurrency token
+- [Configuration](#configuration)
+- Concurrency token support
 
 ## What to do next
 
@@ -102,12 +99,19 @@ Please note it is not working exactly as SaveChanges, so you should verify it wo
 - Tests
   - Value generated on add
   - Auto increment primary key
+  - Explicitly set primary key
+  - No primary key
+  - Various type primary keys
+  - Sequences
   - Value converter
-  - Mixed statements
   - Hierarchical operations
   - Data types precision (date, decimal etc.)
   - Update concurrency tokens
   - Different configuration types
+  - Owned entities
+  - Keyless entities
+  - Value comparers
+  - Table splitting
 
 ## Limitations
 
@@ -124,9 +128,14 @@ Also DatabaseValues for entry will not be retrieved from db when ConcurrencyToke
 
 It looks like serializable transaction produces many errors during execution, especially during insert (e.g. ORA-08177 & ORA-06512). This is something to investigate, maybe this is dockerized Oracle Express issue. I don't recommend using this library with Oracle in production environment without strong testing. Sometimes decrease batch size for insert could help.
 
-### Oracle concurrency token behavior
+### Firebird provider
 
-Oracle returns -1 as affected rows when using INSERT ALL, likely due to using BEGIN / END statements in command. In that case affected rows would be assumed as equal to expected for the statement.
+This is not a SaveOptimizer issue, however I experienced some problems with Firebird provider. It looks model builder sometimes build different model than other providers.
+
+| Issue | Workaround |
+|---|---|
+| Precision lost for decimal column | Use `HasColumnType("DECIMAL(PRECISION,SCALE)")` |
+| Auto increment column not created | Use `HasAnnotation(FbAnnotationNames.ValueGenerationStrategy, FbValueGenerationStrategy.IdentityColumn)` |
 
 ## Q&A
 

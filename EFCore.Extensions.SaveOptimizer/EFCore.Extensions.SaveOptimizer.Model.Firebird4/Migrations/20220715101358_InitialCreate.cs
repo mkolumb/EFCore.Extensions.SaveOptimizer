@@ -1,14 +1,28 @@
 ﻿using System;
+using FirebirdSql.EntityFrameworkCore.Firebird.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace EFCore.Extensions.SaveOptimizer.Model.Firebird3.Migrations
+namespace EFCore.Extensions.SaveOptimizer.Model.Firebird4.Migrations
 {
     public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "AutoIncrementPrimaryKeyEntities",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Fb:ValueGenerationStrategy", FbValueGenerationStrategy.IdentityColumn),
+                    Some = table.Column<string>(type: "BLOB SUB_TYPE TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AutoIncrementPrimaryKeyEnti~", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "NonRelatedEntities",
                 columns: table => new
@@ -38,6 +52,9 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Firebird3.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "AutoIncrementPrimaryKeyEntities");
+
             migrationBuilder.DropTable(
                 name: "NonRelatedEntities");
         }

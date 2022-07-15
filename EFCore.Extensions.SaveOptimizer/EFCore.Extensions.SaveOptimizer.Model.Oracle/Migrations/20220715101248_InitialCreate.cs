@@ -10,6 +10,19 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Oracle.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "AutoIncrementPrimaryKeyEntities",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "NUMBER(10)", nullable: false)
+                        .Annotation("Oracle:Identity", "START WITH 1 INCREMENT BY 1"),
+                    Some = table.Column<string>(type: "NVARCHAR2(2000)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AutoIncrementPrimaryKeyEntities", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "NonRelatedEntities",
                 columns: table => new
                 {
@@ -38,6 +51,9 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Oracle.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "AutoIncrementPrimaryKeyEntities");
+
             migrationBuilder.DropTable(
                 name: "NonRelatedEntities");
         }

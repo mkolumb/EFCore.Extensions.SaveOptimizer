@@ -1,14 +1,45 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FirebirdSql.EntityFrameworkCore.Firebird.Metadata;
+using FirebirdSql.EntityFrameworkCore.Firebird.Metadata.Internal;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Logging;
 
 // ReSharper disable UnusedMember.Global
+
+#pragma warning disable EF1001
 
 namespace EFCore.Extensions.SaveOptimizer.Model.Firebird4;
 
 public class Firebird4DesignTimeFactory : IDesignTimeDbContextFactory<EntitiesContext>,
     ITestTimeDbContextFactory<EntitiesContext>
 {
+    static Firebird4DesignTimeFactory()
+    {
+        static void Builder(ModelBuilder modelBuilder)
+        {
+            const string decimalColumnType = "DECIMAL(12,6)";
+
+            modelBuilder.Entity<NonRelatedEntity>(eb =>
+            {
+                eb.Property(b => b.SomeNullableDecimalProperty)
+                    .HasPrecision(12, 6)
+                    .HasColumnType(decimalColumnType);
+
+                eb.Property(b => b.SomeNonNullableDecimalProperty)
+                    .HasPrecision(12, 6)
+                    .HasColumnType(decimalColumnType);
+            });
+
+            modelBuilder.Entity<AutoIncrementPrimaryKeyEntity>(eb =>
+            {
+                eb.Property(b => b.Id)
+                    .HasAnnotation(FbAnnotationNames.ValueGenerationStrategy, FbValueGenerationStrategy.IdentityColumn);
+            });
+        }
+
+        EntitiesContext.AdditionalBuilders.Add(Builder);
+    }
+
     public EntitiesContext CreateDbContext(string[] args) => CreateDbContext(args, null);
 
     public EntitiesContext CreateDbContext(string[] args, ILoggerFactory? factory)
