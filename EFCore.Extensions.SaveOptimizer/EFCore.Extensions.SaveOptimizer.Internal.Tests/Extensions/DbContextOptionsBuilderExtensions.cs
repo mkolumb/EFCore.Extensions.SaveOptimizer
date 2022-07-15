@@ -4,16 +4,15 @@ namespace EFCore.Extensions.SaveOptimizer.Internal.Tests.Extensions;
 
 public static class DbContextOptionsBuilderExtensions
 {
-    public static DbContextOptionsBuilder<T> UseDynamicSqlLite<T>(this DbContextOptionsBuilder<T> builder) where T : DbContext
-    {
-        return builder
+    public static DbContextOptionsBuilder<T> UseDynamicSqlLite<T>(this DbContextOptionsBuilder<T> builder)
+        where T : DbContext =>
+        builder
             .UseSqlite(GetConnectionString())
             .UseSnakeCaseNamingConvention();
-    }
 
     private static string GetConnectionString()
     {
-        DirectoryInfo directory = new("db");
+        DirectoryInfo directory = new(Path.Combine(Path.GetTempPath(), "db"));
 
         if (!directory.Exists)
         {

@@ -29,7 +29,7 @@ public class SqliteDesignTimeFactory : IDesignTimeDbContextFactory<EntitiesConte
 
     private static string GetConnectionString()
     {
-        DirectoryInfo directory = new("db");
+        DirectoryInfo directory = new(Path.Combine(Path.GetTempPath(), "db"));
 
         if (!directory.Exists)
         {
