@@ -137,8 +137,14 @@ public sealed class DbContextWrapper : IDisposable
 
                 Context.ChangeTracker.AcceptAllChanges();
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogWithDate("Error within transaction");
+
+                _logger.LogWithDate(ex.Message);
+
+                _logger.LogWithDate(ex.StackTrace);
+
                 await transaction.RollbackAsync().ConfigureAwait(false);
 
                 throw;
@@ -245,8 +251,14 @@ public sealed class DbContextWrapper : IDisposable
 
                 Context.ChangeTracker.AcceptAllChanges();
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogWithDate("Error within transaction");
+
+                _logger.LogWithDate(ex.Message);
+
+                _logger.LogWithDate(ex.StackTrace);
+
                 transaction.Rollback();
 
                 throw;
