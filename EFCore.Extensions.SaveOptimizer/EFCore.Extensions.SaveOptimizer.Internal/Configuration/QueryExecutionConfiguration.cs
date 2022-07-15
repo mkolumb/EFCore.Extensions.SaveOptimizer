@@ -19,6 +19,8 @@ public class QueryExecutionConfiguration
 
     public bool? AutoTransactionEnabled { get; set; }
 
+    public bool? AcceptAllChangesOnSuccess { get; set; }
+
     public IsolationLevel? AutoTransactionIsolationLevel { get; set; }
 
     public QueryBuilderConfiguration? BuilderConfiguration { get; set; }

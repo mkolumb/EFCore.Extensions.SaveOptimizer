@@ -7,6 +7,4 @@ public interface ISqlCommandModel
     IDictionary<string, object?>? NamedBindings { get; }
 
     IReadOnlyCollection<SqlParamModel>? Parameters { get; }
-
-    int? ExpectedRows { get; }
 }

@@ -1,5 +1,5 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Model.Firebird4;
-using EFCore.Extensions.SaveOptimizer.Shared.Tests;
+using EFCore.Extensions.SaveOptimizer.Shared.Tests.Wrappers;
 using Microsoft.EntityFrameworkCore;
 using Xunit.Abstractions;
 

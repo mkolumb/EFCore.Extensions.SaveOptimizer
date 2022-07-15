@@ -1,4 +1,4 @@
-﻿using EFCore.Extensions.SaveOptimizer.Shared.Tests;
+﻿using EFCore.Extensions.SaveOptimizer.Shared.Tests.Tests;
 using Xunit;
 using Xunit.Abstractions;
 

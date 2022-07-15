@@ -4,7 +4,13 @@ It supports multiple EF Core providers and brings serious performance benefits f
 
 Currently in BETA
 
-[![GitHub build](https://github.com/mkolumb/EFCore.Extensions.SaveOptimizer/actions/workflows/build.yml/badge.svg "GitHub build")](https://github.com/mkolumb/EFCore.Extensions.SaveOptimizer/actions/workflows/build.yml) [![NuGet SaveOptimizer](https://img.shields.io/nuget/v/EFCore.Extensions.SaveOptimizer "NuGet SaveOptimizer")](https://www.nuget.org/packages/EFCore.Extensions.SaveOptimizer) [![NuGet SaveOptimizer.Dapper](https://img.shields.io/nuget/v/EFCore.Extensions.SaveOptimizer.Dapper "NuGet SaveOptimizer.Dapper")](https://www.nuget.org/packages/EFCore.Extensions.SaveOptimizer.Dapper) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](code_of_conduct.md)
+[![GitHub build](https://github.com/mkolumb/EFCore.Extensions.SaveOptimizer/actions/workflows/build.yml/badge.svg "GitHub build")](https://github.com/mkolumb/EFCore.Extensions.SaveOptimizer/actions/workflows/build.yml) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](code_of_conduct.md)
+
+
+| Package | NuGet |
+|---|---|
+| [EFCore.Extensions.SaveOptimizer](https://www.nuget.org/packages/EFCore.Extensions.SaveOptimizer) | [![NuGet SaveOptimizer](https://img.shields.io/nuget/v/EFCore.Extensions.SaveOptimizer "NuGet SaveOptimizer")](https://www.nuget.org/packages/EFCore.Extensions.SaveOptimizer) |
+| [EFCore.Extensions.SaveOptimizer.Dapper](https://www.nuget.org/packages/EFCore.Extensions.SaveOptimizer.Dapper) | [![NuGet SaveOptimizer.Dapper](https://img.shields.io/nuget/v/EFCore.Extensions.SaveOptimizer.Dapper "NuGet SaveOptimizer.Dapper")](https://www.nuget.org/packages/EFCore.Extensions.SaveOptimizer.Dapper) |
 
 ## Why another library for batch save?
 
@@ -52,14 +58,13 @@ await transaction.CommitAsync(cancellationToken);
 
 ## How it works
 
-When you execute SaveChangesOptimized the following sequence happens:
+When you execute SaveChangesOptimized usually the following sequence happens:
 1. Get entries from ChangeTracker
 2. Build property changes dictionary for each entry
 3. Group changes as much as possible
 4. Generate SQL
 5. Execute
-   - *if there is no transaction started then will start serializable transaction*
-6. Mark all saved entities as detached 
+6. Accept changes  
 
 Please note it is not working exactly as SaveChanges, so you should verify it works in your case as expected. 
 
@@ -165,6 +170,7 @@ This is not a SaveOptimizer issue, however I experienced some problems with Fire
 |  |  | _Other - 15384_ |
 | Concurrency token behavior | When concurrency token is defined for entity it is included in update / delete statements. When flag is set to throws exception it will throws exception when statements affected less / more rows than expected. | _All - throw exception_ |
 | Auto transaction enabled | If enabled it will start transaction when no transaction attached to DbContext | _All - enabled_ |
+| Accept all changes on success | If enabled it will accept all changes after successfull save | _All - enabled_ |
 | Auto transaction isolation level | Isolation level for auto transaction | _All - serializable_ |
 | Builder configuration -> case type | Case type used when building statements, if normal it will not change case to upper / lower | _All - normal_ |
 | Builder configuration -> optimize parameters | Optimize parameters usage in statements, sometimes can lead to unexpected exception in db | _All - true_ |

@@ -1,7 +1,8 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Shared.Tests.Extensions;
+using EFCore.Extensions.SaveOptimizer.Shared.Tests.Wrappers;
 using Xunit.Abstractions;
 
-namespace EFCore.Extensions.SaveOptimizer.Shared.Tests;
+namespace EFCore.Extensions.SaveOptimizer.Shared.Tests.Tests;
 
 public abstract class BaseTests
 {

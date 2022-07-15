@@ -13,7 +13,6 @@ public abstract class BaseQueryBuilder : IQueryBuilder
     protected readonly QueryBuilderConfiguration Configuration;
     protected int BindingsCount;
     protected bool WhereAdded;
-    protected int? ExpectedRows;
 
     protected BaseQueryBuilder(IReadOnlyDictionary<ClauseType, string> clausesConfiguration,
         QueryBuilderConfiguration? configuration)
@@ -26,8 +25,6 @@ public abstract class BaseQueryBuilder : IQueryBuilder
 
     public virtual IQueryBuilder Insert(string tableName, IReadOnlyList<IDictionary<string, SqlValueModel?>> data)
     {
-        ExpectedRows = 0;
-
         Builder.Append($"{ClausesConfiguration[ClauseType.Insert]} {GetTableName(tableName)} (");
 
         var idx = 0;
@@ -47,8 +44,6 @@ public abstract class BaseQueryBuilder : IQueryBuilder
 
         for (var i = 0; i < data.Count; i++)
         {
-            ExpectedRows++;
-
             var valueSetLeft = ClausesConfiguration[ClauseType.ValueSetLeft];
             var valueSetRight = ClausesConfiguration[ClauseType.ValueSetRight];
 
@@ -161,7 +156,7 @@ public abstract class BaseQueryBuilder : IQueryBuilder
 
         IReadOnlyCollection<SqlParamModel> parameters = Bindings.SelectMany(x => x.Value).ToArray();
 
-        return new SqlCommandModel(sql, parameters, ExpectedRows);
+        return new SqlCommandModel(sql, parameters);
     }
 
     protected string GetTableName(string tableName)

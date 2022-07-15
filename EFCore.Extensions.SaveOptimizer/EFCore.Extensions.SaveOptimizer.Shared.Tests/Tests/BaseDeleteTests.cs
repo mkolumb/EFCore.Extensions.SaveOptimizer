@@ -1,13 +1,17 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Model;
+using EFCore.Extensions.SaveOptimizer.Shared.Tests.Attributes;
+using EFCore.Extensions.SaveOptimizer.Shared.Tests.Data;
+using EFCore.Extensions.SaveOptimizer.Shared.Tests.Enums;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests.Extensions;
+using EFCore.Extensions.SaveOptimizer.Shared.Tests.Wrappers;
 using Newtonsoft.Json;
 using Xunit.Abstractions;
 
-namespace EFCore.Extensions.SaveOptimizer.Shared.Tests;
+namespace EFCore.Extensions.SaveOptimizer.Shared.Tests.Tests;
 
 public abstract class BaseDeleteTests : BaseTests
 {
-    public static IEnumerable<IEnumerable<object?>> BaseWriteTheoryData => TheoryData.BaseWriteTheoryData;
+    public static IEnumerable<IEnumerable<object?>> BaseWriteTheoryData => SharedTheoryData.BaseWriteTheoryData;
 
     protected BaseDeleteTests(ITestOutputHelper testOutputHelper,
         Func<ITestOutputHelper, DbContextWrapper> contextWrapperResolver)
@@ -15,7 +19,7 @@ public abstract class BaseDeleteTests : BaseTests
     {
     }
 
-    [Theory]
+    [SkippableTheory]
     [MemberData(nameof(BaseWriteTheoryData))]
     public async Task GivenSaveChangesAsync_WhenNoChanges_ShouldDoNothing(SaveVariant variant)
     {
@@ -46,7 +50,7 @@ public abstract class BaseDeleteTests : BaseTests
         newState.Should().BeEquivalentTo(state);
     }
 
-    [Theory]
+    [SkippableTheory]
     [MemberData(nameof(BaseWriteTheoryData))]
     public async Task GivenSaveChangesAsync_WhenOneObjectDeleted_ShouldDeleteData(SaveVariant variant)
     {
@@ -69,7 +73,7 @@ public abstract class BaseDeleteTests : BaseTests
         result[1].SomeNonNullableDecimalProperty.Should().Be(2.52M);
     }
 
-    [Theory]
+    [SkippableTheory]
     [MemberData(nameof(BaseWriteTheoryData))]
     public async Task GivenSaveChangesAsync_WhenMultipleObjectsDeleted_ShouldDeleteData(SaveVariant variant)
     {
@@ -96,7 +100,7 @@ public abstract class BaseDeleteTests : BaseTests
         nonNullableIntProperties.Should().ContainInOrder(5, 6, 7, 8, 9, 10, 11, 12, 13, 14);
     }
 
-    [Theory]
+    [SkippableTheory]
     [MemberData(nameof(BaseWriteTheoryData))]
     public void GivenSaveChanges_WhenNoChanges_ShouldDoNothing(SaveVariant variant)
     {
@@ -127,7 +131,7 @@ public abstract class BaseDeleteTests : BaseTests
         newState.Should().BeEquivalentTo(state);
     }
 
-    [Theory]
+    [SkippableTheory]
     [MemberData(nameof(BaseWriteTheoryData))]
     public void GivenSaveChanges_WhenOneObjectDeleted_ShouldDeleteData(SaveVariant variant)
     {
@@ -150,7 +154,7 @@ public abstract class BaseDeleteTests : BaseTests
         result[1].SomeNonNullableDecimalProperty.Should().Be(2.52M);
     }
 
-    [Theory]
+    [SkippableTheory]
     [MemberData(nameof(BaseWriteTheoryData))]
     public void GivenSaveChanges_WhenMultipleObjectsDeleted_ShouldDeleteData(SaveVariant variant)
     {

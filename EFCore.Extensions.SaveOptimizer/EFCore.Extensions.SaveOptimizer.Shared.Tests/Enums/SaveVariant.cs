@@ -1,4 +1,4 @@
-﻿namespace EFCore.Extensions.SaveOptimizer.Shared.Tests;
+﻿namespace EFCore.Extensions.SaveOptimizer.Shared.Tests.Enums;
 
 [Flags]
 public enum SaveVariant

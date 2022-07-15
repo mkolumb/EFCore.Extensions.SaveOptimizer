@@ -67,7 +67,7 @@ public class DbContextExecutorService : IDbContextExecutorService
             foreach (ISqlCommandModel sql in queries.Queries)
             {
                 var affected = _queryExecutorService.Execute(context, configuration, transaction, sql, timeout);
-                
+
                 rows += affected;
             }
 
@@ -81,7 +81,7 @@ public class DbContextExecutorService : IDbContextExecutorService
                 transaction.Commit();
             }
 
-            MarkEntitiesAfterSave(context);
+            PrepareAfterSave(queries, configuration, context);
 
             return rows;
         }
@@ -126,7 +126,8 @@ public class DbContextExecutorService : IDbContextExecutorService
                     throw new ArgumentException("Auto transaction isolation level should be set");
                 }
 
-                transaction = await context.Database.BeginTransactionAsync(isolationLevel.Value, cancellationToken).ConfigureAwait(false);
+                transaction = await context.Database.BeginTransactionAsync(isolationLevel.Value, cancellationToken)
+                    .ConfigureAwait(false);
 
                 autoCommit = true;
             }
@@ -165,7 +166,7 @@ public class DbContextExecutorService : IDbContextExecutorService
                 await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
             }
 
-            MarkEntitiesAfterSave(context);
+            PrepareAfterSave(queries, configuration, context);
 
             return rows;
         }
@@ -198,11 +199,32 @@ public class DbContextExecutorService : IDbContextExecutorService
         return configuration;
     }
 
-    private static void MarkEntitiesAfterSave(DbContext context)
+    private static void PrepareAfterSave(QueryPreparationModel queries, QueryExecutionConfiguration configuration,
+        DbContext context)
     {
-        foreach (EntityEntry entityEntry in context.ChangeTracker.Entries())
+        foreach (EntityEntry entry in queries.Entries)
         {
-            entityEntry.State = EntityState.Detached;
+            if (entry.State != EntityState.Added)
+            {
+                continue;
+            }
+
+            foreach (PropertyEntry property in entry.Properties)
+            {
+                if (!property.IsTemporary)
+                {
+                    continue;
+                }
+
+                property.IsTemporary = false;
+            }
         }
+
+        if (configuration.AcceptAllChangesOnSuccess != true)
+        {
+            return;
+        }
+
+        context.ChangeTracker.AcceptAllChanges();
     }
 }

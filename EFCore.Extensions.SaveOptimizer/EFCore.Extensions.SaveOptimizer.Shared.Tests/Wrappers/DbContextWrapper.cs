@@ -2,6 +2,7 @@
 using EFCore.Extensions.SaveOptimizer.Dapper;
 using EFCore.Extensions.SaveOptimizer.Internal.Configuration;
 using EFCore.Extensions.SaveOptimizer.Model;
+using EFCore.Extensions.SaveOptimizer.Shared.Tests.Enums;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests.Extensions;
 using EFCore.Extensions.SaveOptimizer.TestLogger;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
 
-namespace EFCore.Extensions.SaveOptimizer.Shared.Tests;
+namespace EFCore.Extensions.SaveOptimizer.Shared.Tests.Wrappers;
 
 public sealed class DbContextWrapper : IDisposable
 {
@@ -21,9 +22,15 @@ public sealed class DbContextWrapper : IDisposable
 
     public EntitiesContext Context { get; private set; }
 
-    public string[] EntitiesList { get; } = { "NonRelatedEntities", "AutoIncrementPrimaryKeyEntities" };
+    public string[] EntitiesList { get; } =
+    {
+        nameof(EntitiesContext.NonRelatedEntities), nameof(EntitiesContext.AutoIncrementPrimaryKeyEntities)
+    };
 
-    public Dictionary<string, string> SequencesList { get; } = new() { { "AutoIncrementPrimaryKeyEntities", "Id" } };
+    public Dictionary<string, string> SequencesList { get; } = new()
+    {
+        { nameof(EntitiesContext.AutoIncrementPrimaryKeyEntities), nameof(AutoIncrementPrimaryKeyEntity.Id) }
+    };
 
     public DbContextWrapper(ITestTimeDbContextFactory<EntitiesContext> factory, ITestOutputHelper testOutputHelper)
     {
@@ -54,7 +61,7 @@ public sealed class DbContextWrapper : IDisposable
     {
         await RunAsync(retries, () => TrySaveAsync(variant, batchSize)).ConfigureAwait(false);
 
-        if ((variant & SaveVariant.Recreate) != 0)
+        if (variant.HasFlag(SaveVariant.Recreate))
         {
             RecreateContext();
         }
@@ -87,30 +94,37 @@ public sealed class DbContextWrapper : IDisposable
         QueryExecutionConfiguration? configuration =
             batchSize.HasValue ? new QueryExecutionConfiguration { BatchSize = batchSize } : null;
 
-        if ((variant & SaveVariant.NoAutoTransaction) != 0)
+        if (variant.HasFlag(SaveVariant.NoAutoTransaction))
         {
             configuration ??= new QueryExecutionConfiguration();
 
             configuration.AutoTransactionEnabled = false;
         }
 
+        if (variant.HasFlag(SaveVariant.WithTransaction))
+        {
+            configuration ??= new QueryExecutionConfiguration();
+
+            configuration.AcceptAllChangesOnSuccess = false;
+        }
+
         async Task InternalSave()
         {
-            if ((variant & SaveVariant.Optimized) != 0)
+            if (variant.HasFlag(SaveVariant.Optimized))
             {
                 await Context.SaveChangesOptimizedAsync(configuration).ConfigureAwait(false);
             }
-            else if ((variant & SaveVariant.OptimizedDapper) != 0)
+            else if (variant.HasFlag(SaveVariant.OptimizedDapper))
             {
                 await Context.SaveChangesDapperOptimizedAsync(configuration).ConfigureAwait(false);
             }
-            else if ((variant & SaveVariant.EfCore) != 0)
+            else if (variant.HasFlag(SaveVariant.EfCore))
             {
-                await Context.SaveChangesAsync().ConfigureAwait(false);
+                await Context.SaveChangesAsync(configuration?.AcceptAllChangesOnSuccess == true).ConfigureAwait(false);
             }
         }
 
-        if ((variant & SaveVariant.WithTransaction) != 0)
+        if (variant.HasFlag(SaveVariant.WithTransaction))
         {
             IDbContextTransaction transaction =
                 await Context.Database.BeginTransactionAsync(IsolationLevel.Serializable).ConfigureAwait(false);
@@ -120,9 +134,17 @@ public sealed class DbContextWrapper : IDisposable
                 await InternalSave().ConfigureAwait(false);
 
                 await transaction.CommitAsync().ConfigureAwait(false);
+
+                Context.ChangeTracker.AcceptAllChanges();
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogWithDate("Error within transaction");
+
+                _logger.LogWithDate(ex.Message);
+
+                _logger.LogWithDate(ex.StackTrace);
+
                 await transaction.RollbackAsync().ConfigureAwait(false);
 
                 throw;
@@ -176,7 +198,7 @@ public sealed class DbContextWrapper : IDisposable
     {
         Run(retries, () => TrySave(variant, batchSize));
 
-        if ((variant & SaveVariant.Recreate) != 0)
+        if (variant.HasFlag(SaveVariant.Recreate))
         {
             RecreateContext();
         }
@@ -187,30 +209,37 @@ public sealed class DbContextWrapper : IDisposable
         QueryExecutionConfiguration? configuration =
             batchSize.HasValue ? new QueryExecutionConfiguration { BatchSize = batchSize } : null;
 
-        if ((variant & SaveVariant.NoAutoTransaction) != 0)
+        if (variant.HasFlag(SaveVariant.NoAutoTransaction))
         {
             configuration ??= new QueryExecutionConfiguration();
 
             configuration.AutoTransactionEnabled = false;
         }
 
+        if (variant.HasFlag(SaveVariant.WithTransaction))
+        {
+            configuration ??= new QueryExecutionConfiguration();
+
+            configuration.AcceptAllChangesOnSuccess = false;
+        }
+
         void InternalSave()
         {
-            if ((variant & SaveVariant.Optimized) != 0)
+            if (variant.HasFlag(SaveVariant.Optimized))
             {
                 Context.SaveChangesOptimized(configuration);
             }
-            else if ((variant & SaveVariant.OptimizedDapper) != 0)
+            else if (variant.HasFlag(SaveVariant.OptimizedDapper))
             {
                 Context.SaveChangesDapperOptimized(configuration);
             }
-            else if ((variant & SaveVariant.EfCore) != 0)
+            else if (variant.HasFlag(SaveVariant.EfCore))
             {
-                Context.SaveChanges();
+                Context.SaveChanges(configuration?.AcceptAllChangesOnSuccess == true);
             }
         }
 
-        if ((variant & SaveVariant.WithTransaction) != 0)
+        if (variant.HasFlag(SaveVariant.WithTransaction))
         {
             IDbContextTransaction transaction = Context.Database.BeginTransaction(IsolationLevel.Serializable);
 
@@ -219,9 +248,17 @@ public sealed class DbContextWrapper : IDisposable
                 InternalSave();
 
                 transaction.Commit();
+
+                Context.ChangeTracker.AcceptAllChanges();
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogWithDate("Error within transaction");
+
+                _logger.LogWithDate(ex.Message);
+
+                _logger.LogWithDate(ex.StackTrace);
+
                 transaction.Rollback();
 
                 throw;
