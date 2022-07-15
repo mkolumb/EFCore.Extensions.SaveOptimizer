@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using EFCore.Extensions.SaveOptimizer.Dapper;
 using EFCore.Extensions.SaveOptimizer.Internal.Configuration;
+using EFCore.Extensions.SaveOptimizer.Internal.Enums;
 using EFCore.Extensions.SaveOptimizer.Model;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests.Enums;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests.Extensions;
@@ -42,6 +43,24 @@ public sealed class DbContextWrapper : IDisposable
     }
 
     public void Dispose() => Context.Dispose();
+
+    private static QueryExecutionConfiguration GetConfig(SaveVariant variant, int? batchSize)
+    {
+        QueryExecutionConfiguration configuration =
+            batchSize.HasValue
+                ? new QueryExecutionConfiguration { BatchSize = batchSize }
+                : new QueryExecutionConfiguration();
+
+        if (variant.HasFlag(SaveVariant.NoAutoTransaction))
+        {
+            configuration.AutoTransactionEnabled = false;
+        }
+
+        configuration.AfterSaveBehavior = variant.HasFlag(SaveVariant.WithTransaction)
+            ? AfterSaveBehavior.DoNothing
+            : AfterSaveBehavior.AcceptChanges;
+        return configuration;
+    }
 
     public void RecreateContext()
     {
@@ -91,22 +110,7 @@ public sealed class DbContextWrapper : IDisposable
 
     private async Task TrySaveAsync(SaveVariant variant, int? batchSize)
     {
-        QueryExecutionConfiguration? configuration =
-            batchSize.HasValue ? new QueryExecutionConfiguration { BatchSize = batchSize } : null;
-
-        if (variant.HasFlag(SaveVariant.NoAutoTransaction))
-        {
-            configuration ??= new QueryExecutionConfiguration();
-
-            configuration.AutoTransactionEnabled = false;
-        }
-
-        if (variant.HasFlag(SaveVariant.WithTransaction))
-        {
-            configuration ??= new QueryExecutionConfiguration();
-
-            configuration.AcceptAllChangesOnSuccess = false;
-        }
+        QueryExecutionConfiguration configuration = GetConfig(variant, batchSize);
 
         async Task InternalSave()
         {
@@ -120,7 +124,8 @@ public sealed class DbContextWrapper : IDisposable
             }
             else if (variant.HasFlag(SaveVariant.EfCore))
             {
-                await Context.SaveChangesAsync(configuration?.AcceptAllChangesOnSuccess == true).ConfigureAwait(false);
+                await Context.SaveChangesAsync(configuration.AfterSaveBehavior == AfterSaveBehavior.AcceptChanges)
+                    .ConfigureAwait(false);
             }
         }
 
@@ -206,22 +211,7 @@ public sealed class DbContextWrapper : IDisposable
 
     private void TrySave(SaveVariant variant, int? batchSize)
     {
-        QueryExecutionConfiguration? configuration =
-            batchSize.HasValue ? new QueryExecutionConfiguration { BatchSize = batchSize } : null;
-
-        if (variant.HasFlag(SaveVariant.NoAutoTransaction))
-        {
-            configuration ??= new QueryExecutionConfiguration();
-
-            configuration.AutoTransactionEnabled = false;
-        }
-
-        if (variant.HasFlag(SaveVariant.WithTransaction))
-        {
-            configuration ??= new QueryExecutionConfiguration();
-
-            configuration.AcceptAllChangesOnSuccess = false;
-        }
+        QueryExecutionConfiguration configuration = GetConfig(variant, batchSize);
 
         void InternalSave()
         {
@@ -235,7 +225,7 @@ public sealed class DbContextWrapper : IDisposable
             }
             else if (variant.HasFlag(SaveVariant.EfCore))
             {
-                Context.SaveChanges(configuration?.AcceptAllChangesOnSuccess == true);
+                Context.SaveChanges(configuration.AfterSaveBehavior == AfterSaveBehavior.AcceptChanges);
             }
         }
 

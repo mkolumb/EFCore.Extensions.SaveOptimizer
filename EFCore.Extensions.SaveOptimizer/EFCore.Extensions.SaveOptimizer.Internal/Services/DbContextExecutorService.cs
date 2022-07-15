@@ -81,7 +81,7 @@ public class DbContextExecutorService : IDbContextExecutorService
                 transaction.Commit();
             }
 
-            PrepareAfterSave(queries, configuration, context);
+            PrepareAfterSave(queries.Entries, configuration, context);
 
             return rows;
         }
@@ -166,7 +166,7 @@ public class DbContextExecutorService : IDbContextExecutorService
                 await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
             }
 
-            PrepareAfterSave(queries, configuration, context);
+            PrepareAfterSave(queries.Entries, configuration, context);
 
             return rows;
         }
@@ -199,32 +199,52 @@ public class DbContextExecutorService : IDbContextExecutorService
         return configuration;
     }
 
-    private static void PrepareAfterSave(QueryPreparationModel queries, QueryExecutionConfiguration configuration,
+    private static void PrepareAfterSave(IEnumerable<EntityEntry> entries,
+        QueryExecutionConfiguration configuration,
         DbContext context)
     {
-        foreach (EntityEntry entry in queries.Entries)
+        // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
+        switch (configuration.AfterSaveBehavior)
         {
-            if (entry.State != EntityState.Added)
-            {
-                continue;
-            }
+            case AfterSaveBehavior.ClearChanges:
+                ClearChanges(context);
+                return;
+            case AfterSaveBehavior.DetachSaved:
+                DetachEntries(entries);
+                return;
+            case AfterSaveBehavior.AcceptChanges:
+                FixTemporaryProperties(entries);
+                AcceptChanges(context);
+                return;
+            default:
+                FixTemporaryProperties(entries);
+                return;
+        }
+    }
 
+    private static void ClearChanges(DbContext context) => context.ChangeTracker.Clear();
+
+    private static void AcceptChanges(DbContext context) => context.ChangeTracker.AcceptAllChanges();
+
+    private static void DetachEntries(IEnumerable<EntityEntry> entries)
+    {
+        foreach (EntityEntry entry in entries)
+        {
+            entry.State = EntityState.Detached;
+        }
+    }
+
+    private static void FixTemporaryProperties(IEnumerable<EntityEntry> entries)
+    {
+        foreach (EntityEntry entry in entries)
+        {
             foreach (PropertyEntry property in entry.Properties)
             {
-                if (!property.IsTemporary)
+                if (property.IsTemporary)
                 {
-                    continue;
+                    property.IsTemporary = false;
                 }
-
-                property.IsTemporary = false;
             }
         }
-
-        if (configuration.AcceptAllChangesOnSuccess != true)
-        {
-            return;
-        }
-
-        context.ChangeTracker.AcceptAllChanges();
     }
 }

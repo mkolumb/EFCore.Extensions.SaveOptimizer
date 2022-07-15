@@ -39,6 +39,7 @@ public class QueryPreparerService : IQueryPreparerService
             _wrappers[name] = wrapper;
         }
 
+        // ReSharper disable once InvertIf
         if (!_orders.ContainsKey(name))
         {
             IDictionary<Type, int> executeOrder = context.Model.ResolveEntityHierarchy();

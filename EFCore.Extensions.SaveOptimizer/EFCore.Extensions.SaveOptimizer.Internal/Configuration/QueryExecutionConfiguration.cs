@@ -19,7 +19,7 @@ public class QueryExecutionConfiguration
 
     public bool? AutoTransactionEnabled { get; set; }
 
-    public bool? AcceptAllChangesOnSuccess { get; set; }
+    public AfterSaveBehavior? AfterSaveBehavior { get; set; }
 
     public IsolationLevel? AutoTransactionIsolationLevel { get; set; }
 
