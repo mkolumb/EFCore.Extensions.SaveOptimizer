@@ -123,9 +123,13 @@ Please note it is not working exactly as SaveChanges, so you should verify it wo
 ### Refresh data after save
 
 SaveOptimizer approach makes almost impossible refresh data after save, it is on your side. 
+If you will use auto increment primary key it will not retrieve this key from db.
 I recommend to generate values for primary keys in code, not in db. 
 This will make much easier refresh data after save if necessary, you will be able to use this values for query.
 Also DatabaseValues for entry will not be retrieved from db when ConcurrencyTokenException is thrown.
+
+Basically - after save you should not use this context anymore as it could be invalid, you should use new context for another operation.
+However if you need you can experiment with AfterSaveBehavior.
 
 ## Known issues
 
@@ -169,8 +173,8 @@ This is not a SaveOptimizer issue, however I experienced some problems with Fire
 |  |  | _Postgres - 31768_ |
 |  |  | _Other - 15384_ |
 | Concurrency token behavior | When concurrency token is defined for entity it is included in update / delete statements. When flag is set to throws exception it will throws exception when statements affected less / more rows than expected. | _All - throw exception_ |
-| Auto transaction enabled | If enabled it will start transaction when no transaction attached to DbContext | _All - enabled_ |
-| Accept all changes on success | If enabled it will accept all changes after successfull save | _All - enabled_ |
+| Auto transaction enabled | If enabled it will start transaction when no transaction attached to DbContext | _All - true_ |
+| After save behavior | It will behavior after successful save, possible values (ClearChanges, AcceptChanges, DetachSaved, DoNothing) | _All - ClearChanges_ |
 | Auto transaction isolation level | Isolation level for auto transaction | _All - serializable_ |
 | Builder configuration -> case type | Case type used when building statements, if normal it will not change case to upper / lower | _All - normal_ |
 | Builder configuration -> optimize parameters | Optimize parameters usage in statements, sometimes can lead to unexpected exception in db | _All - true_ |

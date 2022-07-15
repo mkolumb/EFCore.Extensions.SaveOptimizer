@@ -39,7 +39,7 @@ public class QueryExecutionConfiguratorService : IQueryExecutionConfiguratorServ
 
         config.AutoTransactionEnabled ??= true;
 
-        config.AcceptAllChangesOnSuccess ??= true;
+        config.AfterSaveBehavior ??= AfterSaveBehavior.ClearChanges;
 
         config.AutoTransactionIsolationLevel ??= IsolationLevel.Serializable;
 
@@ -57,7 +57,7 @@ public class QueryExecutionConfiguratorService : IQueryExecutionConfiguratorServ
             _ => new QueryExecutionConfiguration
             {
                 AutoTransactionEnabled = configuration.AutoTransactionEnabled,
-                AcceptAllChangesOnSuccess = configuration.AcceptAllChangesOnSuccess,
+                AfterSaveBehavior = configuration.AfterSaveBehavior,
                 AutoTransactionIsolationLevel = configuration.AutoTransactionIsolationLevel,
                 BatchSize = configuration.BatchSize,
                 ConcurrencyTokenBehavior = configuration.ConcurrencyTokenBehavior,
