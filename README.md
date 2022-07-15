@@ -130,7 +130,12 @@ It looks like serializable transaction produces many errors during execution, es
 
 ### Firebird provider
 
-This is not a SaveOptimizer issue, however I experienced some problems with Firebird provider. It looks model builder sometimes build wrong model. As a workaround HasColumnType could be solution.
+This is not a SaveOptimizer issue, however I experienced some problems with Firebird provider. It looks model builder sometimes build different model than other providers.
+
+| Issue | Workaround |
+|---|---|
+| Precision lost for decimal column | Use `HasColumnType("DECIMAL(PRECISION,SCALE)")` |
+| Auto increment column not created | Use `HasAnnotation(FbAnnotationNames.ValueGenerationStrategy, FbValueGenerationStrategy.IdentityColumn)` |
 
 ## Q&A
 

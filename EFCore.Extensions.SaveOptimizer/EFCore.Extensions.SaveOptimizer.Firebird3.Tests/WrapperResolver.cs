@@ -17,7 +17,7 @@ public static class WrapperResolver
 
         const string truncateQuery = "DELETE FROM \"{0}\";";
 
-        const string resetSequenceQuery = "ALTER TABLE \"{0}\" ALTER COLUMN \"{1}\" RESTART WITH 1;";
+        const string resetSequenceQuery = "ALTER TABLE \"{0}\" ALTER COLUMN \"{1}\" RESTART WITH 0;";
 
         wrapper.CleanDb(truncateQuery, resetSequenceQuery);
 
