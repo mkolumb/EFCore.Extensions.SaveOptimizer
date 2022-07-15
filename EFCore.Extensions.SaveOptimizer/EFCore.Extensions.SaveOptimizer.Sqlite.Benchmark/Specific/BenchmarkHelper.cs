@@ -15,7 +15,7 @@ public static class BenchmarkHelper
         ServiceCollection collection = new();
 
         collection.AddDbContextFactory<EntitiesContext>(builder => builder.UseSqlite(connectionString,
-            cfg => cfg.MigrationsAssembly("EFCore.Extensions.SaveOptimizer.Model.Sqlite")));
+            cfg => cfg.CommandTimeout(600).MigrationsAssembly("EFCore.Extensions.SaveOptimizer.Model.Sqlite")));
 
         collection.AddSingleton<IWrapperResolver, WrapperResolver>();
 

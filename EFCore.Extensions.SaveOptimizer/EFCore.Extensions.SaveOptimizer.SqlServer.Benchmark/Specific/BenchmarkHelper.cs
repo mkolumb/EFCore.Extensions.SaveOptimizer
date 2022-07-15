@@ -15,7 +15,7 @@ public static class BenchmarkHelper
         ServiceCollection collection = new();
 
         collection.AddDbContextFactory<EntitiesContext>(builder => builder.UseSqlServer(connectionString,
-            cfg => cfg.MigrationsAssembly("EFCore.Extensions.SaveOptimizer.Model.SqlServer")));
+            cfg => cfg.CommandTimeout(600).MigrationsAssembly("EFCore.Extensions.SaveOptimizer.Model.SqlServer")));
 
         collection.AddSingleton<IWrapperResolver, WrapperResolver>();
 

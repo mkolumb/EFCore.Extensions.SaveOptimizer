@@ -18,7 +18,8 @@ public class PomeloMariaDbDesignTimeFactory : IDesignTimeDbContextFactory<Entiti
         DbContextOptionsBuilder<EntitiesContext> builder = new DbContextOptionsBuilder<EntitiesContext>()
             .UseMySql(connectionString,
                 ServerVersion.AutoDetect(connectionString),
-                cfg => cfg.MigrationsAssembly("EFCore.Extensions.SaveOptimizer.Model.PomeloMariaDb"));
+                cfg => cfg.CommandTimeout(600)
+                    .MigrationsAssembly("EFCore.Extensions.SaveOptimizer.Model.PomeloMariaDb"));
 
         if (factory != null)
         {

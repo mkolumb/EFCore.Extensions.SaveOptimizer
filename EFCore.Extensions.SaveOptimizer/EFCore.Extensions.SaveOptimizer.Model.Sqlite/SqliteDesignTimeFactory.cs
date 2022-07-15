@@ -17,7 +17,7 @@ public class SqliteDesignTimeFactory : IDesignTimeDbContextFactory<EntitiesConte
 
         DbContextOptionsBuilder<EntitiesContext> builder = new DbContextOptionsBuilder<EntitiesContext>()
             .UseSqlite(connectionString,
-                cfg => cfg.MigrationsAssembly("EFCore.Extensions.SaveOptimizer.Model.Sqlite"));
+                cfg => cfg.CommandTimeout(600).MigrationsAssembly("EFCore.Extensions.SaveOptimizer.Model.Sqlite"));
 
         if (factory != null)
         {

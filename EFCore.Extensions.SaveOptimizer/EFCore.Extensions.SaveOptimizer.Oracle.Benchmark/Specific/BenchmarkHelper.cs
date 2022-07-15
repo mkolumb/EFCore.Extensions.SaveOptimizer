@@ -17,7 +17,7 @@ public static class BenchmarkHelper
 
         collection.AddDbContextFactory<EntitiesContext>(builder => builder
             .UseOracle(connectionString,
-                cfg => cfg.MigrationsAssembly("EFCore.Extensions.SaveOptimizer.Model.Oracle")));
+                cfg => cfg.CommandTimeout(600).MigrationsAssembly("EFCore.Extensions.SaveOptimizer.Model.Oracle")));
 
         collection.AddSingleton<IWrapperResolver, WrapperResolver>();
 

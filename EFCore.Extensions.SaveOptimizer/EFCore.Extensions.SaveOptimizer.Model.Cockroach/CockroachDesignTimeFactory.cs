@@ -18,7 +18,8 @@ public class CockroachDesignTimeFactory : IDesignTimeDbContextFactory<EntitiesCo
         DbConnection connection = GetConnection();
 
         DbContextOptionsBuilder<EntitiesContext> builder = new DbContextOptionsBuilder<EntitiesContext>()
-            .UseNpgsql(connection, cfg => cfg.MigrationsAssembly("EFCore.Extensions.SaveOptimizer.Model.Cockroach"));
+            .UseNpgsql(connection,
+                cfg => cfg.CommandTimeout(600).MigrationsAssembly("EFCore.Extensions.SaveOptimizer.Model.Cockroach"));
 
         if (factory != null)
         {
