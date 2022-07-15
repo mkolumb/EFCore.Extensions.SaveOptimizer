@@ -17,7 +17,8 @@ public static class BenchmarkHelper
         collection.AddDbContextFactory<EntitiesContext>(builder => builder
             .UseMySql(connectionString,
                 ServerVersion.AutoDetect(connectionString),
-                cfg => cfg.MigrationsAssembly("EFCore.Extensions.SaveOptimizer.Model.PomeloMySql")));
+                cfg => cfg.CommandTimeout(600)
+                    .MigrationsAssembly("EFCore.Extensions.SaveOptimizer.Model.PomeloMySql")));
 
         collection.AddSingleton<IWrapperResolver, WrapperResolver>();
 

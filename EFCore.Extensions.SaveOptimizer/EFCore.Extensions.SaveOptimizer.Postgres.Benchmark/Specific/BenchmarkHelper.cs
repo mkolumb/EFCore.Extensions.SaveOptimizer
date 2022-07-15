@@ -17,7 +17,7 @@ public static class BenchmarkHelper
         ServiceCollection collection = new();
 
         collection.AddDbContextFactory<EntitiesContext>(builder => builder.UseNpgsql(connection,
-            cfg => cfg.MigrationsAssembly("EFCore.Extensions.SaveOptimizer.Model.Postgres")));
+            cfg => cfg.CommandTimeout(600).MigrationsAssembly("EFCore.Extensions.SaveOptimizer.Model.Postgres")));
 
         collection.AddSingleton<IWrapperResolver, WrapperResolver>();
 
@@ -30,7 +30,8 @@ public static class BenchmarkHelper
 
     public static DbConnection GetConnection()
     {
-        const string connectionString = "Host=localhost;Port=5432;SSL Mode=Disable;Username=root;Password=root;Database=test_db";
+        const string connectionString =
+            "Host=localhost;Port=5432;SSL Mode=Disable;Username=root;Password=root;Database=test_db";
 
         NpgsqlConnection conn = new(connectionString);
 

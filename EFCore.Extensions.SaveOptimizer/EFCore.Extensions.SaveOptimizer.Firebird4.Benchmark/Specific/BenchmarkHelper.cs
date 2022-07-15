@@ -16,7 +16,7 @@ public static class BenchmarkHelper
 
         collection.AddDbContextFactory<EntitiesContext>(builder => builder
             .UseFirebird(connectionString,
-                cfg => cfg.MigrationsAssembly("EFCore.Extensions.SaveOptimizer.Model.Firebird4")));
+                cfg => cfg.CommandTimeout(600).MigrationsAssembly("EFCore.Extensions.SaveOptimizer.Model.Firebird4")));
 
         collection.AddSingleton<IWrapperResolver, WrapperResolver>();
 

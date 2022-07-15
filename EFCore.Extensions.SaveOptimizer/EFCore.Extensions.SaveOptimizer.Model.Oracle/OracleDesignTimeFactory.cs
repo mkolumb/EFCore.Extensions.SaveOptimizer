@@ -18,7 +18,7 @@ public class OracleDesignTimeFactory : IDesignTimeDbContextFactory<EntitiesConte
 
         DbContextOptionsBuilder<EntitiesContext> builder = new DbContextOptionsBuilder<EntitiesContext>()
             .UseOracle(connectionString,
-                cfg => cfg.MigrationsAssembly("EFCore.Extensions.SaveOptimizer.Model.Oracle"));
+                cfg => cfg.CommandTimeout(600).MigrationsAssembly("EFCore.Extensions.SaveOptimizer.Model.Oracle"));
 
         if (factory != null)
         {

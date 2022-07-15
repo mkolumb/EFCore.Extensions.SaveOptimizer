@@ -18,7 +18,8 @@ public class PostgresDesignTimeFactory : IDesignTimeDbContextFactory<EntitiesCon
         DbConnection connection = GetConnection();
 
         DbContextOptionsBuilder<EntitiesContext> builder = new DbContextOptionsBuilder<EntitiesContext>()
-            .UseNpgsql(connection, cfg => cfg.MigrationsAssembly("EFCore.Extensions.SaveOptimizer.Model.Postgres"));
+            .UseNpgsql(connection,
+                cfg => cfg.CommandTimeout(600).MigrationsAssembly("EFCore.Extensions.SaveOptimizer.Model.Postgres"));
 
         if (factory != null)
         {

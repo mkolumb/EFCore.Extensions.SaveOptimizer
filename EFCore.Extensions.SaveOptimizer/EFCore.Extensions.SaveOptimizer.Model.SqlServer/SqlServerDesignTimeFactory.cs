@@ -17,7 +17,7 @@ public class SqlServerDesignTimeFactory : IDesignTimeDbContextFactory<EntitiesCo
 
         DbContextOptionsBuilder<EntitiesContext> builder = new DbContextOptionsBuilder<EntitiesContext>()
             .UseSqlServer(connectionString,
-                cfg => cfg.MigrationsAssembly("EFCore.Extensions.SaveOptimizer.Model.SqlServer"));
+                cfg => cfg.CommandTimeout(600).MigrationsAssembly("EFCore.Extensions.SaveOptimizer.Model.SqlServer"));
 
         if (factory != null)
         {

@@ -1,5 +1,5 @@
 # EFCore.Extensions.SaveOptimizer
-Save optimizer extension for EF Core. 
+Save optimizer extension for EF Core.  
 It supports multiple EF Core providers and brings serious performance benefits for many scenarios without big effort.
 
 Currently in BETA
@@ -18,13 +18,13 @@ Currently in BETA
 Because I needed
 
 #### Long version
-Idea came from one of my commercial projects. 
+Idea came from one of my commercial projects.
 
-We were working with CockroachDB (excellent database for multi-region environments) and initially used Entity Framework Core 3.1. It worked fine, but in multi-region configuration save performance was not so good. 
+We were working with CockroachDB (excellent database for multi-region environments) and initially used Entity Framework Core 3.1. It worked fine, but in multi-region configuration save performance was not so good.
 
-Reason? As many people knows EF generates multiple INSERT / UPDATE / DELETE single row statements instead of lower amount of multiple row statements. 
+Reason? As many people knows EF generates multiple INSERT / UPDATE / DELETE single row statements instead of lower amount of multiple row statements.
 
-I considered few solutions (e.g. [EFCore.BulkExtensions](https://github.com/borisdj/EFCore.BulkExtensions), [linq2db](https://linq2db.github.io)) but all of them had some disadvantages during this time. We needed something with support for CockroachDB and concurrency tokens. Also we want to avoid business logic rewrite, more code changes than replacing SaveChanges execution could be big problem. As there were no good choice I wrote something simple from scratch. For sql statements generation I used excellent [SqlKata](https://sqlkata.com/) library. Now I decided to rewrite whole solution as something more efficient and better integrated into EF. 
+I considered few solutions (e.g. [EFCore.BulkExtensions](https://github.com/borisdj/EFCore.BulkExtensions), [linq2db](https://linq2db.github.io)) but all of them had some disadvantages during this time. We needed something with support for CockroachDB and concurrency tokens. Also we want to avoid business logic rewrite, more code changes than replacing SaveChanges execution could be big problem. As there were no good choice I wrote something simple from scratch. For sql statements generation I used excellent [SqlKata](https://sqlkata.com/) library. Now I decided to rewrite whole solution as something more efficient and better integrated into EF.
 
 [EFCore.BulkExtensions](https://github.com/borisdj/EFCore.BulkExtensions) is good choice for most cases as it has BulkSaveChanges method and currently supports few different databases (SQL Server, PostgreSQL and SQLite). Unfortunately it looks like API they used for PostgreSQL is incompatible with CockroachDB.
 
@@ -64,9 +64,9 @@ When you execute SaveChangesOptimized usually the following sequence happens:
 3. Group changes as much as possible
 4. Generate SQL
 5. Execute
-6. Accept changes  
+6. Accept changes
 
-Please note it is not working exactly as SaveChanges, so you should verify it works in your case as expected. 
+Please note it is not working exactly as SaveChanges, so you should verify it works in your case as expected.
 
 ## Features
 - Providers support
@@ -122,14 +122,9 @@ Please note it is not working exactly as SaveChanges, so you should verify it wo
 
 ### Refresh data after save
 
-SaveOptimizer approach makes almost impossible refresh data after save, it is on your side. 
-If you will use auto increment primary key it will not retrieve this key from db.
-I recommend to generate values for primary keys in code, not in db. 
-This will make much easier refresh data after save if necessary, you will be able to use this values for query.
-Also DatabaseValues for entry will not be retrieved from db when ConcurrencyTokenException is thrown.
+SaveOptimizer approach makes almost impossible refresh data after save, it is on your side. If you will use auto increment primary key it will not retrieve this key from db. I recommend to generate values for primary keys in code, not in db. This will make much easier refresh data after save if necessary, you will be able to use this values for query. Also DatabaseValues for entry will not be retrieved from db when ConcurrencyTokenException is thrown.
 
-Basically - after save you should not use this context anymore as it could be invalid, you should use new context for another operation.
-However if you need you can experiment with AfterSaveBehavior.
+Basically - after save you should not use this context anymore as it could be invalid, you should use new context for another operation. However if you need you can experiment with AfterSaveBehavior.
 
 ## Known issues
 
@@ -195,9 +190,9 @@ $name = "[NAME]"
 
 ### Summary
 
-SaveOptimizer is not always better than pure EF Core methods. EF Core contains tons of optimizations so for small operations and simple workloads likely is better. 
+SaveOptimizer is not always better than pure EF Core methods. EF Core contains tons of optimizations so for small operations and simple workloads likely is better.
 
-My advice is to compare results in your real environment. Honestly - the best choice for pure performance is leave EF Core for write operations at all and then write statements from scratch for your scenarios. But this library could bring serious performance benefits in many scenarios without big effort. 
+My advice is to compare results in your real environment. Honestly - the best choice for pure performance is leave EF Core for write operations at all and then write statements from scratch for your scenarios. But this library could bring serious performance benefits in many scenarios without big effort.
 
 All benchmarks uses serializable isolation level and run databases within containers.
 
@@ -207,9 +202,9 @@ Intel Core i7-8850H CPU 2.60GHz (Coffee Lake), 1 CPU, 12 logical and 6 physical 
 .NET SDK=6.0.301
   [Host]     : .NET 6.0.6 (6.0.622.26707), X64 RyuJIT
 
-EvaluateOverhead=True  OutlierMode=RemoveUpper  
-InvocationCount=1  IterationCount=20  LaunchCount=3  
-RunStrategy=ColdStart  UnrollFactor=1  WarmupCount=0  
+EvaluateOverhead=True  OutlierMode=RemoveUpper
+InvocationCount=1  IterationCount=20  LaunchCount=3
+RunStrategy=ColdStart  UnrollFactor=1  WarmupCount=0
 
 ```
 

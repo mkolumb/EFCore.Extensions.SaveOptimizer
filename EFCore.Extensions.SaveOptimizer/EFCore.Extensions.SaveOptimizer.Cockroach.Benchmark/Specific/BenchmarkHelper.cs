@@ -17,7 +17,7 @@ public static class BenchmarkHelper
         ServiceCollection collection = new();
 
         collection.AddDbContextFactory<EntitiesContext>(builder => builder.UseNpgsql(connection,
-            cfg => cfg.MigrationsAssembly("EFCore.Extensions.SaveOptimizer.Model.Cockroach")));
+            cfg => cfg.CommandTimeout(600).MigrationsAssembly("EFCore.Extensions.SaveOptimizer.Model.Cockroach")));
 
         collection.AddSingleton<IWrapperResolver, WrapperResolver>();
 

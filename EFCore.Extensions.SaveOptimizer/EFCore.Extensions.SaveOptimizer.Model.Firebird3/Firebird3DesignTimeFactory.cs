@@ -48,7 +48,7 @@ public class Firebird3DesignTimeFactory : IDesignTimeDbContextFactory<EntitiesCo
 
         DbContextOptionsBuilder<EntitiesContext> builder = new DbContextOptionsBuilder<EntitiesContext>()
             .UseFirebird(connectionString,
-                cfg => cfg.MigrationsAssembly("EFCore.Extensions.SaveOptimizer.Model.Firebird3"));
+                cfg => cfg.CommandTimeout(600).MigrationsAssembly("EFCore.Extensions.SaveOptimizer.Model.Firebird3"));
 
         if (factory != null)
         {
