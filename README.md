@@ -58,14 +58,13 @@ await transaction.CommitAsync(cancellationToken);
 
 ## How it works
 
-When you execute SaveChangesOptimized the following sequence happens:
+When you execute SaveChangesOptimized usually the following sequence happens:
 1. Get entries from ChangeTracker
 2. Build property changes dictionary for each entry
 3. Group changes as much as possible
 4. Generate SQL
 5. Execute
-   - *if there is no transaction started then will start serializable transaction*
-6. Mark all saved entities as detached 
+6. Accept changes  
 
 Please note it is not working exactly as SaveChanges, so you should verify it works in your case as expected. 
 
