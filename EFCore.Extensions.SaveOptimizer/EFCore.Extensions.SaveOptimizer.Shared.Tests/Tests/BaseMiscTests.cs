@@ -1,12 +1,9 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Model;
-using EFCore.Extensions.SaveOptimizer.Shared.Tests.Attributes;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests.Data;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests.Enums;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests.Extensions;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests.Wrappers;
 using Xunit.Abstractions;
-
-// ReSharper disable AccessToDisposedClosure
 
 namespace EFCore.Extensions.SaveOptimizer.Shared.Tests.Tests;
 
@@ -18,110 +15,6 @@ public abstract partial class BaseMiscTests : BaseTests
         Func<ITestOutputHelper, DbContextWrapper> contextWrapperResolver)
         : base(testOutputHelper, contextWrapperResolver)
     {
-    }
-
-    [SkippableTheory]
-    [InlineData(SaveVariant.Optimized | SaveVariant.NoAutoTransaction)]
-    [InlineData(SaveVariant.OptimizedDapper | SaveVariant.NoAutoTransaction)]
-    public async Task GivenSaveChangesAsync_WhenNoTransaction_ShouldThrowsException(SaveVariant variant)
-    {
-        // Arrange
-        using DbContextWrapper db = ContextWrapperResolver();
-
-        await db.Context.AddAsync(ItemResolver(1));
-
-        // Act
-        Func<Task> result = () => db.SaveAsync(variant, null, 0);
-
-        // Assert
-        await result.Should().ThrowExactlyAsync<ArgumentException>();
-    }
-
-    [SkippableTheory]
-    [MemberData(nameof(BaseWriteTheoryData))]
-    public async Task GivenSaveChangesAsync_WhenDifferentOperations_ShouldStoreData(SaveVariant variant)
-    {
-        // Arrange
-        using DbContextWrapper db = ContextWrapperResolver();
-
-        NonRelatedEntity[] data = await InitialSeedAsync(db, variant, 10);
-
-        var toAdd = new object[] { ItemResolver(11), ItemResolver(12), ItemResolver(13) };
-        NonRelatedEntity toEdit = data[3];
-        toEdit.SomeNullableStringProperty = "new-prop";
-        NonRelatedEntity toRemove = data[6];
-
-        await db.Context.AddRangeAsync(toAdd);
-        db.Context.Update(toEdit);
-        db.Context.Remove(toRemove);
-
-        // Act
-        await db.SaveAsync(variant, null);
-
-        NonRelatedEntity[] result =
-            await db.Context.NonRelatedEntities.OrderBy(x => x.SomeNonNullableIntProperty).ToArrayWithRetryAsync();
-
-        var properties = result.Select(x => x.SomeNonNullableIntProperty).ToArray();
-
-        // Assert
-        result.Should().HaveCount(12);
-
-        properties.Should()
-            .ContainInOrder(0, 1, 2, 3, 4, 5, 7, 8, 9, 11, 12, 13);
-
-        result[3].SomeNullableStringProperty.Should().BeEquivalentTo("new-prop");
-    }
-
-    [SkippableTheory]
-    [InlineData(SaveVariant.Optimized | SaveVariant.NoAutoTransaction)]
-    [InlineData(SaveVariant.OptimizedDapper | SaveVariant.NoAutoTransaction)]
-    public void GivenSaveChanges_WhenNoTransaction_ShouldThrowsException(SaveVariant variant)
-    {
-        // Arrange
-        using DbContextWrapper db = ContextWrapperResolver();
-
-        db.Context.Add(ItemResolver(1));
-
-        // Act
-        Action result = () => db.Save(variant, null, 0);
-
-        // Assert
-        result.Should().ThrowExactly<ArgumentException>();
-    }
-
-    [SkippableTheory]
-    [MemberData(nameof(BaseWriteTheoryData))]
-    public void GivenSaveChanges_WhenDifferentOperations_ShouldStoreData(SaveVariant variant)
-    {
-        // Arrange
-        using DbContextWrapper db = ContextWrapperResolver();
-
-        NonRelatedEntity[] data = InitialSeed(db, variant, 10);
-
-        var toAdd = new object[] { ItemResolver(11), ItemResolver(12), ItemResolver(13) };
-        NonRelatedEntity toEdit = data[3];
-        toEdit.SomeNullableStringProperty = "new-prop";
-        NonRelatedEntity toRemove = data[6];
-
-        db.Context.AddRange(toAdd);
-        db.Context.Update(toEdit);
-        db.Context.Remove(toRemove);
-
-        // Act
-        db.Save(variant, null);
-
-        NonRelatedEntity[] result =
-            db.Context.NonRelatedEntities.OrderBy(x => x.SomeNonNullableIntProperty).ToArrayWithRetry();
-
-        var properties = result.Select(x => x.SomeNonNullableIntProperty).ToArray();
-
-        // Assert
-        result.Should().HaveCount(12);
-
-        properties.Should()
-            .ContainInOrder(0, 1, 2, 3, 4, 5, 7, 8, 9, 11, 12, 13);
-
-        result[3].SomeNullableStringProperty.Should().BeEquivalentTo("new-prop");
     }
 
     private static async Task<NonRelatedEntity[]> InitialSeedAsync(DbContextWrapper db, SaveVariant variant, int count)

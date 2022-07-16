@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace EFCore.Extensions.SaveOptimizer.Model.Firebird3.Migrations
+namespace EFCore.Extensions.SaveOptimizer.Model.Firebird4.Migrations
 {
     public partial class InitialCreate : Migration
     {
@@ -44,6 +44,35 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Firebird3.Migrations
                     table.PrimaryKey("PK_NonRelatedEntities", x => x.NonRelatedEntityId);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "VariousTypeEntities",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false),
+                    SomeString = table.Column<string>(type: "BLOB SUB_TYPE TEXT", nullable: true),
+                    SomeGuid = table.Column<Guid>(type: "CHAR(16) CHARACTER SET OCTETS", nullable: true),
+                    SomeBool = table.Column<bool>(type: "BOOLEAN", nullable: true),
+                    SomeEnum = table.Column<int>(type: "INTEGER", nullable: true),
+                    SomeDateTime = table.Column<DateTime>(type: "TIMESTAMP", precision: 5, nullable: true),
+                    SomeDateTimeOffset = table.Column<string>(type: "VARCHAR(48)", precision: 5, nullable: true),
+                    SomeTimeSpan = table.Column<TimeSpan>(type: "TIME", precision: 5, nullable: true),
+                    SomeShort = table.Column<short>(type: "SMALLINT", nullable: true),
+                    SomeUnsignedShort = table.Column<int>(type: "INTEGER", nullable: true),
+                    SomeInt = table.Column<int>(type: "INTEGER", nullable: true),
+                    SomeUnsignedInt = table.Column<long>(type: "BIGINT", nullable: true),
+                    SomeLong = table.Column<long>(type: "BIGINT", nullable: true),
+                    SomeUnsignedLong = table.Column<decimal>(type: "DECIMAL(18,2)", nullable: true),
+                    SomeSignedByte = table.Column<short>(type: "SMALLINT", nullable: true),
+                    SomeByte = table.Column<short>(type: "SMALLINT", nullable: true),
+                    SomeFloat = table.Column<float>(type: "FLOAT", nullable: true),
+                    SomeDouble = table.Column<double>(type: "DOUBLE PRECISION", nullable: true),
+                    SomeDecimal = table.Column<decimal>(type: "DECIMAL(12,6)", precision: 12, scale: 6, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VariousTypeEntities", x => x.Id);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_NonRelatedEntities_Concurre~",
                 table: "NonRelatedEntities",
@@ -57,6 +86,9 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Firebird3.Migrations
 
             migrationBuilder.DropTable(
                 name: "NonRelatedEntities");
+
+            migrationBuilder.DropTable(
+                name: "VariousTypeEntities");
         }
     }
 }

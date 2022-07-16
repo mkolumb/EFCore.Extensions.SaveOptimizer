@@ -88,6 +88,74 @@ namespace EFCore.Extensions.SaveOptimizer.Model.SqlServer.Migrations
 
                     b.ToTable("NonRelatedEntities");
                 });
+
+            modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.VariousTypeEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<bool?>("SomeBool")
+                        .HasColumnType("bit");
+
+                    b.Property<byte?>("SomeByte")
+                        .HasColumnType("tinyint");
+
+                    b.Property<DateTime?>("SomeDateTime")
+                        .HasPrecision(5)
+                        .HasColumnType("datetime2(5)");
+
+                    b.Property<DateTimeOffset?>("SomeDateTimeOffset")
+                        .HasPrecision(5)
+                        .HasColumnType("datetimeoffset(5)");
+
+                    b.Property<decimal?>("SomeDecimal")
+                        .HasPrecision(12, 6)
+                        .HasColumnType("decimal(12,6)");
+
+                    b.Property<double?>("SomeDouble")
+                        .HasColumnType("float");
+
+                    b.Property<int?>("SomeEnum")
+                        .HasColumnType("int");
+
+                    b.Property<float?>("SomeFloat")
+                        .HasColumnType("real");
+
+                    b.Property<Guid?>("SomeGuid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("SomeInt")
+                        .HasColumnType("int");
+
+                    b.Property<long?>("SomeLong")
+                        .HasColumnType("bigint");
+
+                    b.Property<short?>("SomeShort")
+                        .HasColumnType("smallint");
+
+                    b.Property<short?>("SomeSignedByte")
+                        .HasColumnType("smallint");
+
+                    b.Property<string>("SomeString")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<TimeSpan?>("SomeTimeSpan")
+                        .HasPrecision(5)
+                        .HasColumnType("time");
+
+                    b.Property<long?>("SomeUnsignedInt")
+                        .HasColumnType("bigint");
+
+                    b.Property<decimal?>("SomeUnsignedLong")
+                        .HasColumnType("decimal(20,0)");
+
+                    b.Property<int?>("SomeUnsignedShort")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("VariousTypeEntities");
+                });
 #pragma warning restore 612, 618
         }
     }

@@ -25,7 +25,8 @@ public sealed class DbContextWrapper : IDisposable
 
     public string[] EntitiesList { get; } =
     {
-        nameof(EntitiesContext.NonRelatedEntities), nameof(EntitiesContext.AutoIncrementPrimaryKeyEntities)
+        nameof(EntitiesContext.NonRelatedEntities), nameof(EntitiesContext.AutoIncrementPrimaryKeyEntities),
+        nameof(EntitiesContext.VariousTypeEntities)
     };
 
     public Dictionary<string, string> SequencesList { get; } = new()

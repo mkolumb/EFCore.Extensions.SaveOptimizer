@@ -83,6 +83,74 @@ namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMariaDb.Migrations
 
                     b.ToTable("NonRelatedEntities");
                 });
+
+            modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.VariousTypeEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<bool?>("SomeBool")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<byte?>("SomeByte")
+                        .HasColumnType("tinyint unsigned");
+
+                    b.Property<DateTime?>("SomeDateTime")
+                        .HasPrecision(5)
+                        .HasColumnType("datetime(5)");
+
+                    b.Property<DateTimeOffset?>("SomeDateTimeOffset")
+                        .HasPrecision(5)
+                        .HasColumnType("datetime(5)");
+
+                    b.Property<decimal?>("SomeDecimal")
+                        .HasPrecision(12, 6)
+                        .HasColumnType("decimal(12,6)");
+
+                    b.Property<double?>("SomeDouble")
+                        .HasColumnType("double");
+
+                    b.Property<int?>("SomeEnum")
+                        .HasColumnType("int");
+
+                    b.Property<float?>("SomeFloat")
+                        .HasColumnType("float");
+
+                    b.Property<Guid?>("SomeGuid")
+                        .HasColumnType("char(36)");
+
+                    b.Property<int?>("SomeInt")
+                        .HasColumnType("int");
+
+                    b.Property<long?>("SomeLong")
+                        .HasColumnType("bigint");
+
+                    b.Property<short?>("SomeShort")
+                        .HasColumnType("smallint");
+
+                    b.Property<sbyte?>("SomeSignedByte")
+                        .HasColumnType("tinyint");
+
+                    b.Property<string>("SomeString")
+                        .HasColumnType("longtext");
+
+                    b.Property<TimeSpan?>("SomeTimeSpan")
+                        .HasPrecision(5)
+                        .HasColumnType("time(5)");
+
+                    b.Property<uint?>("SomeUnsignedInt")
+                        .HasColumnType("int unsigned");
+
+                    b.Property<ulong?>("SomeUnsignedLong")
+                        .HasColumnType("bigint unsigned");
+
+                    b.Property<ushort?>("SomeUnsignedShort")
+                        .HasColumnType("smallint unsigned");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("VariousTypeEntities");
+                });
 #pragma warning restore 612, 618
         }
     }

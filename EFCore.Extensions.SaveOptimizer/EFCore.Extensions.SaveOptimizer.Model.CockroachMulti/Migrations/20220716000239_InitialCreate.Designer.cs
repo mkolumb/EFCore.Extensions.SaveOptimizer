@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EFCore.Extensions.SaveOptimizer.Model.CockroachMulti.Migrations
 {
     [DbContext(typeof(EntitiesContext))]
-    [Migration("20220715101439_InitialCreate")]
+    [Migration("20220716000239_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -89,6 +89,74 @@ namespace EFCore.Extensions.SaveOptimizer.Model.CockroachMulti.Migrations
                     b.HasIndex("ConcurrencyToken", "NonRelatedEntityId");
 
                     b.ToTable("NonRelatedEntities");
+                });
+
+            modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.VariousTypeEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
+
+                    b.Property<bool?>("SomeBool")
+                        .HasColumnType("boolean");
+
+                    b.Property<byte?>("SomeByte")
+                        .HasColumnType("smallint");
+
+                    b.Property<DateTime?>("SomeDateTime")
+                        .HasPrecision(5)
+                        .HasColumnType("timestamp(5) with time zone");
+
+                    b.Property<DateTimeOffset?>("SomeDateTimeOffset")
+                        .HasPrecision(5)
+                        .HasColumnType("timestamp(5) with time zone");
+
+                    b.Property<decimal?>("SomeDecimal")
+                        .HasPrecision(12, 6)
+                        .HasColumnType("numeric(12,6)");
+
+                    b.Property<double?>("SomeDouble")
+                        .HasColumnType("double precision");
+
+                    b.Property<int?>("SomeEnum")
+                        .HasColumnType("integer");
+
+                    b.Property<float?>("SomeFloat")
+                        .HasColumnType("real");
+
+                    b.Property<Guid?>("SomeGuid")
+                        .HasColumnType("uuid");
+
+                    b.Property<int?>("SomeInt")
+                        .HasColumnType("integer");
+
+                    b.Property<long?>("SomeLong")
+                        .HasColumnType("bigint");
+
+                    b.Property<short?>("SomeShort")
+                        .HasColumnType("smallint");
+
+                    b.Property<short?>("SomeSignedByte")
+                        .HasColumnType("smallint");
+
+                    b.Property<string>("SomeString")
+                        .HasColumnType("text");
+
+                    b.Property<TimeSpan?>("SomeTimeSpan")
+                        .HasPrecision(5)
+                        .HasColumnType("interval(5)");
+
+                    b.Property<long?>("SomeUnsignedInt")
+                        .HasColumnType("bigint");
+
+                    b.Property<decimal?>("SomeUnsignedLong")
+                        .HasColumnType("numeric(20,0)");
+
+                    b.Property<int?>("SomeUnsignedShort")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("VariousTypeEntities");
                 });
 #pragma warning restore 612, 618
         }

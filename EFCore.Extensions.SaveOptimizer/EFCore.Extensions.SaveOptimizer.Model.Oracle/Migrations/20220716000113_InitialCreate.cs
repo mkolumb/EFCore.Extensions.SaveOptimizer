@@ -43,6 +43,35 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Oracle.Migrations
                     table.PrimaryKey("PK_NonRelatedEntities", x => x.NonRelatedEntityId);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "VariousTypeEntities",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "NUMBER(10)", nullable: false),
+                    SomeString = table.Column<string>(type: "NVARCHAR2(2000)", nullable: true),
+                    SomeGuid = table.Column<Guid>(type: "RAW(16)", nullable: true),
+                    SomeBool = table.Column<bool>(type: "NUMBER(1)", nullable: true),
+                    SomeEnum = table.Column<int>(type: "NUMBER(10)", nullable: true),
+                    SomeDateTime = table.Column<DateTime>(type: "TIMESTAMP(5)", precision: 5, nullable: true),
+                    SomeDateTimeOffset = table.Column<DateTimeOffset>(type: "TIMESTAMP(7) WITH TIME ZONE", precision: 5, nullable: true),
+                    SomeTimeSpan = table.Column<TimeSpan>(type: "INTERVAL DAY(8) TO SECOND(7)", precision: 5, nullable: true),
+                    SomeShort = table.Column<short>(type: "NUMBER(5)", nullable: true),
+                    SomeUnsignedShort = table.Column<int>(type: "NUMBER(5)", nullable: true),
+                    SomeInt = table.Column<int>(type: "NUMBER(10)", nullable: true),
+                    SomeUnsignedInt = table.Column<long>(type: "NUMBER(10)", nullable: true),
+                    SomeLong = table.Column<long>(type: "NUMBER(19)", nullable: true),
+                    SomeUnsignedLong = table.Column<decimal>(type: "NUMBER(20)", nullable: true),
+                    SomeSignedByte = table.Column<short>(type: "NUMBER(3)", nullable: true),
+                    SomeByte = table.Column<byte>(type: "NUMBER(3)", nullable: true),
+                    SomeFloat = table.Column<float>(type: "BINARY_FLOAT", nullable: true),
+                    SomeDouble = table.Column<double>(type: "BINARY_DOUBLE", nullable: true),
+                    SomeDecimal = table.Column<decimal>(type: "DECIMAL(12,6)", precision: 12, scale: 6, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VariousTypeEntities", x => x.Id);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_NonRelatedEntities_ConcurrencyToken_NonRelatedEntityId",
                 table: "NonRelatedEntities",
@@ -56,6 +85,9 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Oracle.Migrations
 
             migrationBuilder.DropTable(
                 name: "NonRelatedEntities");
+
+            migrationBuilder.DropTable(
+                name: "VariousTypeEntities");
         }
     }
 }

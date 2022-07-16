@@ -86,6 +86,74 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Firebird3.Migrations
 
                     b.ToTable("NonRelatedEntities");
                 });
+
+            modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.VariousTypeEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool?>("SomeBool")
+                        .HasColumnType("BOOLEAN");
+
+                    b.Property<short?>("SomeByte")
+                        .HasColumnType("SMALLINT");
+
+                    b.Property<DateTime?>("SomeDateTime")
+                        .HasPrecision(5)
+                        .HasColumnType("TIMESTAMP");
+
+                    b.Property<string>("SomeDateTimeOffset")
+                        .HasPrecision(5)
+                        .HasColumnType("VARCHAR(48)");
+
+                    b.Property<decimal?>("SomeDecimal")
+                        .HasPrecision(12, 6)
+                        .HasColumnType("DECIMAL(12,6)");
+
+                    b.Property<double?>("SomeDouble")
+                        .HasColumnType("DOUBLE PRECISION");
+
+                    b.Property<int?>("SomeEnum")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<float?>("SomeFloat")
+                        .HasColumnType("FLOAT");
+
+                    b.Property<Guid?>("SomeGuid")
+                        .HasColumnType("CHAR(16) CHARACTER SET OCTETS");
+
+                    b.Property<int?>("SomeInt")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long?>("SomeLong")
+                        .HasColumnType("BIGINT");
+
+                    b.Property<short?>("SomeShort")
+                        .HasColumnType("SMALLINT");
+
+                    b.Property<short?>("SomeSignedByte")
+                        .HasColumnType("SMALLINT");
+
+                    b.Property<string>("SomeString")
+                        .HasColumnType("BLOB SUB_TYPE TEXT");
+
+                    b.Property<TimeSpan?>("SomeTimeSpan")
+                        .HasPrecision(5)
+                        .HasColumnType("TIME");
+
+                    b.Property<long?>("SomeUnsignedInt")
+                        .HasColumnType("BIGINT");
+
+                    b.Property<decimal?>("SomeUnsignedLong")
+                        .HasColumnType("DECIMAL(18,2)");
+
+                    b.Property<int?>("SomeUnsignedShort")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("VariousTypeEntities");
+                });
 #pragma warning restore 612, 618
         }
     }

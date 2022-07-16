@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EFCore.Extensions.SaveOptimizer.Model.Sqlite.Migrations
 {
     [DbContext(typeof(EntitiesContext))]
-    [Migration("20220715101259_InitialCreate")]
+    [Migration("20220716000124_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -82,6 +82,74 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Sqlite.Migrations
                     b.HasIndex("ConcurrencyToken", "NonRelatedEntityId");
 
                     b.ToTable("NonRelatedEntities");
+                });
+
+            modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.VariousTypeEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool?>("SomeBool")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<byte?>("SomeByte")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("SomeDateTime")
+                        .HasPrecision(5)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTimeOffset?>("SomeDateTimeOffset")
+                        .HasPrecision(5)
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal?>("SomeDecimal")
+                        .HasPrecision(12, 6)
+                        .HasColumnType("TEXT");
+
+                    b.Property<double?>("SomeDouble")
+                        .HasColumnType("REAL");
+
+                    b.Property<int?>("SomeEnum")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<float?>("SomeFloat")
+                        .HasColumnType("REAL");
+
+                    b.Property<Guid?>("SomeGuid")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("SomeInt")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long?>("SomeLong")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<short?>("SomeShort")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<sbyte?>("SomeSignedByte")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("SomeString")
+                        .HasColumnType("TEXT");
+
+                    b.Property<TimeSpan?>("SomeTimeSpan")
+                        .HasPrecision(5)
+                        .HasColumnType("TEXT");
+
+                    b.Property<uint?>("SomeUnsignedInt")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<ulong?>("SomeUnsignedLong")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<ushort?>("SomeUnsignedShort")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("VariousTypeEntities");
                 });
 #pragma warning restore 612, 618
         }

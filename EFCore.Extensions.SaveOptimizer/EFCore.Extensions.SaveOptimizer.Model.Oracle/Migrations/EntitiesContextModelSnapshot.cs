@@ -88,6 +88,74 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Oracle.Migrations
 
                     b.ToTable("NonRelatedEntities");
                 });
+
+            modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.VariousTypeEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("NUMBER(10)");
+
+                    b.Property<bool?>("SomeBool")
+                        .HasColumnType("NUMBER(1)");
+
+                    b.Property<byte?>("SomeByte")
+                        .HasColumnType("NUMBER(3)");
+
+                    b.Property<DateTime?>("SomeDateTime")
+                        .HasPrecision(5)
+                        .HasColumnType("TIMESTAMP(5)");
+
+                    b.Property<DateTimeOffset?>("SomeDateTimeOffset")
+                        .HasPrecision(5)
+                        .HasColumnType("TIMESTAMP(7) WITH TIME ZONE");
+
+                    b.Property<decimal?>("SomeDecimal")
+                        .HasPrecision(12, 6)
+                        .HasColumnType("DECIMAL(12,6)");
+
+                    b.Property<double?>("SomeDouble")
+                        .HasColumnType("BINARY_DOUBLE");
+
+                    b.Property<int?>("SomeEnum")
+                        .HasColumnType("NUMBER(10)");
+
+                    b.Property<float?>("SomeFloat")
+                        .HasColumnType("BINARY_FLOAT");
+
+                    b.Property<Guid?>("SomeGuid")
+                        .HasColumnType("RAW(16)");
+
+                    b.Property<int?>("SomeInt")
+                        .HasColumnType("NUMBER(10)");
+
+                    b.Property<long?>("SomeLong")
+                        .HasColumnType("NUMBER(19)");
+
+                    b.Property<short?>("SomeShort")
+                        .HasColumnType("NUMBER(5)");
+
+                    b.Property<short?>("SomeSignedByte")
+                        .HasColumnType("NUMBER(3)");
+
+                    b.Property<string>("SomeString")
+                        .HasColumnType("NVARCHAR2(2000)");
+
+                    b.Property<TimeSpan?>("SomeTimeSpan")
+                        .HasPrecision(5)
+                        .HasColumnType("INTERVAL DAY(8) TO SECOND(7)");
+
+                    b.Property<long?>("SomeUnsignedInt")
+                        .HasColumnType("NUMBER(10)");
+
+                    b.Property<decimal?>("SomeUnsignedLong")
+                        .HasColumnType("NUMBER(20)");
+
+                    b.Property<int?>("SomeUnsignedShort")
+                        .HasColumnType("NUMBER(5)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("VariousTypeEntities");
+                });
 #pragma warning restore 612, 618
         }
     }
