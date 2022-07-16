@@ -17,13 +17,14 @@ public abstract partial class BaseMiscTests
 
         AutoIncrementPrimaryKeyEntity[] data = { new() { Some = "x1" }, new() { Some = "x2" }, new() { Some = "x3" } };
 
-        await db.Context.AddRangeAsync(data as IEnumerable<object>);
+        await db.Context.AddRangeAsync(data as IEnumerable<object>).ConfigureAwait(false);
 
         // Act
-        await db.SaveAsync(variant, null);
+        await db.SaveAsync(variant, null).ConfigureAwait(false);
 
         AutoIncrementPrimaryKeyEntity[] result =
-            await db.Context.AutoIncrementPrimaryKeyEntities.OrderBy(x => x.Some).ToArrayWithRetryAsync();
+            await db.Context.AutoIncrementPrimaryKeyEntities.OrderBy(x => x.Some).ToArrayWithRetryAsync()
+                .ConfigureAwait(false);
 
         var keys = result.Select(x => x.Id).ToArray();
 
@@ -46,11 +47,12 @@ public abstract partial class BaseMiscTests
 
         AutoIncrementPrimaryKeyEntity[] data = { new() { Some = "x1" }, new() { Some = "x2" }, new() { Some = "x3" } };
 
-        await db.Context.AddRangeAsync(data as IEnumerable<object>);
+        await db.Context.AddRangeAsync(data as IEnumerable<object>).ConfigureAwait(false);
 
-        await db.SaveAsync(variant, null);
+        await db.SaveAsync(variant, null).ConfigureAwait(false);
 
-        data = await db.Context.AutoIncrementPrimaryKeyEntities.OrderBy(x => x.Some).ToArrayWithRetryAsync();
+        data = await db.Context.AutoIncrementPrimaryKeyEntities.OrderBy(x => x.Some).ToArrayWithRetryAsync()
+            .ConfigureAwait(false);
 
         foreach (AutoIncrementPrimaryKeyEntity item in data)
         {
@@ -58,10 +60,11 @@ public abstract partial class BaseMiscTests
         }
 
         // Act
-        await db.SaveAsync(variant, null);
+        await db.SaveAsync(variant, null).ConfigureAwait(false);
 
         AutoIncrementPrimaryKeyEntity[] result =
-            await db.Context.AutoIncrementPrimaryKeyEntities.OrderBy(x => x.Some).ToArrayWithRetryAsync();
+            await db.Context.AutoIncrementPrimaryKeyEntities.OrderBy(x => x.Some).ToArrayWithRetryAsync()
+                .ConfigureAwait(false);
 
         var keys = result.Select(x => x.Id).ToArray();
 
@@ -84,19 +87,21 @@ public abstract partial class BaseMiscTests
 
         AutoIncrementPrimaryKeyEntity[] data = { new() { Some = "x1" }, new() { Some = "x2" }, new() { Some = "x3" } };
 
-        await db.Context.AddRangeAsync(data as IEnumerable<object>);
+        await db.Context.AddRangeAsync(data as IEnumerable<object>).ConfigureAwait(false);
 
-        await db.SaveAsync(variant, null);
+        await db.SaveAsync(variant, null).ConfigureAwait(false);
 
-        data = await db.Context.AutoIncrementPrimaryKeyEntities.OrderBy(x => x.Some).ToArrayWithRetryAsync();
+        data = await db.Context.AutoIncrementPrimaryKeyEntities.OrderBy(x => x.Some).ToArrayWithRetryAsync()
+            .ConfigureAwait(false);
 
         db.Context.RemoveRange(data.Take(2));
 
         // Act
-        await db.SaveAsync(variant, null);
+        await db.SaveAsync(variant, null).ConfigureAwait(false);
 
         AutoIncrementPrimaryKeyEntity[] result =
-            await db.Context.AutoIncrementPrimaryKeyEntities.OrderBy(x => x.Some).ToArrayWithRetryAsync();
+            await db.Context.AutoIncrementPrimaryKeyEntities.OrderBy(x => x.Some).ToArrayWithRetryAsync()
+                .ConfigureAwait(false);
 
         var keys = result.Select(x => x.Id).ToArray();
 

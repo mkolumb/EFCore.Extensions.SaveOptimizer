@@ -1,6 +1,7 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Dapper.Services;
 using EFCore.Extensions.SaveOptimizer.Internal.Configuration;
 using EFCore.Extensions.SaveOptimizer.Internal.Factories;
+using EFCore.Extensions.SaveOptimizer.Internal.Models;
 using EFCore.Extensions.SaveOptimizer.Internal.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -34,18 +35,20 @@ public static class DbContextExtensions
             queryExecutionConfiguratorService);
     }
 
-    public static int SaveChangesDapperOptimized(this DbContext context) =>
+    public static IExecutionResultModel SaveChangesDapperOptimized(this DbContext context) =>
         context.SaveChangesDapperOptimized(null);
 
-    public static int SaveChangesDapperOptimized(this DbContext context, QueryExecutionConfiguration? configuration) =>
+    public static IExecutionResultModel SaveChangesDapperOptimized(this DbContext context,
+        QueryExecutionConfiguration? configuration) =>
         DbContextExecutorService.SaveChangesOptimized(context, configuration);
 
-    public static async Task<int> SaveChangesDapperOptimizedAsync(this DbContext context,
+    public static async Task<IExecutionResultModel> SaveChangesDapperOptimizedAsync(this DbContext context,
         CancellationToken cancellationToken = default) =>
-        await context.SaveChangesDapperOptimizedAsync(null, cancellationToken);
+        await context.SaveChangesDapperOptimizedAsync(null, cancellationToken).ConfigureAwait(false);
 
-    public static async Task<int> SaveChangesDapperOptimizedAsync(this DbContext context,
+    public static async Task<IExecutionResultModel> SaveChangesDapperOptimizedAsync(this DbContext context,
         QueryExecutionConfiguration? configuration,
         CancellationToken cancellationToken = default) =>
-        await DbContextExecutorService.SaveChangesOptimizedAsync(context, configuration, cancellationToken);
+        await DbContextExecutorService.SaveChangesOptimizedAsync(context, configuration, cancellationToken)
+            .ConfigureAwait(false);
 }

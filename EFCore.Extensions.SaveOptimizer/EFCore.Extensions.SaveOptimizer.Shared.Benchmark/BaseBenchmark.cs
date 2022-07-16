@@ -33,9 +33,9 @@ public abstract class BaseBenchmark
 
         RestartContainer();
 
-        Context = await GetContext();
+        Context = await GetContext().ConfigureAwait(false);
 
-        await Context.SeedAsync(Rows * BenchmarkConfig.GetSeedRepeat(), 1);
+        await Context.SeedAsync(Rows * BenchmarkConfig.GetSeedRepeat(), 1).ConfigureAwait(false);
     }
 
     private async Task<IDbContextWrapper> GetContext()
@@ -56,7 +56,7 @@ public abstract class BaseBenchmark
 
                 ConsoleLogger.Unicode.WriteLineWithDate(ex.StackTrace);
 
-                await Task.Delay(TimeSpan.FromSeconds(15));
+                await Task.Delay(TimeSpan.FromSeconds(15)).ConfigureAwait(false);
             }
 
             i++;
@@ -100,7 +100,7 @@ public abstract class BaseBenchmark
 
         if (Context != null)
         {
-            await Context.TruncateAsync();
+            await Context.TruncateAsync().ConfigureAwait(false);
 
             Context.Dispose();
         }

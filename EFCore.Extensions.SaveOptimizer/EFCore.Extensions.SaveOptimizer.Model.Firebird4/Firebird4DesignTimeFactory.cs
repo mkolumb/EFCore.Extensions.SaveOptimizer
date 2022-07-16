@@ -42,6 +42,12 @@ public class Firebird4DesignTimeFactory : IDesignTimeDbContextFactory<EntitiesCo
                 eb.Property(b => b.Id)
                     .HasAnnotation(FbAnnotationNames.ValueGenerationStrategy, FbValueGenerationStrategy.IdentityColumn);
             });
+
+            modelBuilder.Entity<FailingEntity>(eb =>
+            {
+                eb.Property(b => b.Id)
+                    .HasAnnotation(FbAnnotationNames.ValueGenerationStrategy, FbValueGenerationStrategy.IdentityColumn);
+            });
         }
 
         EntitiesContext.AdditionalBuilders.Add(Builder);

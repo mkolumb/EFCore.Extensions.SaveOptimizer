@@ -16,13 +16,13 @@ public abstract partial class BaseMiscTests
         // Arrange
         using DbContextWrapper db = ContextWrapperResolver();
 
-        await db.Context.AddAsync(ItemResolver(1));
+        await db.Context.AddAsync(ItemResolver(1)).ConfigureAwait(false);
 
         // Act
         Func<Task> result = () => db.SaveAsync(variant, null, 0);
 
         // Assert
-        await result.Should().ThrowExactlyAsync<ArgumentException>();
+        await result.Should().ThrowExactlyAsync<ArgumentException>().ConfigureAwait(false);
     }
 
     [SkippableTheory]

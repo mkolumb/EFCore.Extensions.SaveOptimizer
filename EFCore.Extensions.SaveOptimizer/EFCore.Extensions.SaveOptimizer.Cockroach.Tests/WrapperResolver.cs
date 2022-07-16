@@ -11,15 +11,15 @@ public static class WrapperResolver
     {
         CockroachDesignTimeFactory factory = new();
 
-        DbContextWrapper wrapper = new(factory, testOutputHelper);
-
-        wrapper.Context.Database.Migrate();
-
         const string truncateQuery = "truncate \"{0}\";";
 
         const string resetSequenceQuery = "select setval('\"{0}_{1}_seq\"', 1, false);";
 
-        wrapper.CleanDb(truncateQuery, resetSequenceQuery);
+        DbContextWrapper wrapper = new(factory, testOutputHelper, truncateQuery, resetSequenceQuery);
+
+        wrapper.Context.Database.Migrate();
+
+        wrapper.CleanDb();
 
         return wrapper;
     }

@@ -15,22 +15,23 @@ public abstract partial class BaseMiscTests
         // Arrange
         using DbContextWrapper db = ContextWrapperResolver();
 
-        NonRelatedEntity[] data = await InitialSeedAsync(db, variant, 10);
+        NonRelatedEntity[] data = await InitialSeedAsync(db, variant, 10).ConfigureAwait(false);
 
         var toAdd = new object[] { ItemResolver(11), ItemResolver(12), ItemResolver(13) };
         NonRelatedEntity toEdit = data[3];
         toEdit.SomeNullableStringProperty = "new-prop";
         NonRelatedEntity toRemove = data[6];
 
-        await db.Context.AddRangeAsync(toAdd);
+        await db.Context.AddRangeAsync(toAdd).ConfigureAwait(false);
         db.Context.Update(toEdit);
         db.Context.Remove(toRemove);
 
         // Act
-        await db.SaveAsync(variant, null);
+        await db.SaveAsync(variant, null).ConfigureAwait(false);
 
         NonRelatedEntity[] result =
-            await db.Context.NonRelatedEntities.OrderBy(x => x.SomeNonNullableIntProperty).ToArrayWithRetryAsync();
+            await db.Context.NonRelatedEntities.OrderBy(x => x.SomeNonNullableIntProperty).ToArrayWithRetryAsync()
+                .ConfigureAwait(false);
 
         var properties = result.Select(x => x.SomeNonNullableIntProperty).ToArray();
 

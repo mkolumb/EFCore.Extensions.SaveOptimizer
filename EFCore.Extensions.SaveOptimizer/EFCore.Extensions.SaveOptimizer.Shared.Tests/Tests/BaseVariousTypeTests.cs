@@ -64,12 +64,13 @@ public abstract partial class BaseMiscTests
             new() { Id = 143 }
         };
 
-        await db.Context.AddRangeAsync(data as IEnumerable<object>);
+        await db.Context.AddRangeAsync(data as IEnumerable<object>).ConfigureAwait(false);
 
         // Act
-        await db.SaveAsync(variant, null);
+        await db.SaveAsync(variant, null).ConfigureAwait(false);
 
-        VariousTypeEntity[] result = await db.Context.VariousTypeEntities.OrderBy(x => x.Id).ToArrayWithRetryAsync();
+        VariousTypeEntity[] result = await db.Context.VariousTypeEntities.OrderBy(x => x.Id).ToArrayWithRetryAsync()
+            .ConfigureAwait(false);
 
         // Assert
         result.Should().HaveCount(3);

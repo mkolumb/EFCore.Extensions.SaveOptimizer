@@ -33,17 +33,17 @@ public abstract class BaseInsertTests : BaseTests
         // Act
         for (var i = 0; i < count; i++)
         {
-            await db.Context.AddAsync(ItemResolver(i));
+            await db.Context.AddAsync(ItemResolver(i)).ConfigureAwait(false);
         }
 
-        await db.SaveAsync(variant, batchSize);
+        await db.SaveAsync(variant, batchSize).ConfigureAwait(false);
 
-        var result = await db.Context.NonRelatedEntities.CountAsync();
+        var result = await db.Context.NonRelatedEntities.CountAsync().ConfigureAwait(false);
 
         var properties = await db.Context.NonRelatedEntities
             .Select(x => x.SomeNonNullableStringProperty)
             .Distinct()
-            .ToArrayWithRetryAsync();
+            .ToArrayWithRetryAsync().ConfigureAwait(false);
 
         // Assert
         result.Should().Be(count);
@@ -59,9 +59,9 @@ public abstract class BaseInsertTests : BaseTests
         using DbContextWrapper db = ContextWrapperResolver();
 
         // Act
-        await db.SaveAsync(variant, null);
+        await db.SaveAsync(variant, null).ConfigureAwait(false);
 
-        var result = await db.Context.NonRelatedEntities.CountAsync();
+        var result = await db.Context.NonRelatedEntities.CountAsync().ConfigureAwait(false);
 
         // Assert
         result.Should().Be(0);
@@ -89,11 +89,11 @@ public abstract class BaseInsertTests : BaseTests
         };
 
         // Act
-        await db.Context.AddAsync(item);
+        await db.Context.AddAsync(item).ConfigureAwait(false);
 
-        await db.SaveAsync(variant, null);
+        await db.SaveAsync(variant, null).ConfigureAwait(false);
 
-        NonRelatedEntity result = await db.Context.NonRelatedEntities.FirstAsync();
+        NonRelatedEntity result = await db.Context.NonRelatedEntities.FirstAsync().ConfigureAwait(false);
 
         // Assert
         result.Should().NotBeNull();

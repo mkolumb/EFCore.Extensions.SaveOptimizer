@@ -19,7 +19,7 @@ public abstract class BaseDeleteBenchmark : BaseBenchmark
             throw new ArgumentNullException(nameof(Context));
         }
 
-        IReadOnlyList<NonRelatedEntity> items = Context.RetrieveDataAsync(Rows).GetAwaiter().GetResult();
+        IReadOnlyList<NonRelatedEntity> items = Context.RetrieveDataAsync(Rows).ConfigureAwait(false).GetAwaiter().GetResult();
 
         if (items.Count != Rows)
         {
@@ -40,6 +40,6 @@ public abstract class BaseDeleteBenchmark : BaseBenchmark
             throw new ArgumentNullException(nameof(Context));
         }
 
-        await Context.SaveAsync(Variant, Rows);
+        await Context.SaveAsync(Variant, Rows).ConfigureAwait(false);
     }
 }

@@ -11,6 +11,9 @@ public abstract partial class BaseMiscTests : BaseTests
 {
     public static IEnumerable<IEnumerable<object?>> BaseWriteTheoryData => SharedTheoryData.BaseWriteTheoryData;
 
+    public static IEnumerable<IEnumerable<object?>> TransactionTestTheoryData =>
+        SharedTheoryData.TransactionTestTheoryData;
+
     protected BaseMiscTests(ITestOutputHelper testOutputHelper,
         Func<ITestOutputHelper, DbContextWrapper> contextWrapperResolver)
         : base(testOutputHelper, contextWrapperResolver)
@@ -21,12 +24,13 @@ public abstract partial class BaseMiscTests : BaseTests
     {
         for (var i = 0; i < count; i++)
         {
-            await db.Context.AddAsync(ItemResolver(i));
+            await db.Context.AddAsync(ItemResolver(i)).ConfigureAwait(false);
         }
 
-        await db.SaveAsync(variant, null);
+        await db.SaveAsync(variant, null).ConfigureAwait(false);
 
-        return await db.Context.NonRelatedEntities.OrderBy(x => x.SomeNonNullableIntProperty).ToArrayWithRetryAsync();
+        return await db.Context.NonRelatedEntities.OrderBy(x => x.SomeNonNullableIntProperty).ToArrayWithRetryAsync()
+            .ConfigureAwait(false);
     }
 
     private static NonRelatedEntity[] InitialSeed(DbContextWrapper db, SaveVariant variant, int count)
@@ -55,4 +59,72 @@ public abstract partial class BaseMiscTests : BaseTests
             SomeNonNullableStringProperty = $"some-string-{i}",
             SomeNullableStringProperty = "other-string"
         };
+
+    private async Task RunAsync(int max, Func<Task> method)
+    {
+        var i = 0;
+
+        do
+        {
+            try
+            {
+                await method().ConfigureAwait(false);
+
+                return;
+            }
+            catch (Exception ex)
+            {
+                TestOutputHelper.WriteLineWithDate($"Retry number {i} {method.Method.Name}");
+
+                TestOutputHelper.WriteLineWithDate(ex.Message);
+
+                TestOutputHelper.WriteLineWithDate(ex.StackTrace);
+
+                i++;
+
+                if (i >= max)
+                {
+                    throw;
+                }
+
+                await Task.Delay(TimeSpan.FromSeconds(2)).ConfigureAwait(false);
+            }
+        } while (i < max);
+
+        throw new Exception("Unable to run method - something weird happened");
+    }
+
+    private void Run(int max, Action method)
+    {
+        var i = 0;
+
+        do
+        {
+            try
+            {
+                method();
+
+                return;
+            }
+            catch (Exception ex)
+            {
+                TestOutputHelper.WriteLineWithDate($"Retry number {i} {method.Method.Name}");
+
+                TestOutputHelper.WriteLineWithDate(ex.Message);
+
+                TestOutputHelper.WriteLineWithDate(ex.StackTrace);
+
+                i++;
+
+                if (i >= max)
+                {
+                    throw;
+                }
+
+                Task.Delay(TimeSpan.FromSeconds(2)).ConfigureAwait(false).GetAwaiter().GetResult();
+            }
+        } while (i < max);
+
+        throw new Exception("Unable to run method - something weird happened");
+    }
 }

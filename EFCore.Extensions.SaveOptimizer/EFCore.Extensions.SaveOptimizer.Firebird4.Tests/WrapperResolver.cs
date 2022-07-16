@@ -11,15 +11,15 @@ public static class WrapperResolver
     {
         Firebird4DesignTimeFactory factory = new();
 
-        DbContextWrapper wrapper = new(factory, testOutputHelper);
-
-        wrapper.Context.Database.Migrate();
-
         const string truncateQuery = "DELETE FROM \"{0}\";";
 
         const string resetSequenceQuery = "ALTER TABLE \"{0}\" ALTER COLUMN \"{1}\" RESTART WITH 1;";
 
-        wrapper.CleanDb(truncateQuery, resetSequenceQuery);
+        DbContextWrapper wrapper = new(factory, testOutputHelper, truncateQuery, resetSequenceQuery);
+
+        wrapper.Context.Database.Migrate();
+
+        wrapper.CleanDb();
 
         return wrapper;
     }

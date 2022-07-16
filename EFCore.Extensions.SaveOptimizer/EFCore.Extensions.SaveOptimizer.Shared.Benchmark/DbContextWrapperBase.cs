@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Runtime.CompilerServices;
 using BenchmarkDotNet.Loggers;
 using EFCore.Extensions.SaveOptimizer.Dapper;
 using EFCore.Extensions.SaveOptimizer.Model;
@@ -35,7 +36,7 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
         GC.SuppressFinalize(this);
     }
 
-    public async Task TruncateAsync() => await RunAsync(RunTry, TruncateBaseAsync);
+    public async Task TruncateAsync() => await RunAsync(RunTry, TruncateBaseAsync).ConfigureAwait(false);
 
     public async Task SeedAsync(long count, int repeat)
     {
@@ -51,37 +52,37 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
         {
             try
             {
-                await TrySeedAsync(count, repeat, IsolationLevel.ReadCommitted);
+                await TrySeedAsync(count, repeat, IsolationLevel.ReadCommitted).ConfigureAwait(false);
             }
             catch
             {
                 try
                 {
-                    await Task.Delay(TimeSpan.FromSeconds(delay));
+                    await Task.Delay(TimeSpan.FromSeconds(delay)).ConfigureAwait(false);
 
-                    await TrySeedAsync(count / 10, repeat * 10, IsolationLevel.ReadCommitted);
+                    await TrySeedAsync(count / 10, repeat * 10, IsolationLevel.ReadCommitted).ConfigureAwait(false);
                 }
                 catch
                 {
-                    await Task.Delay(TimeSpan.FromSeconds(delay));
+                    await Task.Delay(TimeSpan.FromSeconds(delay)).ConfigureAwait(false);
 
-                    await TrySeedAsync(count / 100, repeat * 100, IsolationLevel.ReadCommitted);
+                    await TrySeedAsync(count / 100, repeat * 100, IsolationLevel.ReadCommitted).ConfigureAwait(false);
                 }
             }
         }
 
-        await TruncateAsync();
+        await TruncateAsync().ConfigureAwait(false);
 
-        await RunAsync(RunTry, InternalSeed);
+        await RunAsync(RunTry, InternalSeed).ConfigureAwait(false);
 
-        await RunAsync(RunTry, () => TrySeedAsync(1, 1, IsolationLevel.Serializable));
+        await RunAsync(RunTry, () => TrySeedAsync(1, 1, IsolationLevel.Serializable)).ConfigureAwait(false);
     }
 
     public async Task SaveAsync(SaveVariant variant, long expectedRows)
     {
         try
         {
-            await RunAsync(RunTry, () => TrySaveAsync(variant, IsolationLevel.Serializable));
+            await RunAsync(RunTry, () => TrySaveAsync(variant, IsolationLevel.Serializable)).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -102,7 +103,7 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
 
             ConsoleLogger.Unicode.WriteLineWithDate(ex.StackTrace);
 
-            await Task.Delay(TimeSpan.FromSeconds(delay));
+            await Task.Delay(TimeSpan.FromSeconds(delay)).ConfigureAwait(false);
         }
 
         RecreateContext();
@@ -111,7 +112,7 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
     public async Task<IReadOnlyList<NonRelatedEntity>> RetrieveDataAsync(long count) =>
         await Context.NonRelatedEntities
             .Take((int)(count % int.MaxValue))
-            .ToArrayAsync();
+            .ToArrayAsync().ConfigureAwait(false);
 
     public NonRelatedEntity CreateItem(long i) => new()
     {
@@ -154,7 +155,7 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
                     throw;
                 }
 
-                await Task.Delay(TimeSpan.Zero);
+                await Task.Delay(TimeSpan.Zero).ConfigureAwait(false);
             }
         } while (i < max);
 
@@ -169,7 +170,7 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
 
         for (var j = 0; j < Math.Max(repeat, 1); j++)
         {
-            await TrySeedOnceAsync(Math.Max(count, 1), isolationLevel);
+            await TrySeedOnceAsync(Math.Max(count, 1), isolationLevel).ConfigureAwait(false);
         }
     }
 
@@ -183,18 +184,18 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
             {
                 NonRelatedEntity item = CreateItem(i);
 
-                await Context.AddAsync(item);
+                await Context.AddAsync(item).ConfigureAwait(false);
             }
 
-            await SeedSaveAsync(isolationLevel);
+            await SeedSaveAsync(isolationLevel).ConfigureAwait(false);
         }
 
-        await RunAsync(RunTry, InternalTrySeedOnce);
+        await RunAsync(RunTry, InternalTrySeedOnce).ConfigureAwait(false);
     }
 
     private async Task SeedSaveAsync(IsolationLevel isolationLevel)
     {
-        await RunAsync(RunTry, () => TrySaveAsync(SaveVariant.Optimized, isolationLevel));
+        await RunAsync(RunTry, () => TrySaveAsync(SaveVariant.Optimized, isolationLevel)).ConfigureAwait(false);
 
         RecreateContext();
     }
@@ -210,25 +211,26 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
             switch (variant)
             {
                 case SaveVariant.Optimized:
-                    await Context.SaveChangesOptimizedAsync(token);
+                    await Context.SaveChangesOptimizedAsync(token).ConfigureAwait(false);
                     break;
                 case SaveVariant.OptimizedDapper:
-                    await Context.SaveChangesDapperOptimizedAsync(token);
+                    await Context.SaveChangesDapperOptimizedAsync(token).ConfigureAwait(false);
                     break;
                 case SaveVariant.EfCore:
-                    await Context.SaveChangesAsync(token);
+                    await Context.SaveChangesAsync(token).ConfigureAwait(false);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(variant), variant, null);
             }
         }
 
-        await using IDbContextTransaction transaction =
-            await Context.Database.BeginTransactionAsync(isolationLevel, token);
+        IDbContextTransaction transaction =
+            await Context.Database.BeginTransactionAsync(isolationLevel, token).ConfigureAwait(false);
+        await using ConfiguredAsyncDisposable _ = transaction.ConfigureAwait(false);
 
-        await InternalSave();
+        await InternalSave().ConfigureAwait(false);
 
-        await transaction.CommitAsync(token);
+        await transaction.CommitAsync(token).ConfigureAwait(false);
     }
 
     private static DateTimeOffset? RemoveMilliseconds(DateTimeOffset x) =>

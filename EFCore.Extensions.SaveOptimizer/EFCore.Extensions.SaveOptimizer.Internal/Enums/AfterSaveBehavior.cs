@@ -3,7 +3,7 @@
 public enum AfterSaveBehavior
 {
     /// <summary>
-    /// It is default behavior, it will call ChangeTracker.Clear to prevent double save
+    /// It will call ChangeTracker.Clear
     /// </summary>
     ClearChanges,
 
@@ -18,7 +18,12 @@ public enum AfterSaveBehavior
     DetachSaved,
 
     /// <summary>
-    /// Do nothing
+    /// It will mark all temporary variables as permanent, also used when AcceptChanges behavior is set
+    /// </summary>
+    MarkTemporaryAsPermanent,
+
+    /// <summary>
+    /// It is default behavior, do nothing
     /// </summary>
     DoNothing
 }

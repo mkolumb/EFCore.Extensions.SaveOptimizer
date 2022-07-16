@@ -23,6 +23,19 @@ namespace EFCore.Extensions.SaveOptimizer.Model.SqlServer.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "FailingEntities",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Some = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FailingEntities", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "NonRelatedEntities",
                 columns: table => new
                 {
@@ -82,6 +95,9 @@ namespace EFCore.Extensions.SaveOptimizer.Model.SqlServer.Migrations
         {
             migrationBuilder.DropTable(
                 name: "AutoIncrementPrimaryKeyEntities");
+
+            migrationBuilder.DropTable(
+                name: "FailingEntities");
 
             migrationBuilder.DropTable(
                 name: "NonRelatedEntities");
