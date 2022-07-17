@@ -41,7 +41,9 @@ let testRun =
         let settingsPath = Path.combine dir "github.runsettings"
 
         let testConfiguration (defaults: DotNet.TestOptions) =
-            { defaults with Settings = Some(settingsPath) }
+            { defaults with
+                Settings = Some(settingsPath)
+                NoBuild = true }
 
         DotNet.test testConfiguration path
 
@@ -62,7 +64,10 @@ let buildRun =
     fun (path: string) ->
         Trace.log ("Running build: " + path)
 
-        DotNet.build (fun o -> o) path
+        let buildConfiguration (defaults: DotNet.BuildOptions) =
+            { defaults with Configuration = DotNet.Debug }
+
+        DotNet.build buildConfiguration path
 
 let packRun =
     fun (path: string) ->
