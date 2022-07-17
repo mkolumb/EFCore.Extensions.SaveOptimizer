@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using EFCore.Extensions.SaveOptimizer.Model.Enums;
 using Microsoft.EntityFrameworkCore;
 
-namespace EFCore.Extensions.SaveOptimizer.Model;
+namespace EFCore.Extensions.SaveOptimizer.Model.Entities;
 
 public class VariousTypeEntity
 {

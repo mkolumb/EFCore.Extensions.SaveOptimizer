@@ -2,7 +2,8 @@
 using System.Runtime.CompilerServices;
 using BenchmarkDotNet.Loggers;
 using EFCore.Extensions.SaveOptimizer.Dapper;
-using EFCore.Extensions.SaveOptimizer.Model;
+using EFCore.Extensions.SaveOptimizer.Model.Context;
+using EFCore.Extensions.SaveOptimizer.Model.Entities;
 using EFCore.Extensions.SaveOptimizer.Shared.Benchmark.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;

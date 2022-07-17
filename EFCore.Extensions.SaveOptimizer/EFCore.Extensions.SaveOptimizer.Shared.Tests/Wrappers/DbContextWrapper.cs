@@ -3,7 +3,9 @@ using EFCore.Extensions.SaveOptimizer.Dapper;
 using EFCore.Extensions.SaveOptimizer.Internal.Configuration;
 using EFCore.Extensions.SaveOptimizer.Internal.Enums;
 using EFCore.Extensions.SaveOptimizer.Internal.Models;
-using EFCore.Extensions.SaveOptimizer.Model;
+using EFCore.Extensions.SaveOptimizer.Model.Context;
+using EFCore.Extensions.SaveOptimizer.Model.Entities;
+using EFCore.Extensions.SaveOptimizer.Model.Factories;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests.Enums;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests.Extensions;
 using EFCore.Extensions.SaveOptimizer.TestLogger;
@@ -29,7 +31,7 @@ public sealed class DbContextWrapper : IDisposable
     public string[] EntitiesList { get; } =
     {
         nameof(EntitiesContext.NonRelatedEntities), nameof(EntitiesContext.AutoIncrementPrimaryKeyEntities),
-        nameof(EntitiesContext.VariousTypeEntities), nameof(EntitiesContext.FailingEntities)
+        nameof(EntitiesContext.VariousTypeEntities), nameof(EntitiesContext.FailingEntities), nameof(EntitiesContext.ValueConverterEntities)
     };
 
     public Dictionary<string, string> SequencesList { get; } = new()

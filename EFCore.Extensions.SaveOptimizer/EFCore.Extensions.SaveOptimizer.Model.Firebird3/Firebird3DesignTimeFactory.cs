@@ -1,4 +1,7 @@
-﻿using FirebirdSql.EntityFrameworkCore.Firebird.Metadata;
+﻿using EFCore.Extensions.SaveOptimizer.Model.Context;
+using EFCore.Extensions.SaveOptimizer.Model.Entities;
+using EFCore.Extensions.SaveOptimizer.Model.Factories;
+using FirebirdSql.EntityFrameworkCore.Firebird.Metadata;
 using FirebirdSql.EntityFrameworkCore.Firebird.Metadata.Internal;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;

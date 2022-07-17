@@ -1,6 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Loggers;
-using EFCore.Extensions.SaveOptimizer.Model;
+using EFCore.Extensions.SaveOptimizer.Model.Entities;
 
 namespace EFCore.Extensions.SaveOptimizer.Shared.Benchmark;
 

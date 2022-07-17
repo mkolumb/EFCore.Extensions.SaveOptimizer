@@ -68,6 +68,20 @@ namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMariaDb.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "ValueConverterEntities",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    SomeHalf = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ValueConverterEntities", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "VariousTypeEntities",
                 columns: table => new
                 {
@@ -114,6 +128,9 @@ namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMariaDb.Migrations
 
             migrationBuilder.DropTable(
                 name: "NonRelatedEntities");
+
+            migrationBuilder.DropTable(
+                name: "ValueConverterEntities");
 
             migrationBuilder.DropTable(
                 name: "VariousTypeEntities");

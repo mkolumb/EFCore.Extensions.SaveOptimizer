@@ -87,7 +87,7 @@ Please note it is not working exactly as SaveChanges, so you should verify it wo
 - [ ] Value generator
   - [x] On add
   - [ ] On update
-- [ ] Value converter
+- [x] Value converter
 - [x] .NET common types
 - [ ] Foreign keys
 - [ ] Inheritance

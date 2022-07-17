@@ -1,4 +1,5 @@
-﻿using EFCore.Extensions.SaveOptimizer.Model;
+﻿using EFCore.Extensions.SaveOptimizer.Model.Entities;
+using EFCore.Extensions.SaveOptimizer.Model.Enums;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests.Attributes;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests.Enums;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests.Extensions;

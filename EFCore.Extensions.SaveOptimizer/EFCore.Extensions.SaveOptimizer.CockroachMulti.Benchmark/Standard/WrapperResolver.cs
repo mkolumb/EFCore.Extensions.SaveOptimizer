@@ -1,5 +1,5 @@
 ﻿using EFCore.Extensions.SaveOptimizer.CockroachMulti.Benchmark.Specific;
-using EFCore.Extensions.SaveOptimizer.Model;
+using EFCore.Extensions.SaveOptimizer.Model.Context;
 using EFCore.Extensions.SaveOptimizer.Shared.Benchmark;
 using Microsoft.EntityFrameworkCore;
 
