@@ -26,7 +26,7 @@ public abstract class BaseDeleteTests : BaseTests
         // Arrange
         using DbContextWrapper db = ContextWrapperResolver();
 
-        NonRelatedEntity[] data = await InitialSeedAsync(db, variant, 10);
+        NonRelatedEntity[] data = await InitialSeedAsync(db, variant, 10).ConfigureAwait(false);
 
         var state = JsonConvert.SerializeObject(data);
 
@@ -37,10 +37,11 @@ public abstract class BaseDeleteTests : BaseTests
         }
 
         // Act
-        await db.SaveAsync(variant, null);
+        await db.SaveAsync(variant, null).ConfigureAwait(false);
 
         NonRelatedEntity[] result =
-            await db.Context.NonRelatedEntities.OrderBy(x => x.SomeNonNullableIntProperty).ToArrayWithRetryAsync();
+            await db.Context.NonRelatedEntities.OrderBy(x => x.SomeNonNullableIntProperty).ToArrayWithRetryAsync()
+                .ConfigureAwait(false);
 
         var newState = JsonConvert.SerializeObject(result);
 
@@ -57,15 +58,16 @@ public abstract class BaseDeleteTests : BaseTests
         // Arrange
         using DbContextWrapper db = ContextWrapperResolver();
 
-        NonRelatedEntity[] data = await InitialSeedAsync(db, variant, 3);
+        NonRelatedEntity[] data = await InitialSeedAsync(db, variant, 3).ConfigureAwait(false);
 
         db.Context.NonRelatedEntities.Remove(data[0]);
 
         // Act
-        await db.SaveAsync(variant, null);
+        await db.SaveAsync(variant, null).ConfigureAwait(false);
 
         NonRelatedEntity[] result =
-            await db.Context.NonRelatedEntities.OrderBy(x => x.SomeNonNullableIntProperty).ToArrayWithRetryAsync();
+            await db.Context.NonRelatedEntities.OrderBy(x => x.SomeNonNullableIntProperty).ToArrayWithRetryAsync()
+                .ConfigureAwait(false);
 
         // Assert
         result.Should().HaveCount(2);
@@ -80,7 +82,7 @@ public abstract class BaseDeleteTests : BaseTests
         // Arrange
         using DbContextWrapper db = ContextWrapperResolver();
 
-        NonRelatedEntity[] data = await InitialSeedAsync(db, variant, 15);
+        NonRelatedEntity[] data = await InitialSeedAsync(db, variant, 15).ConfigureAwait(false);
 
         for (var i = 0; i < 5; i++)
         {
@@ -88,10 +90,11 @@ public abstract class BaseDeleteTests : BaseTests
         }
 
         // Act
-        await db.SaveAsync(variant, null);
+        await db.SaveAsync(variant, null).ConfigureAwait(false);
 
         NonRelatedEntity[] result =
-            await db.Context.NonRelatedEntities.OrderBy(x => x.SomeNonNullableIntProperty).ToArrayWithRetryAsync();
+            await db.Context.NonRelatedEntities.OrderBy(x => x.SomeNonNullableIntProperty).ToArrayWithRetryAsync()
+                .ConfigureAwait(false);
 
         var nonNullableIntProperties = result.Select(x => x.SomeNonNullableIntProperty).ToArray();
 
@@ -185,12 +188,13 @@ public abstract class BaseDeleteTests : BaseTests
     {
         for (var i = 0; i < count; i++)
         {
-            await db.Context.AddAsync(ItemResolver(i));
+            await db.Context.AddAsync(ItemResolver(i)).ConfigureAwait(false);
         }
 
-        await db.SaveAsync(variant, null);
+        await db.SaveAsync(variant, null).ConfigureAwait(false);
 
-        return await db.Context.NonRelatedEntities.OrderBy(x => x.SomeNonNullableIntProperty).ToArrayWithRetryAsync();
+        return await db.Context.NonRelatedEntities.OrderBy(x => x.SomeNonNullableIntProperty).ToArrayWithRetryAsync()
+            .ConfigureAwait(false);
     }
 
     private static NonRelatedEntity[] InitialSeed(DbContextWrapper db, SaveVariant variant, int count)

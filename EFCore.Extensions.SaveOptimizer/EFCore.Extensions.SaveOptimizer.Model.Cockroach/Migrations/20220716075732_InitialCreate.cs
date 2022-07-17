@@ -24,6 +24,19 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Cockroach.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "FailingEntities",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Some = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FailingEntities", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "NonRelatedEntities",
                 columns: table => new
                 {
@@ -83,6 +96,9 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Cockroach.Migrations
         {
             migrationBuilder.DropTable(
                 name: "AutoIncrementPrimaryKeyEntities");
+
+            migrationBuilder.DropTable(
+                name: "FailingEntities");
 
             migrationBuilder.DropTable(
                 name: "NonRelatedEntities");

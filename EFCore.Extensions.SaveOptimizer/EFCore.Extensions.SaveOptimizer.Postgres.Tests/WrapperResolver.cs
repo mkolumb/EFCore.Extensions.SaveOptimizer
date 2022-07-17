@@ -11,13 +11,13 @@ public static class WrapperResolver
     {
         PostgresDesignTimeFactory factory = new();
 
-        DbContextWrapper wrapper = new(factory, testOutputHelper);
+        const string query = "truncate \"{0}\" RESTART IDENTITY;";
+
+        DbContextWrapper wrapper = new(factory, testOutputHelper, query);
 
         wrapper.Context.Database.Migrate();
 
-        const string query = "truncate \"{0}\" RESTART IDENTITY;";
-
-        wrapper.CleanDb(query);
+        wrapper.CleanDb();
 
         return wrapper;
     }

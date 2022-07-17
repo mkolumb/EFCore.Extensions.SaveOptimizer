@@ -1,5 +1,6 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Internal.Configuration;
 using EFCore.Extensions.SaveOptimizer.Internal.Factories;
+using EFCore.Extensions.SaveOptimizer.Internal.Models;
 using EFCore.Extensions.SaveOptimizer.Internal.Services;
 using EFCore.Extensions.SaveOptimizer.Services;
 using Microsoft.EntityFrameworkCore;
@@ -34,18 +35,20 @@ public static class DbContextExtensions
             queryExecutionConfiguratorService);
     }
 
-    public static int SaveChangesOptimized(this DbContext context) =>
+    public static IExecutionResultModel SaveChangesOptimized(this DbContext context) =>
         context.SaveChangesOptimized(null);
 
-    public static int SaveChangesOptimized(this DbContext context, QueryExecutionConfiguration? configuration) =>
+    public static IExecutionResultModel SaveChangesOptimized(this DbContext context,
+        QueryExecutionConfiguration? configuration) =>
         DbContextExecutorService.SaveChangesOptimized(context, configuration);
 
-    public static async Task<int> SaveChangesOptimizedAsync(this DbContext context,
+    public static async Task<IExecutionResultModel> SaveChangesOptimizedAsync(this DbContext context,
         CancellationToken cancellationToken = default) =>
-        await context.SaveChangesOptimizedAsync(null, cancellationToken);
+        await context.SaveChangesOptimizedAsync(null, cancellationToken).ConfigureAwait(false);
 
-    public static async Task<int> SaveChangesOptimizedAsync(this DbContext context,
+    public static async Task<IExecutionResultModel> SaveChangesOptimizedAsync(this DbContext context,
         QueryExecutionConfiguration? configuration,
         CancellationToken cancellationToken = default) =>
-        await DbContextExecutorService.SaveChangesOptimizedAsync(context, configuration, cancellationToken);
+        await DbContextExecutorService.SaveChangesOptimizedAsync(context, configuration, cancellationToken)
+            .ConfigureAwait(false);
 }

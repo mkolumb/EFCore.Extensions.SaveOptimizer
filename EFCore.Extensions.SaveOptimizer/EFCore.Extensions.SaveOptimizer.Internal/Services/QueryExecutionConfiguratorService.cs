@@ -39,7 +39,7 @@ public class QueryExecutionConfiguratorService : IQueryExecutionConfiguratorServ
 
         config.AutoTransactionEnabled ??= true;
 
-        config.AfterSaveBehavior ??= AfterSaveBehavior.ClearChanges;
+        config.AfterSaveBehavior ??= AfterSaveBehavior.DoNothing;
 
         config.AutoTransactionIsolationLevel ??= IsolationLevel.Serializable;
 

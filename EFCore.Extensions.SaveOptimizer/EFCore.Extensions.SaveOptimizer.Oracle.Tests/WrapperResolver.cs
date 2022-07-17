@@ -11,15 +11,15 @@ public static class WrapperResolver
     {
         OracleDesignTimeFactory factory = new();
 
-        DbContextWrapper wrapper = new(factory, testOutputHelper);
-
-        wrapper.Context.Database.Migrate();
-
         const string truncateQuery = "TRUNCATE TABLE \"{0}\";";
 
         const string resetSequenceQuery = "alter table \"{0}\" modify \"{1}\" generated always as identity restart start with 1;";
 
-        wrapper.CleanDb(truncateQuery, resetSequenceQuery);
+        DbContextWrapper wrapper = new(factory, testOutputHelper, truncateQuery, resetSequenceQuery);
+
+        wrapper.Context.Database.Migrate();
+
+        wrapper.CleanDb();
 
         return wrapper;
     }

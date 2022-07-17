@@ -7,7 +7,7 @@ public static class QueryableExtensions
     private const int RunTry = 10;
 
     public static async Task<T[]> ToArrayWithRetryAsync<T>(this IQueryable<T> source) =>
-        await RunAsync(RunTry, () => source.ToArrayAsync());
+        await RunAsync(RunTry, () => source.ToArrayAsync()).ConfigureAwait(false);
 
     public static T[] ToArrayWithRetry<T>(this IQueryable<T> source) => Run(RunTry, source.ToArray);
 

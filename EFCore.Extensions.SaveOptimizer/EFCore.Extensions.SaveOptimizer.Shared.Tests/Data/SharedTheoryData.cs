@@ -1,4 +1,5 @@
-﻿using EFCore.Extensions.SaveOptimizer.Shared.Tests.Enums;
+﻿using EFCore.Extensions.SaveOptimizer.Internal.Enums;
+using EFCore.Extensions.SaveOptimizer.Shared.Tests.Enums;
 
 namespace EFCore.Extensions.SaveOptimizer.Shared.Tests.Data;
 
@@ -12,6 +13,28 @@ public static class SharedTheoryData
 
     private static IEnumerable<string> DisabledFullLoadProviders =>
         TestDataHelper.GetValues(TestFullLoadDisabledProviders);
+
+    public static IEnumerable<IEnumerable<object>> TransactionTestTheoryData
+    {
+        get
+        {
+            SaveVariant[] frameworks = { SaveVariant.EfCore, SaveVariant.Optimized, SaveVariant.OptimizedDapper };
+
+            AfterSaveBehavior[] behaviors =
+            {
+                AfterSaveBehavior.MarkTemporaryAsPermanent, AfterSaveBehavior.AcceptChanges,
+                AfterSaveBehavior.ClearChanges, AfterSaveBehavior.DetachSaved, AfterSaveBehavior.DoNothing
+            };
+
+            foreach (SaveVariant framework in frameworks)
+            {
+                foreach (AfterSaveBehavior behavior in behaviors)
+                {
+                    yield return new object[] { framework, behavior };
+                }
+            }
+        }
+    }
 
     public static IEnumerable<IEnumerable<object>> BaseWriteTheoryData
     {
@@ -29,7 +52,7 @@ public static class SharedTheoryData
             {
                 foreach (SaveVariant transaction in transactions)
                 {
-                    yield return new object[] { framework | SaveVariant.Recreate | transaction };
+                    yield return new object[] { framework | transaction };
                 }
             }
         }
@@ -86,15 +109,9 @@ public static class SharedTheoryData
 
         foreach (var counter in heavyLoadCounters)
         {
-            yield return new object?[]
-            {
-                SaveVariant.Optimized | SaveVariant.Recreate | SaveVariant.WithTransaction, counter, counter
-            };
+            yield return new object?[] { SaveVariant.Optimized | SaveVariant.WithTransaction, counter, counter };
 
-            yield return new object?[]
-            {
-                SaveVariant.OptimizedDapper | SaveVariant.Recreate | SaveVariant.WithTransaction, counter, counter
-            };
+            yield return new object?[] { SaveVariant.OptimizedDapper | SaveVariant.WithTransaction, counter, counter };
         }
     }
 }

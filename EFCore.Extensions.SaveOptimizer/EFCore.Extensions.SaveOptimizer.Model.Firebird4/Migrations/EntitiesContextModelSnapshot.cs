@@ -36,6 +36,22 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Firebird4.Migrations
                     b.ToTable("AutoIncrementPrimaryKeyEntities");
                 });
 
+            modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.FailingEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasAnnotation("Fb:ValueGenerationStrategy", FbValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Some")
+                        .IsRequired()
+                        .HasColumnType("BLOB SUB_TYPE TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FailingEntities");
+                });
+
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.NonRelatedEntity", b =>
                 {
                     b.Property<Guid>("NonRelatedEntityId")

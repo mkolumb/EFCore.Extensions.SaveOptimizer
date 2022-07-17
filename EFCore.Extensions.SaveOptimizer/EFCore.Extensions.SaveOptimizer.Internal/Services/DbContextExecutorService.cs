@@ -3,7 +3,6 @@ using EFCore.Extensions.SaveOptimizer.Internal.Configuration;
 using EFCore.Extensions.SaveOptimizer.Internal.Enums;
 using EFCore.Extensions.SaveOptimizer.Internal.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace EFCore.Extensions.SaveOptimizer.Internal.Services;
@@ -23,7 +22,7 @@ public class DbContextExecutorService : IDbContextExecutorService
         _queryExecutionConfiguratorService = queryExecutionConfiguratorService;
     }
 
-    public int SaveChangesOptimized(DbContext context, QueryExecutionConfiguration? configuration)
+    public IExecutionResultModel SaveChangesOptimized(DbContext context, QueryExecutionConfiguration? configuration)
     {
         configuration = Init(context, configuration);
 
@@ -81,9 +80,11 @@ public class DbContextExecutorService : IDbContextExecutorService
                 transaction.Commit();
             }
 
-            PrepareAfterSave(queries.Entries, configuration, context);
+            ExecutionResultModel result = new(rows, queries, context);
 
-            return rows;
+            result.ProcessAfterSave(configuration.AfterSaveBehavior);
+
+            return result;
         }
         catch
         {
@@ -103,7 +104,7 @@ public class DbContextExecutorService : IDbContextExecutorService
         }
     }
 
-    public async Task<int> SaveChangesOptimizedAsync(DbContext context,
+    public async Task<IExecutionResultModel> SaveChangesOptimizedAsync(DbContext context,
         QueryExecutionConfiguration? configuration,
         CancellationToken cancellationToken)
     {
@@ -166,9 +167,11 @@ public class DbContextExecutorService : IDbContextExecutorService
                 await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
             }
 
-            PrepareAfterSave(queries.Entries, configuration, context);
+            ExecutionResultModel result = new(rows, queries, context);
 
-            return rows;
+            result.ProcessAfterSave(configuration.AfterSaveBehavior);
+
+            return result;
         }
         catch
         {
@@ -197,54 +200,5 @@ public class DbContextExecutorService : IDbContextExecutorService
         _queryPreparerService.Init(context);
 
         return configuration;
-    }
-
-    private static void PrepareAfterSave(IEnumerable<EntityEntry> entries,
-        QueryExecutionConfiguration configuration,
-        DbContext context)
-    {
-        // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
-        switch (configuration.AfterSaveBehavior)
-        {
-            case AfterSaveBehavior.ClearChanges:
-                ClearChanges(context);
-                return;
-            case AfterSaveBehavior.DetachSaved:
-                DetachEntries(entries);
-                return;
-            case AfterSaveBehavior.AcceptChanges:
-                FixTemporaryProperties(entries);
-                AcceptChanges(context);
-                return;
-            default:
-                FixTemporaryProperties(entries);
-                return;
-        }
-    }
-
-    private static void ClearChanges(DbContext context) => context.ChangeTracker.Clear();
-
-    private static void AcceptChanges(DbContext context) => context.ChangeTracker.AcceptAllChanges();
-
-    private static void DetachEntries(IEnumerable<EntityEntry> entries)
-    {
-        foreach (EntityEntry entry in entries)
-        {
-            entry.State = EntityState.Detached;
-        }
-    }
-
-    private static void FixTemporaryProperties(IEnumerable<EntityEntry> entries)
-    {
-        foreach (EntityEntry entry in entries)
-        {
-            foreach (PropertyEntry property in entry.Properties)
-            {
-                if (property.IsTemporary)
-                {
-                    property.IsTemporary = false;
-                }
-            }
-        }
     }
 }

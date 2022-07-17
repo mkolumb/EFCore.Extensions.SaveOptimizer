@@ -16,7 +16,7 @@ public class DbContextWrapper : DbContextWrapperBase
         {
             var query = $"truncate `{entity}`;";
 
-            await Context.Database.ExecuteSqlRawAsync(query);
+            await Context.Database.ExecuteSqlRawAsync(query).ConfigureAwait(false);
         }
     }
 }

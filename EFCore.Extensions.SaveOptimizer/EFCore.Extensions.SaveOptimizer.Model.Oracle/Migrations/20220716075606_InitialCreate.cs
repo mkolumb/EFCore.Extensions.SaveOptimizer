@@ -23,6 +23,19 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Oracle.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "FailingEntities",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "NUMBER(10)", nullable: false)
+                        .Annotation("Oracle:Identity", "START WITH 1 INCREMENT BY 1"),
+                    Some = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FailingEntities", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "NonRelatedEntities",
                 columns: table => new
                 {
@@ -82,6 +95,9 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Oracle.Migrations
         {
             migrationBuilder.DropTable(
                 name: "AutoIncrementPrimaryKeyEntities");
+
+            migrationBuilder.DropTable(
+                name: "FailingEntities");
 
             migrationBuilder.DropTable(
                 name: "NonRelatedEntities");

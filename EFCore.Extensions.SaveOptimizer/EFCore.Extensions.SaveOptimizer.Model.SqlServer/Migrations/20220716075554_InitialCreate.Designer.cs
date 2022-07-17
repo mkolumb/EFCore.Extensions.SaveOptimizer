@@ -3,15 +3,16 @@ using System;
 using EFCore.Extensions.SaveOptimizer.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMariaDb.Migrations
+namespace EFCore.Extensions.SaveOptimizer.Model.SqlServer.Migrations
 {
     [DbContext(typeof(EntitiesContext))]
-    [Migration("20220716000218_InitialCreate")]
+    [Migration("20220716075554_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -19,7 +20,9 @@ namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMariaDb.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "6.0.0")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.AutoIncrementPrimaryKeyEntity", b =>
                 {
@@ -27,31 +30,50 @@ namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMariaDb.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
                     b.Property<string>("Some")
-                        .HasColumnType("longtext");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.ToTable("AutoIncrementPrimaryKeyEntities");
                 });
 
+            modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.FailingEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Some")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FailingEntities");
+                });
+
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.NonRelatedEntity", b =>
                 {
                     b.Property<Guid>("NonRelatedEntityId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTimeOffset?>("ConcurrencyToken")
                         .IsConcurrencyToken()
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<bool?>("SomeNonNullableBooleanProperty")
                         .IsRequired()
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("bit");
 
                     b.Property<DateTimeOffset?>("SomeNonNullableDateTimeProperty")
                         .IsRequired()
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<decimal?>("SomeNonNullableDecimalProperty")
                         .IsRequired()
@@ -64,10 +86,10 @@ namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMariaDb.Migrations
 
                     b.Property<string>("SomeNonNullableStringProperty")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset?>("SomeNullableDateTimeProperty")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<decimal?>("SomeNullableDecimalProperty")
                         .HasPrecision(12, 6)
@@ -77,7 +99,7 @@ namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMariaDb.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("SomeNullableStringProperty")
-                        .HasColumnType("longtext");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("NonRelatedEntityId");
 
@@ -92,34 +114,34 @@ namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMariaDb.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool?>("SomeBool")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("bit");
 
                     b.Property<byte?>("SomeByte")
-                        .HasColumnType("tinyint unsigned");
+                        .HasColumnType("tinyint");
 
                     b.Property<DateTime?>("SomeDateTime")
                         .HasPrecision(5)
-                        .HasColumnType("datetime(5)");
+                        .HasColumnType("datetime2(5)");
 
                     b.Property<DateTimeOffset?>("SomeDateTimeOffset")
                         .HasPrecision(5)
-                        .HasColumnType("datetime(5)");
+                        .HasColumnType("datetimeoffset(5)");
 
                     b.Property<decimal?>("SomeDecimal")
                         .HasPrecision(12, 6)
                         .HasColumnType("decimal(12,6)");
 
                     b.Property<double?>("SomeDouble")
-                        .HasColumnType("double");
+                        .HasColumnType("float");
 
                     b.Property<int?>("SomeEnum")
                         .HasColumnType("int");
 
                     b.Property<float?>("SomeFloat")
-                        .HasColumnType("float");
+                        .HasColumnType("real");
 
                     b.Property<Guid?>("SomeGuid")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int?>("SomeInt")
                         .HasColumnType("int");
@@ -130,24 +152,24 @@ namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMariaDb.Migrations
                     b.Property<short?>("SomeShort")
                         .HasColumnType("smallint");
 
-                    b.Property<sbyte?>("SomeSignedByte")
-                        .HasColumnType("tinyint");
+                    b.Property<short?>("SomeSignedByte")
+                        .HasColumnType("smallint");
 
                     b.Property<string>("SomeString")
-                        .HasColumnType("longtext");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<TimeSpan?>("SomeTimeSpan")
                         .HasPrecision(5)
-                        .HasColumnType("time(5)");
+                        .HasColumnType("time");
 
-                    b.Property<uint?>("SomeUnsignedInt")
-                        .HasColumnType("int unsigned");
+                    b.Property<long?>("SomeUnsignedInt")
+                        .HasColumnType("bigint");
 
-                    b.Property<ulong?>("SomeUnsignedLong")
-                        .HasColumnType("bigint unsigned");
+                    b.Property<decimal?>("SomeUnsignedLong")
+                        .HasColumnType("decimal(20,0)");
 
-                    b.Property<ushort?>("SomeUnsignedShort")
-                        .HasColumnType("smallint unsigned");
+                    b.Property<int?>("SomeUnsignedShort")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

@@ -7,7 +7,6 @@ public enum SaveVariant
     Optimized = 1,
     OptimizedDapper = 2,
     EfCore = 4,
-    Recreate = 8,
-    WithTransaction = 16,
-    NoAutoTransaction = 32
+    WithTransaction = 8,
+    NoAutoTransaction = 16
 }

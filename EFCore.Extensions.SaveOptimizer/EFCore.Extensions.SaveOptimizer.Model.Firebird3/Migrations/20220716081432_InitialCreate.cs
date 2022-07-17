@@ -24,6 +24,19 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Firebird3.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "FailingEntities",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Fb:ValueGenerationStrategy", FbValueGenerationStrategy.IdentityColumn),
+                    Some = table.Column<string>(type: "BLOB SUB_TYPE TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FailingEntities", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "NonRelatedEntities",
                 columns: table => new
                 {
@@ -83,6 +96,9 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Firebird3.Migrations
         {
             migrationBuilder.DropTable(
                 name: "AutoIncrementPrimaryKeyEntities");
+
+            migrationBuilder.DropTable(
+                name: "FailingEntities");
 
             migrationBuilder.DropTable(
                 name: "NonRelatedEntities");

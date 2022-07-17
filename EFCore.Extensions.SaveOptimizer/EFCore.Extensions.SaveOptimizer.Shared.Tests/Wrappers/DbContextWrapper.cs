@@ -2,6 +2,7 @@
 using EFCore.Extensions.SaveOptimizer.Dapper;
 using EFCore.Extensions.SaveOptimizer.Internal.Configuration;
 using EFCore.Extensions.SaveOptimizer.Internal.Enums;
+using EFCore.Extensions.SaveOptimizer.Internal.Models;
 using EFCore.Extensions.SaveOptimizer.Model;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests.Enums;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests.Extensions;
@@ -20,23 +21,29 @@ public sealed class DbContextWrapper : IDisposable
     private readonly ITestTimeDbContextFactory<EntitiesContext> _factory;
     private readonly ILogger _logger;
     private readonly ILoggerFactory _loggerFactory;
+    private readonly string? _resetSequenceFormat;
+    private readonly string? _truncateFormat;
 
     public EntitiesContext Context { get; private set; }
 
     public string[] EntitiesList { get; } =
     {
         nameof(EntitiesContext.NonRelatedEntities), nameof(EntitiesContext.AutoIncrementPrimaryKeyEntities),
-        nameof(EntitiesContext.VariousTypeEntities)
+        nameof(EntitiesContext.VariousTypeEntities), nameof(EntitiesContext.FailingEntities)
     };
 
     public Dictionary<string, string> SequencesList { get; } = new()
     {
-        { nameof(EntitiesContext.AutoIncrementPrimaryKeyEntities), nameof(AutoIncrementPrimaryKeyEntity.Id) }
+        { nameof(EntitiesContext.AutoIncrementPrimaryKeyEntities), nameof(AutoIncrementPrimaryKeyEntity.Id) },
+        { nameof(EntitiesContext.FailingEntities), nameof(FailingEntity.Id) }
     };
 
-    public DbContextWrapper(ITestTimeDbContextFactory<EntitiesContext> factory, ITestOutputHelper testOutputHelper)
+    public DbContextWrapper(ITestTimeDbContextFactory<EntitiesContext> factory, ITestOutputHelper testOutputHelper,
+        string? truncateFormat = null, string? resetSequenceFormat = null)
     {
         _factory = factory;
+        _truncateFormat = truncateFormat;
+        _resetSequenceFormat = resetSequenceFormat;
         _loggerFactory = new LoggerFactory(new[] { new TestLoggerProvider(testOutputHelper, LogLevel.Warning) });
 
         Context = _factory.CreateDbContext(Array.Empty<string>(), _loggerFactory);
@@ -57,16 +64,17 @@ public sealed class DbContextWrapper : IDisposable
             configuration.AutoTransactionEnabled = false;
         }
 
-        configuration.AfterSaveBehavior = variant.HasFlag(SaveVariant.WithTransaction)
-            ? AfterSaveBehavior.DoNothing
-            : AfterSaveBehavior.AcceptChanges;
+        if (!variant.HasFlag(SaveVariant.WithTransaction))
+        {
+            configuration.AfterSaveBehavior = AfterSaveBehavior.AcceptChanges;
+        }
 
         return configuration;
     }
 
-    public void RecreateContext()
+    public void RecreateContext(string? connectionString = null)
     {
-        var connectionString = Context.Database.GetConnectionString();
+        connectionString ??= Context.Database.GetConnectionString();
 
         if (connectionString == null)
         {
@@ -82,29 +90,29 @@ public sealed class DbContextWrapper : IDisposable
     {
         await RunAsync(retries, () => TrySaveAsync(variant, batchSize)).ConfigureAwait(false);
 
-        if (variant.HasFlag(SaveVariant.Recreate))
-        {
-            RecreateContext();
-        }
+        RecreateContext();
     }
 
-    public void CleanDb(string truncateFormat, string? resetSequenceFormat = null)
+    public void CleanDb()
     {
-        foreach (var entity in EntitiesList)
+        if (_truncateFormat != null)
         {
-            var query = string.Format(truncateFormat, entity);
+            foreach (var entity in EntitiesList)
+            {
+                var query = string.Format(_truncateFormat, entity);
 
-            Run(RunTry, () => Context.Database.ExecuteSqlRaw(query));
+                Run(RunTry, () => Context.Database.ExecuteSqlRaw(query));
+            }
         }
 
-        if (resetSequenceFormat == null)
+        if (_resetSequenceFormat == null)
         {
             return;
         }
 
         foreach (var (table, column) in SequencesList)
         {
-            var query = string.Format(resetSequenceFormat, table, column);
+            var query = string.Format(_resetSequenceFormat, table, column);
 
             Run(RunTry, () => Context.Database.ExecuteSqlRaw(query));
         }
@@ -114,23 +122,6 @@ public sealed class DbContextWrapper : IDisposable
     {
         QueryExecutionConfiguration configuration = GetConfig(variant, batchSize);
 
-        async Task InternalSave()
-        {
-            if (variant.HasFlag(SaveVariant.Optimized))
-            {
-                await Context.SaveChangesOptimizedAsync(configuration).ConfigureAwait(false);
-            }
-            else if (variant.HasFlag(SaveVariant.OptimizedDapper))
-            {
-                await Context.SaveChangesDapperOptimizedAsync(configuration).ConfigureAwait(false);
-            }
-            else if (variant.HasFlag(SaveVariant.EfCore))
-            {
-                await Context.SaveChangesAsync(configuration.AfterSaveBehavior == AfterSaveBehavior.AcceptChanges)
-                    .ConfigureAwait(false);
-            }
-        }
-
         if (variant.HasFlag(SaveVariant.WithTransaction))
         {
             IDbContextTransaction transaction =
@@ -138,11 +129,11 @@ public sealed class DbContextWrapper : IDisposable
 
             try
             {
-                await InternalSave().ConfigureAwait(false);
+                IExecutionResultModel result = await SaveChangesAsync(variant, configuration).ConfigureAwait(false);
 
                 await transaction.CommitAsync().ConfigureAwait(false);
 
-                Context.ChangeTracker.AcceptAllChanges();
+                result.ProcessAfterSave(AfterSaveBehavior.AcceptChanges);
             }
             catch (Exception ex)
             {
@@ -163,8 +154,34 @@ public sealed class DbContextWrapper : IDisposable
         }
         else
         {
-            await InternalSave().ConfigureAwait(false);
+            await SaveChangesAsync(variant, configuration).ConfigureAwait(false);
         }
+    }
+
+    public async Task<IExecutionResultModel> SaveChangesAsync(SaveVariant variant,
+        QueryExecutionConfiguration configuration)
+    {
+        if (variant.HasFlag(SaveVariant.Optimized))
+        {
+            return await Context.SaveChangesOptimizedAsync(configuration).ConfigureAwait(false);
+        }
+
+        if (variant.HasFlag(SaveVariant.OptimizedDapper))
+        {
+            return await Context.SaveChangesDapperOptimizedAsync(configuration).ConfigureAwait(false);
+        }
+
+        // ReSharper disable once InvertIf
+        if (variant.HasFlag(SaveVariant.EfCore))
+        {
+            var rows = await Context
+                .SaveChangesAsync(configuration.AfterSaveBehavior == AfterSaveBehavior.AcceptChanges)
+                .ConfigureAwait(false);
+
+            return new ExecutionResultModel(rows, null, Context);
+        }
+
+        throw new Exception("Unexpected variant exception");
     }
 
     private async Task RunAsync(int max, Func<Task> method)
@@ -205,31 +222,12 @@ public sealed class DbContextWrapper : IDisposable
     {
         Run(retries, () => TrySave(variant, batchSize));
 
-        if (variant.HasFlag(SaveVariant.Recreate))
-        {
-            RecreateContext();
-        }
+        RecreateContext();
     }
 
     private void TrySave(SaveVariant variant, int? batchSize)
     {
         QueryExecutionConfiguration configuration = GetConfig(variant, batchSize);
-
-        void InternalSave()
-        {
-            if (variant.HasFlag(SaveVariant.Optimized))
-            {
-                Context.SaveChangesOptimized(configuration);
-            }
-            else if (variant.HasFlag(SaveVariant.OptimizedDapper))
-            {
-                Context.SaveChangesDapperOptimized(configuration);
-            }
-            else if (variant.HasFlag(SaveVariant.EfCore))
-            {
-                Context.SaveChanges(configuration.AfterSaveBehavior == AfterSaveBehavior.AcceptChanges);
-            }
-        }
 
         if (variant.HasFlag(SaveVariant.WithTransaction))
         {
@@ -237,11 +235,11 @@ public sealed class DbContextWrapper : IDisposable
 
             try
             {
-                InternalSave();
+                IExecutionResultModel result = SaveChanges(variant, configuration);
 
                 transaction.Commit();
 
-                Context.ChangeTracker.AcceptAllChanges();
+                result.ProcessAfterSave(AfterSaveBehavior.AcceptChanges);
             }
             catch (Exception ex)
             {
@@ -262,8 +260,31 @@ public sealed class DbContextWrapper : IDisposable
         }
         else
         {
-            InternalSave();
+            SaveChanges(variant, configuration);
         }
+    }
+
+    public IExecutionResultModel SaveChanges(SaveVariant variant, QueryExecutionConfiguration configuration)
+    {
+        if (variant.HasFlag(SaveVariant.Optimized))
+        {
+            return Context.SaveChangesOptimized(configuration);
+        }
+
+        if (variant.HasFlag(SaveVariant.OptimizedDapper))
+        {
+            return Context.SaveChangesDapperOptimized(configuration);
+        }
+
+        // ReSharper disable once InvertIf
+        if (variant.HasFlag(SaveVariant.EfCore))
+        {
+            var rows = Context.SaveChanges(configuration.AfterSaveBehavior == AfterSaveBehavior.AcceptChanges);
+
+            return new ExecutionResultModel(rows, null, Context);
+        }
+
+        throw new Exception("Unexpected variant exception");
     }
 
     private void Run(int max, Action method)

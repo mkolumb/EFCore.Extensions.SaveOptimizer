@@ -5,79 +5,101 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Oracle.EntityFrameworkCore.Metadata;
 
 #nullable disable
 
-namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMySql.Migrations
+namespace EFCore.Extensions.SaveOptimizer.Model.Oracle.Migrations
 {
     [DbContext(typeof(EntitiesContext))]
-    [Migration("20220716000145_InitialCreate")]
+    [Migration("20220716075606_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.0")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+                .HasAnnotation("ProductVersion", "6.0.3")
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+
+            OracleModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.AutoIncrementPrimaryKeyEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("NUMBER(10)");
+
+                    OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Some")
-                        .HasColumnType("longtext");
+                        .HasColumnType("NVARCHAR2(2000)");
 
                     b.HasKey("Id");
 
                     b.ToTable("AutoIncrementPrimaryKeyEntities");
                 });
 
+            modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.FailingEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("NUMBER(10)");
+
+                    OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Some")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR2(2000)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FailingEntities");
+                });
+
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.NonRelatedEntity", b =>
                 {
                     b.Property<Guid>("NonRelatedEntityId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("RAW(16)");
 
                     b.Property<DateTimeOffset?>("ConcurrencyToken")
                         .IsConcurrencyToken()
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("TIMESTAMP(7) WITH TIME ZONE");
 
                     b.Property<bool?>("SomeNonNullableBooleanProperty")
                         .IsRequired()
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("NUMBER(1)");
 
                     b.Property<DateTimeOffset?>("SomeNonNullableDateTimeProperty")
                         .IsRequired()
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("TIMESTAMP(7) WITH TIME ZONE");
 
                     b.Property<decimal?>("SomeNonNullableDecimalProperty")
                         .IsRequired()
                         .HasPrecision(12, 6)
-                        .HasColumnType("decimal(12,6)");
+                        .HasColumnType("DECIMAL(12,6)");
 
                     b.Property<int?>("SomeNonNullableIntProperty")
                         .IsRequired()
-                        .HasColumnType("int");
+                        .HasColumnType("NUMBER(10)");
 
                     b.Property<string>("SomeNonNullableStringProperty")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("NVARCHAR2(2000)");
 
                     b.Property<DateTimeOffset?>("SomeNullableDateTimeProperty")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("TIMESTAMP(7) WITH TIME ZONE");
 
                     b.Property<decimal?>("SomeNullableDecimalProperty")
                         .HasPrecision(12, 6)
-                        .HasColumnType("decimal(12,6)");
+                        .HasColumnType("DECIMAL(12,6)");
 
                     b.Property<int?>("SomeNullableIntProperty")
-                        .HasColumnType("int");
+                        .HasColumnType("NUMBER(10)");
 
                     b.Property<string>("SomeNullableStringProperty")
-                        .HasColumnType("longtext");
+                        .HasColumnType("NVARCHAR2(2000)");
 
                     b.HasKey("NonRelatedEntityId");
 
@@ -89,65 +111,65 @@ namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMySql.Migrations
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.VariousTypeEntity", b =>
                 {
                     b.Property<int>("Id")
-                        .HasColumnType("int");
+                        .HasColumnType("NUMBER(10)");
 
                     b.Property<bool?>("SomeBool")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("NUMBER(1)");
 
                     b.Property<byte?>("SomeByte")
-                        .HasColumnType("tinyint unsigned");
+                        .HasColumnType("NUMBER(3)");
 
                     b.Property<DateTime?>("SomeDateTime")
                         .HasPrecision(5)
-                        .HasColumnType("datetime(5)");
+                        .HasColumnType("TIMESTAMP(5)");
 
                     b.Property<DateTimeOffset?>("SomeDateTimeOffset")
                         .HasPrecision(5)
-                        .HasColumnType("datetime(5)");
+                        .HasColumnType("TIMESTAMP(7) WITH TIME ZONE");
 
                     b.Property<decimal?>("SomeDecimal")
                         .HasPrecision(12, 6)
-                        .HasColumnType("decimal(12,6)");
+                        .HasColumnType("DECIMAL(12,6)");
 
                     b.Property<double?>("SomeDouble")
-                        .HasColumnType("double");
+                        .HasColumnType("BINARY_DOUBLE");
 
                     b.Property<int?>("SomeEnum")
-                        .HasColumnType("int");
+                        .HasColumnType("NUMBER(10)");
 
                     b.Property<float?>("SomeFloat")
-                        .HasColumnType("float");
+                        .HasColumnType("BINARY_FLOAT");
 
                     b.Property<Guid?>("SomeGuid")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("RAW(16)");
 
                     b.Property<int?>("SomeInt")
-                        .HasColumnType("int");
+                        .HasColumnType("NUMBER(10)");
 
                     b.Property<long?>("SomeLong")
-                        .HasColumnType("bigint");
+                        .HasColumnType("NUMBER(19)");
 
                     b.Property<short?>("SomeShort")
-                        .HasColumnType("smallint");
+                        .HasColumnType("NUMBER(5)");
 
-                    b.Property<sbyte?>("SomeSignedByte")
-                        .HasColumnType("tinyint");
+                    b.Property<short?>("SomeSignedByte")
+                        .HasColumnType("NUMBER(3)");
 
                     b.Property<string>("SomeString")
-                        .HasColumnType("longtext");
+                        .HasColumnType("NVARCHAR2(2000)");
 
                     b.Property<TimeSpan?>("SomeTimeSpan")
                         .HasPrecision(5)
-                        .HasColumnType("time(5)");
+                        .HasColumnType("INTERVAL DAY(8) TO SECOND(7)");
 
-                    b.Property<uint?>("SomeUnsignedInt")
-                        .HasColumnType("int unsigned");
+                    b.Property<long?>("SomeUnsignedInt")
+                        .HasColumnType("NUMBER(10)");
 
-                    b.Property<ulong?>("SomeUnsignedLong")
-                        .HasColumnType("bigint unsigned");
+                    b.Property<decimal?>("SomeUnsignedLong")
+                        .HasColumnType("NUMBER(20)");
 
-                    b.Property<ushort?>("SomeUnsignedShort")
-                        .HasColumnType("smallint unsigned");
+                    b.Property<int?>("SomeUnsignedShort")
+                        .HasColumnType("NUMBER(5)");
 
                     b.HasKey("Id");
 

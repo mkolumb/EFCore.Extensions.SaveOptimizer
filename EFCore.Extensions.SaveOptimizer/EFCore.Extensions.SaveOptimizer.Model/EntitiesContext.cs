@@ -14,6 +14,8 @@ public class EntitiesContext : DbContext
 
     public DbSet<VariousTypeEntity> VariousTypeEntities { get; set; }
 
+    public DbSet<FailingEntity> FailingEntities { get; set; }
+
     public EntitiesContext(DbContextOptions<EntitiesContext> options)
         : base(options)
     {

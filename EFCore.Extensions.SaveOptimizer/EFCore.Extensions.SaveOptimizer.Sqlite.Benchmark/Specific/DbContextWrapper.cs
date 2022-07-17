@@ -16,7 +16,7 @@ public class DbContextWrapper : DbContextWrapperBase
         {
             var query = $"DELETE FROM {entity}";
 
-            await Context.Database.ExecuteSqlRawAsync(query);
+            await Context.Database.ExecuteSqlRawAsync(query).ConfigureAwait(false);
         }
     }
 }
