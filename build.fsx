@@ -88,7 +88,7 @@ let packRun =
 
         DotNet.pack packConfiguration path
 
-let iterInParallel action (array: 'T []) =
+let iterInParallel action (array: 'string []) =
     let options: ParallelOptions = new ParallelOptions()
     options.MaxDegreeOfParallelism <- 4
 
@@ -97,7 +97,7 @@ let iterInParallel action (array: 'T []) =
     for item in array do
         queue.Enqueue(item)
 
-    let invoke = (fun i -> action (queue.Dequeue()))
+    let invoke = (fun _ -> action (queue.Dequeue()))
 
     Parallel.For(0, array.Length, options, invoke)
     |> ignore
