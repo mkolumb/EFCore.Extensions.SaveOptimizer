@@ -20,6 +20,40 @@ Set-Location ..
 
 Set-Location "Containers"
 
+function DisableProvider {
+    $dir = $workingDir
+
+    while ($null -ne $dir -And !(Test-Path([System.IO.Path]::Combine($dir, "environment.settings.json")))) {
+        $di = [System.IO.DirectoryInfo]::new($dir)
+
+        $dir = $di.Parent.FullName;
+    }
+
+    $path = [System.IO.Path]::Combine($dir, "environment.settings.json")
+
+    $item = Get-Content $path | ConvertFrom-Json
+    
+    $providersData = $item.TEST_DISABLED_PROVIDERS
+
+    $providers = $providersData.Split(";")
+
+    $exists = $false
+
+    foreach($provider in $providers) {
+        if ($provider.Trim() -ne '' -And $workingDir.Contains($provider)) {
+            $exists = $true
+
+            Write-Host "$($provider) disabled"
+        }
+    }
+
+    return $exists
+}
+
+if (DisableProvider) {
+    Exit;
+}
+
 Write-Host 'Start container'
 Write-Host 'docker compose --file oracle.yml up --detach'
 docker compose --file oracle.yml up --detach

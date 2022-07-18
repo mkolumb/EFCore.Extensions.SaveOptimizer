@@ -13,7 +13,7 @@ jobs:
         with:
           artifact: test-results
           name: Optimizer tests
-          path: '*.trx'
+          path: '**/*.trx'
           reporter: dotnet-trx
           only-summary: 'false'
           list-suites: 'all'
