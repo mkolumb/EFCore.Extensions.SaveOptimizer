@@ -58,6 +58,18 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Cockroach.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ValueConverterEntities",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    SomeHalf = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ValueConverterEntities", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "VariousTypeEntities",
                 columns: table => new
                 {
@@ -102,6 +114,9 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Cockroach.Migrations
 
             migrationBuilder.DropTable(
                 name: "NonRelatedEntities");
+
+            migrationBuilder.DropTable(
+                name: "ValueConverterEntities");
 
             migrationBuilder.DropTable(
                 name: "VariousTypeEntities");

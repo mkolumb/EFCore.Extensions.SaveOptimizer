@@ -57,6 +57,18 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Oracle.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ValueConverterEntities",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "RAW(16)", nullable: false),
+                    SomeHalf = table.Column<string>(type: "NVARCHAR2(2000)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ValueConverterEntities", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "VariousTypeEntities",
                 columns: table => new
                 {
@@ -101,6 +113,9 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Oracle.Migrations
 
             migrationBuilder.DropTable(
                 name: "NonRelatedEntities");
+
+            migrationBuilder.DropTable(
+                name: "ValueConverterEntities");
 
             migrationBuilder.DropTable(
                 name: "VariousTypeEntities");

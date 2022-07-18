@@ -1,4 +1,4 @@
-﻿namespace EFCore.Extensions.SaveOptimizer.Model;
+﻿namespace EFCore.Extensions.SaveOptimizer.Model.Enums;
 
 public enum ExampleEnum
 {

@@ -69,54 +69,45 @@ When you execute SaveChangesOptimized usually the following sequence happens:
 Please note it is not working exactly as SaveChanges, so you should verify it works in your case as expected.
 
 ## Features
-- Providers support
-  - [Microsoft.EntityFrameworkCore.SqlServer](https://www.nuget.org/packages/Microsoft.EntityFrameworkCore.SqlServer)
-  - [Microsoft.EntityFrameworkCore.Sqlite](https://www.nuget.org/packages/Microsoft.EntityFrameworkCore.Sqlite)
-  - [Npgsql.EntityFrameworkCore.PostgreSQL](https://www.nuget.org/packages/Npgsql.EntityFrameworkCore.PostgreSQL)
-  - [Oracle.EntityFrameworkCore](https://www.nuget.org/packages/Oracle.EntityFrameworkCore/)
-  - [Pomelo.EntityFrameworkCore.MySql](https://www.nuget.org/packages/Pomelo.EntityFrameworkCore.MySql)
-  - [FirebirdSql.EntityFrameworkCore.Firebird](https://www.nuget.org/packages/FirebirdSql.EntityFrameworkCore.Firebird/)
-- Primary keys
-  - Simple
-  - Composed
-- Statements
-  - Insert
-  - Update
-  - Delete
-- [Configuration](#configuration)
-- Concurrency token support
+- [x] Providers support
+  - [x] [Microsoft.EntityFrameworkCore.SqlServer](https://www.nuget.org/packages/Microsoft.EntityFrameworkCore.SqlServer)
+  - [x] [Microsoft.EntityFrameworkCore.Sqlite](https://www.nuget.org/packages/Microsoft.EntityFrameworkCore.Sqlite)
+  - [x] [Npgsql.EntityFrameworkCore.PostgreSQL](https://www.nuget.org/packages/Npgsql.EntityFrameworkCore.PostgreSQL)
+  - [x] [Oracle.EntityFrameworkCore](https://www.nuget.org/packages/Oracle.EntityFrameworkCore/)
+  - [x] [Pomelo.EntityFrameworkCore.MySql](https://www.nuget.org/packages/Pomelo.EntityFrameworkCore.MySql)
+  - [x] [FirebirdSql.EntityFrameworkCore.Firebird](https://www.nuget.org/packages/FirebirdSql.EntityFrameworkCore.Firebird/)
+- [ ] Primary keys
+  - [x] Simple
+  - [ ] Composed
+  - [ ] No primary key
+- [x] Statements
+  - [x] Insert
+  - [x] Update
+  - [x] Delete
+- [ ] Value generator
+  - [x] On add
+  - [ ] On update
+- [x] Value converter
+- [x] .NET common types
+- [ ] Foreign keys
+- [ ] Inheritance
+  - [ ] Table per hierarchy
+  - [ ] Table per type
+- [ ] Table splitting
+- [ ] Owned entities
+- [ ] Interceptors
+- [ ] Shadow properties
+- [ ] Self-referencing relationship
+- [x] [Configuration](#configuration)
+- [ ] Concurrency token support
+  - [x] Where clause
+  - [ ] Update statement
 
-## What to do next
-
-- Support for
-  - Different cultures
-  - Interceptors
-  - Value converters
-  - Custom attributes
-  - Ignore
-  - Shadow properties
-  - Tables without primary key
-  - Auto-generated values
-- Optimize data retrieval from Change Tracker
-- Add unchecked when possible
-- Low level performance optimizations
-- Configure await
-- Tests
-  - Value generated on add
-  - Auto increment primary key
-  - Explicitly set primary key
-  - No primary key
-  - Various type primary keys
-  - Sequences
-  - Value converter
-  - Hierarchical operations
-  - Data types precision (date, decimal etc.)
-  - Update concurrency tokens
-  - Different configuration types
-  - Owned entities
-  - Keyless entities
-  - Value comparers
-  - Table splitting
+## What to do
+- [ ] Optimize data retrieval from Change Tracker
+- [ ] Add unchecked when possible
+- [ ] Low level performance optimizations
+- [ ] Contributing document
 
 ## Limitations
 
@@ -127,6 +118,10 @@ SaveOptimizer approach makes almost impossible refresh data after save, it is on
 Basically - after save you should not use this context anymore as it could be invalid, you should use new context for another operation. However if you need you can experiment with `AfterSaveBehavior`.
 
 If you start transaction by your own I recommend to use `AfterSaveBehavior.DoNothing` in configuration and after successful commit call `ProcessAfterSave` method from result with parameter you want.
+
+### Relationships
+
+This limitation is connected with the previous one. If you want to add within one transaction an entity and some dependent entities you can't use auto increment primary key. This will work only with primary key value generated in your code.
 
 ## Known issues
 

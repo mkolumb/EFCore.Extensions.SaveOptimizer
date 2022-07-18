@@ -57,6 +57,18 @@ namespace EFCore.Extensions.SaveOptimizer.Model.SqlServer.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ValueConverterEntities",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SomeHalf = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ValueConverterEntities", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "VariousTypeEntities",
                 columns: table => new
                 {
@@ -101,6 +113,9 @@ namespace EFCore.Extensions.SaveOptimizer.Model.SqlServer.Migrations
 
             migrationBuilder.DropTable(
                 name: "NonRelatedEntities");
+
+            migrationBuilder.DropTable(
+                name: "ValueConverterEntities");
 
             migrationBuilder.DropTable(
                 name: "VariousTypeEntities");

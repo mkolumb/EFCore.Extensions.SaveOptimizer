@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace EFCore.Extensions.SaveOptimizer.Model.Firebird3.Migrations
+namespace EFCore.Extensions.SaveOptimizer.Model.Firebird4.Migrations
 {
     public partial class InitialCreate : Migration
     {
@@ -58,6 +58,18 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Firebird3.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ValueConverterEntities",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "CHAR(16) CHARACTER SET OCTETS", nullable: false),
+                    SomeHalf = table.Column<string>(type: "BLOB SUB_TYPE TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ValueConverterEntities", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "VariousTypeEntities",
                 columns: table => new
                 {
@@ -102,6 +114,9 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Firebird3.Migrations
 
             migrationBuilder.DropTable(
                 name: "NonRelatedEntities");
+
+            migrationBuilder.DropTable(
+                name: "ValueConverterEntities");
 
             migrationBuilder.DropTable(
                 name: "VariousTypeEntities");

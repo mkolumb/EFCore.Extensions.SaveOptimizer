@@ -1,4 +1,4 @@
-﻿using EFCore.Extensions.SaveOptimizer.Model;
+﻿using EFCore.Extensions.SaveOptimizer.Model.Context;
 using EFCore.Extensions.SaveOptimizer.Postgres.Benchmark.Specific;
 using EFCore.Extensions.SaveOptimizer.Shared.Benchmark;
 using Microsoft.EntityFrameworkCore;

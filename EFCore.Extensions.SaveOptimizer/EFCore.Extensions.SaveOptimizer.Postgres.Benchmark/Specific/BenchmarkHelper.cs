@@ -1,5 +1,5 @@
 ﻿using System.Data.Common;
-using EFCore.Extensions.SaveOptimizer.Model;
+using EFCore.Extensions.SaveOptimizer.Model.Context;
 using EFCore.Extensions.SaveOptimizer.Postgres.Benchmark.Standard;
 using EFCore.Extensions.SaveOptimizer.Shared.Benchmark;
 using Microsoft.EntityFrameworkCore;

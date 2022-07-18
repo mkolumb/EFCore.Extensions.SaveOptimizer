@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace EFCore.Extensions.SaveOptimizer.Model;
+namespace EFCore.Extensions.SaveOptimizer.Model.Entities;
 
 public class NonRelatedEntity
 {
