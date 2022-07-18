@@ -27,8 +27,8 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Firebird4.Migrations
                 name: "ComposedPrimaryKeyEntities",
                 columns: table => new
                 {
-                    PrimaryFirst = table.Column<string>(type: "VARCHAR(256)", nullable: false),
-                    PrimarySecond = table.Column<string>(type: "VARCHAR(256)", nullable: false),
+                    PrimaryFirst = table.Column<int>(type: "INTEGER", nullable: false),
+                    PrimarySecond = table.Column<int>(type: "INTEGER", nullable: false),
                     Some = table.Column<string>(type: "BLOB SUB_TYPE TEXT", nullable: true)
                 },
                 constraints: table =>

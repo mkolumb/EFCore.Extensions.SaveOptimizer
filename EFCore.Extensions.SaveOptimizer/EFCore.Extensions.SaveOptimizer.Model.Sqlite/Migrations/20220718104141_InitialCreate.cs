@@ -26,8 +26,8 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Sqlite.Migrations
                 name: "ComposedPrimaryKeyEntities",
                 columns: table => new
                 {
-                    PrimaryFirst = table.Column<string>(type: "TEXT", nullable: false),
-                    PrimarySecond = table.Column<string>(type: "TEXT", nullable: false),
+                    PrimaryFirst = table.Column<int>(type: "INTEGER", nullable: false),
+                    PrimarySecond = table.Column<int>(type: "INTEGER", nullable: false),
                     Some = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>

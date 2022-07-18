@@ -1,4 +1,5 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Model.Entities;
+using EFCore.Extensions.SaveOptimizer.Shared.Tests.Attributes;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests.Enums;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests.Extensions;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests.Wrappers;
@@ -7,7 +8,7 @@ namespace EFCore.Extensions.SaveOptimizer.Shared.Tests.Tests;
 
 public abstract partial class BaseMiscTests
 {
-    [Theory]
+    [SkippableTheory]
     [MemberData(nameof(BaseWriteTheoryData))]
     public async Task GivenSaveChangesAsync_WhenInsertComposedPrimaryKey_ShouldStoreData(SaveVariant variant)
     {
@@ -16,10 +17,10 @@ public abstract partial class BaseMiscTests
 
         ComposedPrimaryKeyEntity[] data =
         {
-            new() { PrimaryFirst = "a1", PrimarySecond = "b1", Some = "some-1" },
-            new() { PrimaryFirst = "a1", PrimarySecond = "b2", Some = "some-2" },
-            new() { PrimaryFirst = "a2", PrimarySecond = "b1", Some = "some-3" },
-            new() { PrimaryFirst = "a2", PrimarySecond = "b2", Some = "some-4" }
+            new() { PrimaryFirst = 1, PrimarySecond = 1, Some = "some-1" },
+            new() { PrimaryFirst = 1, PrimarySecond = 2, Some = "some-2" },
+            new() { PrimaryFirst = 2, PrimarySecond = 1, Some = "some-3" },
+            new() { PrimaryFirst = 2, PrimarySecond = 2, Some = "some-4" }
         };
 
         await db.Context.AddRangeAsync(data as IEnumerable<object>).ConfigureAwait(false);
@@ -36,24 +37,24 @@ public abstract partial class BaseMiscTests
         // Assert
         result.Should().HaveCount(4);
 
-        result[0].PrimaryFirst.Should().Be("a1");
-        result[0].PrimarySecond.Should().Be("b1");
+        result[0].PrimaryFirst.Should().Be(1);
+        result[0].PrimarySecond.Should().Be(1);
         result[0].Some.Should().Be("some-1");
 
-        result[1].PrimaryFirst.Should().Be("a1");
-        result[1].PrimarySecond.Should().Be("b2");
+        result[1].PrimaryFirst.Should().Be(1);
+        result[1].PrimarySecond.Should().Be(2);
         result[1].Some.Should().Be("some-2");
 
-        result[2].PrimaryFirst.Should().Be("a2");
-        result[2].PrimarySecond.Should().Be("b1");
+        result[2].PrimaryFirst.Should().Be(2);
+        result[2].PrimarySecond.Should().Be(1);
         result[2].Some.Should().Be("some-3");
 
-        result[3].PrimaryFirst.Should().Be("a2");
-        result[3].PrimarySecond.Should().Be("b2");
+        result[3].PrimaryFirst.Should().Be(2);
+        result[3].PrimarySecond.Should().Be(2);
         result[3].Some.Should().Be("some-4");
     }
 
-    [Theory]
+    [SkippableTheory]
     [MemberData(nameof(BaseWriteTheoryData))]
     public async Task GivenSaveChangesAsync_WhenUpdateComposedPrimaryKey_ShouldStoreData(SaveVariant variant)
     {
@@ -62,9 +63,8 @@ public abstract partial class BaseMiscTests
 
         ComposedPrimaryKeyEntity[] data =
         {
-            new() { PrimaryFirst = "a1", PrimarySecond = "b1" },
-            new() { PrimaryFirst = "a1", PrimarySecond = "b2" },
-            new() { PrimaryFirst = "a2", PrimarySecond = "b1" }, new() { PrimaryFirst = "a2", PrimarySecond = "b2" }
+            new() { PrimaryFirst = 1, PrimarySecond = 1 }, new() { PrimaryFirst = 1, PrimarySecond = 2 },
+            new() { PrimaryFirst = 2, PrimarySecond = 1 }, new() { PrimaryFirst = 2, PrimarySecond = 2 }
         };
 
         await db.Context.AddRangeAsync(data as IEnumerable<object>).ConfigureAwait(false);
@@ -94,24 +94,24 @@ public abstract partial class BaseMiscTests
         // Assert
         result.Should().HaveCount(4);
 
-        result[0].PrimaryFirst.Should().Be("a1");
-        result[0].PrimarySecond.Should().Be("b1");
+        result[0].PrimaryFirst.Should().Be(1);
+        result[0].PrimarySecond.Should().Be(1);
         result[0].Some.Should().Be("some-1");
 
-        result[1].PrimaryFirst.Should().Be("a1");
-        result[1].PrimarySecond.Should().Be("b2");
+        result[1].PrimaryFirst.Should().Be(1);
+        result[1].PrimarySecond.Should().Be(2);
         result[1].Some.Should().Be("some-2");
 
-        result[2].PrimaryFirst.Should().Be("a2");
-        result[2].PrimarySecond.Should().Be("b1");
+        result[2].PrimaryFirst.Should().Be(2);
+        result[2].PrimarySecond.Should().Be(1);
         result[2].Some.Should().Be("some-3");
 
-        result[3].PrimaryFirst.Should().Be("a2");
-        result[3].PrimarySecond.Should().Be("b2");
+        result[3].PrimaryFirst.Should().Be(2);
+        result[3].PrimarySecond.Should().Be(2);
         result[3].Some.Should().Be("some-4");
     }
 
-    [Theory]
+    [SkippableTheory]
     [MemberData(nameof(BaseWriteTheoryData))]
     public async Task GivenSaveChangesAsync_WhenDeleteComposedPrimaryKey_ShouldStoreData(SaveVariant variant)
     {
@@ -120,10 +120,10 @@ public abstract partial class BaseMiscTests
 
         ComposedPrimaryKeyEntity[] data =
         {
-            new() { PrimaryFirst = "a1", PrimarySecond = "b1", Some = "some-1" },
-            new() { PrimaryFirst = "a1", PrimarySecond = "b2", Some = "some-2" },
-            new() { PrimaryFirst = "a2", PrimarySecond = "b1", Some = "some-3" },
-            new() { PrimaryFirst = "a2", PrimarySecond = "b2", Some = "some-4" }
+            new() { PrimaryFirst = 1, PrimarySecond = 1, Some = "some-1" },
+            new() { PrimaryFirst = 1, PrimarySecond = 2, Some = "some-2" },
+            new() { PrimaryFirst = 2, PrimarySecond = 1, Some = "some-3" },
+            new() { PrimaryFirst = 2, PrimarySecond = 2, Some = "some-4" }
         };
 
         await db.Context.AddRangeAsync(data as IEnumerable<object>).ConfigureAwait(false);
@@ -150,16 +150,16 @@ public abstract partial class BaseMiscTests
         // Assert
         result.Should().HaveCount(2);
 
-        result[0].PrimaryFirst.Should().Be("a1");
-        result[0].PrimarySecond.Should().Be("b2");
+        result[0].PrimaryFirst.Should().Be(1);
+        result[0].PrimarySecond.Should().Be(2);
         result[0].Some.Should().Be("some-2");
 
-        result[1].PrimaryFirst.Should().Be("a2");
-        result[1].PrimarySecond.Should().Be("b2");
+        result[1].PrimaryFirst.Should().Be(2);
+        result[1].PrimarySecond.Should().Be(2);
         result[1].Some.Should().Be("some-4");
     }
 
-    [Theory]
+    [SkippableTheory]
     [MemberData(nameof(BaseWriteTheoryData))]
     public void GivenSaveChanges_WhenInsertComposedPrimaryKey_ShouldStoreData(SaveVariant variant)
     {
@@ -168,10 +168,10 @@ public abstract partial class BaseMiscTests
 
         ComposedPrimaryKeyEntity[] data =
         {
-            new() { PrimaryFirst = "a1", PrimarySecond = "b1", Some = "some-1" },
-            new() { PrimaryFirst = "a1", PrimarySecond = "b2", Some = "some-2" },
-            new() { PrimaryFirst = "a2", PrimarySecond = "b1", Some = "some-3" },
-            new() { PrimaryFirst = "a2", PrimarySecond = "b2", Some = "some-4" }
+            new() { PrimaryFirst = 1, PrimarySecond = 1, Some = "some-1" },
+            new() { PrimaryFirst = 1, PrimarySecond = 2, Some = "some-2" },
+            new() { PrimaryFirst = 2, PrimarySecond = 1, Some = "some-3" },
+            new() { PrimaryFirst = 2, PrimarySecond = 2, Some = "some-4" }
         };
 
         db.Context.AddRange(data as IEnumerable<object>);
@@ -187,24 +187,24 @@ public abstract partial class BaseMiscTests
         // Assert
         result.Should().HaveCount(4);
 
-        result[0].PrimaryFirst.Should().Be("a1");
-        result[0].PrimarySecond.Should().Be("b1");
+        result[0].PrimaryFirst.Should().Be(1);
+        result[0].PrimarySecond.Should().Be(1);
         result[0].Some.Should().Be("some-1");
 
-        result[1].PrimaryFirst.Should().Be("a1");
-        result[1].PrimarySecond.Should().Be("b2");
+        result[1].PrimaryFirst.Should().Be(1);
+        result[1].PrimarySecond.Should().Be(2);
         result[1].Some.Should().Be("some-2");
 
-        result[2].PrimaryFirst.Should().Be("a2");
-        result[2].PrimarySecond.Should().Be("b1");
+        result[2].PrimaryFirst.Should().Be(2);
+        result[2].PrimarySecond.Should().Be(1);
         result[2].Some.Should().Be("some-3");
 
-        result[3].PrimaryFirst.Should().Be("a2");
-        result[3].PrimarySecond.Should().Be("b2");
+        result[3].PrimaryFirst.Should().Be(2);
+        result[3].PrimarySecond.Should().Be(2);
         result[3].Some.Should().Be("some-4");
     }
 
-    [Theory]
+    [SkippableTheory]
     [MemberData(nameof(BaseWriteTheoryData))]
     public void GivenSaveChanges_WhenUpdateComposedPrimaryKey_ShouldStoreData(SaveVariant variant)
     {
@@ -213,9 +213,8 @@ public abstract partial class BaseMiscTests
 
         ComposedPrimaryKeyEntity[] data =
         {
-            new() { PrimaryFirst = "a1", PrimarySecond = "b1" },
-            new() { PrimaryFirst = "a1", PrimarySecond = "b2" },
-            new() { PrimaryFirst = "a2", PrimarySecond = "b1" }, new() { PrimaryFirst = "a2", PrimarySecond = "b2" }
+            new() { PrimaryFirst = 1, PrimarySecond = 1 }, new() { PrimaryFirst = 1, PrimarySecond = 2 },
+            new() { PrimaryFirst = 2, PrimarySecond = 1 }, new() { PrimaryFirst = 2, PrimarySecond = 2 }
         };
 
         db.Context.AddRange(data as IEnumerable<object>);
@@ -243,24 +242,24 @@ public abstract partial class BaseMiscTests
         // Assert
         result.Should().HaveCount(4);
 
-        result[0].PrimaryFirst.Should().Be("a1");
-        result[0].PrimarySecond.Should().Be("b1");
+        result[0].PrimaryFirst.Should().Be(1);
+        result[0].PrimarySecond.Should().Be(1);
         result[0].Some.Should().Be("some-1");
 
-        result[1].PrimaryFirst.Should().Be("a1");
-        result[1].PrimarySecond.Should().Be("b2");
+        result[1].PrimaryFirst.Should().Be(1);
+        result[1].PrimarySecond.Should().Be(2);
         result[1].Some.Should().Be("some-2");
 
-        result[2].PrimaryFirst.Should().Be("a2");
-        result[2].PrimarySecond.Should().Be("b1");
+        result[2].PrimaryFirst.Should().Be(2);
+        result[2].PrimarySecond.Should().Be(1);
         result[2].Some.Should().Be("some-3");
 
-        result[3].PrimaryFirst.Should().Be("a2");
-        result[3].PrimarySecond.Should().Be("b2");
+        result[3].PrimaryFirst.Should().Be(2);
+        result[3].PrimarySecond.Should().Be(2);
         result[3].Some.Should().Be("some-4");
     }
 
-    [Theory]
+    [SkippableTheory]
     [MemberData(nameof(BaseWriteTheoryData))]
     public void GivenSaveChanges_WhenDeleteComposedPrimaryKey_ShouldStoreData(SaveVariant variant)
     {
@@ -269,10 +268,10 @@ public abstract partial class BaseMiscTests
 
         ComposedPrimaryKeyEntity[] data =
         {
-            new() { PrimaryFirst = "a1", PrimarySecond = "b1", Some = "some-1" },
-            new() { PrimaryFirst = "a1", PrimarySecond = "b2", Some = "some-2" },
-            new() { PrimaryFirst = "a2", PrimarySecond = "b1", Some = "some-3" },
-            new() { PrimaryFirst = "a2", PrimarySecond = "b2", Some = "some-4" }
+            new() { PrimaryFirst = 1, PrimarySecond = 1, Some = "some-1" },
+            new() { PrimaryFirst = 1, PrimarySecond = 2, Some = "some-2" },
+            new() { PrimaryFirst = 2, PrimarySecond = 1, Some = "some-3" },
+            new() { PrimaryFirst = 2, PrimarySecond = 2, Some = "some-4" }
         };
 
         db.Context.AddRange(data as IEnumerable<object>);
@@ -297,12 +296,12 @@ public abstract partial class BaseMiscTests
         // Assert
         result.Should().HaveCount(2);
 
-        result[0].PrimaryFirst.Should().Be("a1");
-        result[0].PrimarySecond.Should().Be("b2");
+        result[0].PrimaryFirst.Should().Be(1);
+        result[0].PrimarySecond.Should().Be(2);
         result[0].Some.Should().Be("some-2");
 
-        result[1].PrimaryFirst.Should().Be("a2");
-        result[1].PrimarySecond.Should().Be("b2");
+        result[1].PrimaryFirst.Should().Be(2);
+        result[1].PrimarySecond.Should().Be(2);
         result[1].Some.Should().Be("some-4");
     }
 }

@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace EFCore.Extensions.SaveOptimizer.Model.Postgres.Migrations
+namespace EFCore.Extensions.SaveOptimizer.Model.CockroachMulti.Migrations
 {
     public partial class InitialCreate : Migration
     {
@@ -27,8 +27,8 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Postgres.Migrations
                 name: "ComposedPrimaryKeyEntities",
                 columns: table => new
                 {
-                    PrimaryFirst = table.Column<string>(type: "text", nullable: false),
-                    PrimarySecond = table.Column<string>(type: "text", nullable: false),
+                    PrimaryFirst = table.Column<int>(type: "integer", nullable: false),
+                    PrimarySecond = table.Column<int>(type: "integer", nullable: false),
                     Some = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>

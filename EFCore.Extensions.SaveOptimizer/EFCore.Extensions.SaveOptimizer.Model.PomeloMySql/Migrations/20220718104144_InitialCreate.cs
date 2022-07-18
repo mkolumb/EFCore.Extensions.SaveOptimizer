@@ -1,114 +1,131 @@
 ﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace EFCore.Extensions.SaveOptimizer.Model.SqlServer.Migrations
+namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMySql.Migrations
 {
     public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AlterDatabase()
+                .Annotation("MySql:CharSet", "utf8mb4");
+
             migrationBuilder.CreateTable(
                 name: "AutoIncrementPrimaryKeyEntities",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Some = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Some = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AutoIncrementPrimaryKeyEntities", x => x.Id);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "ComposedPrimaryKeyEntities",
                 columns: table => new
                 {
-                    PrimaryFirst = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    PrimarySecond = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Some = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    PrimaryFirst = table.Column<int>(type: "int", nullable: false),
+                    PrimarySecond = table.Column<int>(type: "int", nullable: false),
+                    Some = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ComposedPrimaryKeyEntities", x => new { x.PrimaryFirst, x.PrimarySecond });
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "FailingEntities",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Some = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Some = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_FailingEntities", x => x.Id);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "NonRelatedEntities",
                 columns: table => new
                 {
-                    NonRelatedEntityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SomeNonNullableStringProperty = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SomeNullableStringProperty = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    NonRelatedEntityId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    SomeNonNullableStringProperty = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    SomeNullableStringProperty = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     SomeNonNullableIntProperty = table.Column<int>(type: "int", nullable: false),
                     SomeNullableIntProperty = table.Column<int>(type: "int", nullable: true),
                     SomeNonNullableDecimalProperty = table.Column<decimal>(type: "decimal(12,6)", precision: 12, scale: 6, nullable: false),
                     SomeNullableDecimalProperty = table.Column<decimal>(type: "decimal(12,6)", precision: 12, scale: 6, nullable: true),
-                    SomeNonNullableDateTimeProperty = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    SomeNullableDateTimeProperty = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    SomeNonNullableBooleanProperty = table.Column<bool>(type: "bit", nullable: false),
-                    ConcurrencyToken = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                    SomeNonNullableDateTimeProperty = table.Column<DateTimeOffset>(type: "datetime(6)", nullable: false),
+                    SomeNullableDateTimeProperty = table.Column<DateTimeOffset>(type: "datetime(6)", nullable: true),
+                    SomeNonNullableBooleanProperty = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    ConcurrencyToken = table.Column<DateTimeOffset>(type: "datetime(6)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_NonRelatedEntities", x => x.NonRelatedEntityId);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "ValueConverterEntities",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SomeHalf = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    SomeHalf = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ValueConverterEntities", x => x.Id);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "VariousTypeEntities",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
-                    SomeString = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SomeGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    SomeBool = table.Column<bool>(type: "bit", nullable: true),
+                    SomeString = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    SomeGuid = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
+                    SomeBool = table.Column<bool>(type: "tinyint(1)", nullable: true),
                     SomeEnum = table.Column<int>(type: "int", nullable: true),
-                    SomeDateTime = table.Column<DateTime>(type: "datetime2(5)", precision: 5, nullable: true),
-                    SomeDateTimeOffset = table.Column<DateTimeOffset>(type: "datetimeoffset(5)", precision: 5, nullable: true),
-                    SomeTimeSpan = table.Column<TimeSpan>(type: "time", precision: 5, nullable: true),
+                    SomeDateTime = table.Column<DateTime>(type: "datetime(5)", precision: 5, nullable: true),
+                    SomeDateTimeOffset = table.Column<DateTimeOffset>(type: "datetime(5)", precision: 5, nullable: true),
+                    SomeTimeSpan = table.Column<TimeSpan>(type: "time(5)", precision: 5, nullable: true),
                     SomeShort = table.Column<short>(type: "smallint", nullable: true),
-                    SomeUnsignedShort = table.Column<int>(type: "int", nullable: true),
+                    SomeUnsignedShort = table.Column<ushort>(type: "smallint unsigned", nullable: true),
                     SomeInt = table.Column<int>(type: "int", nullable: true),
-                    SomeUnsignedInt = table.Column<long>(type: "bigint", nullable: true),
+                    SomeUnsignedInt = table.Column<uint>(type: "int unsigned", nullable: true),
                     SomeLong = table.Column<long>(type: "bigint", nullable: true),
-                    SomeUnsignedLong = table.Column<decimal>(type: "decimal(20,0)", nullable: true),
-                    SomeSignedByte = table.Column<short>(type: "smallint", nullable: true),
-                    SomeByte = table.Column<byte>(type: "tinyint", nullable: true),
-                    SomeFloat = table.Column<float>(type: "real", nullable: true),
-                    SomeDouble = table.Column<double>(type: "float", nullable: true),
+                    SomeUnsignedLong = table.Column<ulong>(type: "bigint unsigned", nullable: true),
+                    SomeSignedByte = table.Column<sbyte>(type: "tinyint", nullable: true),
+                    SomeByte = table.Column<byte>(type: "tinyint unsigned", nullable: true),
+                    SomeFloat = table.Column<float>(type: "float", nullable: true),
+                    SomeDouble = table.Column<double>(type: "double", nullable: true),
                     SomeDecimal = table.Column<decimal>(type: "decimal(12,6)", precision: 12, scale: 6, nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_VariousTypeEntities", x => x.Id);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
                 name: "IX_NonRelatedEntities_ConcurrencyToken_NonRelatedEntityId",

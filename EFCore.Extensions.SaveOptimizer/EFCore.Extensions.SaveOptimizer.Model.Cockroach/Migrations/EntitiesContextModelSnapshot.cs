@@ -40,11 +40,11 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Cockroach.Migrations
 
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.ComposedPrimaryKeyEntity", b =>
                 {
-                    b.Property<string>("PrimaryFirst")
-                        .HasColumnType("text");
+                    b.Property<int?>("PrimaryFirst")
+                        .HasColumnType("integer");
 
-                    b.Property<string>("PrimarySecond")
-                        .HasColumnType("text");
+                    b.Property<int?>("PrimarySecond")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Some")
                         .HasColumnType("text");

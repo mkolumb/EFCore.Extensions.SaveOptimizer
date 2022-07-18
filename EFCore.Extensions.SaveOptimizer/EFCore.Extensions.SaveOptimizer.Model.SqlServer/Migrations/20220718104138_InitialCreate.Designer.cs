@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EFCore.Extensions.SaveOptimizer.Model.SqlServer.Migrations
 {
     [DbContext(typeof(EntitiesContext))]
-    [Migration("20220718085633_InitialCreate")]
+    [Migration("20220718104138_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -42,11 +42,11 @@ namespace EFCore.Extensions.SaveOptimizer.Model.SqlServer.Migrations
 
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.ComposedPrimaryKeyEntity", b =>
                 {
-                    b.Property<string>("PrimaryFirst")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int?>("PrimaryFirst")
+                        .HasColumnType("int");
 
-                    b.Property<string>("PrimarySecond")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int?>("PrimarySecond")
+                        .HasColumnType("int");
 
                     b.Property<string>("Some")
                         .HasColumnType("nvarchar(max)");

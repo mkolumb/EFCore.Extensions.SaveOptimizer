@@ -26,8 +26,8 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Oracle.Migrations
                 name: "ComposedPrimaryKeyEntities",
                 columns: table => new
                 {
-                    PrimaryFirst = table.Column<string>(type: "NVARCHAR2(450)", nullable: false),
-                    PrimarySecond = table.Column<string>(type: "NVARCHAR2(450)", nullable: false),
+                    PrimaryFirst = table.Column<int>(type: "NUMBER(10)", nullable: false),
+                    PrimarySecond = table.Column<int>(type: "NUMBER(10)", nullable: false),
                     Some = table.Column<string>(type: "NVARCHAR2(2000)", nullable: true)
                 },
                 constraints: table =>

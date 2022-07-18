@@ -35,11 +35,11 @@ namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMySql.Migrations
 
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.ComposedPrimaryKeyEntity", b =>
                 {
-                    b.Property<string>("PrimaryFirst")
-                        .HasColumnType("varchar(255)");
+                    b.Property<int?>("PrimaryFirst")
+                        .HasColumnType("int");
 
-                    b.Property<string>("PrimarySecond")
-                        .HasColumnType("varchar(255)");
+                    b.Property<int?>("PrimarySecond")
+                        .HasColumnType("int");
 
                     b.Property<string>("Some")
                         .HasColumnType("longtext");

@@ -9,10 +9,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace EFCore.Extensions.SaveOptimizer.Model.CockroachMulti.Migrations
+namespace EFCore.Extensions.SaveOptimizer.Model.Cockroach.Migrations
 {
     [DbContext(typeof(EntitiesContext))]
-    [Migration("20220718085637_InitialCreate")]
+    [Migration("20220718104142_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -42,11 +42,11 @@ namespace EFCore.Extensions.SaveOptimizer.Model.CockroachMulti.Migrations
 
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.ComposedPrimaryKeyEntity", b =>
                 {
-                    b.Property<string>("PrimaryFirst")
-                        .HasColumnType("text");
+                    b.Property<int?>("PrimaryFirst")
+                        .HasColumnType("integer");
 
-                    b.Property<string>("PrimarySecond")
-                        .HasColumnType("text");
+                    b.Property<int?>("PrimarySecond")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Some")
                         .HasColumnType("text");

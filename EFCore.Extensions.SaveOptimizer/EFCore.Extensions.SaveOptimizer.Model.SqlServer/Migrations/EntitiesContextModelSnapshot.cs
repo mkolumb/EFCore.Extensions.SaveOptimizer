@@ -40,11 +40,11 @@ namespace EFCore.Extensions.SaveOptimizer.Model.SqlServer.Migrations
 
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.ComposedPrimaryKeyEntity", b =>
                 {
-                    b.Property<string>("PrimaryFirst")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int?>("PrimaryFirst")
+                        .HasColumnType("int");
 
-                    b.Property<string>("PrimarySecond")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int?>("PrimarySecond")
+                        .HasColumnType("int");
 
                     b.Property<string>("Some")
                         .HasColumnType("nvarchar(max)");

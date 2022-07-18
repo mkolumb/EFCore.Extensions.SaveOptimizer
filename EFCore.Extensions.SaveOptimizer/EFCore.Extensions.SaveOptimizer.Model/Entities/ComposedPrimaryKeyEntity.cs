@@ -7,11 +7,11 @@ public class ComposedPrimaryKeyEntity
 {
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
     [Required]
-    public string? PrimaryFirst { get; set; }
+    public int? PrimaryFirst { get; set; }
 
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
     [Required]
-    public string? PrimarySecond { get; set; }
+    public int? PrimarySecond { get; set; }
 
     public string? Some { get; set; }
 }

@@ -33,11 +33,11 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Sqlite.Migrations
 
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.ComposedPrimaryKeyEntity", b =>
                 {
-                    b.Property<string>("PrimaryFirst")
-                        .HasColumnType("TEXT");
+                    b.Property<int?>("PrimaryFirst")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<string>("PrimarySecond")
-                        .HasColumnType("TEXT");
+                    b.Property<int?>("PrimarySecond")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Some")
                         .HasColumnType("TEXT");

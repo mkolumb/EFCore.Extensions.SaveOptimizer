@@ -16,8 +16,6 @@ $workingDir = $(Get-Location).Path
 
 ./remove_containers.ps1
 
-$yamls = @('cockroach.yml', 'cockroach_multi.yml', 'sqlserver.yml', 'postgres.yml', 'mysql_pomelo.yml', 'mariadb_pomelo.yml', 'firebird_3.yml', 'firebird_4.yml', 'oracle.yml')
-
 # start all
 
 Set-Location .\EFCore.Extensions.SaveOptimizer\Containers

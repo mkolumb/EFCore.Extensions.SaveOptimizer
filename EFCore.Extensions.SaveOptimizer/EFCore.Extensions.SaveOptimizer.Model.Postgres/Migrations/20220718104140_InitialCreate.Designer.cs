@@ -5,13 +5,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMySql.Migrations
+namespace EFCore.Extensions.SaveOptimizer.Model.Postgres.Migrations
 {
     [DbContext(typeof(EntitiesContext))]
-    [Migration("20220718085639_InitialCreate")]
+    [Migration("20220718104140_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -19,16 +20,20 @@ namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMySql.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "6.0.0")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.AutoIncrementPrimaryKeyEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Some")
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -37,14 +42,14 @@ namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMySql.Migrations
 
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.ComposedPrimaryKeyEntity", b =>
                 {
-                    b.Property<string>("PrimaryFirst")
-                        .HasColumnType("varchar(255)");
+                    b.Property<int?>("PrimaryFirst")
+                        .HasColumnType("integer");
 
-                    b.Property<string>("PrimarySecond")
-                        .HasColumnType("varchar(255)");
+                    b.Property<int?>("PrimarySecond")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Some")
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.HasKey("PrimaryFirst", "PrimarySecond");
 
@@ -55,11 +60,13 @@ namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMySql.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Some")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -70,45 +77,45 @@ namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMySql.Migrations
                 {
                     b.Property<Guid>("NonRelatedEntityId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset?>("ConcurrencyToken")
                         .IsConcurrencyToken()
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<bool?>("SomeNonNullableBooleanProperty")
                         .IsRequired()
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTimeOffset?>("SomeNonNullableDateTimeProperty")
                         .IsRequired()
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<decimal?>("SomeNonNullableDecimalProperty")
                         .IsRequired()
                         .HasPrecision(12, 6)
-                        .HasColumnType("decimal(12,6)");
+                        .HasColumnType("numeric(12,6)");
 
                     b.Property<int?>("SomeNonNullableIntProperty")
                         .IsRequired()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("SomeNonNullableStringProperty")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<DateTimeOffset?>("SomeNullableDateTimeProperty")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<decimal?>("SomeNullableDecimalProperty")
                         .HasPrecision(12, 6)
-                        .HasColumnType("decimal(12,6)");
+                        .HasColumnType("numeric(12,6)");
 
                     b.Property<int?>("SomeNullableIntProperty")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("SomeNullableStringProperty")
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.HasKey("NonRelatedEntityId");
 
@@ -121,10 +128,10 @@ namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMySql.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("SomeHalf")
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -134,40 +141,40 @@ namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMySql.Migrations
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.VariousTypeEntity", b =>
                 {
                     b.Property<int>("Id")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<bool?>("SomeBool")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<byte?>("SomeByte")
-                        .HasColumnType("tinyint unsigned");
+                        .HasColumnType("smallint");
 
                     b.Property<DateTime?>("SomeDateTime")
                         .HasPrecision(5)
-                        .HasColumnType("datetime(5)");
+                        .HasColumnType("timestamp(5) with time zone");
 
                     b.Property<DateTimeOffset?>("SomeDateTimeOffset")
                         .HasPrecision(5)
-                        .HasColumnType("datetime(5)");
+                        .HasColumnType("timestamp(5) with time zone");
 
                     b.Property<decimal?>("SomeDecimal")
                         .HasPrecision(12, 6)
-                        .HasColumnType("decimal(12,6)");
+                        .HasColumnType("numeric(12,6)");
 
                     b.Property<double?>("SomeDouble")
-                        .HasColumnType("double");
+                        .HasColumnType("double precision");
 
                     b.Property<int?>("SomeEnum")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<float?>("SomeFloat")
-                        .HasColumnType("float");
+                        .HasColumnType("real");
 
                     b.Property<Guid?>("SomeGuid")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<int?>("SomeInt")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<long?>("SomeLong")
                         .HasColumnType("bigint");
@@ -175,24 +182,24 @@ namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMySql.Migrations
                     b.Property<short?>("SomeShort")
                         .HasColumnType("smallint");
 
-                    b.Property<sbyte?>("SomeSignedByte")
-                        .HasColumnType("tinyint");
+                    b.Property<short?>("SomeSignedByte")
+                        .HasColumnType("smallint");
 
                     b.Property<string>("SomeString")
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<TimeSpan?>("SomeTimeSpan")
                         .HasPrecision(5)
-                        .HasColumnType("time(5)");
+                        .HasColumnType("interval(5)");
 
-                    b.Property<uint?>("SomeUnsignedInt")
-                        .HasColumnType("int unsigned");
+                    b.Property<long?>("SomeUnsignedInt")
+                        .HasColumnType("bigint");
 
-                    b.Property<ulong?>("SomeUnsignedLong")
-                        .HasColumnType("bigint unsigned");
+                    b.Property<decimal?>("SomeUnsignedLong")
+                        .HasColumnType("numeric(20,0)");
 
-                    b.Property<ushort?>("SomeUnsignedShort")
-                        .HasColumnType("smallint unsigned");
+                    b.Property<int?>("SomeUnsignedShort")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
