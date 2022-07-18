@@ -38,6 +38,22 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Oracle.Migrations
                     b.ToTable("AutoIncrementPrimaryKeyEntities");
                 });
 
+            modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.ComposedPrimaryKeyEntity", b =>
+                {
+                    b.Property<int?>("PrimaryFirst")
+                        .HasColumnType("NUMBER(10)");
+
+                    b.Property<int?>("PrimarySecond")
+                        .HasColumnType("NUMBER(10)");
+
+                    b.Property<string>("Some")
+                        .HasColumnType("NVARCHAR2(2000)");
+
+                    b.HasKey("PrimaryFirst", "PrimarySecond");
+
+                    b.ToTable("ComposedPrimaryKeyEntities");
+                });
+
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.FailingEntity", b =>
                 {
                     b.Property<int>("Id")

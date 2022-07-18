@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMariaDb.Migrations
+namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMySql.Migrations
 {
     public partial class InitialCreate : Migration
     {
@@ -25,6 +25,21 @@ namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMariaDb.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AutoIncrementPrimaryKeyEntities", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "ComposedPrimaryKeyEntities",
+                columns: table => new
+                {
+                    PrimaryFirst = table.Column<int>(type: "int", nullable: false),
+                    PrimarySecond = table.Column<int>(type: "int", nullable: false),
+                    Some = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ComposedPrimaryKeyEntities", x => new { x.PrimaryFirst, x.PrimarySecond });
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -122,6 +137,9 @@ namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMariaDb.Migrations
         {
             migrationBuilder.DropTable(
                 name: "AutoIncrementPrimaryKeyEntities");
+
+            migrationBuilder.DropTable(
+                name: "ComposedPrimaryKeyEntities");
 
             migrationBuilder.DropTable(
                 name: "FailingEntities");

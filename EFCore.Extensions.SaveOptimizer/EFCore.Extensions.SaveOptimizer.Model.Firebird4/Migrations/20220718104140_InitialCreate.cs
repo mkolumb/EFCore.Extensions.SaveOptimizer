@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace EFCore.Extensions.SaveOptimizer.Model.Firebird3.Migrations
+namespace EFCore.Extensions.SaveOptimizer.Model.Firebird4.Migrations
 {
     public partial class InitialCreate : Migration
     {
@@ -21,6 +21,19 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Firebird3.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AutoIncrementPrimaryKeyEnti~", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ComposedPrimaryKeyEntities",
+                columns: table => new
+                {
+                    PrimaryFirst = table.Column<int>(type: "INTEGER", nullable: false),
+                    PrimarySecond = table.Column<int>(type: "INTEGER", nullable: false),
+                    Some = table.Column<string>(type: "BLOB SUB_TYPE TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ComposedPrimaryKeyEntities", x => new { x.PrimaryFirst, x.PrimarySecond });
                 });
 
             migrationBuilder.CreateTable(
@@ -108,6 +121,9 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Firebird3.Migrations
         {
             migrationBuilder.DropTable(
                 name: "AutoIncrementPrimaryKeyEntities");
+
+            migrationBuilder.DropTable(
+                name: "ComposedPrimaryKeyEntities");
 
             migrationBuilder.DropTable(
                 name: "FailingEntities");

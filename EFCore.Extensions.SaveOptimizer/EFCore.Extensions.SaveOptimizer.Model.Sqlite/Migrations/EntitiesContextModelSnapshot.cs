@@ -31,6 +31,22 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Sqlite.Migrations
                     b.ToTable("AutoIncrementPrimaryKeyEntities");
                 });
 
+            modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.ComposedPrimaryKeyEntity", b =>
+                {
+                    b.Property<int?>("PrimaryFirst")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("PrimarySecond")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Some")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("PrimaryFirst", "PrimarySecond");
+
+                    b.ToTable("ComposedPrimaryKeyEntities");
+                });
+
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.FailingEntity", b =>
                 {
                     b.Property<int>("Id")

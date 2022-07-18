@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EFCore.Extensions.SaveOptimizer.Model.Firebird3.Migrations
 {
     [DbContext(typeof(EntitiesContext))]
-    [Migration("20220718000429_InitialCreate")]
+    [Migration("20220718104140_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -36,6 +36,22 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Firebird3.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("AutoIncrementPrimaryKeyEntities");
+                });
+
+            modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.ComposedPrimaryKeyEntity", b =>
+                {
+                    b.Property<int?>("PrimaryFirst")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("PrimarySecond")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Some")
+                        .HasColumnType("BLOB SUB_TYPE TEXT");
+
+                    b.HasKey("PrimaryFirst", "PrimarySecond");
+
+                    b.ToTable("ComposedPrimaryKeyEntities");
                 });
 
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.FailingEntity", b =>

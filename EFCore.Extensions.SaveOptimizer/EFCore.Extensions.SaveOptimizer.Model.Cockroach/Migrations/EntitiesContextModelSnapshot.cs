@@ -38,6 +38,22 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Cockroach.Migrations
                     b.ToTable("AutoIncrementPrimaryKeyEntities");
                 });
 
+            modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.ComposedPrimaryKeyEntity", b =>
+                {
+                    b.Property<int?>("PrimaryFirst")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("PrimarySecond")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Some")
+                        .HasColumnType("text");
+
+                    b.HasKey("PrimaryFirst", "PrimarySecond");
+
+                    b.ToTable("ComposedPrimaryKeyEntities");
+                });
+
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.FailingEntity", b =>
                 {
                     b.Property<int>("Id")

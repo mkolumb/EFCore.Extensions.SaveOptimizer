@@ -23,6 +23,19 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Oracle.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ComposedPrimaryKeyEntities",
+                columns: table => new
+                {
+                    PrimaryFirst = table.Column<int>(type: "NUMBER(10)", nullable: false),
+                    PrimarySecond = table.Column<int>(type: "NUMBER(10)", nullable: false),
+                    Some = table.Column<string>(type: "NVARCHAR2(2000)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ComposedPrimaryKeyEntities", x => new { x.PrimaryFirst, x.PrimarySecond });
+                });
+
+            migrationBuilder.CreateTable(
                 name: "FailingEntities",
                 columns: table => new
                 {
@@ -107,6 +120,9 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Oracle.Migrations
         {
             migrationBuilder.DropTable(
                 name: "AutoIncrementPrimaryKeyEntities");
+
+            migrationBuilder.DropTable(
+                name: "ComposedPrimaryKeyEntities");
 
             migrationBuilder.DropTable(
                 name: "FailingEntities");

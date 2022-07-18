@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace EFCore.Extensions.SaveOptimizer.Model.Cockroach.Migrations
+namespace EFCore.Extensions.SaveOptimizer.Model.Postgres.Migrations
 {
     public partial class InitialCreate : Migration
     {
@@ -21,6 +21,19 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Cockroach.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AutoIncrementPrimaryKeyEntities", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ComposedPrimaryKeyEntities",
+                columns: table => new
+                {
+                    PrimaryFirst = table.Column<int>(type: "integer", nullable: false),
+                    PrimarySecond = table.Column<int>(type: "integer", nullable: false),
+                    Some = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ComposedPrimaryKeyEntities", x => new { x.PrimaryFirst, x.PrimarySecond });
                 });
 
             migrationBuilder.CreateTable(
@@ -108,6 +121,9 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Cockroach.Migrations
         {
             migrationBuilder.DropTable(
                 name: "AutoIncrementPrimaryKeyEntities");
+
+            migrationBuilder.DropTable(
+                name: "ComposedPrimaryKeyEntities");
 
             migrationBuilder.DropTable(
                 name: "FailingEntities");

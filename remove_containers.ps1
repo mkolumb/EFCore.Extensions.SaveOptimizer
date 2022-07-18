@@ -16,25 +16,29 @@ $workingDir = $(Get-Location).Path
 
 Set-Location .\EFCore.Extensions.SaveOptimizer\Containers
 
-docker compose --file cockroach.yml down
+$yamls = @('cockroach.yml', 'cockroach_multi.yml', 'sqlserver.yml', 'postgres.yml', 'mysql_pomelo.yml', 'mariadb_pomelo.yml', 'firebird_3.yml', 'firebird_4.yml', 'oracle.yml')
 
-docker compose --file cockroach_multi.yml down
+$ErrorActionPreference = 'SilentlyContinue'
 
-docker compose --file sqlserver.yml down
+$yamls | Foreach-Object -ThrottleLimit 10 -Parallel {
+    $workingDir = $using:workingDir
+    $item = $_
+    
+    Set-Location $workingDir
+    Set-Location .\EFCore.Extensions.SaveOptimizer\Containers
+    $cmd = "docker compose --file $($item) down"
 
-docker compose --file postgres.yml down
+    Write-Host $cmd
 
-docker compose --file mysql_pomelo.yml down
+    cmd /c $cmd
 
-docker compose --file mariadb_pomelo.yml down
+    Write-Host "$($item) finished"
+}
 
-docker compose --file firebird_3.yml down
-
-docker compose --file firebird_4.yml down
-
-docker compose --file oracle.yml down
+$ErrorActionPreference = "Stop"
 
 docker volume prune --force
+
 Start-Sleep -Seconds 5
 
 Set-Location $workingDir

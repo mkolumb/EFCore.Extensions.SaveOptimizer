@@ -3,16 +3,16 @@ using System;
 using EFCore.Extensions.SaveOptimizer.Model.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace EFCore.Extensions.SaveOptimizer.Model.Cockroach.Migrations
+namespace EFCore.Extensions.SaveOptimizer.Model.SqlServer.Migrations
 {
     [DbContext(typeof(EntitiesContext))]
-    [Migration("20220718000505_InitialCreate")]
+    [Migration("20220718104138_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,37 +20,53 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Cockroach.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "6.0.0")
-                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.AutoIncrementPrimaryKeyEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Some")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.ToTable("AutoIncrementPrimaryKeyEntities");
                 });
 
+            modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.ComposedPrimaryKeyEntity", b =>
+                {
+                    b.Property<int?>("PrimaryFirst")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PrimarySecond")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Some")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("PrimaryFirst", "PrimarySecond");
+
+                    b.ToTable("ComposedPrimaryKeyEntities");
+                });
+
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.FailingEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Some")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -61,45 +77,45 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Cockroach.Migrations
                 {
                     b.Property<Guid>("NonRelatedEntityId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTimeOffset?>("ConcurrencyToken")
                         .IsConcurrencyToken()
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<bool?>("SomeNonNullableBooleanProperty")
                         .IsRequired()
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<DateTimeOffset?>("SomeNonNullableDateTimeProperty")
                         .IsRequired()
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<decimal?>("SomeNonNullableDecimalProperty")
                         .IsRequired()
                         .HasPrecision(12, 6)
-                        .HasColumnType("numeric(12,6)");
+                        .HasColumnType("decimal(12,6)");
 
                     b.Property<int?>("SomeNonNullableIntProperty")
                         .IsRequired()
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<string>("SomeNonNullableStringProperty")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset?>("SomeNullableDateTimeProperty")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<decimal?>("SomeNullableDecimalProperty")
                         .HasPrecision(12, 6)
-                        .HasColumnType("numeric(12,6)");
+                        .HasColumnType("decimal(12,6)");
 
                     b.Property<int?>("SomeNullableIntProperty")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<string>("SomeNullableStringProperty")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("NonRelatedEntityId");
 
@@ -112,10 +128,10 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Cockroach.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("SomeHalf")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -125,40 +141,40 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Cockroach.Migrations
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.VariousTypeEntity", b =>
                 {
                     b.Property<int>("Id")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<bool?>("SomeBool")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<byte?>("SomeByte")
-                        .HasColumnType("smallint");
+                        .HasColumnType("tinyint");
 
                     b.Property<DateTime?>("SomeDateTime")
                         .HasPrecision(5)
-                        .HasColumnType("timestamp(5) with time zone");
+                        .HasColumnType("datetime2(5)");
 
                     b.Property<DateTimeOffset?>("SomeDateTimeOffset")
                         .HasPrecision(5)
-                        .HasColumnType("timestamp(5) with time zone");
+                        .HasColumnType("datetimeoffset(5)");
 
                     b.Property<decimal?>("SomeDecimal")
                         .HasPrecision(12, 6)
-                        .HasColumnType("numeric(12,6)");
+                        .HasColumnType("decimal(12,6)");
 
                     b.Property<double?>("SomeDouble")
-                        .HasColumnType("double precision");
+                        .HasColumnType("float");
 
                     b.Property<int?>("SomeEnum")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<float?>("SomeFloat")
                         .HasColumnType("real");
 
                     b.Property<Guid?>("SomeGuid")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int?>("SomeInt")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<long?>("SomeLong")
                         .HasColumnType("bigint");
@@ -170,20 +186,20 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Cockroach.Migrations
                         .HasColumnType("smallint");
 
                     b.Property<string>("SomeString")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<TimeSpan?>("SomeTimeSpan")
                         .HasPrecision(5)
-                        .HasColumnType("interval(5)");
+                        .HasColumnType("time");
 
                     b.Property<long?>("SomeUnsignedInt")
                         .HasColumnType("bigint");
 
                     b.Property<decimal?>("SomeUnsignedLong")
-                        .HasColumnType("numeric(20,0)");
+                        .HasColumnType("decimal(20,0)");
 
                     b.Property<int?>("SomeUnsignedShort")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

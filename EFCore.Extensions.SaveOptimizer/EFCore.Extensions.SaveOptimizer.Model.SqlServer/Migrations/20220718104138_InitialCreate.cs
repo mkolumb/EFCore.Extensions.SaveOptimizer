@@ -23,6 +23,19 @@ namespace EFCore.Extensions.SaveOptimizer.Model.SqlServer.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ComposedPrimaryKeyEntities",
+                columns: table => new
+                {
+                    PrimaryFirst = table.Column<int>(type: "int", nullable: false),
+                    PrimarySecond = table.Column<int>(type: "int", nullable: false),
+                    Some = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ComposedPrimaryKeyEntities", x => new { x.PrimaryFirst, x.PrimarySecond });
+                });
+
+            migrationBuilder.CreateTable(
                 name: "FailingEntities",
                 columns: table => new
                 {
@@ -107,6 +120,9 @@ namespace EFCore.Extensions.SaveOptimizer.Model.SqlServer.Migrations
         {
             migrationBuilder.DropTable(
                 name: "AutoIncrementPrimaryKeyEntities");
+
+            migrationBuilder.DropTable(
+                name: "ComposedPrimaryKeyEntities");
 
             migrationBuilder.DropTable(
                 name: "FailingEntities");

@@ -3,16 +3,15 @@ using System;
 using EFCore.Extensions.SaveOptimizer.Model.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace EFCore.Extensions.SaveOptimizer.Model.SqlServer.Migrations
+namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMariaDb.Migrations
 {
     [DbContext(typeof(EntitiesContext))]
-    [Migration("20220718000330_InitialCreate")]
+    [Migration("20220718104145_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,9 +19,7 @@ namespace EFCore.Extensions.SaveOptimizer.Model.SqlServer.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "6.0.0")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
-
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.AutoIncrementPrimaryKeyEntity", b =>
                 {
@@ -30,14 +27,28 @@ namespace EFCore.Extensions.SaveOptimizer.Model.SqlServer.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<string>("Some")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
                     b.ToTable("AutoIncrementPrimaryKeyEntities");
+                });
+
+            modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.ComposedPrimaryKeyEntity", b =>
+                {
+                    b.Property<int?>("PrimaryFirst")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PrimarySecond")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Some")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("PrimaryFirst", "PrimarySecond");
+
+                    b.ToTable("ComposedPrimaryKeyEntities");
                 });
 
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.FailingEntity", b =>
@@ -46,11 +57,9 @@ namespace EFCore.Extensions.SaveOptimizer.Model.SqlServer.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<string>("Some")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
@@ -61,19 +70,19 @@ namespace EFCore.Extensions.SaveOptimizer.Model.SqlServer.Migrations
                 {
                     b.Property<Guid>("NonRelatedEntityId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("char(36)");
 
                     b.Property<DateTimeOffset?>("ConcurrencyToken")
                         .IsConcurrencyToken()
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<bool?>("SomeNonNullableBooleanProperty")
                         .IsRequired()
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<DateTimeOffset?>("SomeNonNullableDateTimeProperty")
                         .IsRequired()
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<decimal?>("SomeNonNullableDecimalProperty")
                         .IsRequired()
@@ -86,10 +95,10 @@ namespace EFCore.Extensions.SaveOptimizer.Model.SqlServer.Migrations
 
                     b.Property<string>("SomeNonNullableStringProperty")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<DateTimeOffset?>("SomeNullableDateTimeProperty")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<decimal?>("SomeNullableDecimalProperty")
                         .HasPrecision(12, 6)
@@ -99,7 +108,7 @@ namespace EFCore.Extensions.SaveOptimizer.Model.SqlServer.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("SomeNullableStringProperty")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.HasKey("NonRelatedEntityId");
 
@@ -112,10 +121,10 @@ namespace EFCore.Extensions.SaveOptimizer.Model.SqlServer.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("SomeHalf")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
@@ -128,34 +137,34 @@ namespace EFCore.Extensions.SaveOptimizer.Model.SqlServer.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool?>("SomeBool")
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<byte?>("SomeByte")
-                        .HasColumnType("tinyint");
+                        .HasColumnType("tinyint unsigned");
 
                     b.Property<DateTime?>("SomeDateTime")
                         .HasPrecision(5)
-                        .HasColumnType("datetime2(5)");
+                        .HasColumnType("datetime(5)");
 
                     b.Property<DateTimeOffset?>("SomeDateTimeOffset")
                         .HasPrecision(5)
-                        .HasColumnType("datetimeoffset(5)");
+                        .HasColumnType("datetime(5)");
 
                     b.Property<decimal?>("SomeDecimal")
                         .HasPrecision(12, 6)
                         .HasColumnType("decimal(12,6)");
 
                     b.Property<double?>("SomeDouble")
-                        .HasColumnType("float");
+                        .HasColumnType("double");
 
                     b.Property<int?>("SomeEnum")
                         .HasColumnType("int");
 
                     b.Property<float?>("SomeFloat")
-                        .HasColumnType("real");
+                        .HasColumnType("float");
 
                     b.Property<Guid?>("SomeGuid")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("char(36)");
 
                     b.Property<int?>("SomeInt")
                         .HasColumnType("int");
@@ -166,24 +175,24 @@ namespace EFCore.Extensions.SaveOptimizer.Model.SqlServer.Migrations
                     b.Property<short?>("SomeShort")
                         .HasColumnType("smallint");
 
-                    b.Property<short?>("SomeSignedByte")
-                        .HasColumnType("smallint");
+                    b.Property<sbyte?>("SomeSignedByte")
+                        .HasColumnType("tinyint");
 
                     b.Property<string>("SomeString")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<TimeSpan?>("SomeTimeSpan")
                         .HasPrecision(5)
-                        .HasColumnType("time");
+                        .HasColumnType("time(5)");
 
-                    b.Property<long?>("SomeUnsignedInt")
-                        .HasColumnType("bigint");
+                    b.Property<uint?>("SomeUnsignedInt")
+                        .HasColumnType("int unsigned");
 
-                    b.Property<decimal?>("SomeUnsignedLong")
-                        .HasColumnType("decimal(20,0)");
+                    b.Property<ulong?>("SomeUnsignedLong")
+                        .HasColumnType("bigint unsigned");
 
-                    b.Property<int?>("SomeUnsignedShort")
-                        .HasColumnType("int");
+                    b.Property<ushort?>("SomeUnsignedShort")
+                        .HasColumnType("smallint unsigned");
 
                     b.HasKey("Id");
 

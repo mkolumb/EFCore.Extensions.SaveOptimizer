@@ -78,7 +78,7 @@ Please note it is not working exactly as SaveChanges, so you should verify it wo
   - [x] [FirebirdSql.EntityFrameworkCore.Firebird](https://www.nuget.org/packages/FirebirdSql.EntityFrameworkCore.Firebird/)
 - [ ] Primary keys
   - [x] Simple
-  - [ ] Composed
+  - [x] Composed
   - [ ] No primary key
 - [x] Statements
   - [x] Insert
@@ -98,6 +98,7 @@ Please note it is not working exactly as SaveChanges, so you should verify it wo
 - [ ] Interceptors
 - [ ] Shadow properties
 - [ ] Self-referencing relationship
+- [ ] Alternate keys
 - [x] [Configuration](#configuration)
 - [ ] Concurrency token support
   - [x] Where clause
@@ -108,6 +109,7 @@ Please note it is not working exactly as SaveChanges, so you should verify it wo
 - [ ] Add unchecked when possible
 - [ ] Low level performance optimizations
 - [ ] Contributing document
+- [ ] Validation before save
 
 ## Limitations
 

@@ -20,28 +20,31 @@ $workingDir = $(Get-Location).Path
 
 Set-Location .\EFCore.Extensions.SaveOptimizer\Containers
 
-docker compose --file cockroach.yml up --detach
+$yamls = @('cockroach.yml', 'cockroach_multi.yml', 'sqlserver.yml', 'postgres.yml', 'mysql_pomelo.yml', 'mariadb_pomelo.yml', 'firebird_3.yml', 'firebird_4.yml', 'oracle.yml')
 
-docker compose --file cockroach_multi.yml up --detach
+$ErrorActionPreference = 'SilentlyContinue'
 
-docker compose --file sqlserver.yml up --detach
+$yamls | Foreach-Object -ThrottleLimit 10 -Parallel {
+    $workingDir = $using:workingDir
+    $item = $_
+    
+    Set-Location $workingDir
+    Set-Location .\EFCore.Extensions.SaveOptimizer\Containers
+    $cmd = "docker compose --file $($item) up --detach"
 
-docker compose --file postgres.yml up --detach
+    Write-Host $cmd
 
-docker compose --file mysql_pomelo.yml up --detach
+    cmd /c $cmd
 
-docker compose --file mariadb_pomelo.yml up --detach
+    Write-Host "$($item) finished"
+}
 
-docker compose --file firebird_3.yml up --detach
+$ErrorActionPreference = "Stop"
 
-docker compose --file firebird_4.yml up --detach
-
-docker compose --file oracle.yml up --detach
-
-Start-Sleep -Seconds 10
+Start-Sleep -Seconds 5
 
 docker compose --file cockroach_multi.yml exec optimizerroachmulti11 /cockroach/cockroach init --insecure
 
-Start-Sleep -Seconds 10
+Start-Sleep -Seconds 5
 
 Set-Location $workingDir
