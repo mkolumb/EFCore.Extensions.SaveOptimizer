@@ -24,6 +24,19 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Cockroach.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ComposedPrimaryKeyEntities",
+                columns: table => new
+                {
+                    PrimaryFirst = table.Column<string>(type: "text", nullable: false),
+                    PrimarySecond = table.Column<string>(type: "text", nullable: false),
+                    Some = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ComposedPrimaryKeyEntities", x => new { x.PrimaryFirst, x.PrimarySecond });
+                });
+
+            migrationBuilder.CreateTable(
                 name: "FailingEntities",
                 columns: table => new
                 {
@@ -108,6 +121,9 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Cockroach.Migrations
         {
             migrationBuilder.DropTable(
                 name: "AutoIncrementPrimaryKeyEntities");
+
+            migrationBuilder.DropTable(
+                name: "ComposedPrimaryKeyEntities");
 
             migrationBuilder.DropTable(
                 name: "FailingEntities");

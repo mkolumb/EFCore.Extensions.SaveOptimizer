@@ -36,6 +36,22 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Firebird3.Migrations
                     b.ToTable("AutoIncrementPrimaryKeyEntities");
                 });
 
+            modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.ComposedPrimaryKeyEntity", b =>
+                {
+                    b.Property<string>("PrimaryFirst")
+                        .HasColumnType("VARCHAR(256)");
+
+                    b.Property<string>("PrimarySecond")
+                        .HasColumnType("VARCHAR(256)");
+
+                    b.Property<string>("Some")
+                        .HasColumnType("BLOB SUB_TYPE TEXT");
+
+                    b.HasKey("PrimaryFirst", "PrimarySecond");
+
+                    b.ToTable("ComposedPrimaryKeyEntities");
+                });
+
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.FailingEntity", b =>
                 {
                     b.Property<int>("Id")

@@ -20,6 +20,8 @@ public class EntitiesContext : DbContext
 
     public DbSet<ValueConverterEntity> ValueConverterEntities { get; set; }
 
+    public DbSet<ComposedPrimaryKeyEntity> ComposedPrimaryKeyEntities { get; set; }
+
     public EntitiesContext(DbContextOptions<EntitiesContext> options)
         : base(options)
     {
@@ -34,6 +36,9 @@ public class EntitiesContext : DbContext
         modelBuilder.Entity<ValueConverterEntity>()
             .Property(x => x.SomeHalf)
             .HasConversion<HalfValueConverter>();
+
+        modelBuilder.Entity<ComposedPrimaryKeyEntity>()
+            .HasKey(x => new { x.PrimaryFirst, x.PrimarySecond });
 
         foreach (Action<ModelBuilder> builder in AdditionalBuilders)
         {

@@ -29,6 +29,23 @@ namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMariaDb.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "ComposedPrimaryKeyEntities",
+                columns: table => new
+                {
+                    PrimaryFirst = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    PrimarySecond = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Some = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ComposedPrimaryKeyEntities", x => new { x.PrimaryFirst, x.PrimarySecond });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "FailingEntities",
                 columns: table => new
                 {
@@ -122,6 +139,9 @@ namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMariaDb.Migrations
         {
             migrationBuilder.DropTable(
                 name: "AutoIncrementPrimaryKeyEntities");
+
+            migrationBuilder.DropTable(
+                name: "ComposedPrimaryKeyEntities");
 
             migrationBuilder.DropTable(
                 name: "FailingEntities");

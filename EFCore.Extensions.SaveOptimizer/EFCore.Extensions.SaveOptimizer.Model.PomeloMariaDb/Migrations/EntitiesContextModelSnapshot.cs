@@ -33,6 +33,22 @@ namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMariaDb.Migrations
                     b.ToTable("AutoIncrementPrimaryKeyEntities");
                 });
 
+            modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.ComposedPrimaryKeyEntity", b =>
+                {
+                    b.Property<string>("PrimaryFirst")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("PrimarySecond")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Some")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("PrimaryFirst", "PrimarySecond");
+
+                    b.ToTable("ComposedPrimaryKeyEntities");
+                });
+
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.FailingEntity", b =>
                 {
                     b.Property<int>("Id")

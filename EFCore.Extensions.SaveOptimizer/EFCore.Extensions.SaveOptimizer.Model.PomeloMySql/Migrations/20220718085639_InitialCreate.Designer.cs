@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMySql.Migrations
 {
     [DbContext(typeof(EntitiesContext))]
-    [Migration("20220718000418_InitialCreate")]
+    [Migration("20220718085639_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,6 +33,22 @@ namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMySql.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("AutoIncrementPrimaryKeyEntities");
+                });
+
+            modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.ComposedPrimaryKeyEntity", b =>
+                {
+                    b.Property<string>("PrimaryFirst")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("PrimarySecond")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Some")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("PrimaryFirst", "PrimarySecond");
+
+                    b.ToTable("ComposedPrimaryKeyEntities");
                 });
 
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.FailingEntity", b =>

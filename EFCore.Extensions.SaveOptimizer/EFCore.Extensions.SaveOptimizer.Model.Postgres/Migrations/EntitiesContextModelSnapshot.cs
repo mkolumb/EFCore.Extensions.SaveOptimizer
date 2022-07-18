@@ -38,6 +38,22 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Postgres.Migrations
                     b.ToTable("AutoIncrementPrimaryKeyEntities");
                 });
 
+            modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.ComposedPrimaryKeyEntity", b =>
+                {
+                    b.Property<string>("PrimaryFirst")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PrimarySecond")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Some")
+                        .HasColumnType("text");
+
+                    b.HasKey("PrimaryFirst", "PrimarySecond");
+
+                    b.ToTable("ComposedPrimaryKeyEntities");
+                });
+
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.FailingEntity", b =>
                 {
                     b.Property<int>("Id")
