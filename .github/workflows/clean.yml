@@ -11,10 +11,6 @@ jobs:
         os:
           - ubuntu-latest
     steps:
-      - name: Clean docker
-        run: docker system prune --all --force
-      - name: Clean docker
-        run: docker volume prune --force
       - name: Clean workspace
         uses: AutoModality/action-clean@v1
       - name: Get the sources
@@ -23,3 +19,7 @@ jobs:
         run: git fetch --prune --unshallow
       - name: Clean unnecessary objects
         run: git clean -fdX
+      - name: Clean docker
+        run: docker system prune --all --force
+      - name: Clean docker
+        run: docker volume prune --force
