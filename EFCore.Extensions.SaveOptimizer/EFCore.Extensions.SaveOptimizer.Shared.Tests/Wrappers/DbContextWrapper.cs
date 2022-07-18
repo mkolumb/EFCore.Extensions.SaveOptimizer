@@ -245,7 +245,7 @@ public sealed class DbContextWrapper : IDisposable
                     throw;
                 }
 
-                await Task.Delay(TimeSpan.FromSeconds(2)).ConfigureAwait(false);
+                await Task.Delay(TimeSpan.FromSeconds(1)).ConfigureAwait(false);
             }
         } while (i < max);
 
@@ -348,7 +348,7 @@ public sealed class DbContextWrapper : IDisposable
                     throw;
                 }
 
-                Task.Delay(TimeSpan.FromSeconds(2)).ConfigureAwait(false).GetAwaiter().GetResult();
+                Task.Delay(TimeSpan.FromSeconds(1)).ConfigureAwait(false).GetAwaiter().GetResult();
             }
         } while (i < max);
 

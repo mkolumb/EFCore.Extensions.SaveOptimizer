@@ -76,7 +76,7 @@ public abstract class BaseTests
 
                 if (ContextFails[name] < MaxPrepareTry)
                 {
-                    Task.Delay(TimeSpan.FromSeconds(15)).ConfigureAwait(false).GetAwaiter().GetResult();
+                    Task.Delay(TimeSpan.FromSeconds(5)).ConfigureAwait(false).GetAwaiter().GetResult();
                 }
             }
         } while (ContextFails[name] < MaxPrepareTry);
@@ -166,7 +166,7 @@ public abstract class BaseTests
                     throw;
                 }
 
-                await Task.Delay(TimeSpan.FromSeconds(2)).ConfigureAwait(false);
+                await Task.Delay(TimeSpan.FromSeconds(1)).ConfigureAwait(false);
             }
         } while (i < max);
 
@@ -200,7 +200,7 @@ public abstract class BaseTests
                     throw;
                 }
 
-                Task.Delay(TimeSpan.FromSeconds(2)).ConfigureAwait(false).GetAwaiter().GetResult();
+                Task.Delay(TimeSpan.FromSeconds(1)).ConfigureAwait(false).GetAwaiter().GetResult();
             }
         } while (i < max);
 

@@ -30,7 +30,7 @@ public static class QueryableExtensions
                     throw;
                 }
 
-                await Task.Delay(TimeSpan.FromSeconds(2)).ConfigureAwait(false);
+                await Task.Delay(TimeSpan.FromSeconds(1)).ConfigureAwait(false);
             }
         } while (i < max);
 
@@ -56,7 +56,7 @@ public static class QueryableExtensions
                     throw;
                 }
 
-                Task.Delay(TimeSpan.FromSeconds(2)).ConfigureAwait(false).GetAwaiter().GetResult();
+                Task.Delay(TimeSpan.FromSeconds(1)).ConfigureAwait(false).GetAwaiter().GetResult();
             }
         } while (i < max);
 

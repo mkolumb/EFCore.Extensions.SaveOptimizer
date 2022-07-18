@@ -133,7 +133,7 @@ public abstract class BaseFailTests : BaseTests
                 },
                 async () =>
                 {
-                    await Task.Delay(TimeSpan.FromSeconds(2)).ConfigureAwait(false);
+                    await Task.Delay(TimeSpan.FromSeconds(1)).ConfigureAwait(false);
 
                     t2 = await dbs[2].Context.Database.BeginTransactionAsync().ConfigureAwait(false);
 
@@ -315,7 +315,7 @@ public abstract class BaseFailTests : BaseTests
                 },
                 () =>
                 {
-                    Task.Delay(TimeSpan.FromSeconds(2)).ConfigureAwait(false).GetAwaiter().GetResult();
+                    Task.Delay(TimeSpan.FromSeconds(1)).ConfigureAwait(false).GetAwaiter().GetResult();
 
                     t2 = dbs[2].Context.Database.BeginTransaction();
 
