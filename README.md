@@ -97,6 +97,7 @@ Please note it is not working exactly as SaveChanges, so you should verify it wo
 - [ ] Owned entities
 - [ ] Interceptors
 - [ ] Shadow properties
+- [ ] Self-referencing relationship
 - [x] [Configuration](#configuration)
 - [ ] Concurrency token support
   - [x] Where clause
@@ -117,6 +118,10 @@ SaveOptimizer approach makes almost impossible refresh data after save, it is on
 Basically - after save you should not use this context anymore as it could be invalid, you should use new context for another operation. However if you need you can experiment with `AfterSaveBehavior`.
 
 If you start transaction by your own I recommend to use `AfterSaveBehavior.DoNothing` in configuration and after successful commit call `ProcessAfterSave` method from result with parameter you want.
+
+### Relationships
+
+This limitation is connected with the previous one. If you want to add within one transaction an entity and some dependent entities you can't use auto increment primary key. This will work only with primary key value generated in your code.
 
 ## Known issues
 
