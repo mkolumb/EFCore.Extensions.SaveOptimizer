@@ -2,7 +2,6 @@
 <RunSettings>
     <RunConfiguration>
         <MaxCpuCount>4</MaxCpuCount>
-        <ResultsDirectory>./TestResults</ResultsDirectory>
         <TargetFrameworkVersion>net6.0</TargetFrameworkVersion>
         <TreatNoTestsAsError>true</TreatNoTestsAsError>
     </RunConfiguration>

@@ -62,7 +62,7 @@ jobs:
         if: success() || failure()
         with:
           name: test-results
-          path: ./TestResults/*.trx
+          path: ./TestResults/**/*.trx
       - name: Run FAKE pack prelease
         if: github.ref == 'refs/heads/develop'
         run: |

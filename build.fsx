@@ -40,10 +40,13 @@ let testRun =
 
         let dir = Shell.pwd ()
         let settingsPath = Path.combine dir "github.runsettings"
+        let guid = (System.Guid.NewGuid())
+        let resultPath = Path.combine "./TestResults/" (guid.ToString())
 
         let testConfiguration (defaults: DotNet.TestOptions) =
             { defaults with
                 Settings = Some(settingsPath)
+                ResultsDirectory = Some(resultPath)
                 NoBuild = true }
 
         DotNet.test testConfiguration path
