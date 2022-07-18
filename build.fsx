@@ -11,6 +11,7 @@ open Fake.IO.FileSystemOperators
 open Fake.IO.Globbing.Operators
 open Fake.Core.TargetOperators
 open System.Threading.Tasks
+open System.Collections.Generic
 
 Target.initEnvironment ()
 
