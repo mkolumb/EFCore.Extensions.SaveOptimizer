@@ -8,11 +8,18 @@ using EFCore.Extensions.SaveOptimizer.Shared.Tests.Extensions;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests.Wrappers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Xunit.Abstractions;
 
 namespace EFCore.Extensions.SaveOptimizer.Shared.Tests.Tests;
 
-public abstract partial class BaseMiscTests
+public abstract class BaseFailTests : BaseTests
 {
+    protected BaseFailTests(ITestOutputHelper testOutputHelper,
+        Func<ITestOutputHelper, EntityCollectionAttribute?, DbContextWrapper> contextWrapperResolver)
+        : base(testOutputHelper, contextWrapperResolver)
+    {
+    }
+
     [SkippableTheory]
     [MemberData(nameof(BaseWriteTheoryData))]
     public async Task GivenSaveChangesAsync_WhenFail_ShouldProperlyStoreAfterSaveAgain(SaveVariant variant)
@@ -70,7 +77,7 @@ public abstract partial class BaseMiscTests
 
             QueryExecutionConfiguration config = new() { AfterSaveBehavior = AfterSaveBehavior.DoNothing };
 
-            dbs[0].CleanDb();
+            dbs[0].CleanDb(CollectionAttribute);
 
             foreach (DbContextWrapper db in dbs)
             {
@@ -252,7 +259,7 @@ public abstract partial class BaseMiscTests
 
             QueryExecutionConfiguration config = new() { AfterSaveBehavior = AfterSaveBehavior.DoNothing };
 
-            dbs[0].CleanDb();
+            dbs[0].CleanDb(CollectionAttribute);
 
             foreach (DbContextWrapper db in dbs)
             {

@@ -1,4 +1,6 @@
-﻿using System.Data;
+﻿using System.Collections.Concurrent;
+using System.Data;
+using System.Reflection;
 using EFCore.Extensions.SaveOptimizer.Dapper;
 using EFCore.Extensions.SaveOptimizer.Internal.Configuration;
 using EFCore.Extensions.SaveOptimizer.Internal.Enums;
@@ -6,6 +8,7 @@ using EFCore.Extensions.SaveOptimizer.Internal.Models;
 using EFCore.Extensions.SaveOptimizer.Model.Context;
 using EFCore.Extensions.SaveOptimizer.Model.Entities;
 using EFCore.Extensions.SaveOptimizer.Model.Factories;
+using EFCore.Extensions.SaveOptimizer.Shared.Tests.Attributes;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests.Enums;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests.Extensions;
 using EFCore.Extensions.SaveOptimizer.TestLogger;
@@ -25,6 +28,8 @@ public sealed class DbContextWrapper : IDisposable
     private readonly ILoggerFactory _loggerFactory;
     private readonly string? _resetSequenceFormat;
     private readonly string? _truncateFormat;
+
+    private static ConcurrentDictionary<string, bool> Migrated { get; } = new();
 
     public EntitiesContext Context { get; private set; }
 
@@ -96,12 +101,36 @@ public sealed class DbContextWrapper : IDisposable
         RecreateContext();
     }
 
-    public void CleanDb()
+    public void Migrate()
     {
+        var connectionString = Context.Database.GetConnectionString() ?? throw new InvalidOperationException();
+
+        if (Migrated.ContainsKey(connectionString) && Migrated[connectionString])
+        {
+            return;
+        }
+
+        Context.Database.Migrate();
+
+        Migrated[connectionString] = true;
+    }
+
+    public void CleanDb(EntityCollectionAttribute? collectionAttribute)
+    {
+        if (collectionAttribute == null)
+        {
+            throw new ArgumentNullException(nameof(collectionAttribute));
+        }
+
         if (_truncateFormat != null)
         {
             foreach (var entity in EntitiesList)
             {
+                if (!ShouldClean(entity, collectionAttribute))
+                {
+                    continue;
+                }
+
                 var query = string.Format(_truncateFormat, entity);
 
                 Run(RunTry, () => Context.Database.ExecuteSqlRaw(query));
@@ -115,10 +144,26 @@ public sealed class DbContextWrapper : IDisposable
 
         foreach (var (table, column) in SequencesList)
         {
+            if (!ShouldClean(table, collectionAttribute))
+            {
+                continue;
+            }
+
             var query = string.Format(_resetSequenceFormat, table, column);
 
             Run(RunTry, () => Context.Database.ExecuteSqlRaw(query));
         }
+    }
+
+    private static bool ShouldClean(string collection, EntityCollectionAttribute collectionAttribute)
+    {
+        Type type = typeof(EntitiesContext);
+
+        PropertyInfo? property = type.GetProperty(collection);
+
+        Type argument = property!.PropertyType.GenericTypeArguments[0];
+
+        return collectionAttribute.EntityTypes.Contains(argument);
     }
 
     private async Task TrySaveAsync(SaveVariant variant, int? batchSize)

@@ -1,6 +1,5 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Model.Entities;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests.Attributes;
-using EFCore.Extensions.SaveOptimizer.Shared.Tests.Data;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests.Enums;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests.Extensions;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests.Wrappers;
@@ -12,12 +11,8 @@ namespace EFCore.Extensions.SaveOptimizer.Shared.Tests.Tests;
 
 public abstract class BaseInsertTests : BaseTests
 {
-    public static IEnumerable<IEnumerable<object?>> InsertData => SharedTheoryData.InsertTheoryData;
-
-    public static IEnumerable<IEnumerable<object?>> BaseWriteTheoryData => SharedTheoryData.BaseWriteTheoryData;
-
     protected BaseInsertTests(ITestOutputHelper testOutputHelper,
-        Func<ITestOutputHelper, DbContextWrapper> contextWrapperResolver)
+        Func<ITestOutputHelper, EntityCollectionAttribute?, DbContextWrapper> contextWrapperResolver)
         : base(testOutputHelper, contextWrapperResolver)
     {
     }
@@ -43,7 +38,8 @@ public abstract class BaseInsertTests : BaseTests
         var properties = await db.Context.NonRelatedEntities
             .Select(x => x.SomeNonNullableStringProperty)
             .Distinct()
-            .ToArrayWithRetryAsync().ConfigureAwait(false);
+            .ToArrayWithRetryAsync()
+            .ConfigureAwait(false);
 
         // Assert
         result.Should().Be(count);
@@ -199,19 +195,4 @@ public abstract class BaseInsertTests : BaseTests
         result.SomeNonNullableStringProperty.Should().Be(item.SomeNonNullableStringProperty);
         result.SomeNullableStringProperty.Should().Be(item.SomeNullableStringProperty);
     }
-
-    private static NonRelatedEntity ItemResolver(int i) =>
-        new()
-        {
-            ConcurrencyToken = new DateTimeOffset(2033, 11, 11, 2, 3, 4, 5, TimeSpan.Zero),
-            SomeNonNullableBooleanProperty = true,
-            SomeNonNullableDateTimeProperty = new DateTimeOffset(2010, 10, 10, 1, 2, 3, 0, TimeSpan.Zero),
-            SomeNullableDateTimeProperty = new DateTimeOffset(2012, 11, 11, 1, 2, 3, 0, TimeSpan.Zero),
-            SomeNonNullableDecimalProperty = 2.52M,
-            SomeNullableDecimalProperty = 4.523M,
-            SomeNonNullableIntProperty = 1,
-            SomeNullableIntProperty = 11,
-            SomeNonNullableStringProperty = $"some-string-{i}",
-            SomeNullableStringProperty = "other-string"
-        };
 }

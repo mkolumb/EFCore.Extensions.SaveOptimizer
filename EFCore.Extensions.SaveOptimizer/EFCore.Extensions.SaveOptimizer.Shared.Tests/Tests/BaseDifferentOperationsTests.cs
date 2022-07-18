@@ -3,11 +3,18 @@ using EFCore.Extensions.SaveOptimizer.Shared.Tests.Attributes;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests.Enums;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests.Extensions;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests.Wrappers;
+using Xunit.Abstractions;
 
 namespace EFCore.Extensions.SaveOptimizer.Shared.Tests.Tests;
 
-public abstract partial class BaseMiscTests
+public abstract class BaseDifferentOperationsTests : BaseTests
 {
+    protected BaseDifferentOperationsTests(ITestOutputHelper testOutputHelper,
+        Func<ITestOutputHelper, EntityCollectionAttribute?, DbContextWrapper> contextWrapperResolver)
+        : base(testOutputHelper, contextWrapperResolver)
+    {
+    }
+
     [SkippableTheory]
     [MemberData(nameof(BaseWriteTheoryData))]
     public async Task GivenSaveChangesAsync_WhenDifferentOperations_ShouldStoreData(SaveVariant variant)
@@ -30,7 +37,9 @@ public abstract partial class BaseMiscTests
         await db.SaveAsync(variant, null).ConfigureAwait(false);
 
         NonRelatedEntity[] result =
-            await db.Context.NonRelatedEntities.OrderBy(x => x.SomeNonNullableIntProperty).ToArrayWithRetryAsync()
+            await db.Context.NonRelatedEntities
+                .OrderBy(x => x.Indexer)
+                .ToArrayWithRetryAsync()
                 .ConfigureAwait(false);
 
         var properties = result.Select(x => x.SomeNonNullableIntProperty).ToArray();
@@ -66,7 +75,9 @@ public abstract partial class BaseMiscTests
         db.Save(variant, null);
 
         NonRelatedEntity[] result =
-            db.Context.NonRelatedEntities.OrderBy(x => x.SomeNonNullableIntProperty).ToArrayWithRetry();
+            db.Context.NonRelatedEntities
+                .OrderBy(x => x.Indexer)
+                .ToArrayWithRetry();
 
         var properties = result.Select(x => x.SomeNonNullableIntProperty).ToArray();
 

@@ -81,6 +81,9 @@ namespace EFCore.Extensions.SaveOptimizer.Model.SqlServer.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<int>("Indexer")
+                        .HasColumnType("int");
+
                     b.Property<bool?>("SomeNonNullableBooleanProperty")
                         .IsRequired()
                         .HasColumnType("bit");
@@ -116,6 +119,8 @@ namespace EFCore.Extensions.SaveOptimizer.Model.SqlServer.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("NonRelatedEntityId");
+
+                    b.HasIndex("Indexer");
 
                     b.HasIndex("ConcurrencyToken", "NonRelatedEntityId");
 

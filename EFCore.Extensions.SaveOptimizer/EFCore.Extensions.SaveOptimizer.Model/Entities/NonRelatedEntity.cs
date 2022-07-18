@@ -11,6 +11,9 @@ public class NonRelatedEntity
     public Guid NonRelatedEntityId { get; set; }
 
     [Required]
+    public int Indexer { get; set; }
+
+    [Required]
     public string? SomeNonNullableStringProperty { get; set; }
 
     public string? SomeNullableStringProperty { get; set; }

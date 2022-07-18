@@ -33,6 +33,10 @@ public class EntitiesContext : DbContext
             .HasIndex(x => new { x.ConcurrencyToken, x.NonRelatedEntityId })
             .IsUnique(false);
 
+        modelBuilder.Entity<NonRelatedEntity>()
+            .HasIndex(x => new { x.Indexer })
+            .IsUnique(false);
+
         modelBuilder.Entity<ValueConverterEntity>()
             .Property(x => x.SomeHalf)
             .HasConversion<HalfValueConverter>();

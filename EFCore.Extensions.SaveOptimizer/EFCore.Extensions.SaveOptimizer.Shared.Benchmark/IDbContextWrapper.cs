@@ -11,4 +11,5 @@ public interface IDbContextWrapper : IDisposable
     Task SaveAsync(SaveVariant variant, long expectedRows);
     Task<IReadOnlyList<NonRelatedEntity>> RetrieveDataAsync(long count);
     NonRelatedEntity CreateItem(long i);
+    void Migrate();
 }

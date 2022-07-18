@@ -1,13 +1,13 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Model.Postgres;
+using EFCore.Extensions.SaveOptimizer.Shared.Tests.Attributes;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests.Wrappers;
-using Microsoft.EntityFrameworkCore;
 using Xunit.Abstractions;
 
 namespace EFCore.Extensions.SaveOptimizer.Postgres.Tests;
 
 public static class WrapperResolver
 {
-    public static DbContextWrapper ContextWrapperResolver(ITestOutputHelper testOutputHelper)
+    public static DbContextWrapper ContextWrapperResolver(ITestOutputHelper testOutputHelper, EntityCollectionAttribute? collectionAttribute)
     {
         PostgresDesignTimeFactory factory = new();
 
@@ -15,9 +15,9 @@ public static class WrapperResolver
 
         DbContextWrapper wrapper = new(factory, testOutputHelper, query);
 
-        wrapper.Context.Database.Migrate();
+        wrapper.Migrate();
 
-        wrapper.CleanDb();
+        wrapper.CleanDb(collectionAttribute);
 
         return wrapper;
     }

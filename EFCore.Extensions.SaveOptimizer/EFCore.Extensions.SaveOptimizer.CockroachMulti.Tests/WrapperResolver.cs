@@ -1,13 +1,13 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Model.CockroachMulti;
+using EFCore.Extensions.SaveOptimizer.Shared.Tests.Attributes;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests.Wrappers;
-using Microsoft.EntityFrameworkCore;
 using Xunit.Abstractions;
 
 namespace EFCore.Extensions.SaveOptimizer.CockroachMulti.Tests;
 
 public static class WrapperResolver
 {
-    public static DbContextWrapper ContextWrapperResolver(ITestOutputHelper testOutputHelper)
+    public static DbContextWrapper ContextWrapperResolver(ITestOutputHelper testOutputHelper, EntityCollectionAttribute? collectionAttribute)
     {
         CockroachDesignTimeFactory factory = new();
 
@@ -17,9 +17,9 @@ public static class WrapperResolver
 
         DbContextWrapper wrapper = new(factory, testOutputHelper, truncateQuery, resetSequenceQuery);
 
-        wrapper.Context.Database.Migrate();
+        wrapper.Migrate();
 
-        wrapper.CleanDb();
+        wrapper.CleanDb(collectionAttribute);
 
         return wrapper;
     }
