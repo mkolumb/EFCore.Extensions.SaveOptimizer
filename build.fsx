@@ -94,7 +94,16 @@ let iterInParallel action (array: 'string []) =
 
     let queue: Queue<'string> = new Queue<'string>()
 
-    for item in array do
+    let compareEntries (s1: string) ( s2: string) =
+        let c = compare s1 s2
+        if s1.Contains("Oracle") then -1
+        else if s2.Contains("Oracle") then 1
+        else c
+
+    let sorted: string [] =
+        (Array.sortWith compareEntries array)
+
+    for item in sorted do
         queue.Enqueue(item)
 
     let invoke = (fun _ -> action (queue.Dequeue()))
@@ -133,7 +142,6 @@ Target.create "DbTest" (fun _ ->
     (!! "**/*.Tests.csproj"
      -- "**/*Internal*.Tests.csproj"
      -- "**/*Shared*.Tests.csproj")
-    |> Seq.sort
     |> Seq.toArray
     |> iterInParallel (dbTestRun))
 
