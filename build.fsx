@@ -91,7 +91,14 @@ let iterInParallel action (array: 'T []) =
     let options: ParallelOptions = new ParallelOptions()
     options.MaxDegreeOfParallelism <- 4
 
-    Parallel.For(0, array.Length, options, (fun i -> action array.[i]))
+    let queue: Queue<'string> = new Queue<'string>()
+
+    for item in array do
+        queue.Enqueue(item)
+
+    let invoke = (fun i -> action (queue.Dequeue()))
+
+    Parallel.For(0, array.Length, options, invoke)
     |> ignore
 
 Target.create "Clean" (fun _ -> !! "**/bin" ++ "**/obj" |> Shell.cleanDirs)
@@ -125,6 +132,7 @@ Target.create "DbTest" (fun _ ->
     (!! "**/*.Tests.csproj"
      -- "**/*Internal*.Tests.csproj"
      -- "**/*Shared*.Tests.csproj")
+    |> Seq.sort
     |> Seq.toArray
     |> iterInParallel (dbTestRun))
 
