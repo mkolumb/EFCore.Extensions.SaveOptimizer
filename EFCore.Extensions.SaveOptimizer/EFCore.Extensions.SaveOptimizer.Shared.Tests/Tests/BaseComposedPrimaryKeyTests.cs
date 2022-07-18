@@ -3,11 +3,18 @@ using EFCore.Extensions.SaveOptimizer.Shared.Tests.Attributes;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests.Enums;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests.Extensions;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests.Wrappers;
+using Xunit.Abstractions;
 
 namespace EFCore.Extensions.SaveOptimizer.Shared.Tests.Tests;
 
-public abstract partial class BaseMiscTests
+public abstract class BaseComposedPrimaryKeyTests : BaseTests
 {
+    protected BaseComposedPrimaryKeyTests(ITestOutputHelper testOutputHelper,
+        Func<ITestOutputHelper, EntityCollectionAttribute?, DbContextWrapper> contextWrapperResolver)
+        : base(testOutputHelper, contextWrapperResolver)
+    {
+    }
+
     [SkippableTheory]
     [MemberData(nameof(BaseWriteTheoryData))]
     public async Task GivenSaveChangesAsync_WhenInsertComposedPrimaryKey_ShouldStoreData(SaveVariant variant)

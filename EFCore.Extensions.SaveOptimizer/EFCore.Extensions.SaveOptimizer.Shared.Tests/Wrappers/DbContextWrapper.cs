@@ -6,6 +6,7 @@ using EFCore.Extensions.SaveOptimizer.Internal.Models;
 using EFCore.Extensions.SaveOptimizer.Model.Context;
 using EFCore.Extensions.SaveOptimizer.Model.Entities;
 using EFCore.Extensions.SaveOptimizer.Model.Factories;
+using EFCore.Extensions.SaveOptimizer.Shared.Tests.Attributes;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests.Enums;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests.Extensions;
 using EFCore.Extensions.SaveOptimizer.TestLogger;
@@ -19,10 +20,12 @@ namespace EFCore.Extensions.SaveOptimizer.Shared.Tests.Wrappers;
 public sealed class DbContextWrapper : IDisposable
 {
     private const int RunTry = 10;
+    private readonly EntityCollectionAttribute? _collectionAttribute;
 
     private readonly ITestTimeDbContextFactory<EntitiesContext> _factory;
     private readonly ILogger _logger;
     private readonly ILoggerFactory _loggerFactory;
+
     private readonly string? _resetSequenceFormat;
     private readonly string? _truncateFormat;
 
@@ -41,10 +44,14 @@ public sealed class DbContextWrapper : IDisposable
         { nameof(EntitiesContext.FailingEntities), nameof(FailingEntity.Id) }
     };
 
-    public DbContextWrapper(ITestTimeDbContextFactory<EntitiesContext> factory, ITestOutputHelper testOutputHelper,
-        string? truncateFormat = null, string? resetSequenceFormat = null)
+    public DbContextWrapper(ITestTimeDbContextFactory<EntitiesContext> factory,
+        ITestOutputHelper? testOutputHelper,
+        EntityCollectionAttribute? collectionAttribute,
+        string? truncateFormat = null,
+        string? resetSequenceFormat = null)
     {
         _factory = factory;
+        _collectionAttribute = collectionAttribute;
         _truncateFormat = truncateFormat;
         _resetSequenceFormat = resetSequenceFormat;
         _loggerFactory = new LoggerFactory(new[] { new TestLoggerProvider(testOutputHelper, LogLevel.Warning) });
@@ -53,7 +60,17 @@ public sealed class DbContextWrapper : IDisposable
         _logger = _loggerFactory.CreateLogger(nameof(DbContextWrapper));
     }
 
-    public void Dispose() => Context.Dispose();
+    public void Dispose() => Dispose(true);
+
+    private void Dispose(bool disposing)
+    {
+        if (!disposing)
+        {
+            return;
+        }
+
+        Context.Dispose();
+    }
 
     private static QueryExecutionConfiguration GetConfig(SaveVariant variant, int? batchSize)
     {
@@ -96,12 +113,19 @@ public sealed class DbContextWrapper : IDisposable
         RecreateContext();
     }
 
+    public void Migrate() => Context.Database.Migrate();
+
     public void CleanDb()
     {
         if (_truncateFormat != null)
         {
             foreach (var entity in EntitiesList)
             {
+                if (!ShouldClean(entity))
+                {
+                    continue;
+                }
+
                 var query = string.Format(_truncateFormat, entity);
 
                 Run(RunTry, () => Context.Database.ExecuteSqlRaw(query));
@@ -115,11 +139,18 @@ public sealed class DbContextWrapper : IDisposable
 
         foreach (var (table, column) in SequencesList)
         {
+            if (!ShouldClean(table))
+            {
+                continue;
+            }
+
             var query = string.Format(_resetSequenceFormat, table, column);
 
             Run(RunTry, () => Context.Database.ExecuteSqlRaw(query));
         }
     }
+
+    private bool ShouldClean(string collection) => _collectionAttribute?.IsConnectedCollection(collection) != false;
 
     private async Task TrySaveAsync(SaveVariant variant, int? batchSize)
     {
@@ -322,5 +353,40 @@ public sealed class DbContextWrapper : IDisposable
         } while (i < max);
 
         throw new Exception("Unable to run method - something weird happened");
+    }
+
+    public static void TryInit(Func<ITestOutputHelper?, EntityCollectionAttribute?, DbContextWrapper> resolver)
+    {
+        var i = 0;
+
+        while (true)
+        {
+            try
+            {
+                DbContextWrapper? wrapper = null;
+
+                try
+                {
+                    wrapper = resolver(null, null);
+                }
+                finally
+                {
+                    wrapper?.Dispose();
+                }
+
+                break;
+            }
+            catch
+            {
+                i++;
+
+                if (i > RunTry)
+                {
+                    return;
+                }
+
+                Task.Delay(TimeSpan.FromSeconds(15)).GetAwaiter().GetResult();
+            }
+        }
     }
 }

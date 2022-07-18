@@ -81,6 +81,9 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Postgres.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("Indexer")
+                        .HasColumnType("integer");
+
                     b.Property<bool?>("SomeNonNullableBooleanProperty")
                         .IsRequired()
                         .HasColumnType("boolean");
@@ -116,6 +119,8 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Postgres.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("NonRelatedEntityId");
+
+                    b.HasIndex("Indexer");
 
                     b.HasIndex("ConcurrencyToken", "NonRelatedEntityId");
 

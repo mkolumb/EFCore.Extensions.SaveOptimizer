@@ -1,5 +1,6 @@
 {
   "TEST_LOAD_MODE": "FULL",
   "TEST_FULL_LOAD_DISABLED_PROVIDERS": "Oracle;Firebird",
+  "TEST_MULTITASKING_DISABLED_PROVIDERS": "Oracle;Firebird",
   "TEST_DISABLED_PROVIDERS": "CockroachMulti"
 }

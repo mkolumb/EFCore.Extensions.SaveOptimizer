@@ -78,6 +78,9 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Firebird4.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("VARCHAR(48)");
 
+                    b.Property<int>("Indexer")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool?>("SomeNonNullableBooleanProperty")
                         .IsRequired()
                         .HasColumnType("BOOLEAN");
@@ -113,6 +116,8 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Firebird4.Migrations
                         .HasColumnType("BLOB SUB_TYPE TEXT");
 
                     b.HasKey("NonRelatedEntityId");
+
+                    b.HasIndex("Indexer");
 
                     b.HasIndex("ConcurrencyToken", "NonRelatedEntityId");
 

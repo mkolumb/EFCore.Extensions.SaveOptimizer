@@ -81,6 +81,9 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Oracle.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("TIMESTAMP(7) WITH TIME ZONE");
 
+                    b.Property<int>("Indexer")
+                        .HasColumnType("NUMBER(10)");
+
                     b.Property<bool?>("SomeNonNullableBooleanProperty")
                         .IsRequired()
                         .HasColumnType("NUMBER(1)");
@@ -116,6 +119,8 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Oracle.Migrations
                         .HasColumnType("NVARCHAR2(2000)");
 
                     b.HasKey("NonRelatedEntityId");
+
+                    b.HasIndex("Indexer");
 
                     b.HasIndex("ConcurrencyToken", "NonRelatedEntityId");
 

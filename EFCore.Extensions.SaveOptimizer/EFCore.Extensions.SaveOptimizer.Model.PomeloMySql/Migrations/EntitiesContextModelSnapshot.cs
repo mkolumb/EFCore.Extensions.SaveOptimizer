@@ -74,6 +74,9 @@ namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMySql.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("datetime(6)");
 
+                    b.Property<int>("Indexer")
+                        .HasColumnType("int");
+
                     b.Property<bool?>("SomeNonNullableBooleanProperty")
                         .IsRequired()
                         .HasColumnType("tinyint(1)");
@@ -109,6 +112,8 @@ namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMySql.Migrations
                         .HasColumnType("longtext");
 
                     b.HasKey("NonRelatedEntityId");
+
+                    b.HasIndex("Indexer");
 
                     b.HasIndex("ConcurrencyToken", "NonRelatedEntityId");
 

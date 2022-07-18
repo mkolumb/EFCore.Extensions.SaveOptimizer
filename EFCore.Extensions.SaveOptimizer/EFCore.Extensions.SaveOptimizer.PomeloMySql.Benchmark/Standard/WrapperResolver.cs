@@ -15,7 +15,7 @@ public class WrapperResolver : IWrapperResolver
     {
         DbContextWrapper wrapper = new(_factory);
 
-        wrapper.Context.Database.Migrate();
+        wrapper.Migrate();
 
         return wrapper;
     }

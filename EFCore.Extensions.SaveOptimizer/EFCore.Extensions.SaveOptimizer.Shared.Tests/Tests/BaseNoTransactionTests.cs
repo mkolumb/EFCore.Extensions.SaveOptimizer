@@ -1,13 +1,20 @@
 ﻿using EFCore.Extensions.SaveOptimizer.Shared.Tests.Attributes;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests.Enums;
 using EFCore.Extensions.SaveOptimizer.Shared.Tests.Wrappers;
+using Xunit.Abstractions;
 
 // ReSharper disable AccessToDisposedClosure
 
 namespace EFCore.Extensions.SaveOptimizer.Shared.Tests.Tests;
 
-public abstract partial class BaseMiscTests
+public abstract class BaseNoTransactionTests : BaseTests
 {
+    protected BaseNoTransactionTests(ITestOutputHelper testOutputHelper,
+        Func<ITestOutputHelper, EntityCollectionAttribute?, DbContextWrapper> contextWrapperResolver)
+        : base(testOutputHelper, contextWrapperResolver)
+    {
+    }
+
     [SkippableTheory]
     [InlineData(SaveVariant.Optimized | SaveVariant.NoAutoTransaction)]
     [InlineData(SaveVariant.OptimizedDapper | SaveVariant.NoAutoTransaction)]

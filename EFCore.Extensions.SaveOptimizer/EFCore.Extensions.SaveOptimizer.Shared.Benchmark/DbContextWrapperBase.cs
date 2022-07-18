@@ -129,6 +129,8 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
         SomeNullableStringProperty = "other-string"
     };
 
+    public void Migrate() => Context.Database.Migrate();
+
     private static async Task RunAsync(int max, Func<Task> method)
     {
         var i = 0;

@@ -72,6 +72,9 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Sqlite.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("Indexer")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool?>("SomeNonNullableBooleanProperty")
                         .IsRequired()
                         .HasColumnType("INTEGER");
@@ -107,6 +110,8 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Sqlite.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("NonRelatedEntityId");
+
+                    b.HasIndex("Indexer");
 
                     b.HasIndex("ConcurrencyToken", "NonRelatedEntityId");
 
