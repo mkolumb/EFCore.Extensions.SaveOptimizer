@@ -7,17 +7,29 @@ namespace EFCore.Extensions.SaveOptimizer.Postgres.Tests;
 
 public static class WrapperResolver
 {
-    public static DbContextWrapper ContextWrapperResolver(ITestOutputHelper testOutputHelper, EntityCollectionAttribute? collectionAttribute)
+    static WrapperResolver() => DbContextWrapper.TryInit(ContextWrapperResolver);
+
+    public static DbContextWrapper ContextWrapperResolver(ITestOutputHelper? testOutputHelper,
+        EntityCollectionAttribute? collectionAttribute)
     {
         PostgresDesignTimeFactory factory = new();
 
         const string query = "truncate \"{0}\" RESTART IDENTITY;";
 
-        DbContextWrapper wrapper = new(factory, testOutputHelper, query);
+        DbContextWrapper wrapper = new(factory, testOutputHelper, collectionAttribute, query);
 
-        wrapper.Migrate();
+        try
+        {
+            wrapper.Migrate();
 
-        wrapper.CleanDb(collectionAttribute);
+            wrapper.CleanDb();
+        }
+        catch
+        {
+            wrapper.Dispose();
+
+            throw;
+        }
 
         return wrapper;
     }

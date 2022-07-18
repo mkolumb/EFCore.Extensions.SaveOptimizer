@@ -77,7 +77,7 @@ public abstract class BaseFailTests : BaseTests
 
             QueryExecutionConfiguration config = new() { AfterSaveBehavior = AfterSaveBehavior.DoNothing };
 
-            dbs[0].CleanDb(CollectionAttribute);
+            dbs[0].CleanDb();
 
             foreach (DbContextWrapper db in dbs)
             {
@@ -197,6 +197,8 @@ public abstract class BaseFailTests : BaseTests
             properties.Should().ContainInOrder("0-xyz-2", "1-xyz", "2-xyz-1", "2-xyz-2", "2-xyz-3");
 
             fails.Should().Be(1);
+
+            dbs.DisposeAll();
         }
 
         // Try to run up to 5 times whole test as sometimes transaction can fail randomly
@@ -259,7 +261,7 @@ public abstract class BaseFailTests : BaseTests
 
             QueryExecutionConfiguration config = new() { AfterSaveBehavior = AfterSaveBehavior.DoNothing };
 
-            dbs[0].CleanDb(CollectionAttribute);
+            dbs[0].CleanDb();
 
             foreach (DbContextWrapper db in dbs)
             {
@@ -372,6 +374,8 @@ public abstract class BaseFailTests : BaseTests
             properties.Should().ContainInOrder("0-xyz-2", "1-xyz", "2-xyz-1", "2-xyz-2", "2-xyz-3");
 
             fails.Should().Be(1);
+
+            dbs.DisposeAll();
         }
 
         // Try to run up to 5 times whole test as sometimes transaction can fail randomly
