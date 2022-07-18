@@ -88,11 +88,11 @@ let packRun =
 
         DotNet.pack packConfiguration path
 
-let iterInParallel action (array: 'string []) =
+let iterInParallel action (array: string []) =
     let options: ParallelOptions = new ParallelOptions()
-    options.MaxDegreeOfParallelism <- 4
+    options.MaxDegreeOfParallelism <- 6
 
-    let queue: Queue<'string> = new Queue<'string>()
+    let queue: Queue<string> = new Queue<string>()
 
     let compareEntries (s1: string) ( s2: string) =
         let c = compare s1 s2
