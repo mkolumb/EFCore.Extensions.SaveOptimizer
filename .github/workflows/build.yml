@@ -42,7 +42,7 @@ jobs:
       - name: Setup docker
         run: |
           sudo systemctl stop docker
-          sudo dockerd --debug --max-concurrent-downloads 10
+          sudo bash -c 'echo "{\"max-concurrent-downloads\": 10}" >> /etc/docker/daemon.json'
           sudo systemctl daemon-reload
           sudo systemctl restart docker
           echo 'Restart finished'
