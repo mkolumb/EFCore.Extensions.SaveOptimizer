@@ -92,7 +92,33 @@ public class TestDataHelper
         return value == null ? Array.Empty<string>() : value.Split(";");
     }
 
-    public static bool IsDisabled(IEnumerable<string> disabledList) => disabledList
-        .Any(p => !string.IsNullOrEmpty(p) &&
-                  GetValue(ProjectName)!.Contains(p, StringComparison.InvariantCultureIgnoreCase));
+    public static bool IsDisabled(string variableName) => GetProviderConstraint(variableName) != null;
+
+    public static string? GetProviderValue(string variableName)
+    {
+        var value = GetProviderConstraint(variableName)?.Split(':').Last();
+
+        return string.IsNullOrWhiteSpace(value) ? null : value;
+    }
+
+    private static string? GetProviderConstraint(string variableName)
+    {
+        var list = GetValues(variableName);
+
+        IEnumerable<string> values = list.Where(p =>
+            !string.IsNullOrEmpty(GetConstraintName(p)) &&
+            GetValue(ProjectName)!.Contains(GetConstraintName(p), StringComparison.InvariantCultureIgnoreCase));
+
+        return values.MaxBy(x => x.Length);
+    }
+
+    private static string GetConstraintName(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return string.Empty;
+        }
+
+        return value.Contains(':') ? value.Split(':').First() : value;
+    }
 }
