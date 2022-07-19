@@ -41,7 +41,7 @@ jobs:
         run: git clean -fdX
       - name: Setup docker
         run: |
-          sudo systemctl docker stop
+          sudo systemctl stop docker
           sudo dockerd --max-concurrent-downloads 10
           sudo systemctl daemon-reload
           sudo systemctl restart docker
