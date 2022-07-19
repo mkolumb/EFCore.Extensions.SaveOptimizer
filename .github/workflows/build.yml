@@ -39,6 +39,12 @@ jobs:
         run: git fetch --prune --unshallow
       - name: Clean unnecessary objects
         run: git clean -fdX
+      - name: Setup docker
+        run: |
+          sudo systemctl docker stop
+          sudo dockerd --max-concurrent-downloads 10
+          sudo systemctl daemon-reload
+          sudo systemctl restart docker
       - name: Set RELEASE_VERSION
         run: >
           echo "RELEASE_VERSION=$(git describe --tags --abbrev=0)" >>
