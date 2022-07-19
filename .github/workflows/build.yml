@@ -42,7 +42,7 @@ jobs:
       - name: Setup docker
         run: |
           sudo service docker stop
-          dockerd --max-concurrent-downloads 10
+          sudo dockerd --max-concurrent-downloads 10
           sudo service docker start
       - name: Set RELEASE_VERSION
         run: >
