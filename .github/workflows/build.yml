@@ -39,6 +39,11 @@ jobs:
         run: git fetch --prune --unshallow
       - name: Clean unnecessary objects
         run: git clean -fdX
+      - name: Setup docker
+        run: |
+          service docker stop
+          dockerd --max-concurrent-downloads 10
+          service docker start
       - name: Set RELEASE_VERSION
         run: >
           echo "RELEASE_VERSION=$(git describe --tags --abbrev=0)" >>

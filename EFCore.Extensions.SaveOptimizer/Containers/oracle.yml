@@ -3,9 +3,7 @@ services:
   optimizeroracle:
     container_name: optimizeroracle
     hostname: optimizeroracle
-    image: container-registry.oracle.com/database/express:latest
-    environment:
-      ORACLE_PWD: root
+    image: ghcr.io/mkolumb/oracledb_pre:21.3-xe
     ports:
       - '1521:1521'
       - '5500:5500'
