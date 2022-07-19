@@ -41,9 +41,9 @@ jobs:
         run: git clean -fdX
       - name: Setup docker
         run: |
-          service docker stop
+          sudo service docker stop
           dockerd --max-concurrent-downloads 10
-          service docker start
+          sudo service docker start
       - name: Set RELEASE_VERSION
         run: >
           echo "RELEASE_VERSION=$(git describe --tags --abbrev=0)" >>
