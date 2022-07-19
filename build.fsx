@@ -46,6 +46,7 @@ let testRun =
         let testConfiguration (defaults: DotNet.TestOptions) =
             { defaults with
                 Settings = Some(settingsPath)
+                Configuration = DotNet.Release
                 ResultsDirectory = Some(resultPath)
                 NoBuild = true }
 
@@ -69,7 +70,7 @@ let buildRun =
         Trace.log ("Running build: " + path)
 
         let buildConfiguration (defaults: DotNet.BuildOptions) =
-            { defaults with Configuration = DotNet.Debug }
+            { defaults with Configuration = DotNet.Release }
 
         DotNet.build buildConfiguration path
 

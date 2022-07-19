@@ -19,11 +19,6 @@
                     <Verbosity>diagnostic</Verbosity>
                 </Configuration>
             </Logger>
-            <Logger friendlyName="html" enabled="True">
-                <Configuration>
-                    <Verbosity>diagnostic</Verbosity>
-                </Configuration>
-            </Logger>
             <Logger friendlyName="blame" enabled="True" />
         </Loggers>
     </LoggerRunSettings>
