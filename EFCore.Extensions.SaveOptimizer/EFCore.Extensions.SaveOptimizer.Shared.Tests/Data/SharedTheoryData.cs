@@ -11,9 +11,6 @@ public static class SharedTheoryData
 
     private static bool IsFullMode => TestDataHelper.GetValue(TestLoadMode) == FullLoadValue;
 
-    private static IEnumerable<string> DisabledFullLoadProviders =>
-        TestDataHelper.GetValues(TestFullLoadDisabledProviders);
-
     public static IEnumerable<IEnumerable<object>> TransactionTestTheoryData
     {
         get
@@ -102,7 +99,7 @@ public static class SharedTheoryData
             }
         }
 
-        if (TestDataHelper.IsDisabled(DisabledFullLoadProviders))
+        if (TestDataHelper.IsDisabled(TestFullLoadDisabledProviders))
         {
             yield break;
         }

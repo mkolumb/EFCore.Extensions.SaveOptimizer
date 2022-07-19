@@ -16,10 +16,5 @@ public sealed class SkippableTheoryAttribute : TheoryAttribute
         }
     }
 
-    private static bool ShouldSkip()
-    {
-        var providers = TestDataHelper.GetValues(TestDisabledProviders);
-
-        return TestDataHelper.IsDisabled(providers);
-    }
+    private static bool ShouldSkip() => TestDataHelper.IsDisabled(TestDisabledProviders);
 }
