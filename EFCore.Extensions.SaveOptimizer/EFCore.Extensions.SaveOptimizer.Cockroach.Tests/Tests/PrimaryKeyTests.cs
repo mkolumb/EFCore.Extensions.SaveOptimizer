@@ -7,7 +7,7 @@ using Xunit.Abstractions;
 
 namespace EFCore.Extensions.SaveOptimizer.Cockroach.Tests.Tests;
 
-[EntityCollection(Variables.ProviderName, typeof(AutoIncrementPrimaryKeyEntity))]
+[EntityCollection(Variables.ProviderName, typeof(AutoIncrementEntity))]
 public class PrimaryKeyTests : BasePrimaryKeyTests
 {
     public PrimaryKeyTests(ITestOutputHelper testOutputHelper)

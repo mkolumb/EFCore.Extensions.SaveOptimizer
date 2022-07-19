@@ -22,7 +22,7 @@ public abstract class BaseComposedPrimaryKeyTests : BaseTests
         // Arrange
         using DbContextWrapper db = ContextWrapperResolver();
 
-        ComposedPrimaryKeyEntity[] data =
+        ComposedEntity[] data =
         {
             new() { PrimaryFirst = 1, PrimarySecond = 1, Some = "some-1" },
             new() { PrimaryFirst = 1, PrimarySecond = 2, Some = "some-2" },
@@ -35,7 +35,7 @@ public abstract class BaseComposedPrimaryKeyTests : BaseTests
         // Act
         await db.SaveAsync(variant, null).ConfigureAwait(false);
 
-        ComposedPrimaryKeyEntity[] result = await db.Context.ComposedPrimaryKeyEntities
+        ComposedEntity[] result = await db.Context.ComposedEntities
             .OrderBy(x => x.PrimaryFirst)
             .ThenBy(x => x.PrimarySecond)
             .ToArrayWithRetryAsync()
@@ -68,7 +68,7 @@ public abstract class BaseComposedPrimaryKeyTests : BaseTests
         // Arrange
         using DbContextWrapper db = ContextWrapperResolver();
 
-        ComposedPrimaryKeyEntity[] data =
+        ComposedEntity[] data =
         {
             new() { PrimaryFirst = 1, PrimarySecond = 1 }, new() { PrimaryFirst = 1, PrimarySecond = 2 },
             new() { PrimaryFirst = 2, PrimarySecond = 1 }, new() { PrimaryFirst = 2, PrimarySecond = 2 }
@@ -78,7 +78,7 @@ public abstract class BaseComposedPrimaryKeyTests : BaseTests
 
         await db.SaveAsync(variant, null).ConfigureAwait(false);
 
-        data = await db.Context.ComposedPrimaryKeyEntities
+        data = await db.Context.ComposedEntities
             .OrderBy(x => x.PrimaryFirst)
             .ThenBy(x => x.PrimarySecond)
             .ToArrayWithRetryAsync()
@@ -92,7 +92,7 @@ public abstract class BaseComposedPrimaryKeyTests : BaseTests
         // Act
         await db.SaveAsync(variant, null).ConfigureAwait(false);
 
-        ComposedPrimaryKeyEntity[] result = await db.Context.ComposedPrimaryKeyEntities
+        ComposedEntity[] result = await db.Context.ComposedEntities
             .OrderBy(x => x.PrimaryFirst)
             .ThenBy(x => x.PrimarySecond)
             .ToArrayWithRetryAsync()
@@ -125,7 +125,7 @@ public abstract class BaseComposedPrimaryKeyTests : BaseTests
         // Arrange
         using DbContextWrapper db = ContextWrapperResolver();
 
-        ComposedPrimaryKeyEntity[] data =
+        ComposedEntity[] data =
         {
             new() { PrimaryFirst = 1, PrimarySecond = 1, Some = "some-1" },
             new() { PrimaryFirst = 1, PrimarySecond = 2, Some = "some-2" },
@@ -137,7 +137,7 @@ public abstract class BaseComposedPrimaryKeyTests : BaseTests
 
         await db.SaveAsync(variant, null).ConfigureAwait(false);
 
-        data = await db.Context.ComposedPrimaryKeyEntities
+        data = await db.Context.ComposedEntities
             .OrderBy(x => x.PrimaryFirst)
             .ThenBy(x => x.PrimarySecond)
             .ToArrayWithRetryAsync()
@@ -148,7 +148,7 @@ public abstract class BaseComposedPrimaryKeyTests : BaseTests
         // Act
         await db.SaveAsync(variant, null).ConfigureAwait(false);
 
-        ComposedPrimaryKeyEntity[] result = await db.Context.ComposedPrimaryKeyEntities
+        ComposedEntity[] result = await db.Context.ComposedEntities
             .OrderBy(x => x.PrimaryFirst)
             .ThenBy(x => x.PrimarySecond)
             .ToArrayWithRetryAsync()
@@ -173,7 +173,7 @@ public abstract class BaseComposedPrimaryKeyTests : BaseTests
         // Arrange
         using DbContextWrapper db = ContextWrapperResolver();
 
-        ComposedPrimaryKeyEntity[] data =
+        ComposedEntity[] data =
         {
             new() { PrimaryFirst = 1, PrimarySecond = 1, Some = "some-1" },
             new() { PrimaryFirst = 1, PrimarySecond = 2, Some = "some-2" },
@@ -186,7 +186,7 @@ public abstract class BaseComposedPrimaryKeyTests : BaseTests
         // Act
         db.Save(variant, null);
 
-        ComposedPrimaryKeyEntity[] result = db.Context.ComposedPrimaryKeyEntities
+        ComposedEntity[] result = db.Context.ComposedEntities
             .OrderBy(x => x.PrimaryFirst)
             .ThenBy(x => x.PrimarySecond)
             .ToArrayWithRetry();
@@ -218,7 +218,7 @@ public abstract class BaseComposedPrimaryKeyTests : BaseTests
         // Arrange
         using DbContextWrapper db = ContextWrapperResolver();
 
-        ComposedPrimaryKeyEntity[] data =
+        ComposedEntity[] data =
         {
             new() { PrimaryFirst = 1, PrimarySecond = 1 }, new() { PrimaryFirst = 1, PrimarySecond = 2 },
             new() { PrimaryFirst = 2, PrimarySecond = 1 }, new() { PrimaryFirst = 2, PrimarySecond = 2 }
@@ -228,7 +228,7 @@ public abstract class BaseComposedPrimaryKeyTests : BaseTests
 
         db.Save(variant, null);
 
-        data = db.Context.ComposedPrimaryKeyEntities
+        data = db.Context.ComposedEntities
             .OrderBy(x => x.PrimaryFirst)
             .ThenBy(x => x.PrimarySecond)
             .ToArrayWithRetry();
@@ -241,7 +241,7 @@ public abstract class BaseComposedPrimaryKeyTests : BaseTests
         // Act
         db.Save(variant, null);
 
-        ComposedPrimaryKeyEntity[] result = db.Context.ComposedPrimaryKeyEntities
+        ComposedEntity[] result = db.Context.ComposedEntities
             .OrderBy(x => x.PrimaryFirst)
             .ThenBy(x => x.PrimarySecond)
             .ToArrayWithRetry();
@@ -273,7 +273,7 @@ public abstract class BaseComposedPrimaryKeyTests : BaseTests
         // Arrange
         using DbContextWrapper db = ContextWrapperResolver();
 
-        ComposedPrimaryKeyEntity[] data =
+        ComposedEntity[] data =
         {
             new() { PrimaryFirst = 1, PrimarySecond = 1, Some = "some-1" },
             new() { PrimaryFirst = 1, PrimarySecond = 2, Some = "some-2" },
@@ -285,7 +285,7 @@ public abstract class BaseComposedPrimaryKeyTests : BaseTests
 
         db.Save(variant, null);
 
-        data = db.Context.ComposedPrimaryKeyEntities
+        data = db.Context.ComposedEntities
             .OrderBy(x => x.PrimaryFirst)
             .ThenBy(x => x.PrimarySecond)
             .ToArrayWithRetry();
@@ -295,7 +295,7 @@ public abstract class BaseComposedPrimaryKeyTests : BaseTests
         // Act
         db.Save(variant, null);
 
-        ComposedPrimaryKeyEntity[] result = db.Context.ComposedPrimaryKeyEntities
+        ComposedEntity[] result = db.Context.ComposedEntities
             .OrderBy(x => x.PrimaryFirst)
             .ThenBy(x => x.PrimarySecond)
             .ToArrayWithRetry();

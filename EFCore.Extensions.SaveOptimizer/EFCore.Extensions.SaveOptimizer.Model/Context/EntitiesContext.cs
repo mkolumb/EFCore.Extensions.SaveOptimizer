@@ -12,15 +12,15 @@ public class EntitiesContext : DbContext
 
     public DbSet<NonRelatedEntity> NonRelatedEntities { get; set; }
 
-    public DbSet<AutoIncrementPrimaryKeyEntity> AutoIncrementPrimaryKeyEntities { get; set; }
+    public DbSet<AutoIncrementEntity> AutoIncrementEntities { get; set; }
 
     public DbSet<VariousTypeEntity> VariousTypeEntities { get; set; }
 
     public DbSet<FailingEntity> FailingEntities { get; set; }
 
-    public DbSet<ValueConverterEntity> ValueConverterEntities { get; set; }
+    public DbSet<ConverterEntity> ConverterEntities { get; set; }
 
-    public DbSet<ComposedPrimaryKeyEntity> ComposedPrimaryKeyEntities { get; set; }
+    public DbSet<ComposedEntity> ComposedEntities { get; set; }
 
     public EntitiesContext(DbContextOptions<EntitiesContext> options)
         : base(options)
@@ -30,19 +30,21 @@ public class EntitiesContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<NonRelatedEntity>()
-            .HasIndex(x => new { x.ConcurrencyToken, x.NonRelatedEntityId })
+            .HasIndex(x => new { x.ConcurrencyToken, x.NonRelatedEntityId }, "ix_nr_ct")
             .IsUnique(false);
 
         modelBuilder.Entity<NonRelatedEntity>()
-            .HasIndex(x => new { x.Indexer })
+            .HasIndex(x => new { x.Indexer }, "ix_nr_idx")
             .IsUnique(false);
 
-        modelBuilder.Entity<ValueConverterEntity>()
+        modelBuilder.Entity<ConverterEntity>()
             .Property(x => x.SomeHalf)
             .HasConversion<HalfValueConverter>();
 
-        modelBuilder.Entity<ComposedPrimaryKeyEntity>()
+        modelBuilder.Entity<ComposedEntity>()
             .HasKey(x => new { x.PrimaryFirst, x.PrimarySecond });
+
+        modelBuilder.Model.SetMaxIdentifierLength(30);
 
         foreach (Action<ModelBuilder> builder in AdditionalBuilders)
         {

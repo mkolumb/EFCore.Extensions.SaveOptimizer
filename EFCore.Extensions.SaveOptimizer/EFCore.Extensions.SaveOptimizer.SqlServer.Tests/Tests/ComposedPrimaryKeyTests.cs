@@ -7,7 +7,7 @@ using Xunit.Abstractions;
 
 namespace EFCore.Extensions.SaveOptimizer.SqlServer.Tests.Tests;
 
-[EntityCollection(Variables.ProviderName, typeof(ComposedPrimaryKeyEntity))]
+[EntityCollection(Variables.ProviderName, typeof(ComposedEntity))]
 public class ComposedPrimaryKeyTests : BaseComposedPrimaryKeyTests
 {
     public ComposedPrimaryKeyTests(ITestOutputHelper testOutputHelper)

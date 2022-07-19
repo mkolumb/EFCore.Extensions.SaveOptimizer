@@ -20,11 +20,22 @@ $workingDir = $(Get-Location).Path
 
 Set-Location .\EFCore.Extensions.SaveOptimizer\Containers
 
-$yamls = @('cockroach.yml', 'cockroach_multi.yml', 'sqlserver.yml', 'postgres.yml', 'mysql_pomelo.yml', 'mariadb_pomelo.yml', 'firebird_3.yml', 'firebird_4.yml', 'oracle.yml')
+$yamls = @(
+    'cockroach.yml',
+    'cockroach_multi.yml',
+    'sqlserver.yml',
+    'postgres.yml', 
+    'mysql_pomelo.yml', 
+    'mariadb_pomelo.yml', 
+    'firebird_3.yml', 
+    'firebird_4.yml', 
+    'oracle_11.yml', 
+    'oracle_21.yml'
+)
 
 $ErrorActionPreference = 'SilentlyContinue'
 
-$yamls | Foreach-Object -ThrottleLimit 10 -Parallel {
+$yamls | Foreach-Object -ThrottleLimit 15 -Parallel {
     $workingDir = $using:workingDir
     $item = $_
     

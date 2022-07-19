@@ -26,7 +26,7 @@ public abstract class BaseDifferentOperationsTests : BaseTests
 
         var toAdd = new object[] { ItemResolver(11), ItemResolver(12), ItemResolver(13) };
         NonRelatedEntity toEdit = data[3];
-        toEdit.SomeNullableStringProperty = "new-prop";
+        toEdit.NullableString = "new-prop";
         NonRelatedEntity toRemove = data[6];
 
         await db.Context.AddRangeAsync(toAdd).ConfigureAwait(false);
@@ -42,7 +42,7 @@ public abstract class BaseDifferentOperationsTests : BaseTests
                 .ToArrayWithRetryAsync()
                 .ConfigureAwait(false);
 
-        var properties = result.Select(x => x.SomeNonNullableIntProperty).ToArray();
+        var properties = result.Select(x => x.NonNullableInt).ToArray();
 
         // Assert
         result.Should().HaveCount(12);
@@ -50,7 +50,7 @@ public abstract class BaseDifferentOperationsTests : BaseTests
         properties.Should()
             .ContainInOrder(0, 1, 2, 3, 4, 5, 7, 8, 9, 11, 12, 13);
 
-        result[3].SomeNullableStringProperty.Should().BeEquivalentTo("new-prop");
+        result[3].NullableString.Should().BeEquivalentTo("new-prop");
     }
 
     [SkippableTheory]
@@ -64,7 +64,7 @@ public abstract class BaseDifferentOperationsTests : BaseTests
 
         var toAdd = new object[] { ItemResolver(11), ItemResolver(12), ItemResolver(13) };
         NonRelatedEntity toEdit = data[3];
-        toEdit.SomeNullableStringProperty = "new-prop";
+        toEdit.NullableString = "new-prop";
         NonRelatedEntity toRemove = data[6];
 
         db.Context.AddRange(toAdd);
@@ -79,7 +79,7 @@ public abstract class BaseDifferentOperationsTests : BaseTests
                 .OrderBy(x => x.Indexer)
                 .ToArrayWithRetry();
 
-        var properties = result.Select(x => x.SomeNonNullableIntProperty).ToArray();
+        var properties = result.Select(x => x.NonNullableInt).ToArray();
 
         // Assert
         result.Should().HaveCount(12);
@@ -87,6 +87,6 @@ public abstract class BaseDifferentOperationsTests : BaseTests
         properties.Should()
             .ContainInOrder(0, 1, 2, 3, 4, 5, 7, 8, 9, 11, 12, 13);
 
-        result[3].SomeNullableStringProperty.Should().BeEquivalentTo("new-prop");
+        result[3].NullableString.Should().BeEquivalentTo("new-prop");
     }
 }

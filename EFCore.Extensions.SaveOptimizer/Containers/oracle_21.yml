@@ -1,0 +1,13 @@
+version: '3.7'
+services:
+  optimizeroracle21:
+    container_name: optimizeroracle21
+    hostname: optimizeroracle21
+    image: ghcr.io/mkolumb/oracledb_pre:21.3-xe
+    ports:
+      - '1521:1521'
+      - '5500:5500'
+    networks:
+      - optimizeroracle21network
+networks:
+  optimizeroracle21network:

@@ -127,15 +127,15 @@ public abstract class BaseTests
         new()
         {
             ConcurrencyToken = new DateTimeOffset(2033, 11, 11, 2, 3, 4, 5, TimeSpan.Zero),
-            SomeNonNullableBooleanProperty = true,
-            SomeNonNullableDateTimeProperty = new DateTimeOffset(2010, 10, 10, 1, 2, 3, 0, TimeSpan.Zero),
-            SomeNullableDateTimeProperty = new DateTimeOffset(2012, 11, 11, 1, 2, 3, 0, TimeSpan.Zero),
-            SomeNonNullableDecimalProperty = 2.52M,
-            SomeNullableDecimalProperty = 4.523M,
-            SomeNonNullableIntProperty = i,
-            SomeNullableIntProperty = 11,
-            SomeNonNullableStringProperty = $"some-string-{i}",
-            SomeNullableStringProperty = "other-string",
+            NonNullableBoolean = true,
+            NonNullableDateTime = new DateTimeOffset(2010, 10, 10, 1, 2, 3, 0, TimeSpan.Zero),
+            NullableDateTime = new DateTimeOffset(2012, 11, 11, 1, 2, 3, 0, TimeSpan.Zero),
+            NonNullableDecimal = 2.52M,
+            NullableDecimal = 4.523M,
+            NonNullableInt = i,
+            NullableInt = 11,
+            NonNullableString = $"some-string-{i}",
+            NullableString = "other-string",
             Indexer = i
         };
 

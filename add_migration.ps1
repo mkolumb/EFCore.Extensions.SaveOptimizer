@@ -31,7 +31,18 @@ if ($clear) {
 
 dotnet build
 
-$migrations = @('.\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Model.SqlServer', '.\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Model.Oracle', '.\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Model.Sqlite', '.\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Model.Postgres', '.\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Model.PomeloMySql', '.\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Model.Firebird3', '.\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Model.Firebird4', '.\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Model.PomeloMariaDb', '.\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Model.Cockroach', '.\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Model.CockroachMulti')
+$migrations = @(
+    '.\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Model.SqlServer', 
+    '.\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Model.Oracle21',
+    '.\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Model.Sqlite',
+    '.\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Model.Postgres',
+    '.\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Model.PomeloMySql',
+    '.\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Model.Firebird3',
+    '.\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Model.Firebird4',
+    '.\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Model.PomeloMariaDb',
+    '.\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Model.Cockroach', 
+    '.\EFCore.Extensions.SaveOptimizer\EFCore.Extensions.SaveOptimizer.Model.CockroachMulti'
+)
 
 $migrations | Foreach-Object -ThrottleLimit 10 -Parallel {
     $workingDir = $using:workingDir

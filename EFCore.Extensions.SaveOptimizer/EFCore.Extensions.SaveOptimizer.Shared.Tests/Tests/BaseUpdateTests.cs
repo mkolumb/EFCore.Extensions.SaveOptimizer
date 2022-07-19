@@ -29,8 +29,8 @@ public abstract class BaseUpdateTests : BaseTests
 
         foreach (NonRelatedEntity entity in data)
         {
-            entity.SomeNonNullableIntProperty++;
-            entity.SomeNonNullableIntProperty--;
+            entity.NonNullableInt++;
+            entity.NonNullableInt--;
         }
 
         // Act
@@ -59,7 +59,7 @@ public abstract class BaseUpdateTests : BaseTests
 
         NonRelatedEntity[] data = await InitialSeedAsync(db, variant, 3, Setter).ConfigureAwait(false);
 
-        data[0].SomeNonNullableDecimalProperty = 191;
+        data[0].NonNullableDecimal = 191;
 
         // Act
         await db.SaveAsync(variant, null).ConfigureAwait(false);
@@ -72,9 +72,9 @@ public abstract class BaseUpdateTests : BaseTests
 
         // Assert
         result.Should().HaveCount(3);
-        result[0].SomeNonNullableDecimalProperty.Should().Be(191);
-        result[1].SomeNonNullableDecimalProperty.Should().Be(2.52M);
-        result[2].SomeNonNullableDecimalProperty.Should().Be(2.52M);
+        result[0].NonNullableDecimal.Should().Be(191);
+        result[1].NonNullableDecimal.Should().Be(2.52M);
+        result[2].NonNullableDecimal.Should().Be(2.52M);
     }
 
     [SkippableTheory]
@@ -88,16 +88,16 @@ public abstract class BaseUpdateTests : BaseTests
 
         for (var i = 0; i < 5; i++)
         {
-            data[i].SomeNullableIntProperty = i;
+            data[i].NullableInt = i;
         }
 
-        data[5].SomeNullableIntProperty = null;
+        data[5].NullableInt = null;
 
         for (var i = 0; i < data.Length; i++)
         {
             if (i % 3 == 0)
             {
-                data[i].SomeNonNullableDecimalProperty = 191;
+                data[i].NonNullableDecimal = 191;
             }
         }
 
@@ -110,9 +110,9 @@ public abstract class BaseUpdateTests : BaseTests
                 .ToArrayWithRetryAsync()
                 .ConfigureAwait(false);
 
-        var nullableIntProperties = result.Select(x => x.SomeNullableIntProperty).ToArray();
+        var nullableIntProperties = result.Select(x => x.NullableInt).ToArray();
 
-        var nonNullableDecimalProperties = result.Select(x => x.SomeNonNullableDecimalProperty).ToArray();
+        var nonNullableDecimalProperties = result.Select(x => x.NonNullableDecimal).ToArray();
 
         // Assert
         result.Should().HaveCount(15);
@@ -135,12 +135,12 @@ public abstract class BaseUpdateTests : BaseTests
 
         for (var i = 0; i < 5; i++)
         {
-            data[i].SomeNullableIntProperty = i;
-            data[i].SomeNonNullableIntProperty = i;
+            data[i].NullableInt = i;
+            data[i].NonNullableInt = i;
         }
 
-        data[5].SomeNullableIntProperty = null;
-        data[5].SomeNonNullableIntProperty = 0;
+        data[5].NullableInt = null;
+        data[5].NonNullableInt = 0;
 
         for (var i = 0; i < data.Length; i++)
         {
@@ -149,8 +149,8 @@ public abstract class BaseUpdateTests : BaseTests
                 continue;
             }
 
-            data[i].SomeNullableDecimalProperty = 191;
-            data[i].SomeNonNullableDecimalProperty = 191;
+            data[i].NullableDecimal = 191;
+            data[i].NonNullableDecimal = 191;
         }
 
         // Act
@@ -162,13 +162,13 @@ public abstract class BaseUpdateTests : BaseTests
                 .ToArrayWithRetryAsync()
                 .ConfigureAwait(false);
 
-        var nullableIntProperties = result.Select(x => x.SomeNullableIntProperty).ToArray();
+        var nullableIntProperties = result.Select(x => x.NullableInt).ToArray();
 
-        var nonNullableIntProperties = result.Select(x => x.SomeNonNullableIntProperty).ToArray();
+        var nonNullableIntProperties = result.Select(x => x.NonNullableInt).ToArray();
 
-        var nullableDecimalProperties = result.Select(x => x.SomeNullableDecimalProperty).ToArray();
+        var nullableDecimalProperties = result.Select(x => x.NullableDecimal).ToArray();
 
-        var nonNullableDecimalProperties = result.Select(x => x.SomeNonNullableDecimalProperty).ToArray();
+        var nonNullableDecimalProperties = result.Select(x => x.NonNullableDecimal).ToArray();
 
         // Assert
         result.Should().HaveCount(15);
@@ -198,8 +198,8 @@ public abstract class BaseUpdateTests : BaseTests
 
         foreach (NonRelatedEntity entity in data)
         {
-            entity.SomeNonNullableIntProperty++;
-            entity.SomeNonNullableIntProperty--;
+            entity.NonNullableInt++;
+            entity.NonNullableInt--;
         }
 
         // Act
@@ -227,7 +227,7 @@ public abstract class BaseUpdateTests : BaseTests
 
         NonRelatedEntity[] data = InitialSeed(db, variant, 3, Setter);
 
-        data[0].SomeNonNullableDecimalProperty = 191;
+        data[0].NonNullableDecimal = 191;
 
         // Act
         db.Save(variant, null);
@@ -239,9 +239,9 @@ public abstract class BaseUpdateTests : BaseTests
 
         // Assert
         result.Should().HaveCount(3);
-        result[0].SomeNonNullableDecimalProperty.Should().Be(191);
-        result[1].SomeNonNullableDecimalProperty.Should().Be(2.52M);
-        result[2].SomeNonNullableDecimalProperty.Should().Be(2.52M);
+        result[0].NonNullableDecimal.Should().Be(191);
+        result[1].NonNullableDecimal.Should().Be(2.52M);
+        result[2].NonNullableDecimal.Should().Be(2.52M);
     }
 
     [SkippableTheory]
@@ -255,16 +255,16 @@ public abstract class BaseUpdateTests : BaseTests
 
         for (var i = 0; i < 5; i++)
         {
-            data[i].SomeNullableIntProperty = i;
+            data[i].NullableInt = i;
         }
 
-        data[5].SomeNullableIntProperty = null;
+        data[5].NullableInt = null;
 
         for (var i = 0; i < data.Length; i++)
         {
             if (i % 3 == 0)
             {
-                data[i].SomeNonNullableDecimalProperty = 191;
+                data[i].NonNullableDecimal = 191;
             }
         }
 
@@ -276,9 +276,9 @@ public abstract class BaseUpdateTests : BaseTests
                 .OrderBy(x => x.Indexer)
                 .ToArrayWithRetry();
 
-        var nullableIntProperties = result.Select(x => x.SomeNullableIntProperty).ToArray();
+        var nullableIntProperties = result.Select(x => x.NullableInt).ToArray();
 
-        var nonNullableDecimalProperties = result.Select(x => x.SomeNonNullableDecimalProperty).ToArray();
+        var nonNullableDecimalProperties = result.Select(x => x.NonNullableDecimal).ToArray();
 
         // Assert
         result.Should().HaveCount(15);
@@ -301,12 +301,12 @@ public abstract class BaseUpdateTests : BaseTests
 
         for (var i = 0; i < 5; i++)
         {
-            data[i].SomeNullableIntProperty = i;
-            data[i].SomeNonNullableIntProperty = i;
+            data[i].NullableInt = i;
+            data[i].NonNullableInt = i;
         }
 
-        data[5].SomeNullableIntProperty = null;
-        data[5].SomeNonNullableIntProperty = 0;
+        data[5].NullableInt = null;
+        data[5].NonNullableInt = 0;
 
         for (var i = 0; i < data.Length; i++)
         {
@@ -315,8 +315,8 @@ public abstract class BaseUpdateTests : BaseTests
                 continue;
             }
 
-            data[i].SomeNullableDecimalProperty = 191;
-            data[i].SomeNonNullableDecimalProperty = 191;
+            data[i].NullableDecimal = 191;
+            data[i].NonNullableDecimal = 191;
         }
 
         // Act
@@ -327,13 +327,13 @@ public abstract class BaseUpdateTests : BaseTests
                 .OrderBy(x => x.Indexer)
                 .ToArrayWithRetry();
 
-        var nullableIntProperties = result.Select(x => x.SomeNullableIntProperty).ToArray();
+        var nullableIntProperties = result.Select(x => x.NullableInt).ToArray();
 
-        var nonNullableIntProperties = result.Select(x => x.SomeNonNullableIntProperty).ToArray();
+        var nonNullableIntProperties = result.Select(x => x.NonNullableInt).ToArray();
 
-        var nullableDecimalProperties = result.Select(x => x.SomeNullableDecimalProperty).ToArray();
+        var nullableDecimalProperties = result.Select(x => x.NullableDecimal).ToArray();
 
-        var nonNullableDecimalProperties = result.Select(x => x.SomeNonNullableDecimalProperty).ToArray();
+        var nonNullableDecimalProperties = result.Select(x => x.NonNullableDecimal).ToArray();
 
         // Assert
         result.Should().HaveCount(15);
@@ -350,5 +350,5 @@ public abstract class BaseUpdateTests : BaseTests
                 2.52M);
     }
 
-    private static void Setter(NonRelatedEntity entity) => entity.SomeNonNullableIntProperty = 1;
+    private static void Setter(NonRelatedEntity entity) => entity.NonNullableInt = 1;
 }

@@ -60,8 +60,6 @@ jobs:
           dotnet-version: '${{ env.DOTNET_VERSION }}'
       - name: Install Dotnet Tools
         run: dotnet tool restore
-      - name: Run FAKE pull images
-        run: dotnet fake build -t PullImages
       - name: Run FAKE build
         run: dotnet fake build
       - name: Upload test artifacts

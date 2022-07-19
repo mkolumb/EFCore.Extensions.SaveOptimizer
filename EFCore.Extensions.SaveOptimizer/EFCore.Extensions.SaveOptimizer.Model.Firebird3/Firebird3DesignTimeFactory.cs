@@ -24,11 +24,11 @@ public class Firebird3DesignTimeFactory : IDesignTimeDbContextFactory<EntitiesCo
 
             modelBuilder.Entity<NonRelatedEntity>(eb =>
             {
-                eb.Property(b => b.SomeNullableDecimalProperty)
+                eb.Property(b => b.NullableDecimal)
                     .HasPrecision(12, 6)
                     .HasColumnType(decimalColumnType);
 
-                eb.Property(b => b.SomeNonNullableDecimalProperty)
+                eb.Property(b => b.NonNullableDecimal)
                     .HasPrecision(12, 6)
                     .HasColumnType(decimalColumnType);
             });
@@ -40,7 +40,7 @@ public class Firebird3DesignTimeFactory : IDesignTimeDbContextFactory<EntitiesCo
                     .HasColumnType(decimalColumnType);
             });
 
-            modelBuilder.Entity<AutoIncrementPrimaryKeyEntity>(eb =>
+            modelBuilder.Entity<AutoIncrementEntity>(eb =>
             {
                 eb.Property(b => b.Id)
                     .HasAnnotation(FbAnnotationNames.ValueGenerationStrategy, FbValueGenerationStrategy.IdentityColumn);

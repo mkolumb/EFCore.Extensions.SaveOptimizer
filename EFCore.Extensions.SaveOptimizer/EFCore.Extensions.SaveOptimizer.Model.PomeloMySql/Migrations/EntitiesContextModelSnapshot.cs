@@ -17,9 +17,9 @@ namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMySql.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "6.0.0")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+                .HasAnnotation("Relational:MaxIdentifierLength", 30);
 
-            modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.AutoIncrementPrimaryKeyEntity", b =>
+            modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.AutoIncrementEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -30,10 +30,10 @@ namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMySql.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AutoIncrementPrimaryKeyEntities");
+                    b.ToTable("AutoIncrementEntities");
                 });
 
-            modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.ComposedPrimaryKeyEntity", b =>
+            modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.ComposedEntity", b =>
                 {
                     b.Property<int?>("PrimaryFirst")
                         .HasColumnType("int");
@@ -46,7 +46,21 @@ namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMySql.Migrations
 
                     b.HasKey("PrimaryFirst", "PrimarySecond");
 
-                    b.ToTable("ComposedPrimaryKeyEntities");
+                    b.ToTable("ComposedEntities");
+                });
+
+            modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.ConverterEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("SomeHalf")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ConverterEntities");
                 });
 
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.FailingEntity", b =>
@@ -77,61 +91,47 @@ namespace EFCore.Extensions.SaveOptimizer.Model.PomeloMySql.Migrations
                     b.Property<int>("Indexer")
                         .HasColumnType("int");
 
-                    b.Property<bool?>("SomeNonNullableBooleanProperty")
+                    b.Property<bool?>("NonNullableBoolean")
                         .IsRequired()
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<DateTimeOffset?>("SomeNonNullableDateTimeProperty")
+                    b.Property<DateTimeOffset?>("NonNullableDateTime")
                         .IsRequired()
                         .HasColumnType("datetime(6)");
 
-                    b.Property<decimal?>("SomeNonNullableDecimalProperty")
+                    b.Property<decimal?>("NonNullableDecimal")
                         .IsRequired()
                         .HasPrecision(12, 6)
                         .HasColumnType("decimal(12,6)");
 
-                    b.Property<int?>("SomeNonNullableIntProperty")
+                    b.Property<int?>("NonNullableInt")
                         .IsRequired()
                         .HasColumnType("int");
 
-                    b.Property<string>("SomeNonNullableStringProperty")
+                    b.Property<string>("NonNullableString")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<DateTimeOffset?>("SomeNullableDateTimeProperty")
+                    b.Property<DateTimeOffset?>("NullableDateTime")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<decimal?>("SomeNullableDecimalProperty")
+                    b.Property<decimal?>("NullableDecimal")
                         .HasPrecision(12, 6)
                         .HasColumnType("decimal(12,6)");
 
-                    b.Property<int?>("SomeNullableIntProperty")
+                    b.Property<int?>("NullableInt")
                         .HasColumnType("int");
 
-                    b.Property<string>("SomeNullableStringProperty")
+                    b.Property<string>("NullableString")
                         .HasColumnType("longtext");
 
                     b.HasKey("NonRelatedEntityId");
 
-                    b.HasIndex("Indexer");
+                    b.HasIndex(new[] { "ConcurrencyToken", "NonRelatedEntityId" }, "ix_nr_ct");
 
-                    b.HasIndex("ConcurrencyToken", "NonRelatedEntityId");
+                    b.HasIndex(new[] { "Indexer" }, "ix_nr_idx");
 
                     b.ToTable("NonRelatedEntities");
-                });
-
-            modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.ValueConverterEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("SomeHalf")
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ValueConverterEntities");
                 });
 
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.VariousTypeEntity", b =>

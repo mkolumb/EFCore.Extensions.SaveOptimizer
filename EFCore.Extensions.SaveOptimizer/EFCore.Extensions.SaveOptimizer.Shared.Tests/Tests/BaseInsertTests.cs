@@ -36,7 +36,7 @@ public abstract class BaseInsertTests : BaseTests
         var result = await db.Context.NonRelatedEntities.CountAsync().ConfigureAwait(false);
 
         var properties = await db.Context.NonRelatedEntities
-            .Select(x => x.SomeNonNullableStringProperty)
+            .Select(x => x.NonNullableString)
             .Distinct()
             .ToArrayWithRetryAsync()
             .ConfigureAwait(false);
@@ -73,15 +73,15 @@ public abstract class BaseInsertTests : BaseTests
         NonRelatedEntity item = new()
         {
             ConcurrencyToken = new DateTimeOffset(2033, 11, 11, 2, 3, 4, 5, TimeSpan.Zero),
-            SomeNonNullableBooleanProperty = true,
-            SomeNonNullableDateTimeProperty = new DateTimeOffset(2010, 10, 10, 1, 2, 3, 0, TimeSpan.Zero),
-            SomeNullableDateTimeProperty = new DateTimeOffset(2012, 11, 11, 1, 2, 3, 0, TimeSpan.Zero),
-            SomeNonNullableDecimalProperty = 2.52M,
-            SomeNullableDecimalProperty = 4.523435M,
-            SomeNonNullableIntProperty = 1,
-            SomeNullableIntProperty = 11,
-            SomeNonNullableStringProperty = "some-string",
-            SomeNullableStringProperty = "other-string"
+            NonNullableBoolean = true,
+            NonNullableDateTime = new DateTimeOffset(2010, 10, 10, 1, 2, 3, 0, TimeSpan.Zero),
+            NullableDateTime = new DateTimeOffset(2012, 11, 11, 1, 2, 3, 0, TimeSpan.Zero),
+            NonNullableDecimal = 2.52M,
+            NullableDecimal = 4.523435M,
+            NonNullableInt = 1,
+            NullableInt = 11,
+            NonNullableString = "some-string",
+            NullableString = "other-string"
         };
 
         // Act
@@ -95,16 +95,16 @@ public abstract class BaseInsertTests : BaseTests
         result.Should().NotBeNull();
         result.NonRelatedEntityId.Should().NotBeEmpty();
         result.ConcurrencyToken.Should().BeCloseTo(item.ConcurrencyToken.Value, 1.Seconds());
-        result.SomeNonNullableBooleanProperty.Should().Be(item.SomeNonNullableBooleanProperty);
-        result.SomeNonNullableDateTimeProperty.Should()
-            .BeCloseTo(item.SomeNonNullableDateTimeProperty.Value, 1.Seconds());
-        result.SomeNullableDateTimeProperty.Should().BeCloseTo(item.SomeNullableDateTimeProperty.Value, 1.Seconds());
-        result.SomeNonNullableDecimalProperty.Should().Be(item.SomeNonNullableDecimalProperty);
-        result.SomeNullableDecimalProperty.Should().Be(item.SomeNullableDecimalProperty);
-        result.SomeNonNullableIntProperty.Should().Be(item.SomeNonNullableIntProperty);
-        result.SomeNullableIntProperty.Should().Be(item.SomeNullableIntProperty);
-        result.SomeNonNullableStringProperty.Should().Be(item.SomeNonNullableStringProperty);
-        result.SomeNullableStringProperty.Should().Be(item.SomeNullableStringProperty);
+        result.NonNullableBoolean.Should().Be(item.NonNullableBoolean);
+        result.NonNullableDateTime.Should()
+            .BeCloseTo(item.NonNullableDateTime.Value, 1.Seconds());
+        result.NullableDateTime.Should().BeCloseTo(item.NullableDateTime.Value, 1.Seconds());
+        result.NonNullableDecimal.Should().Be(item.NonNullableDecimal);
+        result.NullableDecimal.Should().Be(item.NullableDecimal);
+        result.NonNullableInt.Should().Be(item.NonNullableInt);
+        result.NullableInt.Should().Be(item.NullableInt);
+        result.NonNullableString.Should().Be(item.NonNullableString);
+        result.NullableString.Should().Be(item.NullableString);
     }
 
     [SkippableTheory]
@@ -126,7 +126,7 @@ public abstract class BaseInsertTests : BaseTests
         var result = db.Context.NonRelatedEntities.Count();
 
         var properties = db.Context.NonRelatedEntities
-            .Select(x => x.SomeNonNullableStringProperty)
+            .Select(x => x.NonNullableString)
             .Distinct()
             .ToArrayWithRetry();
 
@@ -162,15 +162,15 @@ public abstract class BaseInsertTests : BaseTests
         NonRelatedEntity item = new()
         {
             ConcurrencyToken = new DateTimeOffset(2033, 11, 11, 2, 3, 4, 5, TimeSpan.Zero),
-            SomeNonNullableBooleanProperty = true,
-            SomeNonNullableDateTimeProperty = new DateTimeOffset(2010, 10, 10, 1, 2, 3, 0, TimeSpan.Zero),
-            SomeNullableDateTimeProperty = new DateTimeOffset(2012, 11, 11, 1, 2, 3, 0, TimeSpan.Zero),
-            SomeNonNullableDecimalProperty = 2.52M,
-            SomeNullableDecimalProperty = 4.523435M,
-            SomeNonNullableIntProperty = 1,
-            SomeNullableIntProperty = 11,
-            SomeNonNullableStringProperty = "some-string",
-            SomeNullableStringProperty = "other-string"
+            NonNullableBoolean = true,
+            NonNullableDateTime = new DateTimeOffset(2010, 10, 10, 1, 2, 3, 0, TimeSpan.Zero),
+            NullableDateTime = new DateTimeOffset(2012, 11, 11, 1, 2, 3, 0, TimeSpan.Zero),
+            NonNullableDecimal = 2.52M,
+            NullableDecimal = 4.523435M,
+            NonNullableInt = 1,
+            NullableInt = 11,
+            NonNullableString = "some-string",
+            NullableString = "other-string"
         };
 
         // Act
@@ -184,15 +184,15 @@ public abstract class BaseInsertTests : BaseTests
         result.Should().NotBeNull();
         result.NonRelatedEntityId.Should().NotBeEmpty();
         result.ConcurrencyToken.Should().BeCloseTo(item.ConcurrencyToken.Value, 1.Seconds());
-        result.SomeNonNullableBooleanProperty.Should().Be(item.SomeNonNullableBooleanProperty);
-        result.SomeNonNullableDateTimeProperty.Should()
-            .BeCloseTo(item.SomeNonNullableDateTimeProperty.Value, 1.Seconds());
-        result.SomeNullableDateTimeProperty.Should().BeCloseTo(item.SomeNullableDateTimeProperty.Value, 1.Seconds());
-        result.SomeNonNullableDecimalProperty.Should().Be(item.SomeNonNullableDecimalProperty);
-        result.SomeNullableDecimalProperty.Should().Be(item.SomeNullableDecimalProperty);
-        result.SomeNonNullableIntProperty.Should().Be(item.SomeNonNullableIntProperty);
-        result.SomeNullableIntProperty.Should().Be(item.SomeNullableIntProperty);
-        result.SomeNonNullableStringProperty.Should().Be(item.SomeNonNullableStringProperty);
-        result.SomeNullableStringProperty.Should().Be(item.SomeNullableStringProperty);
+        result.NonNullableBoolean.Should().Be(item.NonNullableBoolean);
+        result.NonNullableDateTime.Should()
+            .BeCloseTo(item.NonNullableDateTime.Value, 1.Seconds());
+        result.NullableDateTime.Should().BeCloseTo(item.NullableDateTime.Value, 1.Seconds());
+        result.NonNullableDecimal.Should().Be(item.NonNullableDecimal);
+        result.NullableDecimal.Should().Be(item.NullableDecimal);
+        result.NonNullableInt.Should().Be(item.NonNullableInt);
+        result.NullableInt.Should().Be(item.NullableInt);
+        result.NonNullableString.Should().Be(item.NonNullableString);
+        result.NullableString.Should().Be(item.NullableString);
     }
 }

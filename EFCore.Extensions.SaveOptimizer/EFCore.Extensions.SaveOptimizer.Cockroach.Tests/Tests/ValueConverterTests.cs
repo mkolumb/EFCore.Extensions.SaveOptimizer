@@ -7,7 +7,7 @@ using Xunit.Abstractions;
 
 namespace EFCore.Extensions.SaveOptimizer.Cockroach.Tests.Tests;
 
-[EntityCollection(Variables.ProviderName, typeof(ValueConverterEntity))]
+[EntityCollection(Variables.ProviderName, typeof(ConverterEntity))]
 public class ValueConverterTests : BaseValueConverterTests
 {
     public ValueConverterTests(ITestOutputHelper testOutputHelper)
