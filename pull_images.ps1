@@ -6,7 +6,6 @@ $images = @(
     'mysql:8-oracle',
     'postgres:14.4',
     'mcr.microsoft.com/mssql/server:2019-latest',
-    'ghcr.io/mkolumb/oracledb_pre:11.2-xe',
     'ghcr.io/mkolumb/oracledb_pre:21.3-xe'
 )
 

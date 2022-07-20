@@ -25,7 +25,6 @@ $yamls = @(
     'mariadb_pomelo.yml', 
     'firebird_3.yml', 
     'firebird_4.yml', 
-    'oracle_11.yml', 
     'oracle_21.yml'
 )
 
