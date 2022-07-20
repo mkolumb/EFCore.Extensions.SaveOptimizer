@@ -18,7 +18,7 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
     private readonly IDbContextFactory<EntitiesContext> _factory;
     private int _failures;
 
-    protected string[] EntitiesList { get; } = { "NonRelatedEntities", "AutoIncrementPrimaryKeyEntities" };
+    protected string[] EntitiesList { get; } = { nameof(EntitiesContext.NonRelatedEntities) };
 
     protected DbContextWrapperBase(IDbContextFactory<EntitiesContext> factory)
     {
@@ -118,15 +118,15 @@ public abstract class DbContextWrapperBase : IDbContextWrapper
     public NonRelatedEntity CreateItem(long i) => new()
     {
         ConcurrencyToken = RemoveMilliseconds(DateTimeOffset.UtcNow),
-        SomeNonNullableBooleanProperty = true,
-        SomeNonNullableDateTimeProperty = new DateTimeOffset(2010, 10, 10, 1, 2, 3, 0, TimeSpan.Zero),
-        SomeNullableDateTimeProperty = new DateTimeOffset(2012, 11, 11, 1, 2, 3, 0, TimeSpan.Zero),
-        SomeNonNullableDecimalProperty = 2.52M,
-        SomeNullableDecimalProperty = 4.523M,
-        SomeNonNullableIntProperty = 1,
-        SomeNullableIntProperty = 11,
-        SomeNonNullableStringProperty = $"some-string-{i}",
-        SomeNullableStringProperty = "other-string"
+        NonNullableBoolean = true,
+        NonNullableDateTime = new DateTimeOffset(2010, 10, 10, 1, 2, 3, 0, TimeSpan.Zero),
+        NullableDateTime = new DateTimeOffset(2012, 11, 11, 1, 2, 3, 0, TimeSpan.Zero),
+        NonNullableDecimal = 2.52M,
+        NullableDecimal = 4.523M,
+        NonNullableInt = 1,
+        NullableInt = 11,
+        NonNullableString = $"some-string-{i}",
+        NullableString = "other-string"
     };
 
     public void Migrate() => Context.Database.Migrate();

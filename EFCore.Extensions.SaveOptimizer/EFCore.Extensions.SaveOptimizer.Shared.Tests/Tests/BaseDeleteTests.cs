@@ -72,8 +72,8 @@ public abstract class BaseDeleteTests : BaseTests
 
         // Assert
         result.Should().HaveCount(2);
-        result[0].SomeNonNullableDecimalProperty.Should().Be(2.52M);
-        result[1].SomeNonNullableDecimalProperty.Should().Be(2.52M);
+        result[0].NonNullableDecimal.Should().Be(2.52M);
+        result[1].NonNullableDecimal.Should().Be(2.52M);
     }
 
     [SkippableTheory]
@@ -99,7 +99,7 @@ public abstract class BaseDeleteTests : BaseTests
                 .ToArrayWithRetryAsync()
                 .ConfigureAwait(false);
 
-        var nonNullableIntProperties = result.Select(x => x.SomeNonNullableIntProperty).ToArray();
+        var nonNullableIntProperties = result.Select(x => x.NonNullableInt).ToArray();
 
         // Assert
         result.Should().HaveCount(10);
@@ -160,8 +160,8 @@ public abstract class BaseDeleteTests : BaseTests
 
         // Assert
         result.Should().HaveCount(2);
-        result[0].SomeNonNullableDecimalProperty.Should().Be(2.52M);
-        result[1].SomeNonNullableDecimalProperty.Should().Be(2.52M);
+        result[0].NonNullableDecimal.Should().Be(2.52M);
+        result[1].NonNullableDecimal.Should().Be(2.52M);
     }
 
     [SkippableTheory]
@@ -186,7 +186,7 @@ public abstract class BaseDeleteTests : BaseTests
                 .OrderBy(x => x.Indexer)
                 .ToArrayWithRetry();
 
-        var nonNullableIntProperties = result.Select(x => x.SomeNonNullableIntProperty).ToArray();
+        var nonNullableIntProperties = result.Select(x => x.NonNullableInt).ToArray();
 
         // Assert
         result.Should().HaveCount(10);

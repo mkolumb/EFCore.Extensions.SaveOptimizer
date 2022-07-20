@@ -19,9 +19,9 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Firebird4.Migrations
             modelBuilder
                 .HasAnnotation("Fb:ValueGenerationStrategy", FbValueGenerationStrategy.IdentityColumn)
                 .HasAnnotation("ProductVersion", "6.0.2")
-                .HasAnnotation("Relational:MaxIdentifierLength", 31);
+                .HasAnnotation("Relational:MaxIdentifierLength", 30);
 
-            modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.AutoIncrementPrimaryKeyEntity", b =>
+            modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.AutoIncrementEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -33,10 +33,10 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Firebird4.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AutoIncrementPrimaryKeyEntities");
+                    b.ToTable("AutoIncrementEntities");
                 });
 
-            modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.ComposedPrimaryKeyEntity", b =>
+            modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.ComposedEntity", b =>
                 {
                     b.Property<int?>("PrimaryFirst")
                         .HasColumnType("INTEGER");
@@ -49,7 +49,21 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Firebird4.Migrations
 
                     b.HasKey("PrimaryFirst", "PrimarySecond");
 
-                    b.ToTable("ComposedPrimaryKeyEntities");
+                    b.ToTable("ComposedEntities");
+                });
+
+            modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.ConverterEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("CHAR(16) CHARACTER SET OCTETS");
+
+                    b.Property<string>("SomeHalf")
+                        .HasColumnType("BLOB SUB_TYPE TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ConverterEntities");
                 });
 
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.FailingEntity", b =>
@@ -81,61 +95,47 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Firebird4.Migrations
                     b.Property<int>("Indexer")
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool?>("SomeNonNullableBooleanProperty")
+                    b.Property<bool?>("NonNullableBoolean")
                         .IsRequired()
                         .HasColumnType("BOOLEAN");
 
-                    b.Property<string>("SomeNonNullableDateTimeProperty")
+                    b.Property<string>("NonNullableDateTime")
                         .IsRequired()
                         .HasColumnType("VARCHAR(48)");
 
-                    b.Property<decimal?>("SomeNonNullableDecimalProperty")
+                    b.Property<decimal?>("NonNullableDecimal")
                         .IsRequired()
                         .HasPrecision(12, 6)
                         .HasColumnType("DECIMAL(12,6)");
 
-                    b.Property<int?>("SomeNonNullableIntProperty")
+                    b.Property<int?>("NonNullableInt")
                         .IsRequired()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("SomeNonNullableStringProperty")
+                    b.Property<string>("NonNullableString")
                         .IsRequired()
                         .HasColumnType("BLOB SUB_TYPE TEXT");
 
-                    b.Property<string>("SomeNullableDateTimeProperty")
+                    b.Property<string>("NullableDateTime")
                         .HasColumnType("VARCHAR(48)");
 
-                    b.Property<decimal?>("SomeNullableDecimalProperty")
+                    b.Property<decimal?>("NullableDecimal")
                         .HasPrecision(12, 6)
                         .HasColumnType("DECIMAL(12,6)");
 
-                    b.Property<int?>("SomeNullableIntProperty")
+                    b.Property<int?>("NullableInt")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("SomeNullableStringProperty")
+                    b.Property<string>("NullableString")
                         .HasColumnType("BLOB SUB_TYPE TEXT");
 
                     b.HasKey("NonRelatedEntityId");
 
-                    b.HasIndex("Indexer");
+                    b.HasIndex(new[] { "ConcurrencyToken", "NonRelatedEntityId" }, "ix_nr_ct");
 
-                    b.HasIndex("ConcurrencyToken", "NonRelatedEntityId");
+                    b.HasIndex(new[] { "Indexer" }, "ix_nr_idx");
 
                     b.ToTable("NonRelatedEntities");
-                });
-
-            modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.ValueConverterEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("CHAR(16) CHARACTER SET OCTETS");
-
-                    b.Property<string>("SomeHalf")
-                        .HasColumnType("BLOB SUB_TYPE TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ValueConverterEntities");
                 });
 
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.VariousTypeEntity", b =>

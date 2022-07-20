@@ -39,6 +39,13 @@ jobs:
         run: git fetch --prune --unshallow
       - name: Clean unnecessary objects
         run: git clean -fdX
+      - name: Setup docker
+        run: |
+          sudo systemctl stop docker
+          sudo bash -c 'echo "{\"max-concurrent-downloads\": 50}" >> /etc/docker/daemon.json'
+          sudo systemctl daemon-reload
+          sudo systemctl restart docker
+          echo 'Restart finished'
       - name: Set RELEASE_VERSION
         run: >
           echo "RELEASE_VERSION=$(git describe --tags --abbrev=0)" >>
@@ -51,10 +58,10 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '${{ env.DOTNET_VERSION }}'
+      - name: Download images
+        run: pwsh -file pull_images.ps1
       - name: Install Dotnet Tools
         run: dotnet tool restore
-      - name: Run FAKE pull images
-        run: dotnet fake build -t PullImages
       - name: Run FAKE build
         run: dotnet fake build
       - name: Upload test artifacts

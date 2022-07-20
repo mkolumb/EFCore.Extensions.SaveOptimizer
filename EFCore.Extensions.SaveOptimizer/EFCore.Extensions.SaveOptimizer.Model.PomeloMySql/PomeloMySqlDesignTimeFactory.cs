@@ -19,7 +19,7 @@ public class PomeloMySqlDesignTimeFactory : IDesignTimeDbContextFactory<Entities
 
         DbContextOptionsBuilder<EntitiesContext> builder = new DbContextOptionsBuilder<EntitiesContext>()
             .UseMySql(connectionString,
-                ServerVersion.AutoDetect(connectionString),
+                new MySqlServerVersion(new Version(8, 0)),
                 cfg => cfg.CommandTimeout(600).MigrationsAssembly("EFCore.Extensions.SaveOptimizer.Model.PomeloMySql"));
 
         if (factory != null)

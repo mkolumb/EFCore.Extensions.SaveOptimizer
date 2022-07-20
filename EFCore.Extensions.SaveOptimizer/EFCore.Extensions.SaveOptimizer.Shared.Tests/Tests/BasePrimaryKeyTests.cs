@@ -22,15 +22,15 @@ public abstract class BasePrimaryKeyTests : BaseTests
         // Arrange
         using DbContextWrapper db = ContextWrapperResolver();
 
-        AutoIncrementPrimaryKeyEntity[] data = { new() { Some = "x1" }, new() { Some = "x2" }, new() { Some = "x3" } };
+        AutoIncrementEntity[] data = { new() { Some = "x1" }, new() { Some = "x2" }, new() { Some = "x3" } };
 
         await db.Context.AddRangeAsync(data as IEnumerable<object>).ConfigureAwait(false);
 
         // Act
         await db.SaveAsync(variant, null).ConfigureAwait(false);
 
-        AutoIncrementPrimaryKeyEntity[] result =
-            await db.Context.AutoIncrementPrimaryKeyEntities.OrderBy(x => x.Some).ToArrayWithRetryAsync()
+        AutoIncrementEntity[] result =
+            await db.Context.AutoIncrementEntities.OrderBy(x => x.Some).ToArrayWithRetryAsync()
                 .ConfigureAwait(false);
 
         var keys = result.Select(x => x.Id).ToArray();
@@ -52,16 +52,16 @@ public abstract class BasePrimaryKeyTests : BaseTests
         // Arrange
         using DbContextWrapper db = ContextWrapperResolver();
 
-        AutoIncrementPrimaryKeyEntity[] data = { new() { Some = "x1" }, new() { Some = "x2" }, new() { Some = "x3" } };
+        AutoIncrementEntity[] data = { new() { Some = "x1" }, new() { Some = "x2" }, new() { Some = "x3" } };
 
         await db.Context.AddRangeAsync(data as IEnumerable<object>).ConfigureAwait(false);
 
         await db.SaveAsync(variant, null).ConfigureAwait(false);
 
-        data = await db.Context.AutoIncrementPrimaryKeyEntities.OrderBy(x => x.Some).ToArrayWithRetryAsync()
+        data = await db.Context.AutoIncrementEntities.OrderBy(x => x.Some).ToArrayWithRetryAsync()
             .ConfigureAwait(false);
 
-        foreach (AutoIncrementPrimaryKeyEntity item in data)
+        foreach (AutoIncrementEntity item in data)
         {
             item.Some = $"a_{item.Some}_{item.Id}";
         }
@@ -69,8 +69,8 @@ public abstract class BasePrimaryKeyTests : BaseTests
         // Act
         await db.SaveAsync(variant, null).ConfigureAwait(false);
 
-        AutoIncrementPrimaryKeyEntity[] result =
-            await db.Context.AutoIncrementPrimaryKeyEntities.OrderBy(x => x.Some).ToArrayWithRetryAsync()
+        AutoIncrementEntity[] result =
+            await db.Context.AutoIncrementEntities.OrderBy(x => x.Some).ToArrayWithRetryAsync()
                 .ConfigureAwait(false);
 
         var keys = result.Select(x => x.Id).ToArray();
@@ -92,13 +92,13 @@ public abstract class BasePrimaryKeyTests : BaseTests
         // Arrange
         using DbContextWrapper db = ContextWrapperResolver();
 
-        AutoIncrementPrimaryKeyEntity[] data = { new() { Some = "x1" }, new() { Some = "x2" }, new() { Some = "x3" } };
+        AutoIncrementEntity[] data = { new() { Some = "x1" }, new() { Some = "x2" }, new() { Some = "x3" } };
 
         await db.Context.AddRangeAsync(data as IEnumerable<object>).ConfigureAwait(false);
 
         await db.SaveAsync(variant, null).ConfigureAwait(false);
 
-        data = await db.Context.AutoIncrementPrimaryKeyEntities.OrderBy(x => x.Some).ToArrayWithRetryAsync()
+        data = await db.Context.AutoIncrementEntities.OrderBy(x => x.Some).ToArrayWithRetryAsync()
             .ConfigureAwait(false);
 
         db.Context.RemoveRange(data.Take(2));
@@ -106,8 +106,8 @@ public abstract class BasePrimaryKeyTests : BaseTests
         // Act
         await db.SaveAsync(variant, null).ConfigureAwait(false);
 
-        AutoIncrementPrimaryKeyEntity[] result =
-            await db.Context.AutoIncrementPrimaryKeyEntities.OrderBy(x => x.Some).ToArrayWithRetryAsync()
+        AutoIncrementEntity[] result =
+            await db.Context.AutoIncrementEntities.OrderBy(x => x.Some).ToArrayWithRetryAsync()
                 .ConfigureAwait(false);
 
         var keys = result.Select(x => x.Id).ToArray();
@@ -129,15 +129,15 @@ public abstract class BasePrimaryKeyTests : BaseTests
         // Arrange
         using DbContextWrapper db = ContextWrapperResolver();
 
-        AutoIncrementPrimaryKeyEntity[] data = { new() { Some = "x1" }, new() { Some = "x2" }, new() { Some = "x3" } };
+        AutoIncrementEntity[] data = { new() { Some = "x1" }, new() { Some = "x2" }, new() { Some = "x3" } };
 
         db.Context.AddRange(data as IEnumerable<object>);
 
         // Act
         db.Save(variant, null);
 
-        AutoIncrementPrimaryKeyEntity[] result =
-            db.Context.AutoIncrementPrimaryKeyEntities.OrderBy(x => x.Some).ToArrayWithRetry();
+        AutoIncrementEntity[] result =
+            db.Context.AutoIncrementEntities.OrderBy(x => x.Some).ToArrayWithRetry();
 
         var keys = result.Select(x => x.Id).ToArray();
 
@@ -158,15 +158,15 @@ public abstract class BasePrimaryKeyTests : BaseTests
         // Arrange
         using DbContextWrapper db = ContextWrapperResolver();
 
-        AutoIncrementPrimaryKeyEntity[] data = { new() { Some = "x1" }, new() { Some = "x2" }, new() { Some = "x3" } };
+        AutoIncrementEntity[] data = { new() { Some = "x1" }, new() { Some = "x2" }, new() { Some = "x3" } };
 
         db.Context.AddRange(data as IEnumerable<object>);
 
         db.Save(variant, null);
 
-        data = db.Context.AutoIncrementPrimaryKeyEntities.OrderBy(x => x.Some).ToArrayWithRetry();
+        data = db.Context.AutoIncrementEntities.OrderBy(x => x.Some).ToArrayWithRetry();
 
-        foreach (AutoIncrementPrimaryKeyEntity item in data)
+        foreach (AutoIncrementEntity item in data)
         {
             item.Some = $"a_{item.Some}_{item.Id}";
         }
@@ -174,8 +174,8 @@ public abstract class BasePrimaryKeyTests : BaseTests
         // Act
         db.Save(variant, null);
 
-        AutoIncrementPrimaryKeyEntity[] result =
-            db.Context.AutoIncrementPrimaryKeyEntities.OrderBy(x => x.Some).ToArrayWithRetry();
+        AutoIncrementEntity[] result =
+            db.Context.AutoIncrementEntities.OrderBy(x => x.Some).ToArrayWithRetry();
 
         var keys = result.Select(x => x.Id).ToArray();
 
@@ -196,21 +196,21 @@ public abstract class BasePrimaryKeyTests : BaseTests
         // Arrange
         using DbContextWrapper db = ContextWrapperResolver();
 
-        AutoIncrementPrimaryKeyEntity[] data = { new() { Some = "x1" }, new() { Some = "x2" }, new() { Some = "x3" } };
+        AutoIncrementEntity[] data = { new() { Some = "x1" }, new() { Some = "x2" }, new() { Some = "x3" } };
 
         db.Context.AddRange(data as IEnumerable<object>);
 
         db.Save(variant, null);
 
-        data = db.Context.AutoIncrementPrimaryKeyEntities.OrderBy(x => x.Some).ToArrayWithRetry();
+        data = db.Context.AutoIncrementEntities.OrderBy(x => x.Some).ToArrayWithRetry();
 
         db.Context.RemoveRange(data.Take(2));
 
         // Act
         db.Save(variant, null);
 
-        AutoIncrementPrimaryKeyEntity[] result =
-            db.Context.AutoIncrementPrimaryKeyEntities.OrderBy(x => x.Some).ToArrayWithRetry();
+        AutoIncrementEntity[] result =
+            db.Context.AutoIncrementEntities.OrderBy(x => x.Some).ToArrayWithRetry();
 
         var keys = result.Select(x => x.Id).ToArray();
 

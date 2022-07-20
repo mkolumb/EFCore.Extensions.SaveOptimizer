@@ -22,7 +22,7 @@ public abstract class BaseValueConverterTests : BaseTests
         // Arrange
         using DbContextWrapper db = ContextWrapperResolver();
 
-        ValueConverterEntity[] data =
+        ConverterEntity[] data =
         {
             new() { Id = Guid.Parse("b94c49be-6867-48d8-b001-7f540eb4c243"), SomeHalf = (Half)2.445 },
             new() { Id = Guid.Parse("b94c49be-6867-48d8-b001-8f540eb4c243"), SomeHalf = (Half)2.845 }
@@ -33,7 +33,7 @@ public abstract class BaseValueConverterTests : BaseTests
         // Act
         await db.SaveAsync(variant, null).ConfigureAwait(false);
 
-        ValueConverterEntity[] result = await db.Context.ValueConverterEntities.OrderBy(x => x.Id)
+        ConverterEntity[] result = await db.Context.ConverterEntities.OrderBy(x => x.Id)
             .ToArrayWithRetryAsync()
             .ConfigureAwait(false);
 
@@ -54,7 +54,7 @@ public abstract class BaseValueConverterTests : BaseTests
         // Arrange
         using DbContextWrapper db = ContextWrapperResolver();
 
-        ValueConverterEntity[] data =
+        ConverterEntity[] data =
         {
             new() { Id = Guid.Parse("b94c49be-6867-48d8-b001-7f540eb4c243"), SomeHalf = (Half)2.445 },
             new() { Id = Guid.Parse("b94c49be-6867-48d8-b001-8f540eb4c243"), SomeHalf = (Half)2.845 }
@@ -65,7 +65,7 @@ public abstract class BaseValueConverterTests : BaseTests
         // Act
         db.Save(variant, null);
 
-        ValueConverterEntity[] result = db.Context.ValueConverterEntities.OrderBy(x => x.Id).ToArrayWithRetry();
+        ConverterEntity[] result = db.Context.ConverterEntities.OrderBy(x => x.Id).ToArrayWithRetry();
 
         // Assert
         result.Should().HaveCount(2);

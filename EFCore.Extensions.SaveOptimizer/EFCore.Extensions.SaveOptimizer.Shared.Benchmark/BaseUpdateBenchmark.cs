@@ -28,7 +28,7 @@ public abstract class BaseUpdateBenchmark : BaseBenchmark
 
         for (var i = 0L; i < Rows; i++)
         {
-            items[(int)i].SomeNullableDecimalProperty = 9.181M + Iterations;
+            items[(int)i].NullableDecimal = 9.181M + Iterations;
         }
     }
 

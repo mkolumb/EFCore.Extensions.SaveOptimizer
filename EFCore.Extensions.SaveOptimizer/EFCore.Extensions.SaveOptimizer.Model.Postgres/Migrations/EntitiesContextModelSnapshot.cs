@@ -18,11 +18,11 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Postgres.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "6.0.0")
-                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+                .HasAnnotation("Relational:MaxIdentifierLength", 30);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.AutoIncrementPrimaryKeyEntity", b =>
+            modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.AutoIncrementEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -35,10 +35,10 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Postgres.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AutoIncrementPrimaryKeyEntities");
+                    b.ToTable("AutoIncrementEntities");
                 });
 
-            modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.ComposedPrimaryKeyEntity", b =>
+            modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.ComposedEntity", b =>
                 {
                     b.Property<int?>("PrimaryFirst")
                         .HasColumnType("integer");
@@ -51,7 +51,21 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Postgres.Migrations
 
                     b.HasKey("PrimaryFirst", "PrimarySecond");
 
-                    b.ToTable("ComposedPrimaryKeyEntities");
+                    b.ToTable("ComposedEntities");
+                });
+
+            modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.ConverterEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("SomeHalf")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ConverterEntities");
                 });
 
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.FailingEntity", b =>
@@ -84,61 +98,47 @@ namespace EFCore.Extensions.SaveOptimizer.Model.Postgres.Migrations
                     b.Property<int>("Indexer")
                         .HasColumnType("integer");
 
-                    b.Property<bool?>("SomeNonNullableBooleanProperty")
+                    b.Property<bool?>("NonNullableBoolean")
                         .IsRequired()
                         .HasColumnType("boolean");
 
-                    b.Property<DateTimeOffset?>("SomeNonNullableDateTimeProperty")
+                    b.Property<DateTimeOffset?>("NonNullableDateTime")
                         .IsRequired()
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<decimal?>("SomeNonNullableDecimalProperty")
+                    b.Property<decimal?>("NonNullableDecimal")
                         .IsRequired()
                         .HasPrecision(12, 6)
                         .HasColumnType("numeric(12,6)");
 
-                    b.Property<int?>("SomeNonNullableIntProperty")
+                    b.Property<int?>("NonNullableInt")
                         .IsRequired()
                         .HasColumnType("integer");
 
-                    b.Property<string>("SomeNonNullableStringProperty")
+                    b.Property<string>("NonNullableString")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTimeOffset?>("SomeNullableDateTimeProperty")
+                    b.Property<DateTimeOffset?>("NullableDateTime")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<decimal?>("SomeNullableDecimalProperty")
+                    b.Property<decimal?>("NullableDecimal")
                         .HasPrecision(12, 6)
                         .HasColumnType("numeric(12,6)");
 
-                    b.Property<int?>("SomeNullableIntProperty")
+                    b.Property<int?>("NullableInt")
                         .HasColumnType("integer");
 
-                    b.Property<string>("SomeNullableStringProperty")
+                    b.Property<string>("NullableString")
                         .HasColumnType("text");
 
                     b.HasKey("NonRelatedEntityId");
 
-                    b.HasIndex("Indexer");
+                    b.HasIndex(new[] { "ConcurrencyToken", "NonRelatedEntityId" }, "ix_nr_ct");
 
-                    b.HasIndex("ConcurrencyToken", "NonRelatedEntityId");
+                    b.HasIndex(new[] { "Indexer" }, "ix_nr_idx");
 
                     b.ToTable("NonRelatedEntities");
-                });
-
-            modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.ValueConverterEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("SomeHalf")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ValueConverterEntities");
                 });
 
             modelBuilder.Entity("EFCore.Extensions.SaveOptimizer.Model.Entities.VariousTypeEntity", b =>
