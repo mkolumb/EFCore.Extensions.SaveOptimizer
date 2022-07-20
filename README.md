@@ -198,7 +198,7 @@ All benchmarks uses serializable isolation level and run databases within contai
 ``` ini
 BenchmarkDotNet=v0.13.1, OS=Windows 10.0.19042.1706 (20H2/October2020Update)
 Intel Core i7-8850H CPU 2.60GHz (Coffee Lake), 1 CPU, 12 logical and 6 physical cores
-.NET SDK=6.0.301
+.NET SDK=6.0.302
   [Host]     : .NET 6.0.6 (6.0.622.26707), X64 RyuJIT
 
 EvaluateOverhead=True  OutlierMode=RemoveUpper
