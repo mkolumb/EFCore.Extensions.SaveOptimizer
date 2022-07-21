@@ -110,6 +110,7 @@ Please note it is not working exactly as SaveChanges, so you should verify it wo
 - [ ] Low level performance optimizations
 - [ ] Contributing document
 - [ ] Validation before save
+- [ ] Build query builder tests from scratch
 
 ## Limitations
 
@@ -143,7 +144,7 @@ This is not a SaveOptimizer issue, however I experienced some problems with Fire
 ## Q&A
 
 1. Why you wrote query builder instead of using SqlKata?
-   - The reason behind is performance. I noticed few issues and created [pull request](https://github.com/sqlkata/querybuilder/pull/548). When I started working on this library my pull request was in review without response for few months. Initially I decided to create [.NET 6 fork](https://www.nuget.org/packages/SqlKata.Net6/) and performance improvements were really great. Later I realized I don't need most of SqlKata features so it's better to write something optimized from scratch - this will bring performance & freedom boost. Currently there is reference to SqlKata in test project, just for verify my builder.
+   - The reason behind is performance. I noticed few issues and created [pull request](https://github.com/sqlkata/querybuilder/pull/548). When I started working on this library my pull request was in review without response for few months. Initially I decided to create [.NET 6 fork](https://www.nuget.org/packages/SqlKata.Net6/) and performance improvements were really great. Later I realized I don't need most of SqlKata features so it's better to write something optimized from scratch - this will bring performance & freedom boost. Currently there is reference to SqlKata in test project, just for verify my builder. In the future I have plan to drop this dependency and write builder tests from scratch.
 2. Why you wrote query executor?
    - I noticed a bug with ExecuteSqlRaw from RelationalExtensions. It looks it cuts precision for decimals. So I created something lightweight using some EF Core features.
 3. What is EFCore.Extensions.SaveOptimizer.Dapper package purpose?
