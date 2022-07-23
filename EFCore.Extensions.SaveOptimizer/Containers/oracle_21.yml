@@ -4,6 +4,8 @@ services:
     container_name: optimizeroracle21
     hostname: optimizeroracle21
     image: ghcr.io/mkolumb/oracledb_pre:21.3-xe
+    environment:
+      - ORACLE_PWD=root
     ports:
       - '1521:1521'
       - '5500:5500'
