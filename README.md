@@ -194,13 +194,13 @@ SaveOptimizer is not always better than pure EF Core methods. EF Core contains t
 
 My advice is to compare results in your real environment. Honestly - the best choice for pure performance is leave EF Core for write operations at all and then write statements from scratch for your scenarios. But this library could bring serious performance benefits in many scenarios without big effort.
 
-All benchmarks uses serializable isolation level and run databases within containers.
+All benchmarks uses serializable isolation level and run databases within containers. Please note I used free versions (e.g. Oracle Express), results on commercial versions could be much better.
 
 ``` ini
-BenchmarkDotNet=v0.13.1, OS=Windows 10.0.19042.1706 (20H2/October2020Update)
-Intel Core i7-8850H CPU 2.60GHz (Coffee Lake), 1 CPU, 12 logical and 6 physical cores
+BenchmarkDotNet=v0.13.1, OS=Windows 10.0.19044.1826 (21H2)
+12th Gen Intel Core i9-12900HK, 1 CPU, 20 logical and 14 physical cores
 .NET SDK=6.0.302
-  [Host]     : .NET 6.0.6 (6.0.622.26707), X64 RyuJIT
+  [Host]     : .NET 6.0.7 (6.0.722.32202), X64 RyuJIT
 
 EvaluateOverhead=True  OutlierMode=RemoveUpper
 InvocationCount=1  IterationCount=20  LaunchCount=3
@@ -281,19 +281,19 @@ powershell -File run_benchmarks.ps1
 
 [![SQL Server DELETE](/results/SqlServer.Delete-barplot-small.png "SQL Server DELETE")](/results/SqlServer.Delete-report-github.md)
 
-#### Oracle Express
+#### Oracle Express 21
 
-##### [INSERT](/results/Oracle.Insert-report-github.md)
+##### [INSERT](/results/Oracle21.Insert-report-github.md)
 
-[![Oracle Express INSERT](/results/Oracle.Insert-barplot-small.png "Oracle Express INSERT")](/results/Oracle.Insert-report-github.md)
+[![Oracle Express 21 INSERT](/results/Oracle21.Insert-barplot-small.png "Oracle Express 21 INSERT")](/results/Oracle21.Insert-report-github.md)
 
-##### [UPDATE](/results/Oracle.Update-report-github.md)
+##### [UPDATE](/results/Oracle21.Update-report-github.md)
 
-[![Oracle Express UPDATE](/results/Oracle.Update-barplot-small.png "Oracle Express UPDATE")](/results/Oracle.Update-report-github.md)
+[![Oracle Express 21 UPDATE](/results/Oracle21.Update-barplot-small.png "Oracle Express 21 UPDATE")](/results/Oracle21.Update-report-github.md)
 
-##### [DELETE](/results/Oracle.Delete-report-github.md)
+##### [DELETE](/results/Oracle21.Delete-report-github.md)
 
-[![Oracle Express DELETE](/results/Oracle.Delete-barplot-small.png "Oracle Express DELETE")](/results/Oracle.Delete-report-github.md)
+[![Oracle Express 21 DELETE](/results/Oracle21.Delete-barplot-small.png "Oracle Express 21 DELETE")](/results/Oracle21.Delete-report-github.md)
 
 #### MySQL
 

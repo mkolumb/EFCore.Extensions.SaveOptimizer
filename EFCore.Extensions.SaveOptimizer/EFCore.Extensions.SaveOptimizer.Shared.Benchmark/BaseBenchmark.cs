@@ -169,7 +169,7 @@ public abstract class BaseBenchmark
     {
         var path = Path.Combine(di.FullName, scriptPath);
 
-        var cmd = $@"& '{path}'";
+        var cmd = $@"& '{path}' -force";
 
         ConsoleLogger.Unicode.WriteLineWithDate($"Running {path}");
 

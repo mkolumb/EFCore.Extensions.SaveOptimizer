@@ -17,10 +17,10 @@ $workingDir = $(Get-Location).Path
 Set-Location $workingDir
 
 Set-Location $workingDir
-.\start.ps1
+.\start.ps1 -force
 
 Set-Location $workingDir
 dotnet run -c release
 
 Set-Location $workingDir
-.\stop.ps1
+.\stop.ps1 -force

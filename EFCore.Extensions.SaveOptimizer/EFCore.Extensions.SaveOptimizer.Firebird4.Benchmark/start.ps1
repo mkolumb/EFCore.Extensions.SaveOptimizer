@@ -1,4 +1,6 @@
-﻿$ErrorActionPreference = "Stop"
+﻿param ([switch]$force)
+
+$ErrorActionPreference = "Stop"
 
 # Ensure that is being run from dir where script locates (helpful when running on remote machine)
 
@@ -21,6 +23,10 @@ Set-Location ..
 Set-Location "Containers"
 
 function DisableProvider {
+    if ($force) {
+        return $false
+    }
+
     $dir = $workingDir
 
     while ($null -ne $dir -And !(Test-Path([System.IO.Path]::Combine($dir, "environment.settings.json")))) {

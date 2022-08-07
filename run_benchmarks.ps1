@@ -46,8 +46,19 @@ foreach($benchmark in $benchmarks) {
     
     # plots & logs
     Set-Location $workingDir
-    .\preserve_logs.ps1
-    .\generate_plots.ps1
+    try {
+        .\preserve_logs.ps1        
+    }
+    catch {
+        Write-Host "Unable to preserve logs for $($benchmark)"
+    }
+
+    try {
+        .\generate_plots.ps1        
+    }
+    catch {
+        Write-Host "Unable to generate plots for $($benchmark)"
+    }
 }
 
 # cleanup

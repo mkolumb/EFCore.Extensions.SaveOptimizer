@@ -63,7 +63,7 @@ for (file in files) {
   title <- gsub("CockroachMulti", "CockroachDB (9 nodes)", title)
   title <- gsub("Cockroach -", "CockroachDB (1 node) -", title)
   title <- gsub("SqlServer", "SQL Server", title)
-  title <- gsub("Oracle", "Oracle Express", title)
+  title <- gsub("Oracle21", "Oracle Express 21", title)
   title <- gsub("PomeloMySql", "MySQL", title)
   title <- gsub("PomeloMariaDb", "MariaDB", title)
   title <- gsub("Postgres", "PostgreSQL", title)
