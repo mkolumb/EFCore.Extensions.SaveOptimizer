@@ -23,10 +23,9 @@ public static class DbContextExtensions
 
         IQueryExecutionConfiguratorService queryExecutionConfiguratorService = new QueryExecutionConfiguratorService();
 
-        IQueryPreparerService queryPreparerService = new QueryPreparerService(compilerService, translatorService);
+        IDbContextDependencyResolverService dbContextDependencyResolverService = new DbContextDependencyResolverService();
 
-        IDbContextDependencyResolverService dbContextDependencyResolverService =
-            new DbContextDependencyResolverService();
+        IQueryPreparerService queryPreparerService = new QueryPreparerService(compilerService, translatorService, dbContextDependencyResolverService);
 
         IQueryExecutorService queryExecutorService = new QueryExecutorService(dbContextDependencyResolverService);
 

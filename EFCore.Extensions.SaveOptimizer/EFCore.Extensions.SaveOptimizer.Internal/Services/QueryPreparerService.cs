@@ -13,19 +13,23 @@ public class QueryPreparerService : IQueryPreparerService
 {
     private readonly IQueryCompilerService _compilerService;
 
-    private readonly ConcurrentDictionary<string, IDictionary<Type, int>> _orders;
-
     private readonly IQueryTranslatorService _translatorService;
 
-    private readonly ConcurrentDictionary<string, DataContextModelWrapper> _wrappers;
+    private readonly IDbContextDependencyResolverService _dbContextDependencyResolverService;
+
+    private readonly ConcurrentDictionary<object, DataContextModelWrapper> _wrappers;
+
+    private readonly ConcurrentDictionary<object, IDictionary<Type, int>> _orders;
 
     public QueryPreparerService(IQueryCompilerService compilerService,
-        IQueryTranslatorService translatorService)
+        IQueryTranslatorService translatorService,
+        IDbContextDependencyResolverService dbContextDependencyResolverService)
     {
         _compilerService = compilerService;
         _translatorService = translatorService;
-        _wrappers = new ConcurrentDictionary<string, DataContextModelWrapper>();
-        _orders = new ConcurrentDictionary<string, IDictionary<Type, int>>();
+        _dbContextDependencyResolverService = dbContextDependencyResolverService;
+        _wrappers = new ConcurrentDictionary<object, DataContextModelWrapper>();
+        _orders = new ConcurrentDictionary<object, IDictionary<Type, int>>();
     }
 
     public void Init(DbContext context)
@@ -88,10 +92,7 @@ public class QueryPreparerService : IQueryPreparerService
 
             Dictionary<Type, int> paramsDictionary = maxParameters[entry.State];
 
-            if (!paramsDictionary.ContainsKey(translation.EntityType))
-            {
-                paramsDictionary.Add(translation.EntityType, 1);
-            }
+            paramsDictionary.TryAdd(translation.EntityType, 1);
 
             Dictionary<Type, List<QueryDataModel>> dictionary = translations[entry.State];
 
@@ -137,13 +138,11 @@ public class QueryPreparerService : IQueryPreparerService
         return new QueryPreparationModel(results, entries, expectedRows);
     }
 
-    private static string GetKey(DbContext context)
+    private object GetKey(DbContext context)
     {
-        var typeName = context.GetType().FullName ?? throw new ArgumentNullException(nameof(context));
+        var factory = _dbContextDependencyResolverService.GetModelCacheKeyFactory(context);
 
-        var providerName = context.Database.ProviderName;
-
-        return $"{typeName}_{providerName}";
+        return factory.Create(context, false);
     }
 
     private IEnumerable<IEnumerable<ISqlCommandModel>> GetQuery(

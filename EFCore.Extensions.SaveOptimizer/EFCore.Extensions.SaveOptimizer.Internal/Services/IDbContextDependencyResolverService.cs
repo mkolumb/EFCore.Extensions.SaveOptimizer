@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 
@@ -9,4 +10,6 @@ public interface IDbContextDependencyResolverService
     IRelationalConnection GetConnection(DbContext context);
 
     ILogger GetLogger(DbContext context);
+
+    IModelCacheKeyFactory GetModelCacheKeyFactory(DbContext context);
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 
@@ -10,6 +11,8 @@ public class DbContextDependencyResolverService : IDbContextDependencyResolverSe
     public IRelationalConnection GetConnection(DbContext context) => GetDependencies(context).RelationalConnection;
 
     public ILogger GetLogger(DbContext context) => GetDependencies(context).CommandLogger.Logger;
+
+    public IModelCacheKeyFactory GetModelCacheKeyFactory(DbContext context) => context.GetService<IModelCacheKeyFactory>();
 
     private static IRelationalDatabaseFacadeDependencies GetDependencies(DbContext context)
     {

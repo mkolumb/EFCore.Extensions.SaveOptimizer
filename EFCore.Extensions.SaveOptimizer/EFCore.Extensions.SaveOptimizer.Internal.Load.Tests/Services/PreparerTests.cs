@@ -28,7 +28,7 @@ public class PreparerTests
             out QueryCompilerService? queryCompiler,
             out QueryTranslatorService queryTranslator);
 
-        QueryPreparerService queryPreparer = new(queryCompiler, queryTranslator);
+        QueryPreparerService queryPreparer = new(queryCompiler, queryTranslator, new DbContextDependencyResolverService());
 
         queryPreparer.Init(context);
 
